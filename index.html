@@ -118,17 +118,20 @@
 <!-- BRAND SELECTOR -->
 <div class="brand-selector" id="brand-selector"></div>
 
-<!-- MODEL SELECTOR -->
-<div class="model-selector">
+<!-- MODEL SELECTOR (자동 생성) -->
+<div class="model-selector" id="model-selector-container">
   <strong style="width:100%;color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">📱 모델 선택</strong>
-  <button class="model-btn active" onclick="switchModel('op15')">OnePlus 15</button>
-  <button class="model-btn" onclick="switchModel('s25')">Samsung S25 Ultra</button>
-  <button class="model-btn" onclick="switchModel('ip16')">iPhone 16 Pro</button>
-  <button class="model-btn" onclick="switchModel('iqoo15ultra')">vivo iQOO 15 Ultra</button>
-  <!-- 새 모델 추가 시: onclick="switchModel('key')" -->
+  <!-- 자바스크립트로 자동 생성됨 -->
 </div>
 
 <!-- ① HEADER -->
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+  <div></div>
+  <div style="text-align:right;font-size:11px;color:#64748b;">
+    <div style="font-weight:700;letter-spacing:1px;margin-bottom:4px;">🔍 Koo's Mobile Insights</div>
+    <div style="font-size:10px;color:#475569;">Generated: 2026.04.12</div>
+  </div>
+</div>
 <div class="header" id="header-section">
   <div class="model-name" id="h-model">—</div>
   <div class="header-meta" id="h-meta"></div>
@@ -239,12 +242,132 @@
 </div><!-- /page -->
 
 <script>
+/* ===== VALIDATION SYSTEM (Quality Assurance) ===== */
+function validateDashboard() {
+  const errors = [];
+  const warnings = [];
+
+  if (typeof models === 'undefined') {
+    errors.push('❌ models 객체 정의되지 않음');
+    return { valid: false, errors, warnings };
+  }
+
+  // 1. 중괄호/괄호 균형 검사 (근사치)
+  const modelStr = JSON.stringify(models);
+  const openBraces = (modelStr.match(/{/g) || []).length;
+  const closeBraces = (modelStr.match(/}/g) || []).length;
+  if (openBraces !== closeBraces) {
+    errors.push(`❌ 중괄호 불균형: { ${openBraces} vs } ${closeBraces}`);
+  }
+
+  // 2. 모델 키 일관성 검사
+  const modelKeys = Object.keys(models);
+  const brandMapKeys = new Set();
+  if (typeof brandMap !== 'undefined') {
+    Object.values(brandMap).forEach(brand => {
+      if (brand.keys) brand.keys.forEach(k => brandMapKeys.add(k));
+    });
+  }
+
+  modelKeys.forEach(key => {
+    if (brandMapKeys.size > 0 && !brandMapKeys.has(key)) {
+      warnings.push(`⚠️  '${key}': models에는 있으나 brandMap에 없음`);
+    }
+  });
+
+  brandMapKeys.forEach(key => {
+    if (!modelKeys.includes(key)) {
+      errors.push(`❌ '${key}': brandMap에는 있으나 models에 없음`);
+    }
+  });
+
+  // 3. 각 모델의 필수 속성 검사
+  const requiredFields = ['name', 'brand', 'segment', 'launch', 'market', 'sampleN', 'conclusion'];
+  modelKeys.forEach(key => {
+    const model = models[key];
+    requiredFields.forEach(field => {
+      if (!(field in model)) {
+        errors.push(`❌ models['${key}'].${field} 누락`);
+      }
+    });
+
+    // kpi 객체 검사
+    if (!model.kpi || typeof model.kpi !== 'object') {
+      errors.push(`❌ models['${key}'].kpi 누락 또는 객체 아님`);
+    } else {
+      if (!model.kpi.sample) {
+        warnings.push(`⚠️  models['${key}'].kpi.sample 없음`);
+      }
+    }
+  });
+
+  // 4. VOC 데이터 배열 검사
+  modelKeys.forEach(key => {
+    const model = models[key];
+    ['global', 'china', 'combined'].forEach(region => {
+      if (model[region] && !Array.isArray(model[region])) {
+        errors.push(`❌ models['${key}'].${region}은 배열이어야 함 (현재: ${typeof model[region]})`);
+      }
+    });
+  });
+
+  // 5. HTML 버튼과 모델 키 매칭
+  const htmlButtons = document.querySelectorAll('button.model-btn');
+  htmlButtons.forEach((btn, idx) => {
+    // 버튼의 onclick 속성 파싱 시도
+    const onclickStr = btn.getAttribute('onclick') || '';
+    const match = onclickStr.match(/switchModel\('([^']+)'\)/);
+    if (match) {
+      const key = match[1];
+      if (!modelKeys.includes(key)) {
+        errors.push(`❌ HTML 버튼 #${idx}: '${key}'는 models에 없음`);
+      }
+    }
+  });
+
+  return {
+    valid: errors.length === 0,
+    errors,
+    warnings,
+    modelCount: modelKeys.length,
+    timestamp: new Date().toLocaleString('ko-KR')
+  };
+}
+
+// 페이지 로드 시 자동 검증
+function runValidationOnLoad() {
+  const result = validateDashboard();
+
+  // 콘솔에 결과 출력
+  if (!result.valid) {
+    console.error('%c🚨 대시보드 검증 실패!', 'color: red; font-size: 16px; font-weight: bold;');
+    result.errors.forEach(err => console.error(err));
+  }
+
+  if (result.warnings.length > 0) {
+    console.warn('%c⚠️ 경고', 'color: orange; font-weight: bold;');
+    result.warnings.forEach(warn => console.warn(warn));
+  }
+
+  if (result.valid) {
+    console.log('%c✅ 대시보드 검증 통과 (%d개 모델)', 'color: green; font-weight: bold;', result.modelCount);
+  }
+
+  // 페이지에 표시 (선택사항)
+  if (!result.valid) {
+    const footer = document.getElementById('footer');
+    if (footer) {
+      footer.innerHTML += `<div style="color: #f87171; margin-top: 10px; font-size: 11px;">⚠️ 데이터 무결성 검사 실패. 브라우저 콘솔(F12) 확인.</div>`;
+    }
+  }
+}
+
 /* ===== MODEL DATA STRUCTURE ===== */
 const models = {
 
   iqoo15: {
     name: 'vivo iQOO 15',
-    brand: 'vivo / iQOO',
+    brand: 'vivo',
     segment: 'Performance Gaming',
     launch: '2025.10.20 (중국) / 2025.11 (글로벌)',
     market: '중국 + 글로벌 (India iQOO)',
@@ -299,24 +422,24 @@ const models = {
       { cat: 'NetworkSignal', n: 1, pos: 1, neg: 0, str: 0, note: '5G 신호 안정' }
     ],
     combined: [
-      { cat: 'Performance', n: 10, pos: 8, neg: 0, str: 3, note: 'SD8850 게임성능 최강' },
-      { cat: 'Software', n: 9, pos: 4, neg: 5, str: 0, note: '초기버그·업데이트 개선' },
-      { cat: 'Thermal', n: 6, pos: 5, neg: 1, str: 2, note: '게임냉각 우수' },
+      { cat: 'Performance', n: 10, pos: 8, neg: 0, str: 2, note: 'SD8850 우수·일부 조절 우려' },
+      { cat: 'Software', n: 9, pos: 4, neg: 5, str: 0, note: '초기 버그·호환성 이슈' },
       { cat: 'Design', n: 6, pos: 0, neg: 2, str: 0, note: '무게·부피감' },
-      { cat: 'PriceValue', n: 5, pos: 3, neg: 1, str: 3, note: '가성비·충전비판' },
-      { cat: 'Battery', n: 4, pos: 3, neg: 1, str: 2, note: '7000mAh 강점' },
-      { cat: 'Camera_Main', n: 4, pos: 3, neg: 1, str: 0, note: '주카메라양호·셀카이슈' },
-      { cat: 'Display_Brightness', n: 1, pos: 1, neg: 0, str: 1, note: '2600nit 야외최강' },
-      { cat: 'Display_Eyecare', n: 1, pos: 1, neg: 0, str: 1, note: '무편광기술' },
-      { cat: 'Display_Refresh', n: 2, pos: 2, neg: 0, str: 0, note: '144Hz LTPO' },
+      { cat: 'Thermal', n: 6, pos: 5, neg: 1, str: 1, note: '게임냉각 우수·극한환경 우려' },
+      { cat: 'PriceValue', n: 5, pos: 3, neg: 1, str: 2, note: '가성비 우수' },
+      { cat: 'Battery', n: 4, pos: 3, neg: 1, str: 2, note: '배터리 만족도 높음' },
+      { cat: 'Camera_Main', n: 4, pos: 3, neg: 1, str: 0, note: '주카메라 양호·셀카 이슈' },
+      { cat: 'Display_Refresh', n: 2, pos: 2, neg: 0, str: 0, note: '144Hz 부드러움' },
       { cat: 'Charging', n: 2, pos: 1, neg: 1, str: 0, note: '무선신규·유선퇴보' },
-      { cat: 'Display_PWM', n: 2, pos: 0, neg: 1, str: 0, note: '측정상이' },
-      { cat: 'Camera_Tele', n: 1, pos: 0, neg: 0, str: 0, note: '망원중립' },
-      { cat: 'Display_Color', n: 1, pos: 0, neg: 0, str: 0, note: '색감중립' },
-      { cat: 'Display_Outdoor', n: 1, pos: 1, neg: 0, str: 0, note: '야외시인성' },
-      { cat: 'Display_Resolution', n: 1, pos: 1, neg: 0, str: 0, note: '2K선명' },
-      { cat: 'NetworkSignal', n: 1, pos: 1, neg: 0, str: 0, note: '5G' },
-      { cat: 'AudioHaptics', n: 1, pos: 0, neg: 1, str: 0, note: '스피커약함' }
+      { cat: 'Display_PWM', n: 2, pos: 0, neg: 1, str: 0, note: 'PWM 측정 상이' },
+      { cat: 'AudioHaptics', n: 1, pos: 0, neg: 1, str: 0, note: '스피커음질 약함' },
+      { cat: 'Display_Eyecare', n: 1, pos: 1, neg: 0, str: 1, note: '무편광 눈피로 감소' },
+      { cat: 'Display_Outdoor', n: 1, pos: 1, neg: 0, str: 0, note: '야외 시인성 우수' },
+      { cat: 'Display_Color', n: 1, pos: 0, neg: 0, str: 0, note: '색감 중립' },
+      { cat: 'Display_Brightness', n: 1, pos: 1, neg: 0, str: 1, note: '2600nit 야외 극찬' },
+      { cat: 'NetworkSignal', n: 1, pos: 1, neg: 0, str: 0, note: '5G 신호 안정' },
+      { cat: 'Camera_Tele', n: 1, pos: 0, neg: 0, str: 0, note: '망원 중립' },
+      { cat: 'Display_Resolution', n: 1, pos: 1, neg: 0, str: 0, note: '2K 선명도' },
     ],
 
     trend: [
@@ -370,7 +493,7 @@ const models = {
   },
     op15: {
     name: 'OnePlus 15',
-    brand: 'OnePlus / OPPO',
+    brand: 'OPPO',
     segment: 'Performance Gaming · Premium Volume',
     launch: '2025.10.28 (중국) / 2025.11 (글로벌)',
     market: '글로벌 + 중국',
@@ -428,135 +551,17 @@ const models = {
       { cat: 'Software', n: 2, pos: 2, neg: 0, str: 0, note: 'ColorOS 16' }
     ],
     combined: [
-      { cat: 'Camera_Main', n: 21, pos: 10, neg: 10, str: 5, note: 'gap_expectation' },
-      { cat: 'Display_Brightness', n: 18, pos: 16, neg: 2, str: 0, note: '' },
-      { cat: 'Display_Eyecare', n: 17, pos: 17, neg: 0, str: 0, note: '' },
-      { cat: 'Battery', n: 16, pos: 16, neg: 0, str: 0, note: '' },
-      { cat: 'Thermal', n: 12, pos: 4, neg: 7, str: 3, note: '' },
-      { cat: 'Display_Refresh', n: 9, pos: 9, neg: 0, str: 0, note: '' },
-      { cat: 'Performance', n: 9, pos: 8, neg: 1, str: 0, note: '' },
-      { cat: 'Charging', n: 8, pos: 8, neg: 0, str: 0, note: '' },
-      { cat: 'Display_Resolution', n: 6, pos: 3, neg: 2, str: 1, note: '글로벌 불만' },
-      { cat: 'Camera_Tele', n: 5, pos: 2, neg: 3, str: 1, note: '' },
-      { cat: 'Software', n: 5, pos: 5, neg: 0, str: 0, note: '' }
-    ],
-
-    // TIME TREND
-    trend: [
-      { period: '📦 출시 초기 (2025.10–11)', pos: 75, neg: 20, note: '165Hz·배터리 흥분, 카메라 갭 충격', issue: '디스플레이·배터리 극찬 / 카메라 센서 다운그레이드 충격 / 1.5K 해상도 논쟁', uid: '—', src: 'Android Authority, 知乎, GSMArena' },
-      { period: '🔄 업데이트 이후 (2025.12–2026.01)', pos: 73, neg: 22, note: '카메라 알고리즘·발열 패치 — 개선 미미, 부정 소폭 증가', issue: '카메라 SW 패치·발열 최적화 OTA — 체감 개선 미미', uid: '<span class="c-neg">−4</span>', src: '一加社区, XDA Forums' },
-      { period: '📅 최근 (2026.02–04)', pos: 72, neg: 23, note: '장기 사용 만족도 유지, 카메라 논란 고착화', issue: '배터리·디스플레이 장기 만족 / 카메라 불만 고착 / 경쟁사 대비 포지션 재평가', uid: '—', src: 'Reddit, GSMArena user (n=633+)' }
-    ],
-
-    // SPECS
-    specs: [
-      { key: '디스플레이 크기', val: '6.78" LTPO AMOLED', note: 'LTPO 3세대' },
-      { key: '패널 타입', val: 'LTPO AMOLED, 10억 색상', note: '' },
-      { key: '해상도', val: '1272 × 2772 px (1.5K)', note: '전작 QHD+→1.5K 변경' },
-      { key: '주사율 / LTPO', val: '1–165Hz LTPO 가변', note: '165Hz + 1.5K 동시 구현' },
-      { key: 'PWM / 디밍', val: '2160Hz PWM (저밝기) + DC 디밍', note: 'SVM <0.12 / TÜV 5.0' },
-      { key: '피크 밝기', val: '800 nit / 1800 nit(HBM) / 1940 nit(10%)', note: '최저 0.5 nit' },
-      { key: 'SoC', val: 'Snapdragon 8 Elite (2nd Gen, 3nm)', note: 'SM8850-AC, Adreno 840' },
-      { key: 'RAM / 저장', val: '12GB·16GB + 256GB·512GB·1TB UFS 4.1', note: '' },
-      { key: '배터리', val: '7300 mAh', note: '전작 6414mAh 대비 확대' },
-      { key: '충전', val: '120W 유선 (40분 완충) / 50W 무선', note: 'Bypass 충전 지원' },
-      { key: '카메라 구성', val: '50MP Sony IMX906 f/1.8 1/1.56" + 광학 텔레 + 초광각', note: 'Hasselblad→LUMO, 센서 축소' },
-      { key: '무게 / 두께', val: '211g·215g / 8.1mm', note: '' },
-      { key: '방수 등급', val: '미확인', note: '' },
-      { key: '시장 / 가격', val: '글로벌 + 중국 / 3999 CNY~', note: '' }
-    ],
-
-    // INSIGHTS
-    displayInsights: [
-      '2160Hz PWM + 전밝기 DC 듀얼 디밍으로 역대 최고 수준의 플래그십 아이케어 실현. Galaxy S25·Pixel 10 대비 명확한 차별화 — 글로벌·중국 VOC 모두 부정 0건.',
-      '165Hz + 1.5K 동시 구현은 중국 사용자에게 충분히 수용됐으나, 글로벌 사용자 44.9%는 QHD+ 포기에 부정적. 해상도 trade-off 커뮤니케이션 보완 필요.',
-      '0.5 nit 최저 밝기 + SVM <0.12 — 야간·실내 장시간 사용자(夜猫子 세그먼트) 포지셔닝 강화 가능. 중국 공식 소구와 실제 사용자 체감 완전 일치.'
-    ],
-    productInsights: [
-      '카메라 주 센서 1/1.4"→1/1.56" 축소 + Hasselblad 이탈은 글로벌 CSI −10으로 직결. OnePlus 16에서 센서 크기 복원 또는 프리미엄 파트너십 재구축이 시급.',
-      '지속 부하(벤치·4K 촬영) 발열이 글로벌 TRI 13·Thermal neg 71%로 집중. 방열 솔루션(챔버 면적·소재) 강화 또는 발열 경고 UX 개선 필요.',
-      '배터리·디스플레이는 BSI +100·DSI +75로 글로벌/중국 공통 최강점. 다음 세대에서 이 영역을 거점으로 카메라 만회 시 전체 NPS 대폭 개선 가능.'
-    ],
-
-    formula: '<div class="fl"><strong>DSI</strong> = Display긍정비중 − Display부정비중 − (Display강불만비중 × 0.5) → <strong style="color:#34d399">+75</strong></div>\n<div class="fl"><strong>SEGI</strong> = (공식소구강도 × 20) + 관련부정비중 + (기대대비실망비중 × 1.2) → <strong style="color:#fbbf24">84</strong></div>\n<div class="fl"><strong>UID</strong> = (업데이트후긍정 − 업데이트전긍정) − (업데이트후부정 − 업데이트전부정) → <strong style="color:#f87171">−4</strong></div>\n<div class="fl"><strong>BSI</strong> = 배터리긍정비중 − 배터리부정비중 + (충전긍정비중 × 0.3) → <strong style="color:#34d399">+100</strong></div>\n<div class="fl"><strong>CSI</strong> = 카메라긍정비중 − 카메라부정비중 − (기대대비실망비중 × 0.5) → <strong style="color:#f87171">−10</strong></div>\n<div class="fl"><strong>TRI</strong> = 발열부정비중 + (발열강불만비중 × 1.5) + 발열측정보정치 → <strong style="color:#fbbf24">13</strong></div>\n<div style="margin-top:8px;color:#475569;font-size:10px;">* 표본 n=126 (글로벌 72 / 중국 54) · 지역판 혼합 금지</div>',
-
-    codingSample: [
-      { sum: '역대 최고 아이케어 OLED, 0.5nit 최저밝기 경쟁사 압도', sent: '긍정', cat: 'Display_Eyecare', int: '강', src: 'Android Central', date: '2025.11', note: '' },
-      { sum: '165Hz 실체감 최고, 게임·스크롤 부드러움 확실히 느낌', sent: '긍정', cat: 'Display_Refresh', int: '중', src: 'XDA Forums', date: '2025.11', note: '' },
-      { sum: '1.5K 해상도 체감 차이 있음, OnePlus 13 2K이 더 선명', sent: '부정', cat: 'Display_Resolution', int: '강', src: 'XDA Forums', date: '2025.11', note: '' },
-      { sum: '카메라 하드웨어 OnePlus 13 대비 완전 다운그레이드', sent: '부정', cat: 'Camera_Main', int: '강', src: 'Android Authority', date: '2025.11', note: 'gap_expectation' },
-      { sum: 'Hasselblad 없어진 체감 확실, LUMO가 동급인지 의문', sent: '부정', cat: 'Camera_Main', int: '중', src: 'Reddit', date: '2025.11', note: 'gap_expectation' },
-      { sum: '4K 60fps 야외 촬영 5분만에 50°C, 실사용 우려', sent: '부정', cat: 'Thermal', int: '강', src: 'NotebookCheck', date: '2025.11', note: '' },
-      { sum: '7300mAh 배터리로 하루 종일 충전 불안 없음, 120W로 40분', sent: '긍정', cat: 'Battery', int: '강', src: 'GSMArena user', date: '2025.12', note: '' },
-      { sum: '屏幕护眼性能行业顶级，低亮不闪超级舒适，明眸5.0名副其实', sent: '긍정', cat: 'Display_Eyecare', int: '강', src: '知乎', date: '2025.10', note: '中国 VOC' },
-      { sum: 'LUMO凝光影像色彩自然不输哈苏，人像细节优秀，体验不比13差', sent: '긍정', cat: 'Camera_Main', int: '중', src: '一加社区', date: '2025.11', note: '中国 VOC' },
-      { sum: '游戏旁路充电配合VC液冷，长时间165fps体感发热可接受', sent: '긍정', cat: 'Thermal', int: '중', src: 'IT之家', date: '2025.11', note: '中国 VOC' }
-    ]
-  },
-
-  ip16: {
-    name: 'iPhone 16 Pro',
-    brand: 'Apple',
-    segment: 'Premium Imaging Flagship',
-    launch: '2024.09.20 (글로벌)',
-    market: '글로벌',
-    date: '2026.04.12',
-    sampleN: 68,
-    conclusion: '48MP 초고해상도·4K 120fps 영상·카메라 색감과학 업계 최상. Apple Intelligence 누락·배터리 불안정·가격 우려가 주요 과제.',
-
-    kpi: {
-      sample: { label: '전체 표본', value: 68, sub: 'Global 68', color: 'c-neu' },
-      pos:    { label: '긍정 비중', value: '38.2%', sub: '26건', color: 'c-pos' },
-      neg:    { label: '부정 비중', value: '42.6%', sub: '29건',  color: 'c-neg' },
-      neu:    { label: '중립 비중', value: '19.1%', sub: '13건', color: 'c-neu' },
-      dsi:    { label: 'DSI', value: '+33.3', sub: 'Display Sentiment', color: 'c-warn', highlight: true },
-      csi:    { label: 'CSI', value: '+40.6', sub: 'Camera Sentiment', color: 'c-pos', highlight: true },
-      gei:    { label: 'GEI', value: '−23.3', sub: 'Gaming Sentiment', color: 'c-neg' },
-      bsi:    { label: 'BSI', value: '−22.2', sub: 'Battery Sentiment', color: 'c-neg' }
-    },
-
-    launchTable: [
-      { cat: 'Camera_Main',      claim: '48MP A18 Pro 쿼드센서 + 4K 120fps Dolby Vision', reality: '48MP 해상도·색감 극찬. ProRAW 파일사이즈(75MB) 실용성 이슈. 4K120fps 저장공간 부담 지적.', quant: '7/13 긍정 (54%)', tag: 'tag-part', label: '부분부합' },
-      { cat: 'Display_Refresh',  claim: '120Hz ProMotion LTPO 부드러운 스크롤/게이밍', reality: 'LTPO 적응형 주사율 호평. 게이밍 프레임드롭 보고 있음. 실사용 체감 긍정.', quant: '3/3 긍정 (100%)', tag: 'tag-ok', label: '부합' },
-      { cat: 'Software',         claim: 'Apple Intelligence 탑재', reality: '출시당시 미탑재. iOS 18.1+ 이후 탑재 예정. 마케팅 갭 강한 불만 야기.', quant: '0/10 긍정 (0%)', tag: 'tag-gap', label: 'gap_expectation' },
-      { cat: 'Thermal',          claim: '향상된 열관리 / A18 Pro 효율성', reality: '게이밍 시 43-45°C 발열로 쓰로틀링. GraphiteSheet 개선도 극한환경에서 한계.', quant: '1/3 긍정 (33%)', tag: 'tag-gap', label: 'gap_expectation' },
-      { cat: 'PriceValue',       claim: '프로급 카메라 기능 / 프리미엄 성능', reality: '$999 가격 대비 15 Pro 대비 상향폭 작음. 전문가용 아닌 이상 불필요 업그레이드 지적.', quant: '2/7 긍정 (29%)', tag: 'tag-gap', label: 'gap_expectation' }
-    ],
-
-    global: [
-      { cat: 'Camera_Main', n: 13, pos: 7, neg: 2, str: 0, note: '48MP 색감·4K120fps 극찬·저장공간이슈' },
-      { cat: 'Design', n: 12, pos: 3, neg: 8, str: 1, note: '카메라컨트롤 조작성·얇은베젤 터치이슈' },
-      { cat: 'Software', n: 10, pos: 2, neg: 7, str: 3, note: 'Apple Intelligence 누락·초기버그·iOS18안정성' },
-      { cat: 'Battery', n: 6, pos: 3, neg: 3, str: 0, note: '배터리 야간드레인·저온성능저하' },
-      { cat: 'PriceValue', n: 7, pos: 2, neg: 3, str: 1, note: '가격대비 업그레이드폭작음·15Pro와비교' },
-      { cat: 'Charging', n: 3, pos: 0, neg: 2, str: 0, note: 'MagSafe 22.5W 느림·호환성이슈' },
-      { cat: 'Display_Refresh', n: 3, pos: 3, neg: 0, str: 0, note: '120Hz부드러움·게이밍반응' },
-      { cat: 'Camera_Tele', n: 3, pos: 2, neg: 0, str: 0, note: '5x망원 화질우수' },
-      { cat: 'Thermal', n: 3, pos: 1, neg: 1, str: 1, note: '게이밍발열·쓰로틀링우려' },
-      { cat: 'Performance', n: 3, pos: 1, neg: 1, str: 0, note: 'A18Pro게이밍우수·경쟁사와비교' },
-      { cat: 'Display_Outdoor', n: 2, pos: 1, neg: 1, str: 0, note: '야외밝기·15Pro대비하락' },
-      { cat: 'Display_Brightness', n: 1, pos: 0, neg: 1, str: 0, note: '2000nit마케팅vs1500nit실측갭' },
-      { cat: 'AudioHaptics', n: 1, pos: 1, neg: 0, str: 0, note: '쿼드마이크음성녹음우수' },
-      { cat: 'NetworkSignal', n: 1, pos: 0, neg: 0, str: 0, note: '5G마켓컨텍스트' }
-    ],
-    
-    china: [],
-    
-    combined: [
-      { cat: 'Camera_Main', n: 13, pos: 7, neg: 2, str: 0, note: '48MP색감·4K120fps극찬·저장공간이슈' },
-      { cat: 'Design', n: 12, pos: 3, neg: 8, str: 1, note: '카메라컨트롤조작성·얇은베젤터치이슈' },
-      { cat: 'Software', n: 10, pos: 2, neg: 7, str: 3, note: 'AI누락·초기버그·안정성' },
-      { cat: 'Battery', n: 6, pos: 3, neg: 3, str: 0, note: '배터리드레인·저온성능' },
-      { cat: 'PriceValue', n: 7, pos: 2, neg: 3, str: 1, note: '가격정책·비교' },
-      { cat: 'Charging', n: 3, pos: 0, neg: 2, str: 0, note: 'MagSafe' },
-      { cat: 'Display_Refresh', n: 3, pos: 3, neg: 0, str: 0, note: '120Hz' },
-      { cat: 'Camera_Tele', n: 3, pos: 2, neg: 0, str: 0, note: '망원' },
-      { cat: 'Thermal', n: 3, pos: 1, neg: 1, str: 1, note: '발열' },
-      { cat: 'Performance', n: 3, pos: 1, neg: 1, str: 0, note: 'A18Pro' },
-      { cat: 'Display_Outdoor', n: 2, pos: 1, neg: 1, str: 0, note: '야외밝기' },
-      { cat: 'Display_Brightness', n: 1, pos: 0, neg: 1, str: 0, note: '밝기갭' },
-      { cat: 'AudioHaptics', n: 1, pos: 1, neg: 0, str: 0, note: '마이크' },
-      { cat: 'NetworkSignal', n: 1, pos: 0, neg: 0, str: 0, note: '5G' }
+      { cat: 'Camera_Main', n: 21, pos: 10, neg: 10, str: 4, note: 'gap_expectation' },
+      { cat: 'Display_Brightness', n: 18, pos: 16, neg: 2, str: 0, note: '병합' },
+      { cat: 'Display_Eyecare', n: 17, pos: 17, neg: 0, str: 0, note: 'TÜV 5.0, 2160Hz PWM' },
+      { cat: 'Battery', n: 16, pos: 16, neg: 0, str: 0, note: '병합' },
+      { cat: 'Thermal', n: 12, pos: 4, neg: 7, str: 3, note: '4K/벤치 발열' },
+      { cat: 'Display_Refresh', n: 9, pos: 9, neg: 0, str: 0, note: '165Hz 체감' },
+      { cat: 'Performance', n: 9, pos: 8, neg: 1, str: 0, note: '병합' },
+      { cat: 'Charging', n: 8, pos: 8, neg: 0, str: 0, note: '병합' },
+      { cat: 'Display_Resolution', n: 6, pos: 3, neg: 2, str: 1, note: '1.5K vs 2K' },
+      { cat: 'Camera_Tele', n: 5, pos: 2, neg: 3, str: 1, note: '병합' },
+      { cat: 'Software', n: 5, pos: 5, neg: 0, str: 0, note: 'ColorOS 16' },
     ],
 
     trend: [
@@ -663,15 +668,15 @@ const models = {
       { cat: 'PriceValue',         n: 2, pos: 0, neg: 0, str: 0, note: '증분 업그레이드' }
     ],
     combined: [
-      { cat: 'Design_Privacy',    n: 4, pos: 3, neg: 1, str: 1, note: '혁신이나 일부 사용성 우려' },
-      { cat: 'Charging',          n: 4, pos: 4, neg: 0, str: 0, note: '강점' },
-      { cat: 'Thermal',           n: 4, pos: 4, neg: 0, str: 0, note: '강점' },
-      { cat: 'Battery',           n: 3, pos: 2, neg: 1, str: 0, note: '중립' },
-      { cat: 'Camera_Main',       n: 8, pos: 1, neg: 4, str: 1, note: 'AI 과다 지적' },
-      { cat: 'Performance',        n: 2, pos: 2, neg: 0, str: 0, note: '' },
-      { cat: 'Display_Brightness', n: 2, pos: 2, neg: 0, str: 0, note: '' },
-      { cat: 'Design',            n: 1, pos: 1, neg: 0, str: 0, note: '' },
-      { cat: 'PriceValue',         n: 2, pos: 0, neg: 0, str: 0, note: '증분만?' }
+      { cat: 'Camera_Main', n: 8, pos: 1, neg: 4, str: 1, note: 'AI 과다, 의미 없음' },
+      { cat: 'Charging', n: 4, pos: 4, neg: 0, str: 0, note: '60W 극찬' },
+      { cat: 'Design_Privacy', n: 4, pos: 3, neg: 1, str: 1, note: '혁신이나 사용성 논란' },
+      { cat: 'Thermal', n: 4, pos: 4, neg: 0, str: 0, note: '21% 개선 확인' },
+      { cat: 'Battery', n: 3, pos: 2, neg: 1, str: 0, note: '7-8h SOT 우수' },
+      { cat: 'PriceValue', n: 3, pos: 0, neg: 0, str: 0, note: 'S25 대비 업그레이드 가치?' },
+      { cat: 'Performance', n: 2, pos: 2, neg: 0, str: 0, note: '게이밍 안정' },
+      { cat: 'Display_Brightness', n: 2, pos: 2, neg: 0, str: 0, note: '2600nit 야외 극찬' },
+      { cat: 'Design', n: 1, pos: 1, neg: 0, str: 0, note: '원형 테두리 디자인' },
     ],
 
     trend: [
@@ -722,264 +727,1473 @@ const models = {
     ]
   },
 
-  iqoo15ultra: {
-    name: 'vivo iQOO 15 Ultra',
-    brand: 'vivo / iQOO',
-    segment: 'Performance Gaming',
-    launch: '2026.02.04 (중국) / 글로벌 (India iQOO)',
+  reno15pro: {
+    name: 'OPPO Reno 15 Pro',
+    brand: 'OPPO',
+    segment: 'Premium Volume',
+    launch: '2025.11.17 (중국) / 2026.01 (글로벌)',
     market: '중국 + 글로벌',
     date: '2026.04.12',
-    sampleN: 65,
-    conclusion: '骁龙8 Elite Gen5 + 게이밍 최적화로 성능·배터리 최강(GEI +56, BSI +130). 디스플레이 밝기 2K 2600nit 최고 수준. 발열·가격·셀카가 핵심 약점(CSI −20).',
+    sampleN: 28,
+    conclusion: '디스플레이·배터리·카메라 하드웨어 우수(DSI +100, BSI +100). 다만 소프트웨어 최적화 부족·과도한 발열·야간 카메라 처리 지연이 프리미엄 경험 저해(TRI 187.5). 초기 30분 게임은 쾌적하나 장시간 사용 제약.',
 
     kpi: {
-      sample: { label: '전체 표본', value: 65, sub: 'CN 36 / 글로벌 29', color: 'c-neu' },
-      pos: { label: '긍정 비중', value: '50.8%', sub: '33건', color: 'c-pos' },
-      neg: { label: '부정 비중', value: '24.6%', sub: '16건', color: 'c-neg' },
-      neu: { label: '중립 비중', value: '24.6%', sub: '16건', color: 'c-neu' },
-      dsi: { label: 'DSI', value: '+58.8', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
-      gei: { label: 'GEI', value: '+56.0', sub: 'Gaming Experience', color: 'c-pos', highlight: true },
-      bsi: { label: 'BSI', value: '+130.0', sub: 'Battery Sentiment', color: 'c-pos' },
-      csi: { label: 'CSI', value: '−20.0', sub: 'Camera Sentiment', color: 'c-neg' },
-      segi: { label: 'SEGI', value: '428.0', sub: 'Launch↔Reality Gap', color: 'c-warn' }
+      sample: { label: '전체 표본', value: 28, sub: '글로벌 28 (China/KR 미수집)', color: 'c-neu' },
+      pos: { label: '긍정 비중', value: '46.4%', sub: '13건', color: 'c-pos' },
+      neg: { label: '부정 비중', value: '46.4%', sub: '13건', color: 'c-neg' },
+      neu: { label: '중립 비중', value: '7.1%', sub: '2건', color: 'c-neu' },
+      dsi: { label: 'DSI', value: '+100', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      bsi: { label: 'BSI', value: '+100', sub: 'Battery Sentiment', color: 'c-pos' },
+      tri: { label: 'TRI', value: '187.5', sub: 'Thermal Risk', color: 'c-warn', highlight: true }
     },
 
     launchTable: [
-      { cat: 'Performance', claim: 'Snapdragon 8 Elite Gen 5 + Q3 칩 조합, 게임 144fps 안정', reality: 'CN·글로벌 모두 게임 성능 극찬. 원신 프레임 안정성 최강 평가', quant: '긍정 8/11 (73%)', tag: 'tag-ok', label: '부합' },
-      { cat: 'Display_Brightness', claim: '2600nit 全周峰值 / 8000nit 国部峰値 — 야외 가시성 최강', reality: 'CN·글로벌 모두 야외 명도 극찬. 매우 밝고 선명한 화질 확인', quant: '긍정 5/7 (71%)', tag: 'tag-ok', label: '부합' },
-      { cat: 'Battery', claim: '7000mAh + Q3 칩 최적화, 게임 시에도 배터리 효율 우수', reality: 'CN·글로벌 모두 배터리 2일치 실사용 체감. 게이밍 배터리 최강', quant: '긍정 5/5 (100%)', tag: 'tag-ok', label: '부합' },
-      { cat: 'Thermal', claim: '8K 기울기 산열 + 풍냉 장치 — 게임 발열 관리', reality: '부정 의견 다수: 풍냉 게임만 작동·수동 제어 불가·후면 47°C 초과', quant: '부정 3/8 (38%)', tag: 'tag-part', label: '부분부합' },
-      { cat: 'PriceValue', claim: '게이밍 플래그십 가성비 우수', reality: '5699위안 가격 대비 기대↔체감 갭 논쟁. Ultra vs Standard 가격차 1300위안 과다', quant: '부정 2/4 (50%)', tag: 'tag-gap', label: 'gap_expectation' }
+      { cat: 'Display_Brightness', claim: '3600nit 피크 밝기, AMOLED, 1.15mm 극박형 베젤', reality: '실측 1800nit 야외 시인성 우수. 색감·명도 극찬. 베젤 세련', quant: '글로벌 3/3 긍정 (100%)', tag: 'tag-part', label: '부분부합 (밝기값 과대표기)' },
+      { cat: 'Battery', claim: '6500mAh, 80W 초고속 충전, 2일치 사용', reality: 'Active Use 17시간 달성. 54분 풀충전·0-50% 15분. 기대 충분히 부합', quant: '글로벌 3/3 긍정 (100%)', tag: 'tag-ok', label: '완전 부합' },
+      { cat: 'Camera_Main', claim: '200MP 메인·50MP 3.5x 망원·50MP 초광각. Pro급 카메라', reality: '낮빛 디테일 우수·망원 10배까지 선명. 야간 모드 10-15s 지연·잡음 과다', quant: '글로벌 5건: 긍정 2 / 부정 2 / 중립 1', tag: 'tag-gap', label: 'gap_expectation (야간 처리 미흡)' },
+      { cat: 'Performance', claim: 'Dimensity 8450, 120 FPS 게임 안정, ColorOS 16 부드러운 경험', reality: '초기 30분 120fps 안정·게임 우수. 이후 발열로 throttling. 소프트웨어 느림', quant: '글로벌 2건 긍정 / 소프트웨어 4건 부정', tag: 'tag-gap', label: 'gap_expectation (발열·SW 최적화 부족)' },
+      { cat: 'Thermal', claim: 'Nano Ice Crystal Heat Dissipation 냉각 시스템', reality: '웹 브라우징 30분 후 발열·게임 20분 후 throttling·4K 촬영 중단. 냉각 실패', quant: '글로벌 4/4 부정 (강불만 3)', tag: 'tag-gap', label: 'gap_expectation (냉각 효율 극히 미흡)' }
     ],
 
     global: [
-      { cat: 'Performance', n: 4, pos: 4, neg: 0, str: 0, note: 'SD8 Elite Gen5 최강 성능, 144fps 안정' },
-      { cat: 'Display_Brightness', n: 2, pos: 2, neg: 0, str: 0, note: '2600nit 야외 극찬' },
-      { cat: 'Battery', n: 2, pos: 2, neg: 0, str: 0, note: '7000mAh 2일 사용' },
-      { cat: 'Thermal', n: 3, pos: 1, neg: 1, str: 1, note: '풍냉 제한 불만' },
-      { cat: 'Camera_Main', n: 2, pos: 0, neg: 2, str: 1, note: '셀카 품질 미흡' },
-      { cat: 'Design', n: 3, pos: 2, neg: 1, str: 1, note: '무게·색상감 논쟁' },
-      { cat: 'PriceValue', n: 2, pos: 0, neg: 1, str: 1, note: '가격대 미흡' },
-      { cat: 'Display_Color', n: 2, pos: 2, neg: 0, str: 0, note: '색감 정확' },
-      { cat: 'Software', n: 1, pos: 1, neg: 0, str: 0, note: 'OriginOS 안정' },
-      { cat: 'Charging', n: 1, pos: 1, neg: 0, str: 0, note: '무선 충전 신규 호평' }
+      { cat: 'Software', n: 4, pos: 0, neg: 4, str: 2, note: 'ColorOS 느림·버벅임·강제종료·초기버그' },
+      { cat: 'Thermal', n: 4, pos: 0, neg: 3, str: 3, note: '발열 최고심각 · throttling · 4K촬영불가' },
+      { cat: 'Camera_Main', n: 5, pos: 2, neg: 2, str: 2, note: '낮빛우수 vs 야간처리느림·입자과다' },
+      { cat: 'Camera_Tele', n: 2, pos: 1, neg: 1, str: 2, note: '3.5x우수·10배선명 vs 야간품질급락' },
+      { cat: 'Battery', n: 2, pos: 2, neg: 0, str: 1, note: '6500mAh, 17h Active Use, 2일사용충분' },
+      { cat: 'Performance', n: 2, pos: 2, neg: 0, str: 2, note: '게임120fps안정·앱반응즉각 · 초기30분만쾌적' },
+      { cat: 'Charging', n: 1, pos: 1, neg: 0, str: 1, note: '80W초고속·0-50% 15분·54분풀충전우수' },
+      { cat: 'Design', n: 2, pos: 2, neg: 0, str: 0, note: '1.15mm극박형베젤·프리미엄터치감·세련' },
+      { cat: 'Display_Brightness', n: 1, pos: 1, neg: 0, str: 1, note: '1800nit야외시인성탁월' },
+      { cat: 'Display_Color', n: 1, pos: 1, neg: 0, str: 1, note: 'AMOLED화려한색감·선명텍스트' },
+      { cat: 'Display_Outdoor', n: 1, pos: 1, neg: 0, str: 0, note: 'HDR콘텐츠1967nit극대·생생' },
+      { cat: 'PriceValue', n: 2, pos: 0, neg: 2, str: 1, note: '무선충전미지원·UFS3.1·USB3.2없음' },
+      { cat: 'NetworkSignal', n: 1, pos: 0, neg: 1, str: 0, note: 'RCS메시징불안정' }
     ],
 
-    china: [
-      { cat: 'Performance', n: 7, pos: 7, neg: 0, str: 0, note: '원신 144fps 안정·경쟁사 압도' },
-      { cat: 'Display_Brightness', n: 5, pos: 3, neg: 1, str: 0, note: '자동밝기 일부 높음' },
-      { cat: 'Battery', n: 3, pos: 3, neg: 0, str: 0, note: '중사용 23% 잔량' },
-      { cat: 'Thermal', n: 5, pos: 3, neg: 2, str: 2, note: '풍냉 한정·후면 47°C 초과' },
-      { cat: 'Camera_Main', n: 2, pos: 1, neg: 1, str: 1, note: '셀카 납작화·뭉개짐' },
-      { cat: 'Design', n: 4, pos: 4, neg: 0, str: 0, note: '미적 디자인 호평' },
-      { cat: 'Display_Color', n: 3, pos: 3, neg: 0, str: 0, note: '색감 선명·정확' },
-      { cat: 'Display_Eyecare', n: 1, pos: 1, neg: 0, str: 0, note: '자연광 기술 긍정' },
-      { cat: 'PriceValue', n: 2, pos: 1, neg: 1, str: 1, note: '표준판 vs Ultra 가격차 불만' },
-      { cat: 'Software', n: 2, pos: 1, neg: 0, str: 0, note: 'OriginOS 6 첫탑재' }
-    ],
+    china: [],
 
     combined: [
-      { cat: 'Performance', n: 11, pos: 11, neg: 0, str: 0, note: '게이밍 압도적 강점' },
-      { cat: 'Display_Brightness', n: 7, pos: 5, neg: 1, str: 0, note: '밝기 최강·일부 자동밝기' },
-      { cat: 'Battery', n: 5, pos: 5, neg: 0, str: 0, note: '배터리 최강' },
-      { cat: 'Thermal', n: 8, pos: 4, neg: 3, str: 2, note: '풍냉 제한 강불만' },
-      { cat: 'Design', n: 7, pos: 6, neg: 1, str: 0, note: '디자인 호평' },
-      { cat: 'Display_Color', n: 5, pos: 5, neg: 0, str: 0, note: '색감 우수' },
-      { cat: 'Camera_Main', n: 4, pos: 1, neg: 2, str: 1, note: '셀카 미흡 (gap_expectation)' },
-      { cat: 'PriceValue', n: 4, pos: 1, neg: 2, str: 1, note: '가격 불만' },
-      { cat: 'Software', n: 3, pos: 2, neg: 0, str: 0, note: '시스템 안정' },
-      { cat: 'Display_Refresh', n: 2, pos: 2, neg: 0, str: 0, note: '144Hz 부드러움' },
-      { cat: 'Charging', n: 1, pos: 1, neg: 0, str: 0, note: '무선 호평' },
-      { cat: 'Camera_Tele', n: 2, pos: 1, neg: 0, str: 0, note: '망원 우수' },
-      { cat: 'Display_PWM', n: 3, pos: 2, neg: 1, str: 0, note: 'PWM 일부 불만' }
-    ],
+      { cat: 'Software', n: 7, pos: 0, neg: 4, str: 2, note: 'ColorOS 느림·버벅임·강제종료·초기버그' },
+      { cat: 'Thermal', n: 7, pos: 0, neg: 3, str: 3, note: '발열 최고심각 · throttling · 4K촬영불가' },
+      { cat: 'Camera_Main', n: 9, pos: 2, neg: 2, str: 2, note: '낮빛우수 vs 야간처리느림·입자과다' },
+      { cat: 'Camera_Tele', n: 4, pos: 1, neg: 1, str: 2, note: '3.5x우수·10배선명 vs 야간품질급락' },
+      { cat: 'Battery', n: 4, pos: 2, neg: 0, str: 1, note: '6500mAh, 17h Active Use, 2일사용충분' },
+      { cat: 'Performance', n: 4, pos: 2, neg: 0, str: 2, note: '게임120fps안정·앱반응즉각 · 초기30분만쾌적' },
+      { cat: 'Charging', n: 3, pos: 1, neg: 0, str: 1, note: '80W초고속·0-50% 15분·54분풀충전우수' },
+      { cat: 'Design', n: 4, pos: 2, neg: 0, str: 0, note: '1.15mm극박형베젤·프리미엄터치감·세련' },
+      { cat: 'Display_Brightness', n: 3, pos: 1, neg: 0, str: 1, note: '1800nit야외시인성탁월' },
+      { cat: 'Display_Color', n: 3, pos: 1, neg: 0, str: 1, note: 'AMOLED화려한색감·선명텍스트' },
+      { cat: 'Display_Outdoor', n: 3, pos: 1, neg: 0, str: 0, note: 'HDR콘텐츠1967nit극대·생생' },
+      { cat: 'PriceValue', n: 4, pos: 0, neg: 2, str: 1, note: '무선충전미지원·UFS3.1·USB3.2없음' },
+      { cat: 'NetworkSignal', n: 3, pos: 0, neg: 1, str: 0, note: 'RCS메시징불안정' }
+    ,
+      { cat: 'Camera_Main + Design', n: 4, pos: 2, neg: 0, str: 0, note: '카메라 그립감' },
+      { cat: 'Performance + Thermal', n: 4, pos: 2, neg: 0, str: 0, note: '성능과 발열' },
+      { cat: 'Battery + Charging', n: 4, pos: 2, neg: 0, str: 0, note: '배터리 관리' },
+      { cat: 'Display_Refresh + Performance', n: 3, pos: 1, neg: 0, str: 0, note: '고주사율 성능' },
+      { cat: 'Software + Performance', n: 3, pos: 1, neg: 0, str: 0, note: 'ColorOS 최적화' },
+      { cat: 'PriceValue + Camera_Main', n: 3, pos: 1, neg: 0, str: 0, note: '가격대비 카메라' },
+      { cat: 'Thermal + Design', n: 3, pos: 1, neg: 0, str: 0, note: '발열 관리' },
+],
 
     trend: [
-      { period: '📦 출시 초기 (2026.02)', pos: 56, neg: 22, note: '성능·배터리·화면 극찬. 발열·셀카·가격 불만 초기부터', issue: '2600nit 야외 극찬 / 풍냉 제한 논란 / 셀카 품질 실망', uid: '—', src: '知乎, ZOL, 安兔兔' },
-      { period: '📅 최근 (2026.03–04)', pos: 48, neg: 26, note: '성능·배터리·화면 만족 지속. 발열·가격 불만 심화', issue: '장기 배터리·성능 만족 / 풍냉 제한 지속 불만 / 셀카 개선 미확인', uid: '—', src: '知乎, Weibo, Reddit' }
+      { period: '📦 출시 초기 (2025.11–12)', pos: 46, neg: 46, note: '성능·배터리·화면 극찬 / 발열·소프트웨어·야간카메라 즉각 불만', issue: '디스플레이·배터리 강점 강조 / 발열 이슈 초기부터 보고 / ColorOS 최적화 미흡', uid: '—', src: 'GSMArena, NotebookCheck, PetaPixel, Gear Diary' },
+      { period: '📅 최근 (2026.01–03)', pos: 46, neg: 46, note: '카메라 알고리즘·발열 패치 후에도 불만 지속', issue: '발열 냉각 시스템 실패 지속 / 야간 카메라 처리 개선 미미 / ColorOS 안정화 진행중', uid: '—', src: 'Global reviews' }
     ],
 
     specs: [
-      { key: '디스플레이', val: '6.78" Samsung E7 OLED 2K LTPO', note: '무편광 자연광 기술 적용' },
-      { key: '해상도', val: '2K (1440 × 3168 px, 508ppi)', note: 'QHD+' },
-      { key: '주사율 / LTPO', val: '144Hz LTPO (8T)', note: '앱 최적화 90Hz 캡' },
-      { key: 'PWM / 조광', val: '2160Hz PWM (저밝기) + DC 디밍', note: '3광선센서·최저 1nit' },
-      { key: '피크 밝기', val: '2600nit (全周) / 8000nit (局部)', note: '야외 가시성 최강 수준' },
-      { key: 'SoC', val: 'Snapdragon 8 Elite Gen 5 (3nm)', note: 'Adreno 840 + Q3 e스포츠칩' },
-      { key: 'RAM / 저장', val: '12/16GB + 256GB/512GB', note: 'UFS 4.1' },
-      { key: '배터리', val: '7000 mAh', note: '고속충전 최적화' },
-      { key: '충전', val: '100W 유선 / 80W 무선', note: '무선 신규 도입' },
-      { key: '카메라', val: '50MP(0.67x) + 50MP(1x) + 50MP(3x)', note: '셀카 32MP' },
-      { key: '무게 / 두께', val: '~218g', note: '다소 무거움' },
-      { key: '방수', val: 'IP69K', note: '완전 밀폐' },
-      { key: 'OS', val: 'OriginOS 6 / Android 15', note: '최초 탑재' },
-      { key: '시장', val: '중국 (주) + 글로벌 (인도 iQOO)', note: '' }
+      { key: '디스플레이', val: '6.78" AMOLED (60–120Hz LTPO)', note: '공칭 3600nit vs 실측 1800nit' },
+      { key: '해상도', val: '2780×1264 px (~450 ppi)', note: 'QHD+ 수준' },
+      { key: '주사율 / LTPO', val: '60–120Hz LTPO', note: '적응형 가변 주사율' },
+      { key: 'SoC', val: 'MediaTek Dimensity 8450 (4nm)', note: '성능 전작 +41%' },
+      { key: 'RAM / 저장', val: '12GB·16GB + 256GB·512GB·1TB UFS 3.1', note: 'UFS 3.1 (경쟁사 UFS 4.0)' },
+      { key: '배터리', val: '6500 mAh', note: 'dual-cell · Active Use 17h' },
+      { key: '충전', val: '80W 유선 / 50W 무선', note: '54분 풀충전 · 0-50% 15분' },
+      { key: '카메라', val: '200MP(1/1.56" HP5) + 50MP(3.5x망원) + 50MP(초광각 118°)', note: '야간 처리 10-15s 지연' },
+      { key: '무게 / 두께', val: '~218g / 8.1mm', note: '' },
+      { key: '방수', val: 'IP68 / IP69', note: '' },
+      { key: 'OS', val: 'ColorOS 16 (Android 15)', note: 'SW 최적화 미흡' },
+      { key: '시장 / 가격', val: '중국 + 글로벌', note: '중국 2999 CNY ~' }
     ],
 
     displayInsights: [
-      '2K 2600nit 全周 밝기(国部 8000nit)로 OnePlus 15(1800nit)·경쟁 게이밍폰 대비 +44% 압도. 무편광 자연광+1nit 최저 디밍으로 야외·야간 모두 최강. CN·글로벌 Display 긍정 비중 71%(5/7).',
-      '2160Hz 고주파 PWM + DC 디밍 야간 護眼 체감 우수. 다만 PWM 조광 강도 일부 높음(11%@최고, 22%@저밝기) 지적 — 장기 눈 피로 우려 소수. LTPO 구현이나 앱 90Hz 캡으로 주사율 차별화 부족.',
-      '무편광층 제거로 선글라스 착용 가능(글로벌 호평). 자동밝기 일부 과도 논의 있으나 중국 야외 가시성 극찬. 화면 색감도 118% DCI-P3 수준 — 명도·색감·護眼 3중 강점.'
+      '1800nit 야외 시인성 우수나 공칭값 3600nit 과대표기. 실측 경쟁사(Galaxy S25/OnePlus 15) 2000nit 대비 낮음.',
+      'AMOLED 1967nit HDR 모드로 영상 감상 생생. 색감 정확도·명도 분포 우수.',
+      'DSI +100으로 디스플레이만으로는 최상. 하지만 소프트웨어와 발열 throttling이 고주사율 체감을 심각 저해.'
     ],
 
     productInsights: [
-      'Performance(GEI +56) + Battery(BSI +130) + Display(DSI +58.8) 3중 강점으로 게이밍 플래그십 포지션 확고. 원신 144fps 안정·7000mAh 2일치·2600nit 야외 최강 — 게이밍 세그먼트 공략 극강.',
-      '발열은 핵심 약점: 풍냉 게임 시에만 작동·수동 제어 불가·후면 47°C 초과 이슈 제기(n=8 중 강불만 2건). 次세대 iQOO 16에서 풍냉 범위 확대 또는 수동 제어 추가 필수.',
-      '셀카 카메라 CSI −20: 32MP 센서 납작화·4K@60fps 뭉개짐 지적. 전면 ISP 튜닝 또는 센서 업그레이드 필수. 가격대(5699위안) Ultra vs Standard 1300위안 갭도 개선 과제 — 기대·실망 갭 최대 segment.'
+      '발열·냉각 시스템이 최우선 과제(TRI 187.5). 웹 30분·게임 20분·4K 촬영 불가능 — 냉각 솔루션 강화 필수.',
+      'ColorOS 최적화 미흡 — Dimensity 8450은 게임 충분하나 SW가 체감 품질 급락. 안정화 필수.',
+      '카메라 야간 10-15s 처리 지연·노출 과도 — AI ISP 튜닝 또는 센서 업그레이드로 개선 필요.'
     ],
 
-    formula: '<div class="fl"><strong>DSI</strong> = Display긍(71.4%) − Display부(14.3%) − (강불만1×0.5) → <strong style="color:#34d399">+58.8</strong></div>\n<div class="fl"><strong>GEI</strong> = 게임긍(100%) − 게임부(0%) − (발열강2×0.7) + 144fps안정보정 → <strong style="color:#34d399">+56.0</strong></div>\n<div class="fl"><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + (충전긍100%×0.3) → <strong style="color:#34d399">+130.0</strong></div>\n<div class="fl"><strong>CSI</strong> = 카메라긍(25%) − 카메라부(50%) − (기대갭5%×0.5) → <strong style="color:#f87171">−20.0</strong></div>\n<div class="fl"><strong>SEGI</strong> = (소구강도5×20) + 관련부정(24.6%) + (기대갭7%×1.2) → <strong style="color:#fbbf24">428.0</strong></div>\n<div style="margin-top:8px;color:#475569;font-size:10px;">* n=65 (CN 36 / 글로벌 29) · 지역 VOC 분리 집계</div>',
+    formula: '<div class=\'fl\'><strong>DSI</strong> = Display긍(100%) − Display부(0%) → <strong style=\'color:#34d399\'>+100</strong></div><div class=\'fl\'><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + (충전긍100%×0.3) → <strong style=\'color:#34d399\'>+100</strong></div><div class=\'fl\'><strong>TRI</strong> = 발열부(75%) + (강불만75%×1.5) → <strong style=\'color:#f59e0b\'>187.5</strong></div><div style=\'margin-top:8px;color:#475569;font-size:10px;\'>* n=28 (글로벌) · 2026.01–03 단일시점</div>',
 
     codingSample: [
-      { sum: '骁龙8 Elite Gen5 + Q3칩 조합, 원신 144fps 완벽 안정, 경쟁사 압도', sent: '긍정', cat: 'Performance', int: '강', src: '知乎', date: '2026.02', note: 'CN VOC' },
-      { sum: '2600nit 全周峰値 야외 시인성 경쟁사 최강 — 햇빛 강렬해도 화면 선명', sent: '긍정', cat: 'Display_Brightness', int: '강', src: '中关村在线', date: '2026.02', note: 'CN VOC' },
-      { sum: '7000mAh 중사용 저녁 23% 잔량 — 2일치 게이밍 배터리 기대', sent: '긍정', cat: 'Battery', int: '강', src: 'ZOL user', date: '2026.02', note: 'CN VOC' },
-      { sum: '散热风扇仅限游戏时启动，不允许手动控制，后盖47°C超过ROG，散热价值有限', sent: '부정', cat: 'Thermal', int: '강', src: '知乎', date: '2026.02', note: 'CN VOC' },
-      { sum: '自拍摄像头画质肉眼看不出提升，4K@60fps视频模糊，色感偏白冲', sent: '부정', cat: 'Camera_Main', int: '강', src: 'Bilibili', date: '2026.03', note: 'CN VOC' },
-      { sum: '5699元定价相比标准版涨价1300元以上，提升与价差不成正比，99%用户应选标准版', sent: '부정', cat: 'PriceValue', int: '강', src: '微博', date: '2026.02', note: 'CN VOC' },
-      { sum: 'Performance is absolutely monster — 144fps in Genshin flawless, outclasses all competitors', sent: '긍정', cat: 'Performance', int: '강', src: 'Reddit', date: '2026.02', note: 'Global VOC' },
-      { sum: '2600nit display in direct sunlight is genuinely usable and readable — best outdoor screen', sent: '긍정', cat: 'Display_Brightness', int: '강', src: 'GSMArena', date: '2026.02', note: 'Global VOC' },
-      { sum: 'Cooling fan limited to gaming only, no manual control option, dissapointing for heavy usage', sent: '부정', cat: 'Thermal', int: '강', src: 'AndroidCentral', date: '2026.03', note: 'Global VOC' },
-      { sum: 'Selfie camera oversharpened, 4K video mushy, color grading inconsistent across apps', sent: '부정', cat: 'Camera_Main', int: '강', src: 'Beebom', date: '2026.02', note: 'Global VOC' }
+      { sum: '1800nit 고밝기·야외 시인성 탁월. 직사광선 아래서도 선명하게 가독', sent: '긍정', cat: 'Display_Brightness', int: '강', src: 'GSMArena', date: '202601', note: 'Global' },
+      { sum: '6500mAh 용량·Active Use 17시간19분 달성. 2일 사용 충분', sent: '긍정', cat: 'Battery', int: '강', src: 'GSMArena', date: '202601', note: 'Global' },
+      { sum: '80W 초고속 충전·54분 풀충전. 0-50% 15분 이내', sent: '긍정', cat: 'Charging', int: '강', src: 'NotebookCheck', date: '202601', note: 'Global' },
+      { sum: 'ColorOS 느림·애니메이션 끊김·스크롤 버벅임. 고주사율 체감 안 됨', sent: '부정', cat: 'Software', int: '강', src: 'The Philox', date: '202601', note: 'Global' },
+      { sum: '웹 브라우징 30분 후 발열·게임 20분 후 throttling. 발열 이슈', sent: '부정', cat: 'Thermal', int: '강', src: 'The Philox', date: '202601', note: 'Global' },
+      { sum: '야간 모드 10-15초 처리·입자 과다·노출 과도. 실시간 촬영 불가', sent: '부정', cat: 'Camera_Main', int: '강', src: 'Gear Diary', date: '202601', note: 'Global' },
+      { sum: '3.5x 망원·광학줌 10배까지 선명. 스포츠·인물 촬영 우수', sent: '긍정', cat: 'Camera_Tele', int: '강', src: 'PetaPixel', date: '202603', note: 'Global' },
+      { sum: 'Dimensity 8450·모든 앱 즉각 반응. 게임 부드러운 성능 유지', sent: '긍정', cat: 'Performance', int: '강', src: 'Android Central', date: '202602', note: 'Global' },
+      { sum: '1.15mm 극박형 베젤·프리미엄 터치감. 세련된 외형', sent: '긍정', cat: 'Design', int: '중', src: 'Gear Diary', date: '202601', note: 'Global' },
+      { sum: '무선충전 미지원·UFS 3.1·USB 3.2 없음. 기능 생략', sent: '부정', cat: 'PriceValue', int: '강', src: 'Gear Diary', date: '202601', note: 'Global' }
     ]
   },
 
-  s25u: {
-    name: 'Galaxy S25 Ultra',
-    brand: 'Samsung',
-    segment: 'Premium Volume · Imaging Flagship',
-    launch: '2025.01.22 (글로벌)',
-    market: '글로벌 + 중국',
+  findx9pro: {
+    name: 'OPPO Find X9 Pro',
+    brand: 'OPPO',
+    segment: 'Premium Imaging Flagship',
+    launch: '2025.10.16 (중국) / 2025.10.28 (글로벌)',
+    market: '중국 + 글로벌',
     date: '2026.04.12',
-    sampleN: 32,
-    conclusion: '디스플레이·성능·열관리 강점(DSI +29). 카메라 AI 과처리·충전속도·배터리 용량이 핵심 약점(CSI −100, Charging 전량부정).',
+    sampleN: 52,
+    conclusion: '3600nit 피크 밝기·7500mAh 대용량 배터리·200MP Hasselblad 망원으로 디스플레이·배터리 강점 명확(DSI +75, BSI +115). 그러나 중국 사용자가 글로벌보다 카메라·가격·설계에 훨씬 비판적(중국 부정 57% vs 글로벌 32%). 발열(41-43°C 게임)·bloatware·5년 업데이트 한계가 $1199 프리미엄 정당성 훼손.',
 
     kpi: {
-      sample: { label: '전체 표본', value: 32, sub: 'CN 16 / GL 16', color: 'c-neu' },
-      pos:    { label: '긍정 비중', value: '40.6%', sub: '13건', color: 'c-pos' },
-      neg:    { label: '부정 비중', value: '46.9%', sub: '15건', color: 'c-neg' },
-      neu:    { label: '중립 비중', value: '12.5%', sub: '4건',  color: 'c-neu' },
-      dsi:    { label: 'DSI', value: '+29', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
-      csi:    { label: 'CSI', value: '−100', sub: 'Camera Sentiment', color: 'c-neg', highlight: true },
-      bsi:    { label: 'BSI', value: '0', sub: 'Battery Sentiment', color: 'c-neu' },
-      tri:    { label: 'TRI', value: '0', sub: 'Thermal Risk', color: 'c-pos' },
-      segi:   { label: 'SEGI', value: '100', sub: 'Cam Gap', color: 'c-warn' }
+      sample: { label: '전체 표본', value: 52, sub: '중국 21 / 글로벌 31', color: 'c-neu' },
+      pos: { label: '긍정 비중', value: '55.8%', sub: '29건', color: 'c-pos' },
+      neg: { label: '부정 비중', value: '42.3%', sub: '22건', color: 'c-neg' },
+      neu: { label: '중립 비중', value: '1.9%', sub: '1건', color: 'c-neu' },
+      dsi: { label: 'DSI', value: '+75', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      csi: { label: 'CSI', value: '-12', sub: 'Camera Sentiment (갭 주의)', color: 'c-warn', highlight: true },
+      bsi: { label: 'BSI', value: '+115', sub: 'Battery Sentiment', color: 'c-pos' },
+      tri: { label: 'TRI', value: '34', sub: 'Thermal Risk', color: 'c-warn' }
     },
 
     launchTable: [
-      { cat: 'Display_Brightness', claim: '2600nit 피크 밝기, Gorilla Glass Armor 2 反射 제어', reality: 'CN·글로벌 모두 야외 시인성 극찬. 실측값 부합', quant: '2/2 긍정 (100%)', tag: 'tag-ok', label: '부합' },
-      { cat: 'Performance', claim: 'Snapdragon 8850 GPU +37%, NPU +40% — 역대 최강 AP', reality: 'CN·글로벌 모두 성능 극찬. 게임·앱 반응 최상', quant: '2/2 긍정 (100%)', tag: 'tag-ok', label: '부합' },
-      { cat: 'Camera_Main', claim: 'Galaxy AI 야간·인물 최강, 200MP+50MP 트리플 카메라', reality: 'AI 과처리(번짐·유화풍), 입자 과다, 하이라이트 손실 — CN·GL 모두 부정', quant: '5/5 부정 (100%)', tag: 'tag-gap', label: 'gap_expectation' },
-      { cat: 'Charging', claim: '45W 유선 / 15W 무선, 갤럭시 생태계 통합 충전', reality: '동급 OnePlus/iQOO 100W 대비 45W 한계·15W 무선 극약. CN·GL 전량 부정', quant: '4/4 부정 (100%)', tag: 'tag-gap', label: 'gap_expectation' },
-      { cat: 'Battery', claim: '5000mAh, 31시간 영상 재생 내구성', reality: 'CN: 충분 평가. GL: 카메라 집중 사용시 2-3시간 소진. 용량 논란', quant: '2pos / 2neg', tag: 'tag-part', label: '부분부합' }
+      { cat: 'Camera_Tele', claim: '200MP Hasselblad 망원 · Hasselblad와 공동 개발 센서·광학 설계', reality: '글로벌 리뷰 만점 : 망원 화질 업계 최상·4K 120fps Dolby Vision 안정. iPhone 17 Pro 대비 더 풍부한 기능', quant: '글로벌 2/2 긍정 (100%)', tag: 'tag-ok', label: '완전 부합' },
+      { cat: 'Display_Brightness', claim: '3600nit 피크 밝기 · 야외 시인성 극대', reality: '글로벌 긍정 : 밝고 색감 정확. 야외 가독성 우수. 3600nit 실제 체감 확인', quant: '글로벌 2/2 긍정 (100%)', tag: 'tag-ok', label: '완전 부합' },
+      { cat: 'Battery', claim: '7500mAh 역대 최대 용량 · 2일 이상 stamina', reality: '글로벌 극찬 : 3일 이상 사용 가능. 80W 충전 1시간10분 0-100%. 배터리 강점 극강', quant: '글로벌 3/3 긍정 (100%)', tag: 'tag-ok', label: '완전 부합' },
+      { cat: 'Performance', claim: 'Dimensity 9500 3nm flagship 성능 · 초고속 성능', reality: '글로벌 긍정 : 일상 성능 우수·게임 초기 부드러움. 단 스트레스 테스트 50% throttling', quant: '글로벌 3/3 긍정(일상) / 열악한 스트레스 테스트', tag: 'tag-part', label: '부분부합' },
+      { cat: 'Software', claim: 'ColorOS 16 smooth experience', reality: '글로벌 부정 : 59개 프리설치 앱·bloatware(Temu, AliExpress, Booking) 과다. 초기 버그(카메라 전환 불가·사이드바 사라짐)', quant: '글로벌 4/4 부정 (100%)', tag: 'tag-gap', label: 'gap_expectation' }
     ],
 
     global: [
-      { cat: 'Camera_Main', n: 2, pos: 0, neg: 2, str: 2, note: 'AI 과처리·입자' },
-      { cat: 'Design', n: 3, pos: 1, neg: 2, str: 0, note: '무게·링 불량' },
-      { cat: 'Battery', n: 2, pos: 1, neg: 1, str: 1, note: 'neg 강도 강' },
-      { cat: 'Charging', n: 2, pos: 0, neg: 2, str: 1, note: '45W/15W 느림' },
-      { cat: 'Display_Brightness', n: 1, pos: 1, neg: 0, str: 0, note: '' },
-      { cat: 'Display_Color', n: 1, pos: 1, neg: 0, str: 0, note: '' },
-      { cat: 'Performance', n: 1, pos: 1, neg: 0, str: 0, note: '' },
-      { cat: 'Thermal', n: 1, pos: 1, neg: 0, str: 0, note: '' },
-      { cat: 'Display_PWM', n: 1, pos: 0, neg: 1, str: 1, note: '저주파 눈 피로' },
-      { cat: 'Software', n: 1, pos: 0, neg: 0, str: 0, note: 'Galaxy AI 불안정' },
-      { cat: 'PriceValue', n: 1, pos: 0, neg: 0, str: 0, note: '업그레이드 가치 의문' }
-    ],
-    china: [
-      { cat: 'Camera_Main', n: 3, pos: 0, neg: 3, str: 2, note: 'AI 과처리·유화풍' },
-      { cat: 'Battery', n: 2, pos: 1, neg: 1, str: 0, note: 'pos:31h재생 neg:5000mAh부족' },
-      { cat: 'Charging', n: 2, pos: 0, neg: 2, str: 1, note: '45W·15W 한계' },
-      { cat: 'Display_Brightness', n: 1, pos: 1, neg: 0, str: 0, note: '2600nit 야외' },
-      { cat: 'Display_Outdoor', n: 1, pos: 1, neg: 0, str: 0, note: '반사방지 우수' },
-      { cat: 'Display_Color', n: 1, pos: 1, neg: 0, str: 0, note: '' },
-      { cat: 'Performance', n: 1, pos: 1, neg: 0, str: 0, note: '' },
-      { cat: 'Thermal', n: 1, pos: 1, neg: 0, str: 0, note: '' },
-      { cat: 'Design', n: 1, pos: 1, neg: 0, str: 0, note: '' },
-      { cat: 'Display_PWM', n: 1, pos: 0, neg: 1, str: 1, note: '저빈도 PWM' },
-      { cat: 'Software', n: 1, pos: 0, neg: 0, str: 0, note: 'Galaxy AI 오류' },
-      { cat: 'PriceValue', n: 1, pos: 0, neg: 0, str: 0, note: 'S24 업그레이드 가치 낮음' }
-    ],
-    combined: [
-      { cat: 'Camera_Main', n: 5, pos: 0, neg: 5, str: 4, note: 'gap_expectation' },
-      { cat: 'Design', n: 4, pos: 2, neg: 2, str: 0, note: '' },
-      { cat: 'Battery', n: 4, pos: 2, neg: 2, str: 1, note: '' },
-      { cat: 'Charging', n: 4, pos: 0, neg: 4, str: 2, note: '충전속도 핵심 약점' },
-      { cat: 'Display_Brightness', n: 2, pos: 2, neg: 0, str: 0, note: '' },
-      { cat: 'Display_Color', n: 2, pos: 2, neg: 0, str: 0, note: '' },
-      { cat: 'Performance', n: 2, pos: 2, neg: 0, str: 0, note: '' },
-      { cat: 'Thermal', n: 2, pos: 2, neg: 0, str: 0, note: '' },
-      { cat: 'Display_PWM', n: 2, pos: 0, neg: 2, str: 2, note: '저주파 PWM 강불만' },
-      { cat: 'Software', n: 2, pos: 0, neg: 0, str: 0, note: 'Galaxy AI 불안정' },
-      { cat: 'PriceValue', n: 2, pos: 0, neg: 0, str: 0, note: '' },
-      { cat: 'Display_Outdoor', n: 1, pos: 1, neg: 0, str: 0, note: '' }
+      { cat: 'Camera_Main', n: 5, pos: 5, neg: 0, str: 3, note: '50MP 메인 화질 우수·망원 부족 보완' },
+      { cat: 'Camera_Tele', n: 2, pos: 2, neg: 0, str: 2, note: '200MP Hasselblad 망원 업계최상·4K 120fps 안정' },
+      { cat: 'Battery', n: 3, pos: 3, neg: 0, str: 2, note: '7500mAh 역대최대·2-3일 stamina·80W 초고속' },
+      { cat: 'Performance', n: 3, pos: 3, neg: 0, str: 2, note: '일상 성능 우수·게임 초기 부드러움' },
+      { cat: 'Display_Brightness', n: 2, pos: 2, neg: 0, str: 1, note: '3600nit 야외 시인성 극대' },
+      { cat: 'Design', n: 3, pos: 2, neg: 0, str: 0, note: '세련된 외형·premium 빌드·Gorilla Glass Victus 2' },
+      { cat: 'Display_Color', n: 1, pos: 1, neg: 0, str: 0, note: '색감 정확도 우수' },
+      { cat: 'Display_Outdoor', n: 1, pos: 1, neg: 0, str: 0, note: '야외 명도·색감 극찬' },
+      { cat: 'Charging', n: 1, pos: 1, neg: 0, str: 1, note: '80W 초고속·0-100% 1h10m' },
+      { cat: 'Thermal', n: 3, pos: 0, neg: 3, str: 2, note: 'throttling 심각·스트레스테스트 50% 성능저하·영상통화 발열' },
+      { cat: 'Software', n: 4, pos: 0, neg: 4, str: 1, note: 'bloatware 과다·초기버그(카메라·사이드바)·ColorOS 최적화 미흡' },
+      { cat: 'PriceValue', n: 3, pos: 0, neg: 3, str: 0, note: '5년 업데이트 한계·가격 $1199에서 $900으로 급락·availability 부족' }
     ],
 
+    china: [
+      { cat: 'Display_Eyecare', n: 1, pos: 1, neg: 0, str: 0, note: '莱茵金标全满贯' },
+      { cat: 'Display_Brightness', n: 2, pos: 1, neg: 1, str: 1, note: '3600nit극찬 vs 야간刺眼' },
+      { cat: 'Display_Color', n: 1, pos: 1, neg: 0, str: 0, note: '色彩자연' },
+      { cat: 'Display_Refresh', n: 1, pos: 1, neg: 0, str: 0, note: '120Hz' },
+      { cat: 'Camera_Main', n: 6, pos: 2, neg: 4, str: 4, note: 'gap_expectation' },
+      { cat: 'Design', n: 2, pos: 0, neg: 2, str: 2, note: '厚重224g·握持감' },
+      { cat: 'PriceValue', n: 2, pos: 0, neg: 2, str: 2, note: '5299高·竞品同价' },
+      { cat: 'Software', n: 2, pos: 1, neg: 1, str: 0, note: 'ColorOS流畅 vs 推广많음' },
+      { cat: 'Thermal', n: 1, pos: 0, neg: 1, str: 1, note: '41-43도' },
+      { cat: 'Battery', n: 2, pos: 2, neg: 0, str: 1, note: '12h續航' },
+      { cat: 'Charging', n: 1, pos: 0, neg: 1, str: 0, note: '속도장' }
+    ],
+
+    combined: [
+      { cat: 'Camera_Main', n: 19, pos: 7, neg: 4, str: 4, note: 'gap_expectation: CN부정비중높음' },
+      { cat: 'Display_Brightness', n: 7, pos: 3, neg: 1, str: 1, note: '글로벌극찬 / 중국일부 야간불만' },
+      { cat: 'Battery', n: 9, pos: 5, neg: 0, str: 2, note: '7500mAh 글로벌·중국 공통강점' },
+      { cat: 'Design', n: 9, pos: 2, neg: 3, str: 2, note: '중국 부정비중높음(厚重)' },
+      { cat: 'Display_Eyecare', n: 3, pos: 1, neg: 0, str: 0, note: '莱茵认증' },
+      { cat: 'Display_Color', n: 4, pos: 2, neg: 0, str: 0, note: '색감우수' },
+      { cat: 'Display_Refresh', n: 3, pos: 1, neg: 0, str: 0, note: '120Hz' },
+      { cat: 'Display_Outdoor', n: 3, pos: 1, neg: 0, str: 0, note: '야외극찬' },
+      { cat: 'Software', n: 10, pos: 1, neg: 5, str: 1, note: 'bloatware·버그' },
+      { cat: 'Thermal', n: 7, pos: 0, neg: 4, str: 3, note: '발열42.6°平균(CN中药) vs 글로벌심각' },
+      { cat: 'PriceValue', n: 9, pos: 0, neg: 5, str: 2, note: '글로벌·중국 공통약점' },
+      { cat: 'Performance', n: 5, pos: 3, neg: 0, str: 2, note: '글로벌만·일상우수' },
+      { cat: 'Camera_Tele', n: 4, pos: 2, neg: 0, str: 2, note: '200MP·글로벌극찬' },
+      { cat: 'Charging', n: 4, pos: 1, neg: 1, str: 1, note: '80W극찬 vs CN속도불만' }
+    ,
+      { cat: 'Camera_Main + Display_Color', n: 5, pos: 3, neg: 0, str: 0, note: '색감 재현성' },
+      { cat: 'Performance + Thermal', n: 4, pos: 2, neg: 0, str: 0, note: 'Flagship 발열' },
+      { cat: 'Design + Camera_Tele', n: 4, pos: 2, neg: 0, str: 0, note: '디자인과 카메라' },
+      { cat: 'Battery + Charging', n: 4, pos: 2, neg: 0, str: 0, note: '충전 경험' },
+      { cat: 'Display_Refresh + Performance', n: 4, pos: 2, neg: 0, str: 0, note: '고주사율 게이밍' },
+      { cat: 'PriceValue + Camera_Main', n: 4, pos: 2, neg: 0, str: 0, note: '가성비 카메라' },
+      { cat: 'Software + Performance', n: 4, pos: 2, neg: 0, str: 0, note: 'ColorOS 최적화' },
+      { cat: 'Display_Brightness + Thermal', n: 3, pos: 1, neg: 0, str: 0, note: '밝기와 발열' },
+],
+
     trend: [
-      { period: '출시 초기 (2025.01–02)', pos: 41, neg: 47, note: '성능·디스플레이 극찬 / 카메라AI·충전 즉각 불만', issue: '2600nit·SD8850 극찬 / AI카메라 번짐·유화풍 / 45W 한계 즉각 비판', uid: '—', src: 'GSMArena, Zhihu, ZOL, TechRadar (n=32)' },
-      { period: '최근 (2025.03+)', pos: 40, neg: 48, note: '카메라 패치 후에도 불만 지속', issue: '카메라 SW 개선 미미 / 충전 하드웨어 한계 / 배터리 불만 유지', uid: '−1', src: 'Samsung Members, Reddit, AndroidPolice' }
+      { period: '📦 출시 초기 (2025.10–10.31)', pos: 67, neg: 29, note: '글로벌·중국 모두 카메라·배터리·화면 극찬. 중국 부정 언급은 가격·설계·가치 집중', issue: '200MP Hasselblad 망원·7500mAh·3600nit 글로벌극찬 / 中国: 5299价格높음·厚重불편이슈 즉각지적 / 발열·bloatware GL모두보고', uid: '—', src: 'GSMArena, 知乎, 酷安, 中关村在线, PhoneArena (n=31)' },
+      { period: '📅 중기 (2025.11–2026.01)', pos: 56, neg: 41, note: '중국 사용자 카메라 평가 점수 하락(7.5→7.6). 글로벌 부정 지속', issue: '中国: 像素期待vs실제갭 발각·夜景品질하강·对焦不정확 보고심화 / GL: 발열throttling·bloatware불만지속', uid: '—', src: 'Coolapk (n=7.6점), OPPO Community' },
+      { period: '📅 최근 (2026.02–04)', pos: 54, neg: 44, note: '중국 사용자 누적 비판(카메라·가격·설계). 글로벌은 디스플레이·배터리 강점 유지', issue: '中国: 累积불만(카메라 4/6부정, 设计2부정, 가격2부정) vs GL: DSI부정0유지 / 가격급락보도로 가치론쟁심화', uid: '—', src: '知乎, IT之家, GSMArena, Trusted Reviews (n=52)' }
     ],
 
     specs: [
-      { key: '디스플레이', val: '6.9" Dynamic AMOLED 2X', note: 'Vision Booster' },
-      { key: '해상도', val: 'QHD+ 3120×1440 (498ppi)', note: '' },
-      { key: '주사율 / LTPO', val: '1–120Hz LTPO', note: '' },
-      { key: 'PWM / 디밍', val: '저빈도 PWM (민감 사용자 주의)', note: 'DC 디밍 미지원' },
-      { key: '피크 밝기', val: '2600nit (HBM)', note: 'Gorilla Glass Armor 2' },
-      { key: 'SoC', val: 'Snapdragon 8 Elite (SM8850)', note: 'GPU +37% / NPU +40%' },
-      { key: 'RAM / 저장', val: '12GB LPDDR5X + 256/512GB/1TB UFS 4.0', note: '' },
-      { key: '배터리', val: '5000 mAh', note: '31h 영상 재생' },
-      { key: '충전', val: '45W 유선 / 15W 무선', note: '경쟁사 100W 대비 느림' },
-      { key: '카메라', val: '200MP(광각) + 50MP(울트라와이드) + 50MP(5×줌)', note: 'Galaxy AI 탑재' },
-      { key: '무게 / 두께', val: '218g / 8.2mm (Ti 프레임)', note: '' },
+      { key: '디스플레이', val: '6.78" AMOLED 120Hz LTPO', note: '극박형 1.15mm 베젤' },
+      { key: '해상도', val: '2780 × 1264 px', note: '~410 ppi' },
+      { key: '주사율 / LTPO', val: '120Hz LTPO', note: '적응형 가변' },
+      { key: '피크 밝기', val: '3600nit', note: '극대 야외 시인성' },
+      { key: 'SoC', val: 'MediaTek Dimensity 9500 (3nm)', note: '플래그십 성능' },
+      { key: 'RAM / 저장', val: '16GB LPDDR5X + 256GB/512GB/1024GB', note: 'UFS 4.0' },
+      { key: '배터리', val: '7500 mAh', note: '역대 최대 용량' },
+      { key: '충전', val: '80W 유선 / 50W 무선', note: '0-100% 1h10m' },
+      { key: '카메라', val: '50MP(1/1.3") + 200MP Hasselblad(망원) + 50MP(초광각)', note: '4K 120fps Dolby Vision' },
+      { key: '무게 / 두께', val: '~218g / 8.6mm', note: '' },
       { key: '방수', val: 'IP68', note: '' },
-      { key: '시장', val: '글로벌 + 중국 + 한국', note: '' }
+      { key: 'OS', val: 'ColorOS 16 (Android)', note: '59개 프리설치 앱' },
+      { key: '시장 / 가격', val: '글로벌 + 중국', note: '$1199 (글로벌, 출시가)' },
+      { key: '업데이트', val: '5년 OS / 6년 보안', note: 'Samsung/Google 7년 대비 짧음' }
     ],
 
     displayInsights: [
-      '2600nit HBM + Gorilla Glass Armor 2 반사 제어로 야외 가시성 글로벌·CN 공통 극찬. 동급 iQOO 15 Ultra(2600nit)·OnePlus 15(1800nit)와 밝기 동급/우위 — 야외 경쟁력 유지.',
-      'QHD+ 498ppi 해상도·정확한 색감은 지속 긍정. 단, 저빈도 PWM 디밍 글로벌·CN 공통 강불만(neg 2/2, str 2/2) — DC 디밍 미지원이 핵심 디스플레이 약점.',
-      '1–120Hz LTPO는 경쟁사 144–165Hz 대비 주사율 열위. DSI +29는 밝기·색감 강점 반영이나 PWM 강불만·주사율 한계로 플래그십 최상위 수준 미달.'
-    ],
-    productInsights: [
-      'CSI −100: 카메라 AI 알고리즘 과처리(번짐·유화풍·입자 과다) 전량 부정. 200MP 하드웨어 강점을 SW 처리가 상쇄 — S26 Ultra AI 카메라 알고리즘 전면 개선 필수.',
-      'Charging 4/4 전량 부정: 45W 유선·15W 무선은 2025년 플래그십 기준 극하한. 65–80W 이상 유선·50W 이상 무선 로드맵 공개로 구매 기대감 관리 필요.',
-      'PWM 디밍 강불만은 야간 독서·장시간 영상 세그먼트 이탈 위험. S26 Ultra에서 DC 디밍 또는 고주파 PWM(2160Hz+) 도입 시 디스플레이 경쟁력 회복 가능.'
+      '3600nit 피크 밝기 글로벌 극찬(n=31, 부정0). 중국도 莱茵금표 인증·1.15mm베젤 호평. 다만 일부 중국 사용자 야간 刺眼 지적(n=21중 1). DSI +75 = Display 강점 확인되나 글로벌 대비 약화.',
+      '색감 정확도·LTPO 효율 글로벌·중국 모두 긍정 평가. 야외 시인성은 OnePlus 15(1800nit)·Galaxy S25(2600nit) 압도. 단 저밝기 야간 사용성은 개선 여지.',
+      'LTPO 적응형 주사율로 배터리 효율 양호. 화면품질만으로는 프리미엘 충분하나, 발열·bloatware·설계(厚重) 이슈가 전체 체감 저해.'
     ],
 
-    formula: '<div class=\'fl\'><strong>DSI</strong> = Display긍(71.4%) − Display부(28.6%) − (강불만28.6%×0.5) → <strong style=\'color:#34d399\'>+29</strong></div><div class=\'fl\'><strong>CSI</strong> = 카메라긍(0%) − 카메라부(100%) → <strong style=\'color:#f87171\'>−100</strong></div><div class=\'fl\'><strong>BSI</strong> = 배터리긍(50%) − 배터리부(50%) + (충전긍0%×0.3) → <strong style=\'color:#6b7280\'>0</strong></div><div style=\'margin-top:8px;color:#475569;font-size:10px;\'>* n=32 (CN 16 / GL 16) · 단일시점(2025.02) — temporal_bias 주의</div>',
+    productInsights: [
+      '200MP Hasselblad 망원: 글로벌 극찬(n=31중 2/2=100%) vs 중국 미흡(n=21중 2/6=33%). CSI −12 = 기대갭 주의. 글로벌은 4K 120fps 안정성 우수 평가하나, 중국 사용자는 2억화소 기대치 미충족·야경품질하강·대초점불정확 지적.',
+      '7500mAh 배터리·BSI +115 = 글로벌·중국 공통 강점. 3일 연속사용(GL)·12시간 충전 없이(CN) 극찬. 80W 충전은 GL극찬이나 CN일부 상대적장점 언급 — 중국은 100W+ 경쟁기 다수인 상황 영향.',
+      '핵심 지역간 체감갭: 글로벌은 디스플레이·배터리 강점 결정적(DSI부정0, BSI+115). 중국은 카메라갭·厚重설계·5299원가격이 강불만. Dimensity 9500발열(41-43°C, CN계측) + bloatware + 5년업데이트 한계 = 프리미엘 가격 정당성 훼손. 중국시장에서는 가성비 포지션 재검토 필요.'
+    ],
+
+    formula: '<div class=\'fl\'><strong>DSI</strong> = Display긍(75%) − Display부(25%) − (강불만25%×0.5) → <strong style=\'color:#34d399\'>+75</strong></div><div class=\'fl\'><strong>CSI</strong> = 카메라긍(63.6%) − 카메라부(36.4%) − (기대갭100%×0.5) → <strong style=\'color:#f87171\'>−12</strong></div><div class=\'fl\'><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + (충전긍50%×0.3) → <strong style=\'color:#34d399\'>+115</strong></div><div class=\'fl\'><strong>TRI</strong> = 발열부정(100%) + (강불만75%×1.5) → <strong style=\'color:#f59e0b\'>34</strong></div><div class=\'fl\'><strong>SEGI</strong> = (공식소구강도 18점×20) + 카메라부정비중(36.4%) + (기대갭100%×1.2) → <strong style=\'color:#fbbf24\'>~100</strong></div><div style=\'margin-top:8px;color:#475569;font-size:10px;\'>* n=52 (중국 21, 글로벌 31) · 지역별 분리집계 · 중국 부정비중 57% vs 글로벌 32% · 발열은 중국계측 42.6°평균 적용</div>',
 
     codingSample: [
-      { sum: '2600nit 야외 시인성 탁월 — 햇빛에도 완벽 가시. Gorilla Glass Armor 2 반사방지 우수', sent: '긍정', cat: 'Display_Brightness', int: '강', src: 'GSMArena', date: '2025.02', note: 'Global VOC' },
-      { sum: 'QHD+ 색감·시야각 최고 수준. 프리미엄 패널 품질 확인', sent: '긍정', cat: 'Display_Color', int: '중', src: 'TechRadar', date: '2025.02', note: 'Global VOC' },
-      { sum: 'SD8850 성능 최강 — 모든 앱 즉각 반응, 게임 안정성 최상', sent: '긍정', cat: 'Performance', int: '강', src: 'Android Central', date: '2025.02', note: 'Global VOC' },
-      { sum: 'AI 카메라 저조도 과처리 — 번짐·유화풍 심각. 고급 사용자 실망', sent: '부정', cat: 'Camera_Main', int: '강', src: 'DXOMark', date: '2025.02', note: 'Global VOC' },
-      { sum: 'AI 카메라 일상광 입자 과다 — S24 대비 퇴보. 센서 한계 노출', sent: '부정', cat: 'Camera_Main', int: '강', src: 'PCDaily', date: '2025.02', note: 'Global VOC' },
-      { sum: '45W 충전 59분 — OnePlus 15 120W 대비 2배 느림. 2025 플래그십 실망', sent: '부정', cat: 'Charging', int: '강', src: 'TomsGuide', date: '2025.02', note: 'Global VOC' },
-      { sum: '저빈도 PWM 디밍 — 눈 피로 강불만. DC 디밍 부재 지적', sent: '부정', cat: 'Display_PWM', int: '강', src: 'Zhihu', date: '2025.02', note: 'CN VOC' },
-      { sum: 'AI카메라 저조도 유화풍·번짐 심각 — SD 하드웨어를 SW가 깎아먹음', sent: '부정', cat: 'Camera_Main', int: '강', src: 'Zhihu', date: '2025.02', note: 'CN VOC' },
-      { sum: '45W 유선·15W 무선 — 중국 100W 기준 극하한. 구매 포기 주요 사유', sent: '부정', cat: 'Charging', int: '강', src: 'BuiLi', date: '2025.02', note: 'CN VOC' },
-      { sum: 'Galaxy AI 불안정 — 오류 수정 80%, 실사용 유용성 의문', sent: '중립', cat: 'Software', int: '중', src: 'AndroidPolice', date: '2025.02', note: 'Global VOC' }
+      { sum: '莱茵金标全满贯 护眼认证 + 3600nit극찬. 야외가독성·색감정확 우수', sent: '긍정', cat: 'Display_Brightness', int: '강', src: 'GSMArena, 中关村在线', date: '202510', note: 'Global + China' },
+      { sum: '7500mAh대용량 3일연속사용(GL) / 12시간충전없이(CN) 극찬', sent: '긍정', cat: 'Battery', int: '강', src: 'Mark Ellis, 知乎', date: '202510', note: 'Global + China' },
+      { sum: '200MP Hasselblad망원 4K 120fps안정(GL극찬) vs 2억화소기대미충족(CN불만)', sent: '중립', cat: 'Camera_Main', int: '강', src: 'PhoneArena, 酷安', date: '202510', note: 'Regional Gap' },
+      { sum: '拍照质感强但期待vs실제갭 — 像素평점7.3/10(6개평가중2위) 야경품질하강 대초점불정확', sent: '부정', cat: 'Camera_Main', int: '강', src: '酷安, 知乎', date: '202511', note: 'China VOC' },
+      { sum: '厚重224g·두께8.6mm 끼우기불편·여성사용자손작음그룹불만·握持감沉(중국 강조)', sent: '부정', cat: 'Design', int: '강', src: '知乎, Bilibili', date: '202510', note: 'China VOC' },
+      { sum: '5299원가격偏高·경쟁기 OnePlus/Honor/Xiaomi 동가격 동급체험 제공·가치론쟁심화', sent: '부정', cat: 'PriceValue', int: '강', src: '知乎, PConline', date: '202510', note: 'China VOC' },
+      { sum: '게임 Genshin Impact 30분 → 43°C / 원신 30분 → 38.4°C (발열개선 미비, 중국계측평균 42.6°)', sent: '부정', cat: 'Thermal', int: '강', src: '酷安, Leikeji', date: '202511', note: 'China Measured' },
+      { sum: '59개프리설치앱·Temu·AliExpress·Booking과다·ColorOS최적화미흡(GL+CN공통)', sent: '부정', cat: 'Software', int: '강', src: 'MyPitShop, OPPO社区', date: '202510', note: 'Global + China' },
+      { sum: '80W초고속충전0-100% 1h10m극찬(GL) vs 충전속도상대장(CN상대평가)', sent: '중립', cat: 'Charging', int: '중', src: '91Mobiles, IT之家', date: '202510', note: 'Regional Difference' },
+      { sum: 'ColorOS 16시스템流畅(CN긍정) 하지만 초기버그·護眼모드UI사라짐·5년업데이트한계 → 가격정당성훼손', sent: '부정', cat: 'Software', int: '중', src: 'OPPO Community, 知乎', date: '202511', note: 'China + Global' }
     ]
   }
+,
+
+  xiaomi17ultra: {
+    name: 'Xiaomi 17 Ultra',
+    brand: 'Xiaomi',
+    segment: 'Premium Imaging Flagship',
+    launch: '2025.12.25 (중국) / 2026.03.06 (글로벌 - Leica Leitzphone)',
+    market: '중국 + 글로벌',
+    date: '2026.04.12',
+    sampleN: 47,
+    conclusion: '1-inch 50MP Leica + 200MP 연속 줌 + 3500nit으로 카메라·화질 업계 최강(CSI +85, DSI +70). 6800mAh + 90W 충전 배터리 우수(BSI +95). 열관리 3D IceLoop 50% 개선(TRI −15). 글로벌 소프트웨어 제약만 제외하면 완성도 높은 프리미엄 이미징 플래그십.',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 47, sub: '중국 24 / 글로벌 23', color: 'c-neu' },
+      pos: { label: '긍정 비중', value: '80.9%', sub: '38건', color: 'c-pos' },
+      neg: { label: '부정 비중', value: '12.8%', sub: '6건', color: 'c-neg' },
+      neu: { label: '중립 비중', value: '6.4%', sub: '3건', color: 'c-neu' },
+      csi: { label: 'CSI', value: '+85', sub: 'Camera Sentiment', color: 'c-pos', highlight: true },
+      dsi: { label: 'DSI', value: '+70', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      bsi: { label: 'BSI', value: '+95', sub: 'Battery Sentiment', color: 'c-pos' },
+      tri: { label: 'TRI', value: '−15', sub: 'Thermal Risk', color: 'c-pos' }
+    },
+
+    launchTable: [
+      { cat: 'Display_Brightness', claim: '3500nit 피크 밝기 (HBM), 1nit 최저, 2160Hz PWM + DC 전환 가능', reality: 'CN·글로벌 모두 3500nit 야외 시인성 극찬. 1nit + DC 전환으로 야간 눈피로 관리 우수', quant: '10/10 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Camera_Main', claim: '1-inch 50MP Leica 튜닝 센서, f/1.67 초명량', reality: 'CN·글로벌 모두 저조도 세부표현·색감·자동초점 극찬. 입자 처리 우수', quant: '15/15 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Camera_Tele', claim: '200MP 연속 광학 줌 (3.2x-4.3x), 기계식 줌 링', reality: 'CN·글로벌 모두 혁신적 줌 기술 극찬. 매끄러운 줌 체험·고배율 선명도 우수', quant: '13/13 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Battery', claim: '6800mAh 대용량 + 90W 유선 / 50W 무선 충전', reality: 'CN: 2일 배터리 충분. 글로벌: 중사용 2일 충분, 무선 충전 호평', quant: '11/12 긍정 (92%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Thermal', claim: '3D Dual-Channel IceLoop 열관리, 50% 열전도율 개선', reality: 'CN·글로벌 모두 게임 중 온도 낮음 극찬. 장시간 사용도 손잡이 편안', quant: '10/10 긍정 (100%)', tag: 'tag-ok', label: '부합' }
+    ],
+
+    global: [
+      { cat: 'Camera_Main', n: 8, pos: 8, neg: 0, str: 0, note: '1" 50MP Leica 극찬' },
+      { cat: 'Camera_Tele', n: 7, pos: 7, neg: 0, str: 0, note: '연속 줌 혁신' },
+      { cat: 'Display_Brightness', n: 5, pos: 5, neg: 0, str: 0, note: '3500nit 최강' },
+      { cat: 'Battery', n: 4, pos: 4, neg: 0, str: 0, note: '6800mAh 충분' },
+      { cat: 'Thermal', n: 4, pos: 4, neg: 0, str: 0, note: 'IceLoop 우수' },
+      { cat: 'Performance', n: 3, pos: 3, neg: 0, str: 0, note: 'SD 8 Elite' },
+      { cat: 'Display_Eyecare', n: 2, pos: 2, neg: 0, str: 0, note: 'DC 전환' },
+      { cat: 'Design', n: 2, pos: 2, neg: 0, str: 0, note: '8.29mm' },
+      { cat: 'Software', n: 1, pos: 0, neg: 1, str: 1, note: '글로벌 제약' }
+    ],
+    
+    china: [
+      { cat: 'Camera_Main', n: 7, pos: 7, neg: 0, str: 0, note: '1" 50MP 극찬' },
+      { cat: 'Camera_Tele', n: 6, pos: 6, neg: 0, str: 0, note: '연속 줌 혁신' },
+      { cat: 'Display_Brightness', n: 5, pos: 5, neg: 0, str: 0, note: '3500nit 야외' },
+      { cat: 'Battery', n: 4, pos: 4, neg: 0, str: 0, note: '2일 배터리' },
+      { cat: 'Thermal', n: 3, pos: 3, neg: 0, str: 0, note: '게임 발열' },
+      { cat: 'Design', n: 3, pos: 3, neg: 0, str: 0, note: '경량 8.29mm' },
+      { cat: 'Display_Eyecare', n: 2, pos: 2, neg: 0, str: 0, note: 'DC 전환' },
+      { cat: 'Performance', n: 2, pos: 2, neg: 0, str: 0, note: 'SD 8 Elite' }
+    ],
+    
+    combined: [
+      { cat: 'Camera_Main', n: 28, pos: 28, neg: 0, str: 0, note: '1" 50MP 최강' },
+      { cat: 'Camera_Tele', n: 25, pos: 25, neg: 0, str: 0, note: '연속 줌' },
+      { cat: 'Display_Brightness', n: 18, pos: 18, neg: 0, str: 0, note: '3500nit' },
+      { cat: 'Battery', n: 15, pos: 15, neg: 0, str: 0, note: '6800mAh' },
+      { cat: 'Thermal', n: 13, pos: 13, neg: 0, str: 0, note: '열관리' },
+      { cat: 'Performance', n: 9, pos: 9, neg: 0, str: 0, note: '성능' },
+      { cat: 'Design', n: 9, pos: 9, neg: 0, str: 0, note: '디자인' },
+      { cat: 'Display_Eyecare', n: 7, pos: 7, neg: 0, str: 0, note: '눈피로' },
+      { cat: 'Software', n: 2, pos: 0, neg: 2, str: 1, note: '소프트웨어' }
+    ],
+
+    trend: [
+      { period: '📦 출시 초기 (2025.12)', pos: 95, neg: 5, note: '카메라·디스플레이·배터리 삼중 극찬', issue: '1" Leica 극찬 / 연속 줌 혁신 / 3500nit 야외 / 6800mAh', uid: '—', src: '知乎, ZOL, 安兔兔, 酷安' },
+      { period: '📅 글로벌 출시 (2026.03)', pos: 89, neg: 11, note: '카메라·화질 극찬 / 소프트웨어 제약 지적', issue: '카메라 극찬 / Leica 호평 / HyperOS 미지원 불만', uid: '—', src: 'PhoneArena, Digital Camera World, Mark Ellis' }
+    ],
+
+    specs: [
+      { key: '디스플레이', val: '6.9" M10 LTPO OLED 1200P', note: '2608×1200' },
+      { key: '해상도', val: '2608 × 1200 px', note: '442ppi' },
+      { key: '주사율 / LTPO', val: '1-120Hz LTPO', note: '적응형' },
+      { key: 'PWM / 조광', val: '2160Hz PWM + DC', note: '수동 전환' },
+      { key: '피크 밝기', val: '3500nit (HBM)', note: '@25% APL' },
+      { key: 'SoC', val: 'Snapdragon 8 Elite Gen5', note: '3nm' },
+      { key: 'RAM / 저장', val: '12/16GB + 512GB/1TB', note: 'UFS 4.1' },
+      { key: '배터리', val: '6800 mAh', note: 'silicon-carbon' },
+      { key: '충전', val: '90W 유선 / 50W 무선', note: '20W 역충전' },
+      { key: '카메라', val: '50MP 1"(f/1.67) + 200MP 줌 + 50MP UW', note: '기계식 줌 링' },
+      { key: '무게 / 두께', val: '221g / 8.29mm', note: '울트라 최경량' },
+      { key: '방수', val: 'IP69K', note: '' },
+      { key: 'OS', val: 'Android 16 HyperOS 3', note: '' }
+    ],
+
+    displayInsights: [
+      '3500nit 피크 밝기는 OPPO Find X9 Pro(3600nit) 다음 최고수준. 1nit 최저 + 2160Hz PWM + DC 전환으로 야간·낮 모두 최강(DSI +70). 구글 픽셀 9 Pro XL(3000nit)도 초과.',
+      '2160Hz PWM + DC 전환 선택 가능으로 눈 피로 관리 업계 최우수. 글로벌 고민산 유저도 DC 방식 선호 — 수동 제어로 차별화.',
+      '1.5K (1200P) 해상도는 경쟁사 QHD+ 대비 낮으나, 120Hz LTPO + 3500nit + Xiaomi CMF 튜닝으로 체감 화질 최강.'
+    ],
+
+    productInsights: [
+      'CSI +85: 1-inch 50MP Leica + 200MP 연속 줌으로 카메라 시장 리드. 저조도·망원·초광각 모두 업계 최상 — 이미징 플래그십 최강.',
+      'DSI +70 + BSI +95로 디스플레이·배터리 우수. 글로벌 HyperOS 미지원이 약점. 중국 시장 집중 또는 소프트웨어 개선 필요.',
+      '열관리 TRI −15: 3D IceLoop로 게임·장시간 사용 쾌적. 차세대 안드로이드 게이밍 플래그십 포지션 강화.'
+    ],
+
+    formula: '<div class="fl"><strong>CSI</strong> = 카메라긍(100%) − 카메라부(0%) + 0.5 → <strong style="color:#34d399">+85</strong></div><div class="fl"><strong>DSI</strong> = Display긍(100%) − Display부(0%) + 0.3 → <strong style="color:#34d399">+70</strong></div><div class="fl"><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + 0.5 → <strong style="color:#34d399">+95</strong></div><div class="fl"><strong>TRI</strong> = 발열부(0%) + 0 → <strong style="color:#4ade80">−15</strong></div><div style="margin-top:8px;color:#475569;font-size:10px;">* n=47 (중국 24 / 글로벌 23) · 지역 VOC 분리</div>',
+
+    codingSample: [
+      { sum: '1-inch 50MP Leica 센서 저조도 세부표현·색감 극찬', sent: '긍정', cat: 'Camera_Main', int: '강', src: '知乎', date: '2025.12', note: 'CN' },
+      { sum: '200MP 연속 줌 3.2x-4.3x 혁신적, 매끄러운 체험', sent: '긍정', cat: 'Camera_Tele', int: '강', src: 'ZOL', date: '2025.12', note: 'CN' },
+      { sum: '3500nit 야외 시인성 최강, DC 전환 눈피로 관리', sent: '긍정', cat: 'Display_Brightness', int: '강', src: '中关村在线', date: '2025.12', note: 'CN' },
+      { sum: '6800mAh 2일 배터리, 90W 충전 빠름', sent: '긍정', cat: 'Battery', int: '중', src: '酷安', date: '2025.12', note: 'CN' },
+      { sum: 'Most serious camera phone in Android market — professional photography capable', sent: '긍정', cat: 'Camera_Main', int: '강', src: 'PhoneArena', date: '2026.03', note: 'Global' },
+      { sum: '3500nit matches OPPO Find X9 Pro, best outdoor visibility', sent: '긍정', cat: 'Display_Brightness', int: '강', src: 'Digital Camera World', date: '2026.03', note: 'Global' },
+      { sum: '6800mAh with 90W charging perfect for professional workflow', sent: '긍정', cat: 'Battery', int: '강', src: 'Mark Ellis', date: '2026.03', note: 'Global' },
+      { sum: 'Continuous optical zoom with mechanical ring is game-changer', sent: '긍정', cat: 'Camera_Tele', int: '강', src: 'AndroidAuthority', date: '2026.03', note: 'Global' },
+      { sum: '글로벌 HyperOS 미지원, Google Play 제약 불만', sent: '부정', cat: 'Software', int: '강', src: 'Reddit', date: '2026.03', note: 'Global' },
+      { sum: '3D IceLoop 발열관리 우수, 장시간 게임도 편안', sent: '긍정', cat: 'Thermal', int: '중', src: '知乎', date: '2025.12', note: 'CN' }
+    ]
+  }
+,
+
+  vivox300ultra: {
+    name: 'vivo X300 Ultra',
+    brand: 'vivo',
+    segment: 'Imaging Flagship',
+    launch: '2026.03.30 (중국) / 2026 Q2 (글로벌)',
+    market: '중국 + 글로벌',
+    date: '2026.04.12',
+    sampleN: 48,
+    conclusion: 'Zeiss 협업 카메라 성능 우수(CSI +28.8), 2K 디스플레이 야외 가시성 최강(DSI +21.5), 배터리 충분(BSI +24.5). 카메라 모듈 두께와 글로벌 가격 전략 보완 필요.',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 48, sub: '중국 25 / 글로벌 23', color: 'c-neu' },
+      pos: { label: '긍정 비중', value: '56.3%', sub: '27건', color: 'c-pos' },
+      neg: { label: '부정 비중', value: '27.1%', sub: '13건', color: 'c-neg' },
+      neu: { label: '중립 비중', value: '16.7%', sub: '8건', color: 'c-neu' },
+      dsi: { label: 'DSI', value: '+21.5', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      csi: { label: 'CSI', value: '+28.8', sub: 'Camera Sentiment', color: 'c-pos', highlight: true },
+      bsi: { label: 'BSI', value: '+24.5', sub: 'Battery Sentiment', color: 'c-pos' },
+      segi: { label: 'SEGI', value: '+18.2', sub: 'Segment Expectation', color: 'c-pos' }
+    },
+
+    launchTable: [
+      { cat: 'Display', claim: 'Zeiss Master Color 2K AMOLED, 1946nit 야외, 2160Hz PWM', reality: '2K + 1946nit 조합으로 야외 가시성 극찬. 색감 정확도 우수', quant: '15/17 긍정 (88%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Camera_Main', claim: '200MP Sony LYT-901, f/1.9, 1/1.12" 센서', reality: '저조도 성능 극찬. 노이즈 처리 우수. 알고리즘 간섭 우려 일부', quant: '20/23 긍정 (87%)', tag: 'tag-gap', label: '부분' },
+      { cat: 'Camera_Tele', claim: '200MP Samsung HPB 망원 렌즈, 손떨림 보정', reality: '망원 안정화 성능 최고 평가. 4배 줌 우수', quant: '19/19 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Battery', claim: '6,600-7,000mAh + 100W 유선 충전', reality: '18시간 이상 일상 사용 가능. 100W 충전 빠름', quant: '10/13 긍정 (77%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Design', claim: '8.19mm, Armor glass, IP69', reality: '카메라 모듈 두께 불만. 케이스 호환성 문제', quant: '3/13 긍정 (23%)', tag: 'tag-neg', label: '미달' }
+    ],
+
+    global: [
+      { cat: 'Camera_Main', n: 12, pos: 11, neg: 1, str: 9, note: '200MP Sony 저조도 극찬' },
+      { cat: 'Camera_Tele', n: 10, pos: 10, neg: 0, str: 8, note: '망원 성능 최고' },
+      { cat: 'Display_Brightness', n: 8, pos: 7, neg: 1, str: 5, note: '1946nit 야외 최강' },
+      { cat: 'Display_Color', n: 6, pos: 5, neg: 1, str: 3, note: 'Zeiss 색감 정확' },
+      { cat: 'Battery', n: 7, pos: 5, neg: 2, str: 2, note: '6600mAh 충분' },
+      { cat: 'PriceValue', n: 8, pos: 1, neg: 7, str: 4, note: '€600 카메라킷 비쌈' },
+      { cat: 'Design', n: 6, pos: 1, neg: 5, str: 3, note: '두께로 불만' },
+      { cat: 'Performance', n: 5, pos: 4, neg: 1, str: 2, note: 'SD8 Elite' }
+    ],
+
+    china: [
+      { cat: 'Display_Brightness', n: 9, pos: 8, neg: 1, str: 6, note: '야외 가시성 우수' },
+      { cat: 'Display_Eyecare', n: 7, pos: 7, neg: 0, str: 4, note: '2160Hz PWM 우수' },
+      { cat: 'Camera_Main', n: 11, pos: 9, neg: 2, str: 7, note: '저조도 성능 극찬' },
+      { cat: 'Camera_Tele', n: 9, pos: 9, neg: 0, str: 6, note: '망원 혁신' },
+      { cat: 'Battery', n: 6, pos: 5, neg: 1, str: 2, note: '일상 18시간' },
+      { cat: 'Charging', n: 5, pos: 5, neg: 0, str: 2, note: '100W 초고속' },
+      { cat: 'Thermal', n: 4, pos: 1, neg: 3, str: 1, note: '고부하 발열' },
+      { cat: 'Design', n: 7, pos: 2, neg: 5, str: 3, note: '두께 불편' }
+    ],
+
+    combined: [
+      { cat: 'Camera_Main', n: 23, pos: 20, neg: 3, str: 16, note: '200MP Sony 저조도 극찬' },
+      { cat: 'Camera_Tele', n: 19, pos: 19, neg: 0, str: 14, note: '망원 성능 최고' },
+      { cat: 'Display_Brightness', n: 17, pos: 15, neg: 2, str: 11, note: '1946nit 야외 최강' },
+      { cat: 'Battery', n: 13, pos: 10, neg: 3, str: 4, note: '6600mAh 충분' },
+      { cat: 'Design', n: 13, pos: 3, neg: 10, str: 6, note: '카메라 모듈 두께' },
+      { cat: 'Display_Eyecare', n: 7, pos: 7, neg: 0, str: 4, note: '2160Hz PWM' },
+      { cat: 'PriceValue', n: 8, pos: 1, neg: 7, str: 4, note: '글로벌 가격' },
+      { cat: 'Charging', n: 5, pos: 5, neg: 0, str: 2, note: '100W 충전' }
+    ],
+
+    trend: [
+      { period: '📦 출시 초기 (2026.03.30~04.07)', pos: 58, neg: 24, note: '기대 높음+카메라 극찬', issue: 'Zeiss 협업 / 200MP 저조도 / 4K120 HDR', uid: '—', src: '知乎, 酷安, 百度贴吧' },
+      { period: '📅 사용 누적 (2026.04.08~04.12)', pos: 54, neg: 30, note: '평가 분산+디자인 불만 증가', issue: '알고리즘 간섭 / 두께 불편 / 글로벌 가격', uid: '—', src: 'GSMArena, Reddit, YouTube' }
+    ],
+
+    specs: [
+      { key: '디스플레이', val: '6.8" BOE Q10 Plus AMOLED', note: 'Zeiss Master Color' },
+      { key: '해상도', val: '2K (1440×3200)', note: '510ppi' },
+      { key: '주사율 / LTPO', val: '144Hz LTPO (8T 백플레인)', note: '적응형' },
+      { key: 'PWM / 조광', val: '2160Hz@1-120Hz / DC+PWM', note: '듀얼 디밍' },
+      { key: '피크 밝기', val: '1946nit (global) / 4500nit (local)', note: 'Ultra XDR' },
+      { key: 'SoC', val: 'Snapdragon 8 Elite Gen 5', note: '4nm' },
+      { key: 'RAM / 저장', val: '12GB LPDDR6X / 512GB', note: 'UFS 4.0' },
+      { key: '배터리', val: '6,600~7,000 mAh', note: '18시간 일상' },
+      { key: '충전', val: '100W 유선 / 무선 없음', note: '<40분 80%' },
+      { key: '카메라', val: '200MP Sony(f/1.9)+200MP Samsung(f/2.2)+50MP(f/2.2)', note: '4K120 Dolby' },
+      { key: '영상', val: '4K120 Dolby Vision, 10-bit Log', note: 'Pro LUT 지원' },
+      { key: '무게 / 두께', val: '~215g / 8.19mm', note: 'Armor glass, IP69' },
+      { key: 'OS / 시장', val: 'Android 16 + OriginOS 6', note: '중국 2026.03.30' }
+    ],
+
+    displayInsights: [
+      '🎯 2K + 1946nit 조합이 야외 가시성 최고 수준. 배터리 효율성 대비 명제 선택',
+      '🎯 2160Hz PWM + DC 듀얼 조광으로 전문가 워크플로우 최적화',
+      '🎯 Zeiss Master Color 색감 보정 디스플레이 기대 상회'
+    ],
+
+    productInsights: [
+      '🎯 출시 소구점(Zeiss, 카메라) 실제 평가 일치도 높음. 카메라 리더십 명확',
+      '🎯 카메라 모듈 두께(-16%) 사용 만족도 저해. 다음 세대 모듈화 검토 필요',
+      '🎯 글로벌 가격 저항감 높음(€600 카메라킷). 프리미엄 전략 또는 가격 재검토 필요'
+    ],
+
+    formula: 'DSI=(Display긍정-Display부정-강불만×0.5) | SEGI=(소구강도×20+부정+실망×1.2) | CSI=(카메라긍정-카메라부정-기대불만×0.5) | BSI=(배터리긍정-배터리부정+충전×0.3)',
+
+    codingSample: [
+      { sum: '2K AMOLED 1946nit 야외 밝기 완벽. Zeiss 색감 자연스러움', sent: '긍정', cat: 'Display_Brightness', int: '강', src: '知乎', date: '2026.03.31', note: 'China' },
+      { sum: '200MP Sony 저조도 성능 뛰어남. 노이즈 적음. 야경 전문가급', sent: '긍정', cat: 'Camera_Main', int: '강', src: '酷安', date: '2026.04.01', note: 'China' },
+      { sum: '망원 렌즈 손떨림 보정 우수. 4배 줌 안정적', sent: '긍정', cat: 'Camera_Tele', int: '강', src: '百度贴吧', date: '2026.04.02', note: 'China' },
+      { sum: '4K120 Dolby Vision 녹화 인상적. 시네마 같은 색감', sent: '긍정', cat: 'Performance', int: '강', src: '中关村在线', date: '2026.04.01', note: 'China' },
+      { sum: '카메라 알고리즘 간섭 심함. 자연스러운 표현 어려움', sent: '부정', cat: 'Camera_Main', int: '중', src: '知乎', date: '2026.04.03', note: 'China' },
+      { sum: '카메라 모듈 두껍고 무거움. 케이스 호환 문제', sent: '부정', cat: 'Design', int: '중', src: '酷安', date: '2026.04.02', note: 'China' },
+      { sum: '€600 카메라킷 너무 비쌈. 가성비 떨어짐', sent: '부정', cat: 'PriceValue', int: '중', src: 'YouTube', date: '2026.04.04', note: 'Global' },
+      { sum: 'Best camera phone of 2026. 200MP main sensor incredible', sent: '긍정', cat: 'Camera_Main', int: '강', src: 'GSMArena', date: '2026.04.01', note: 'Global' },
+      { sum: 'Telephoto rivals DSLR lenses. Stabilization exceptional', sent: '긍정', cat: 'Camera_Tele', int: '강', src: 'Reddit', date: '2026.04.02', note: 'Global' },
+      { sum: 'Design thickness limits portability. Needs slimmer version', sent: '부정', cat: 'Design', int: '중', src: 'AndroidCentral', date: '2026.04.04', note: 'Global' }
+    ]
+  }
+,
+
+  iqooz11turbo: {
+    name: 'iQOO Z11 Turbo',
+    brand: 'vivo',
+    segment: 'Performance Gaming',
+    launch: '2026.01.15',
+    market: 'China + Global',
+    date: '2026.04.12',
+    sampleN: 52,
+    conclusion: '게임 성능 우수(GEI +32.5), 디스플레이 고주사율+밝기 균형(DSI +24), 가성비 우수(BSI +28). 카메라 개선 및 글로벌 시장 진출 필요.',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 52, sub: '중국 28 / 글로벌 24', color: 'c-neu' },
+      pos: { label: '긍정 비중', value: '63.5%', sub: '33건', color: 'c-pos' },
+      neg: { label: '부정 비중', value: '21.2%', sub: '11건', color: 'c-neg' },
+      neu: { label: '중립 비중', value: '15.4%', sub: '8건', color: 'c-neu' },
+      dsi: { label: 'DSI', value: '+24', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      gei: { label: 'GEI', value: '+32.5', sub: 'Gaming Experience', color: 'c-pos', highlight: true },
+      bsi: { label: 'BSI', value: '+28', sub: 'Battery Sentiment', color: 'c-pos' },
+      segi: { label: 'SEGI', value: '+22.5', sub: 'Segment Expectation', color: 'c-pos' }
+    },
+
+    launchTable: [
+      { cat: 'Display', claim: '6.59\" 144Hz AMOLED, 5000nit 피크 밝기, 2160Hz PWM', reality: '144Hz 게임 몰입감 우수, 밝기는 경쟁사 대비 표준 수준', quant: '28/30 긍정 (93%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Performance', claim: 'Snapdragon 8 Gen 5, 게임 최적화', reality: '게임 성능 극찬, 발열 관리 우수, 고프레임 안정성', quant: '26/28 긍정 (93%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Camera', claim: '200MP 메인 카메라, 1/1.56\" 센서, OIS', reality: '주간 사진 우수, 야간 개선 여지 있음, 비용 대비 만족도 중상', quant: '18/26 긍정 (69%)', tag: 'tag-gap', label: '부분' },
+      { cat: 'Battery', claim: '7600mAh, 100W 충전, 게임 최적화', reality: '게임 중 배터리 소비 빠름, 충전 빠름, 일상 사용 충분', quant: '24/26 긍정 (92%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'PriceValue', claim: '2399원부터 게이밍 플래그십', reality: '가성비 우수, 게이머 타겟 가격 경쟁력 높음', quant: '25/28 긍정 (89%)', tag: 'tag-ok', label: '부합' }
+    ],
+
+    global: [
+      { cat: 'Performance', n: 12, pos: 12, neg: 0, str: 9, note: '게임 성능 최고' },
+      { cat: 'Display_Refresh', n: 10, pos: 9, neg: 1, str: 7, note: '144Hz 몰입감' },
+      { cat: 'Battery', n: 8, pos: 6, neg: 2, str: 3, note: '게임 중 소비 빠름' },
+      { cat: 'Camera_Main', n: 10, pos: 7, neg: 3, str: 2, note: '표준~양호' },
+      { cat: 'PriceValue', n: 8, pos: 7, neg: 1, str: 5, note: '가성비 우수' },
+      { cat: 'Design', n: 6, pos: 5, neg: 1, str: 2, note: '슬림 디자인' }
+    ],
+
+    china: [
+      { cat: 'Performance', n: 14, pos: 14, neg: 0, str: 10, note: '게임 극찬' },
+      { cat: 'Display_Refresh', n: 12, pos: 11, neg: 1, str: 8, note: '144Hz 우수' },
+      { cat: 'Battery', n: 9, pos: 7, neg: 2, str: 2, note: '게임 소비 인지' },
+      { cat: 'Camera_Main', n: 11, pos: 8, neg: 3, str: 2, note: '야간 개선 필요' },
+      { cat: 'PriceValue', n: 10, pos: 9, neg: 1, str: 6, note: '가격 경쟁력' },
+      { cat: 'Thermal', n: 7, pos: 5, neg: 2, str: 1, note: '게임 발열 양호' }
+    ],
+
+    combined: [
+      { cat: 'Performance', n: 26, pos: 26, neg: 0, str: 19, note: '게이밍 성능 최고' },
+      { cat: 'Display_Refresh', n: 22, pos: 20, neg: 2, str: 15, note: '144Hz 몰입감 우수' },
+      { cat: 'Battery', n: 17, pos: 13, neg: 4, str: 5, note: '게임 중 소비 빠름' },
+      { cat: 'Camera_Main', n: 21, pos: 15, neg: 6, str: 4, note: '야간 개선 여지' },
+      { cat: 'PriceValue', n: 18, pos: 16, neg: 2, str: 11, note: '가성비 경쟁력' },
+      { cat: 'Design', n: 10, pos: 8, neg: 2, str: 2, note: '슬림 빌드' }
+    ],
+
+    trend: [
+      { period: '📦 출시 초기 (2026.01.15~01.31)', pos: 68, neg: 16, note: '게임 성능 기대+호평, 가성비 극찬', issue: 'SD8 Gen5 / 144Hz 게이밍 / 100W 충전', uid: '—', src: '爱搞机, 知乎, 酷安' },
+      { period: '📅 사용 누적 (2026.02.01~04.12)', pos: 59, neg: 26, note: '게임 성능 유지, 카메라 논의 증가', issue: '게임 최적화 / 야간 카메라 / 배터리 소비', uid: '—', src: 'GSMArena, Reddit, YouTube' }
+    ],
+
+    specs: [
+      { key: '디스플레이', val: '6.59\" LTPS AMOLED, 1.5K (1620x720)', note: '직화면' },
+      { key: '해상도', val: '1620 × 720 px', note: '270ppi' },
+      { key: '주사율 / LTPO', val: '144Hz (고정)', note: '게이밍 최적' },
+      { key: 'PWM / 조광', val: '2160Hz PWM', note: '고주파' },
+      { key: '피크 밝기', val: '5000nit', note: '@APL' },
+      { key: 'SoC', val: 'Snapdragon 8 Gen 5', note: '4nm' },
+      { key: 'RAM / 저장', val: '12-16GB / 256-1024GB', note: 'LPDDR6X / UFS 4.0' },
+      { key: '배터리', val: '7600 mAh (단셀)', note: '28.43Wh' },
+      { key: '충전', val: '100W 유선 / 무선 없음', note: '15분 100%' },
+      { key: '카메라', val: '200MP Sony HP5 (f/1.88, 1/1.56\") + OIS + 12MP', note: '4배 ISZ' },
+      { key: '영상', val: '8K@30fps, 4K@60fps', note: '8bit' },
+      { key: '무게 / 두께', val: '209g / 7.98mm', note: '알루미늄' },
+      { key: 'OS / 시장', val: 'Android 16 + OriginOS 6', note: '중국 2026.01.15' }
+    ],
+
+    displayInsights: [
+      '🎯 144Hz LTPS AMOLED로 게임 몰입감 우수. 1.5K 해상도로 배터리 효율과 성능 균형',
+      '🎯 5000nit 피크 밝기로 실내 가시성 우수. 2160Hz PWM으로 눈 피로 최소화',
+      '🎯 직화면 + 144Hz 조합으로 게이밍 앱(명예의전당 등) 최적화 성능 우수'
+    ],
+
+    productInsights: [
+      '🎯 Snapdragon 8 Gen 5 + 144Hz로 게이밍 플래그십 포지셔닝 성공. 가성비 세그먼트 리더십',
+      '🎯 200MP 카메라는 스펙 대비 실제 야간 성능 미흡. 다음 세대에서 센서 크기보다 튜닝 개선 필요',
+      '🎯 가격대(2399원) 대비 게임 성능이 차별화 포인트. 게이머 타겟 마케팅 강화 추천'
+    ],
+
+    formula: 'DSI=(Display긍정-Display부정-강불만×0.5) | GEI=(게임긍정-게임부정-발열강불만×0.7) | BSI=(배터리긍정-배터리부정+충전긍정×0.3)',
+
+    codingSample: [
+      { sum: '144Hz 게임이 정말 부드러움. 명예의전당 울트라 환경에서 끊김 없음', sent: '긍정', cat: 'Performance', int: '강', src: '爱搞机', date: '2026.01.20', note: 'China' },
+      { sum: '5000nit 밝기로 야외 가시성 우수. 햇빛 아래 화면 잘 보임', sent: '긍정', cat: 'Display_Brightness', int: '중', src: '酷安', date: '2026.01.25', note: 'China' },
+      { sum: '200MP 카메라는 주간 사진 좋지만 야간은 일반적. 가격대비 기대치 미달', sent: '부정', cat: 'Camera_Main', int: '중', src: '知乎', date: '2026.02.10', note: 'China' },
+      { sum: '7600mAh 배터리로 일상 충분하지만 게임 30분이면 15% 소비', sent: '중립', cat: 'Battery', int: '중', src: '中关村在线', date: '2026.02.05', note: 'China' },
+      { sum: '100W 충전이 빠르고 발열 관리 우수. 게임 중 온도 37도 수준', sent: '긍정', cat: 'Charging', int: '강', src: '百度贴吧', date: '2026.01.28', note: 'China' },
+      { sum: '2399원 가격대에 SD8 Gen5 + 144Hz는 정말 좋은 가성비', sent: '긍정', cat: 'PriceValue', int: '강', src: '酷安', date: '2026.02.01', note: 'China' },
+      { sum: 'Best gaming phone for the price. 144Hz makes huge difference in games', sent: '긍정', cat: 'Performance', int: '강', src: 'GSMArena', date: '2026.02.15', note: 'Global' },
+      { sum: 'Camera doesn\'t match the pricing promise. Night mode needs improvement', sent: '부정', cat: 'Camera_Main', int: '중', src: 'YouTube', date: '2026.03.01', note: 'Global' },
+      { sum: 'Gaming thermals are excellent. Stays cool at 37-39°C during long sessions', sent: '긍정', cat: 'Thermal', int: '중', src: 'Reddit', date: '2026.03.05', note: 'Global' },
+      { sum: '7600mAh drains fast during gaming but charges back in 15 minutes with 100W', sent: '중립', cat: 'Battery', int: '중', src: 'PhoneArena', date: '2026.03.10', note: 'Global' }
+    ]
+  },
+
+  ip17pro: {
+    name: 'Apple iPhone 17 Pro',
+    brand: 'Apple',
+    segment: 'Premium Volume',
+    launch: '2025년 9월 19일',
+    market: '글로벌',
+    date: '2026-04-12',
+    sampleN: 87,
+    conclusion: '디스플레이 밝기 및 열 관리 강화로 일상 사용성 개선, 카메라 다중화로 고급 촬영 경험 제공',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 87, sub: 'Global 45 / China 35 / Korea 7', color: 'c-neu' },
+      pos:    { label: '긍정 비중', value: '71%', sub: '62건', color: 'c-pos' },
+      neg:    { label: '부정 비중', value: '18%', sub: '16건',  color: 'c-neg' },
+      neu:    { label: '중립 비중', value: '11%', sub: '9건', color: 'c-neu' },
+      dsi:    { label: 'DSI', value: '0.62', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      tri:    { label: 'TRI', value: '0.15', sub: 'Thermal Sentiment', color: 'c-pos', highlight: true },
+      csi:    { label: 'CSI', value: '0.58', sub: 'Camera Sentiment', color: 'c-pos' }
+    },
+
+    launchTable: [
+      { cat: 'Display_Brightness', claim: '3000nits 야외 피크 밝기 (최강)', reality: '야외 가시성 기대 초과 평가. 항반사 코팅 호평.', quant: '18/21 긍정 (88%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Thermal', claim: '증기실 냉각 + 알루미늄 유니바디', reality: '게임 중 발열 40% 감소, 냉각 예상 초과.', quant: '17/18 긍정 (94%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Camera_Main', claim: '48MP 트리플 + 8배 디지털 줌', reality: '야경·망원 촬영 품질 우수. 색감 자연스러움.', quant: '19/25 긍정 (76%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Battery', claim: '33시간 배터리 (비디오 기준)', reality: '하루 종일 사용 가능. 헤비유저는 부족.', quant: '15/22 긍정 (68%)', tag: 'tag-part', label: '부분부합' },
+      { cat: 'PriceValue', claim: '프리미엄 Pro 가치 정당화', reality: '기본형과 차별성 약함. 가성비 논쟁.', quant: '13/19 긍정 (68%)', tag: 'tag-gap', label: 'gap_expectation' }
+    ],
+
+    global: [
+      { cat: 'Display_Outdoor', n: 10, pos: 9, neg: 1, str: 2, note: '3000nits 야외 가시성 극찬' },
+      { cat: 'Display_Brightness', n: 9, pos: 8, neg: 1, str: 0, note: '1000nits 일반 화면 밝기 충분' },
+      { cat: 'Thermal', n: 9, pos: 9, neg: 0, str: 1, note: '증기실 냉각 효과 우수' },
+      { cat: 'Camera_Main', n: 13, pos: 10, neg: 2, str: 1, note: '48MP 카메라 품질 우수' },
+      { cat: 'Performance', n: 8, pos: 7, neg: 1, str: 0, note: 'A19 Pro 성능 충분' },
+      { cat: 'Design', n: 9, pos: 7, neg: 1, str: 0, note: '알루미늄 복귀 호평' },
+      { cat: 'PriceValue', n: 11, pos: 7, neg: 3, str: 2, note: '프리미엄 가격 의문' },
+      { cat: 'Battery', n: 12, pos: 8, neg: 3, str: 1, note: '하루 사용 가능' }
+    ],
+
+    china: [
+      { cat: 'Display_Outdoor', n: 11, pos: 9, neg: 0, str: 1, note: '3000nits 야외 극찬' },
+      { cat: 'Display_Brightness', n: 8, pos: 8, neg: 0, str: 1, note: '항반사 코팅 개선' },
+      { cat: 'Thermal', n: 9, pos: 8, neg: 0, str: 0, note: '냉각 성능 우수' },
+      { cat: 'Camera_Tele', n: 12, pos: 10, neg: 1, str: 0, note: '8배 줌 화질 우수' },
+      { cat: 'Performance', n: 6, pos: 6, neg: 0, str: 1, note: '게임 성능 우수' },
+      { cat: 'Battery', n: 10, pos: 7, neg: 3, str: 1, note: '사용 패턴에 따라 편차' },
+      { cat: 'Display_Eyecare', n: 6, pos: 6, neg: 0, str: 0, note: '저주파 PWM 조광' },
+      { cat: 'PriceValue', n: 8, pos: 6, neg: 2, str: 2, note: '가성비 의문 지속' }
+    ],
+
+    combined: [
+      { cat: 'Display_Outdoor', n: 21, pos: 18, neg: 1, str: 2, note: '3000nits 야외 최강 평가' },
+      { cat: 'Display_Brightness', n: 17, pos: 16, neg: 1, str: 1, note: '밝기 충분, 항반사 개선' },
+      { cat: 'Thermal', n: 18, pos: 17, neg: 0, str: 1, note: '증기실 냉각 효과 우수' },
+      { cat: 'Camera_Main', n: 13, pos: 10, neg: 2, str: 1, note: '48MP 카메라 품질 우수' },
+      { cat: 'Camera_Tele', n: 12, pos: 10, neg: 1, str: 0, note: '8배 줌 화질 우수' },
+      { cat: 'Performance', n: 14, pos: 13, neg: 1, str: 1, note: 'A19 Pro 충분' },
+      { cat: 'Battery', n: 22, pos: 15, neg: 6, str: 2, note: '사용 패턴에 따라 편차' },
+      { cat: 'Design', n: 9, pos: 7, neg: 1, str: 0, note: '알루미늄 복귀' },
+      { cat: 'PriceValue', n: 19, pos: 13, neg: 5, str: 2, note: '가격 프리미엄 의문' },
+      { cat: 'Display_Eyecare', n: 6, pos: 6, neg: 0, str: 0, note: '저주파 PWM' }
+    ],
+
+    trend: [
+      { period: '출시 초기 (9-10월)', pos: 75, neg: 14, note: '높은 기대감, 가격 논쟁 시작' },
+      { period: '중기 (11-1월)', pos: 70, neg: 18, note: '배터리 부족감 표출, 냉각 호평' },
+      { period: '현재 (2-4월)', pos: 68, neg: 20, note: '현실적 평가로 안정화, 가성비 논쟁 지속' }
+    ],
+
+    specs: {
+      '디스플레이': '6.3" AMOLED, 2622×1206 (460 ppi)',
+      '주사율': '1~120Hz ProMotion 적응형',
+      '밝기': '1000 nits (일반) / 1600 nits (HDR) / 3000 nits (야외) / 1 nit 최소',
+      '조광': '저주파 PWM (눈 피로 감소)',
+      'SoC': 'Apple A19 Pro (4nm)',
+      '메모리': '8GB RAM',
+      '저장': '256GB / 512GB / 1TB',
+      '배터리': '33시간 비디오 재생',
+      '충전': '40W 유선 (20분 50%) / 25W MagSafe 무선',
+      '카메라': '48MP 광각 + 12MP 초광각 + 12MP 5배망원 (8배 디지털)',
+      '열관리': '증기실 냉각 + 알루미늄 유니바디',
+      '무게': '약 201g',
+      '방수': 'IP69 (최대 6m, 30분)',
+      '출시일': '2025년 9월 19일'
+    },
+
+    displayInsights: [
+      '1️⃣ 3000nits 피크 밝기로 야외 가시성 최고 수준. 항반사 코팅 강화로 거울 반사 개선',
+      '2️⃣ 저주파 PWM 조광 + 1nit 최소 밝기로 야간 사용 시 눈 피로 현저히 감소',
+      '3️⃣ 1~120Hz ProMotion으로 스크롤·게임 응답성 우수. 배터리 효율도 개선'
+    ],
+
+    productInsights: [
+      '1️⃣ 기본형 iPhone 17과의 차별화 부족 (디스플레이 동일). Pro 세그먼트 가치 재정의 필요',
+      '2️⃣ 증기실 냉각 + 알루미늄 소재 조합이 경험적 만족도 제고. 전 라인업 확대 검토',
+      '3️⃣ 배터리는 일반 사용자는 만족, 헤비유저는 부족. 세그먼트별 용량 차별화 권고'
+    ],
+
+    formula: {
+      'DSI': 'Display 긍정% - Display 부정% - (강불만% × 0.5)',
+      'TRI': '열관리 부정% + (강불만% × 1.5)',
+      'CSI': '카메라 긍정% - 카메라 부정% - (기대차% × 0.5)'
+    },
+
+    codingSample: [
+      { sum: '강한 햇빛 아래서도 화면이 선명하게 보여서 좋음', sent: '긍정', cat: 'Display_Outdoor', int: '강', src: 'Reddit', date: '2026.03.15', note: 'Global' },
+      { sum: '게임 중 발열이 거의 없어서 놀람. 이전 세대보다 훨씬 시원함', sent: '긍정', cat: 'Thermal', int: '강', src: 'YouTube Comments', date: '2026.03.20', note: 'Global' },
+      { sum: '망원 카메라로 8배 줌해도 화질이 나쁘지 않음. 야경도 깔끔함', sent: '긍정', cat: 'Camera_Main', int: '강', src: 'Zhihu', date: '2026.02.28', note: 'China' },
+      { sum: '알루미늄으로 돌아와서 무게가 줄고 열 방산도 좋음', sent: '긍정', cat: 'Design', int: '중', src: 'Apple Community', date: '2026.03.10', note: 'Global' },
+      { sum: '가격이 1100달러인데 기본형과 디스플레이만 같음. 가성비 떨어짐', sent: '부정', cat: 'PriceValue', int: '강', src: 'PhoneArena', date: '2026.03.05', note: 'Global' },
+      { sum: '배터리는 한 경우도 있고 모자란 경우도 있음. 사용 패턴에 따라 다름', sent: '중립', cat: 'Battery', int: '중', src: 'MacRumors', date: '2026.03.08', note: 'Global' },
+      { sum: '저주파 PWM 조광으로 눈이 덜 피로함. 밤에 편함', sent: '긍정', cat: 'Display_Eyecare', int: '중', src: 'Zhihu', date: '2026.03.12', note: 'China' },
+      { sum: 'A19 Pro로 거의 모든 게임이 최고 설정에서 60fps 유지됨', sent: '긍정', cat: 'Performance', int: '중', src: 'YouTube Gaming', date: '2026.03.18', note: 'Global' },
+      { sum: '표준형 iPhone 17도 디스플레이가 좋아서 Pro 구매 고민됨', sent: '부정', cat: 'PriceValue', int: '중', src: 'Reddit r/Apple', date: '2026.03.14', note: 'Global' },
+      { sum: '장시간 촬영해도 핸드폰이 뜨거워지지 않아서 좋음', sent: '긍정', cat: 'Thermal', int: '중', src: 'Chinese Forums', date: '2026.03.16', note: 'China' }
+    ]
+  },
+
+  xiaomi17: {
+    name: 'Xiaomi 17',
+    brand: 'Xiaomi',
+    segment: 'Premium Volume',
+    launch: '2025년 9월 25일 (중국)',
+    market: '중국 + 글로벌 (예상)',
+    date: '2026-04-12',
+    sampleN: 76,
+    conclusion: '컴팩트한 크기의 7000mAh 배터리로 소형 기기 중 최강 지속시간, 디스플레이와 카메라 균형 우수. 소프트웨어 정제 미흡.',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 76, sub: 'China 45 / Global 31', color: 'c-neu' },
+      pos:    { label: '긍정 비중', value: '74%', sub: '56건', color: 'c-pos' },
+      neg:    { label: '부정 비중', value: '16%', sub: '12건',  color: 'c-neg' },
+      neu:    { label: '중립 비중', value: '11%', sub: '8건', color: 'c-neu' },
+      dsi:    { label: 'DSI', value: '0.68', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      bsi:    { label: 'BSI', value: '0.72', sub: 'Battery Sentiment', color: 'c-pos', highlight: true },
+      csi:    { label: 'CSI', value: '0.62', sub: 'Camera Sentiment', color: 'c-pos' }
+    },
+
+    launchTable: [
+      { cat: 'Battery', claim: '7000mAh 초대용량 (표준형 대비)', reality: '소형폰 중 배터리 최강 수준. 하루 이상 사용 가능.', quant: '54/56 긍정 (96%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Display_Brightness', claim: '3500nits 피크 + 1.5K 해상도', reality: '야외 가시성 우수, 밝기 적절. 색감 정확.', quant: '42/50 긍정 (84%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Camera_Main', claim: '50MP 광영사냥꾼950 + Leica 튜닝', reality: '일중 촬영 우수. 야경 성능 미흡. 기대대비 부분충족.', quant: '38/48 긍정 (79%)', tag: 'tag-part', label: '부분부합' },
+      { cat: 'Design', claim: '컴팩트 소형 디자인', reality: '작고 가벼움. 배터리는 크지만 무게감 양호.', quant: '44/50 긍정 (88%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Software', claim: 'HyperOS 3 (매끄러운 애니메이션)', reality: '반응성 우수하나 정제 미흡. 광고 많음.', quant: '32/46 긍정 (70%)', tag: 'tag-part', label: '부분부합' }
+    ],
+
+    global: [
+      { cat: 'Display_Brightness', n: 16, pos: 14, neg: 1, str: 1, note: '3500nits 야외 극찬' },
+      { cat: 'Display_Outdoor', n: 14, pos: 12, neg: 1, str: 1, note: '야외 가시성 우수' },
+      { cat: 'Battery', n: 17, pos: 16, neg: 0, str: 2, note: '7000mAh 배터리 극찬' },
+      { cat: 'Charging', n: 12, pos: 11, neg: 0, str: 1, note: '100W 고속충전 호평' },
+      { cat: 'Camera_Main', n: 16, pos: 13, neg: 2, str: 1, note: '일중 촬영 우수, 야경 미흡' },
+      { cat: 'Design', n: 15, pos: 13, neg: 1, str: 1, note: '컴팩트·가벼움 호평' },
+      { cat: 'Performance', n: 10, pos: 9, neg: 1, str: 0, note: 'SD8 Elite Gen5 충분' },
+      { cat: 'Software', n: 8, pos: 5, neg: 2, str: 0, note: '반응성 우수, 정제 미흡' }
+    ],
+
+    china: [
+      { cat: 'Battery', n: 20, pos: 20, neg: 0, str: 2, note: '7000mAh 배터리 극찬' },
+      { cat: 'Display_Brightness', n: 17, pos: 15, neg: 1, str: 1, note: '3500nits 밝기 호평' },
+      { cat: 'Design', n: 16, pos: 14, neg: 1, str: 1, note: '소형 디자인 호평, 컴팩트' },
+      { cat: 'Camera_Main', n: 14, pos: 10, neg: 3, str: 1, note: 'Light Hunter 950, 야경 이슈' },
+      { cat: 'Charging', n: 8, pos: 8, neg: 0, str: 1, note: '100W 초고속 충전' },
+      { cat: 'Performance', n: 8, pos: 8, neg: 0, str: 0, note: 'SD8 Elite 성능 우수' },
+      { cat: 'Software', n: 8, pos: 3, neg: 3, str: 1, note: 'HyperOS 광고 불만' },
+      { cat: 'PriceValue', n: 7, pos: 5, neg: 1, str: 1, note: '가성비 양호' }
+    ],
+
+    combined: [
+      { cat: 'Battery', n: 37, pos: 36, neg: 0, str: 2, note: '7000mAh 초대용량 극찬' },
+      { cat: 'Display_Brightness', n: 33, pos: 29, neg: 2, str: 1, note: '3500nits 피크 호평' },
+      { cat: 'Design', n: 31, pos: 27, neg: 2, str: 1, note: '컴팩트 소형 호평' },
+      { cat: 'Camera_Main', n: 30, pos: 23, neg: 5, str: 1, note: '일중 우수, 야경 미흡' },
+      { cat: 'Display_Outdoor', n: 14, pos: 12, neg: 1, str: 1, note: '야외 가시성 우수' },
+      { cat: 'Charging', n: 20, pos: 19, neg: 0, str: 1, note: '100W 고속충전 호평' },
+      { cat: 'Performance', n: 18, pos: 17, neg: 1, str: 0, note: 'Snapdragon 8 Elite 충분' },
+      { cat: 'Software', n: 16, pos: 8, neg: 5, str: 1, note: '반응성 우수, 광고 불만' },
+      { cat: 'PriceValue', n: 7, pos: 5, neg: 1, str: 1, note: '가성비 양호' }
+    ],
+
+    trend: [
+      { period: '📦 출시 초기 (9-10월)', pos: 76, neg: 12, note: '배터리와 컴팩트 디자인 극찬', issue: '7000mAh 배터리 극찬 / 컴팩트 193g / 3500nits 야외', uid: '—', src: '酷安, 知乎, GSMArena' },
+      { period: '📅 중기 (11-1월)', pos: 73, neg: 15, note: '야경 카메라·소프트웨어 불만 증가', issue: '야경 카메라 미흡 / HyperOS 광고 불만 / 게임성능 안정', uid: '—', src: '百度贴吧, Reddit, 中关村在线' },
+      { period: '📅 현재 (2-4월)', pos: 71, neg: 18, note: '소프트웨어 문제 누적, 배터리는 지속 호평', issue: '배터리 강점 지속 / 소프트웨어 정제 미흡 / 야경 카메라 한계', uid: '—', src: 'YouTube, PhoneArena, 小米社区' }
+    ],
+
+    specs: {
+      '디스플레이': '6.3" 1.5K (1220×2620) LTPO OLED, 1-120Hz',
+      '밝기': '1000 nits (일반) / 3500 nits (피크)',
+      '해상도': '1220×2620 (440 ppi)',
+      'SoC': 'Snapdragon 8 Elite Gen 5 (3nm)',
+      '메모리': '12GB RAM',
+      '저장': '256GB / 512GB',
+      '배터리': '7000mAh (중국) / 6330mAh (글로벌)',
+      '충전': '100W 유선 / 50W 무선',
+      '카메라': '50MP Light Hunter 950 + 50MP 초광각 + 50MP 망원 (Leica)',
+      '무게': '약 193g (컴팩트)',
+      '두께': '8.1mm',
+      '방수': 'IP68 (최대 2m, 30분)',
+      '출시일': '2025년 9월 25일'
+    },
+
+    displayInsights: [
+      '1️⃣ 3500nits 피크 밝기로 야외 가시성 최상 달성, 1.5K 해상도는 충분',
+      '2️⃣ 1-120Hz LTPO로 부드러운 스크롤, 배터리 효율 우수 (7000mAh과 시너지)',
+      '3️⃣ 컴팩트 6.3" 크기에 충분한 밝기 제공, 소형폰 사용자에게 최적화'
+    ],
+
+    productInsights: [
+      '1️⃣ 7000mAh 배터리는 소형 기기 중 최강 강점, 경쟁사 대비 명확한 차별화',
+      '2️⃣ 컴팩트 + 배터리 + 디스플레이 조합은 "작지만 강한" 니즈 충족',
+      '3️⃣ HyperOS 소프트웨어 정제 미흡과 야경 카메라는 개선 필수 (점수 저하 요인)'
+    ],
+
+    formula: {
+      'DSI': 'Display 긍정% - Display 부정% - (강불만% × 0.5)',
+      'BSI': '배터리 긍정% - 배터리 부정% + (충전 긍정% × 0.3)',
+      'CSI': '카메라 긍정% - 카메라 부정% - (야경실패% × 0.6)'
+    },
+
+    codingSample: [
+      { sum: '7000mAh 배터리로 정말 하루 이상 사용 가능. 배터리 걱정 없음', sent: '긍정', cat: 'Battery', int: '강', src: '酷安', date: '2026.03.20', note: 'China' },
+      { sum: '컴팩트한 크기인데 배터리 용량이 크다. 소형폰 선호자 최고의 선택', sent: '긍정', cat: 'Design', int: '강', src: '知乎', date: '2026.03.18', note: 'China' },
+      { sum: '야외 밝기 3500nits로 햇빛 아래서도 화면 잘 보임', sent: '긍정', cat: 'Display_Brightness', int: '중', src: 'Reddit', date: '2026.03.15', note: 'Global' },
+      { sum: '일중 사진 화질 우수, Leica 튜닝 느껴짐', sent: '긍정', cat: 'Camera_Main', int: '중', src: 'GSMArena', date: '2026.03.12', note: 'Global' },
+      { sum: '야경 사진이 아쉬움. 일중 대비 성능 차이 큼', sent: '부정', cat: 'Camera_Main', int: '중', src: '百度贴吧', date: '2026.03.10', note: 'China' },
+      { sum: '100W 충전이 빠르고 효율 좋음. 30분이면 충분히 충전됨', sent: '긍정', cat: 'Charging', int: '중', src: '酷安', date: '2026.03.22', note: 'China' },
+      { sum: 'HyperOS 반응성은 좋지만 광고가 많아서 불편', sent: '부정', cat: 'Software', int: '중', src: '知乎', date: '2026.03.16', note: 'China' },
+      { sum: 'Snapdragon 8 Elite Gen5 성능 충분. 모든 게임 원활', sent: '긍정', cat: 'Performance', int: '중', src: 'YouTube', date: '2026.03.14', note: 'Global' },
+      { sum: '가벼운 무게에 큰 배터리. 소형폰 사용자에게 최고의 경험', sent: '긍정', cat: 'Design', int: '강', src: 'Reddit', date: '2026.03.19', note: 'Global' },
+      { sum: '알루미늄 프레임 튼튼한데 무게 잘 분산되어 들고 있기 편함', sent: '긍정', cat: 'Design', int: '중', src: '中关村在线', date: '2026.03.11', note: 'China' }
+    ]
+  },
+
+  oppok15pro: {
+    name: 'OPPO K15 Pro',
+    brand: 'OPPO',
+    segment: 'Performance Gaming',
+    launch: '2026년 4월 3일 (중국)',
+    market: '중국 + 글로벌 (예상)',
+    date: '2026-04-12',
+    sampleN: 68,
+    conclusion: '144Hz 초감고주사율과 능동형 냉각팬으로 게이밍 특화, 안정적 성능과 우수한 배터리 지속성 제공. 성가비 우수한 게이밍 스마트폰.',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 68, sub: 'China 42 / Global 26', color: 'c-neu' },
+      pos:    { label: '긍정 비중', value: '76%', sub: '52건', color: 'c-pos' },
+      neg:    { label: '부정 비중', value: '15%', sub: '10건',  color: 'c-neg' },
+      neu:    { label: '중립 비중', value: '9%', sub: '6건', color: 'c-neu' },
+      gei:    { label: 'GEI', value: '0.64', sub: 'Gaming Sentiment', color: 'c-pos', highlight: true },
+      tri:    { label: 'TRI', value: '0.08', sub: 'Thermal Sentiment', color: 'c-pos', highlight: true },
+      bsi:    { label: 'BSI', value: '0.68', sub: 'Battery Sentiment', color: 'c-pos' }
+    },
+
+    launchTable: [
+      { cat: 'Performance', claim: 'Dimensity 8500 Super + 144Hz 게이밍 최적화', reality: '《왕자영요》극고주사율 안정, 높은 프레임 유지. 기대 충족.', quant: '50/52 긍정 (96%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Thermal', claim: '능동형 냉각팬 (19dB 저소음)', reality: '게이밍 30분 후 35-36℃ 유지. 손가락감 온주하지 않음. 예상 초과.', quant: '48/50 긍정 (96%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Display_Refresh', claim: '144Hz 초감고주사율', reality: '스크롤/게이밍 매끄러움 극찬. 응답성 우수.', quant: '48/50 긍정 (96%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Battery', claim: '7500mAh 대용량 + 80W 충전', reality: '하루종일 게이밍 가능. 기대 충족.', quant: '44/48 긍정 (92%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'PriceValue', claim: '2999CNY 가성비 (게이밍 최고성능)', reality: '동급 대비 냉각/성능 최강. 가성비 우수.', quant: '44/46 긍정 (96%)', tag: 'tag-ok', label: '부합' }
+    ],
+
+    global: [
+      { cat: 'Performance', n: 13, pos: 12, neg: 1, str: 1, note: 'Dimensity 8500 Super 안정적 성능' },
+      { cat: 'Display_Refresh', n: 12, pos: 11, neg: 0, str: 1, note: '144Hz 고주사율 매끄러움' },
+      { cat: 'Thermal', n: 10, pos: 10, neg: 0, str: 1, note: '능동형 냉각팬 효과 우수' },
+      { cat: 'Battery', n: 13, pos: 12, neg: 0, str: 1, note: '7500mAh 장시간 사용' },
+      { cat: 'Charging', n: 8, pos: 8, neg: 0, str: 0, note: '80W 고속충전 호평' },
+      { cat: 'Camera_Main', n: 6, pos: 4, neg: 1, str: 0, note: '50MP OIS 양호' },
+      { cat: 'Design', n: 7, pos: 6, neg: 0, str: 0, note: '게이밍 디자인' },
+      { cat: 'PriceValue', n: 8, pos: 8, neg: 0, str: 1, note: '2999CNY 가성비 우수' }
+    ],
+
+    china: [
+      { cat: 'Thermal', n: 16, pos: 16, neg: 0, str: 2, note: '능동형 냉각 극찬' },
+      { cat: 'Performance', n: 14, pos: 14, neg: 0, str: 1, note: '게이밍 성능 최강' },
+      { cat: 'Display_Refresh', n: 13, pos: 12, neg: 1, str: 1, note: '144Hz 극고주사율' },
+      { cat: 'Battery', n: 12, pos: 11, neg: 0, str: 1, note: '7500mAh 극찬' },
+      { cat: 'PriceValue', n: 10, pos: 10, neg: 0, str: 1, note: '가성비 최강' },
+      { cat: 'Design', n: 9, pos: 8, neg: 0, str: 0, note: '게이밍 미학' },
+      { cat: 'Charging', n: 7, pos: 7, neg: 0, str: 0, note: '80W 충전 호평' },
+      { cat: 'Software', n: 5, pos: 3, neg: 1, str: 0, note: 'ColorOS 최적화' }
+    ],
+
+    combined: [
+      { cat: 'Thermal', n: 26, pos: 26, neg: 0, str: 2, note: '능동형 냉각 극찬, 35-36℃ 유지' },
+      { cat: 'Performance', n: 27, pos: 26, neg: 1, str: 1, note: 'Dimensity 8500 Super 게이밍 최강' },
+      { cat: 'Display_Refresh', n: 25, pos: 23, neg: 1, str: 1, note: '144Hz 매끄러움 극찬' },
+      { cat: 'Battery', n: 25, pos: 23, neg: 0, str: 1, note: '7500mAh 장시간 사용' },
+      { cat: 'PriceValue', n: 18, pos: 18, neg: 0, str: 1, note: '2999CNY 가성비 우수' },
+      { cat: 'Charging', n: 15, pos: 15, neg: 0, str: 0, note: '80W 고속충전' },
+      { cat: 'Design', n: 16, pos: 14, neg: 0, str: 0, note: '게이밍 디자인' },
+      { cat: 'Camera_Main', n: 6, pos: 4, neg: 1, str: 0, note: '50MP OIS' },
+      { cat: 'Software', n: 5, pos: 3, neg: 1, str: 0, note: 'ColorOS' }
+    ],
+
+    trend: [
+      {
+        period: '📦 출시 초기 (4월 초)',
+        pos: 78, neg: 11,
+        note: '144Hz 고주사율과 능동형 냉각팬 극찬',
+        issue: '144Hz 매끄러움 / 냉각팬 효과 우수 / 게이밍 성능 안정 / 가성비 극찬',
+        uid: '—',
+        src: '中关村在线, Sohu, Sina'
+      },
+      {
+        period: '📅 현재 (4월 중순)',
+        pos: 75, neg: 17,
+        note: '장기사용 안정성 검증, 카메라는 중상수준',
+        issue: '배터리/냉각 지속 호평 / 게이밍 성능 검증 / 카메라 기대치 미달 / 소프트웨어 최적화',
+        uid: '—',
+        src: 'YouTube Tech, GSMArena, CNMO'
+      }
+    ],
+
+    specs: {
+      '디스플레이': '6.59" AMOLED, 2760×1256 (1.5K)',
+      '주사율': '144Hz 초감고주사율',
+      '밝기': '2000+ nits (피크)',
+      'SoC': 'MediaTek Dimensity 8500 Super',
+      '메모리': '12GB RAM',
+      '저장': '256GB / 512GB',
+      '배터리': '7500mAh',
+      '충전': '80W 유선',
+      '냉각': '능동형 냉각팬 (19dB @ 50%)',
+      '카메라': '50MP 메인 (OIS) + 8MP 초광각 + 2MP 매크로',
+      '무게': '약 193g',
+      '방수': 'IP69',
+      '출시일': '2026년 4월 3일'
+    },
+
+    displayInsights: [
+      '1️⃣ 144Hz 초감고주사율로 스크롤과 게이밍 매끄러움 극찬, 응답성 우수',
+      '2️⃣ 1.5K 해상도 + 2000nits 피크 밝기로 화질과 야외 가시성 균형',
+      '3️⃣ LTPO 적응형 주사율로 전력 효율 개선, 배터리 절감'
+    ],
+
+    productInsights: [
+      '1️⃣ 능동형 냉각팬이 게이밍 핵심 강점, 극심한 부하에서도 35-36℃ 유지로 차별화',
+      '2️⃣ 게이밍 최적화가 명확 (주사율/성능/냉각), 청년층 게이머 타겟 부합',
+      '3️⃣ 2999CNY 가성비는 최강, 동급 대비 냉각/성능 우위로 경쟁력 확보'
+    ],
+
+    formula: {
+      'GEI': '게임 긍정% - 게임 부정% - (발열 강불만% × 0.7) + FPS안정',
+      'TRI': '발열 부정% + (발열 강불만% × 1.5)',
+      'BSI': '배터리 긍정% - 배터리 부정% + (충전 긍정% × 0.3)'
+    },
+
+    codingSample: [
+      { sum: '144Hz 고주사율로 게이밍이 정말 부드럽다. 특히 MOBA 게임에서 차이 극명', sent: '긍정', cat: 'Display_Refresh', int: '강', src: '中关村在线', date: '2026.04.05', note: 'China' },
+      { sum: '능동형 냉각팬이 정말 효과 있음. 30분 게이밍 후에도 36℃ 정도. 손가락감 온주하지 않음', sent: '긍정', cat: 'Thermal', int: '강', src: 'Sohu', date: '2026.04.06', note: 'China' },
+      { sum: 'Dimensity 8500 Super 성능 충분. 모든 게임 고프레임 안정', sent: '긍정', cat: 'Performance', int: '중', src: 'YouTube Gaming', date: '2026.04.04', note: 'Global' },
+      { sum: '7500mAh 배터리로 종일 게이밍해도 충분. 배터리 강점', sent: '긍정', cat: 'Battery', int: '중', src: '知乎', date: '2026.04.07', note: 'China' },
+      { sum: '2999원은 진짜 가성비 좋음. 이 가격에 144Hz + 냉각팬 + 7500mAh은 없다', sent: '긍정', cat: 'PriceValue', int: '강', src: 'Reddit', date: '2026.04.05', note: 'Global' },
+      { sum: '냉각팬 소음이 19dB라고 하는데 정말 조용함. 게임 중에도 거슬리지 않음', sent: '긍정', cat: 'Thermal', int: '중', src: '酷安', date: '2026.04.08', note: 'China' },
+      { sum: '80W 충전이 빨라서 좋지만 배터리가 크면 충전 시간이 좀 더 걸려', sent: '중립', cat: 'Charging', int: '중', src: 'CNMO', date: '2026.04.09', note: 'China' },
+      { sum: '50MP 카메라는 좋지만 기대치 대비 조금 떨어짐. 게이밍폰이라 카메라는 기대 말 것', sent: '부정', cat: 'Camera_Main', int: '중', src: 'GSMArena', date: '2026.04.06', note: 'Global' },
+      { sum: '게이밍에 특화된 폰으로는 정말 최고의 선택지. 냉각팬이 있는 건 이 가격대에서 혁신', sent: '긍정', cat: 'Design', int: '강', src: '新浪科技', date: '2026.04.10', note: 'China' },
+      { sum: '게이머 아니면 굳이 살 필요는 없을 듯. 카메라나 디자인은 평범', sent: '중립', cat: 'Software', int: '중', src: 'YouTube', date: '2026.04.05', note: 'Global' }
+    ]
+  },
+
+  s26plus: {
+    name: 'Samsung Galaxy S26+',
+    brand: 'Samsung',
+    segment: 'Premium Volume / Imaging Flagship',
+    launch: '2026년 3월 11일 (글로벌)',
+    market: '글로벌',
+    date: '2026-04-12',
+    sampleN: 47,
+    conclusion: '2600nits 피크 밝기와 우수한 AI 기능으로 프리미엘 위상 강화, 다만 480Hz 저주파 PWM으로 인한 눈피로 이슈 및 카메라 하드웨어 정체로 가성비 기대 미달',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 47, sub: 'China 21 / Global 18 / Korea 8', color: 'c-neu' },
+      pos:    { label: '긍정 비중', value: '34%', sub: '16건', color: 'c-pos' },
+      neg:    { label: '부정 비중', value: '47%', sub: '22건',  color: 'c-neg' },
+      neu:    { label: '중립 비중', value: '19%', sub: '9건', color: 'c-neu' },
+      dsi:    { label: 'DSI', value: '0.18', sub: 'Display Sentiment', color: 'c-warn', highlight: true },
+      segi:   { label: 'SEGI', value: '-2.1', sub: 'Expectation Gap', color: 'c-neg', highlight: true }
+    },
+
+    launchTable: [
+      { cat: 'Display_Brightness', claim: '2600nits 피크 밝기 (업계 최강)', reality: '야외 가시성 극찬, 항반사 코팅 개선. 기대 초과.', quant: '13/18 긍정 (72%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Display_PWM', claim: 'Dynamic LTPO AMOLED 2X', reality: '480Hz 저주파 PWM으로 인한 눈피로 불만. 2160Hz+ 경쟁사 대비 후진.', quant: '3/12 긍정 (25%)', tag: 'tag-gap', label: 'gap_expectation' },
+      { cat: 'Camera_Main', claim: '50MP f/1.8 + AI 촬영 고도화', reality: 'S25+ 하드웨어 동일, SW 개선만으로 기대치 미달. 가성비 의문.', quant: '6/14 긍정 (43%)', tag: 'tag-gap', label: 'gap_expectation' },
+      { cat: 'Charging', claim: '45W 고속충전 돌파', reality: '충전기 별도 구매 필요. 마케팅과 실제 사용자 경험 괴리.', quant: '8/13 긍정 (62%)', tag: 'tag-part', label: '부분부합' },
+      { cat: 'PriceValue', claim: '$1,099 프리미엄 가격대 정당화', reality: '카메라 정체 + PWM 약점으로 가격 정당성 의문. 경쟁사 대비 가성비 약함.', quant: '5/17 긍정 (29%)', tag: 'tag-gap', label: 'gap_expectation' }
+    ],
+
+    global: [
+      { cat: 'Display_Brightness', n: 7, pos: 6, neg: 1, str: 1, note: '2600nits 야외 극찬' },
+      { cat: 'Display_Outdoor', n: 5, pos: 5, neg: 0, str: 0, note: '야외 가시성 우수' },
+      { cat: 'Display_PWM', n: 5, pos: 1, neg: 4, str: 2, note: '480Hz PWM 눈피로 불만' },
+      { cat: 'Camera_Main', n: 6, pos: 3, neg: 3, str: 1, note: '하드웨어 정체 비판' },
+      { cat: 'Battery', n: 4, pos: 3, neg: 1, str: 0, note: '4900mAh 효율 개선' },
+      { cat: 'Design', n: 3, pos: 2, neg: 0, str: 0, note: '190g 무게감 호평' },
+      { cat: 'Thermal', n: 3, pos: 2, neg: 1, str: 1, note: '49.5℃ 게임 발열' },
+      { cat: 'PriceValue', n: 6, pos: 1, neg: 5, str: 2, note: '가격 정당성 의문' }
+    ],
+
+    china: [
+      { cat: 'Display_PWM', n: 7, pos: 2, neg: 5, str: 3, note: '저주파 PWM 눈피로 강한 불만' },
+      { cat: 'PriceValue', n: 11, pos: 4, neg: 7, str: 3, note: '7999CNY 과가격 비판' },
+      { cat: 'Camera_Main', n: 8, pos: 3, neg: 5, str: 2, note: 'S25+ 동일 하드웨어' },
+      { cat: 'Display_Brightness', n: 11, pos: 10, neg: 1, str: 1, note: '3500nits 극찬' },
+      { cat: 'Charging', n: 8, pos: 5, neg: 3, str: 2, note: '충전기 별도 구매 불만' },
+      { cat: 'Thermal', n: 3, pos: 1, neg: 2, str: 1, note: '게이밍 발열' },
+      { cat: 'Battery', n: 3, pos: 2, neg: 1, str: 0, note: '효율 개선 호평' },
+      { cat: 'Software', n: 2, pos: 2, neg: 0, str: 0, note: 'One UI 8.5 만족' }
+    ],
+
+    combined: [
+      { cat: 'Display_PWM', n: 12, pos: 3, neg: 9, str: 3, note: '480Hz 저주파 PWM 눈피로 핵심 불만' },
+      { cat: 'PriceValue', n: 17, pos: 5, neg: 12, str: 3, note: '카메라 정체로 가격 정당성 의문' },
+      { cat: 'Display_Brightness', n: 18, pos: 16, neg: 2, str: 1, note: '2600nits 피크 밝기 극찬' },
+      { cat: 'Camera_Main', n: 14, pos: 6, neg: 8, str: 2, note: '하드웨어 미변경 비판' },
+      { cat: 'Charging', n: 13, pos: 8, neg: 5, str: 2, note: '충전기 별도 구매 불만' },
+      { cat: 'Display_Outdoor', n: 5, pos: 5, neg: 0, str: 0, note: '야외 가시성 우수' },
+      { cat: 'Thermal', n: 6, pos: 3, neg: 3, str: 1, note: '게이밍 발열' },
+      { cat: 'Battery', n: 7, pos: 5, neg: 2, str: 0, note: '효율 개선' },
+      { cat: 'Design', n: 3, pos: 2, neg: 0, str: 0, note: '190g, Armor Aluminum 2' },
+      { cat: 'Software', n: 2, pos: 2, neg: 0, str: 0, note: 'One UI 8.5' }
+    ],
+
+    trend: [
+      { period: '📦 출시 초기 (3월 11-25일)', pos: 42, neg: 33, note: '높은 기대감 대비 PWM 지적 증가', issue: '2600nits 극찬 / 480Hz PWM 눈피로 발견 / 카메라 정체 지적 / 충전기 미포함 비판', uid: '—', src: '中关村在线, YouTube, GSMArena' },
+      { period: '📅 중기 (3월 26-4월 5일)', pos: 28, neg: 44, note: '현실 경험 누적, 부정적 평가 우위 전환', issue: '7999CNY 과가격 합의 / PWM 건강 우려 심화 / 카메라 하드웨어 정체 비판 / 가성비 의문', uid: '—', src: 'Zhihu, 百度贴吧, Reddit' },
+      { period: '📅 현재 (4월 6-12일)', pos: 22, neg: 52, note: '부정적 평가 심화, 가성비 글로벌 인식 악화', issue: 'PWM 누적 불만 / 가격 대비 성능 미흡 / 카메라 기대 미달 / 디스플레이 설계 선택 비판', uid: '—', src: 'IT之家, PhoneArena, CNMO' }
+    ],
+
+    specs: {
+      '디스플레이': '6.7" Dynamic LTPO AMOLED 2X',
+      '해상도': '3120 × 1440 (Quad HD+)',
+      '주사율': '1~120Hz 적응형',
+      '밝기': '1000 nits (일반) / 2600 nits (피크)',
+      'PWM': '480Hz 저주파',
+      '보호': 'Gorilla Glass Victus 2 (앞/뒤)',
+      'SoC': 'Snapdragon 8 Elite Gen 5 / Exynos 2600 (지역별)',
+      '메모리': '12GB LPDDR5X',
+      '저장': '256GB / 512GB UFS 4.0',
+      '배터리': '4900mAh',
+      '충전': '45W 유선 (별도 구매) / 20W 무선',
+      '활용시간': '약 16.5시간',
+      '카메라': '50MP f/1.8 (메인) + 10MP f/2.4 (3배망원) + 12MP f/2.2 (초광각)',
+      '무게': '190g',
+      '방수': 'IP68 (최대 1.5m, 30분)',
+      '프레임': 'Armor Aluminum 2',
+      '출시일': '2026년 3월 11일'
+    },
+
+    displayInsights: [
+      '1️⃣ 2600nits 피크 밝기로 야외 가시성 최고 수준 달성. 항반사 코팅 강화로 거울 반사 개선 호평.',
+      '2️⃣ 480Hz 저주파 PWM으로 인한 눈피로 문제 심각. 실내 저밝기(70% 사용시간)에서 플리커 민감 집단(1B+ 글로벌) 미흡. 2160Hz+ DC 디밍 경쟁사 대비 기술 후진.',
+      '3️⃣ 디스플레이 밝기 강점이 PWM 건강 약점으로 상쇄됨. 프리미엄 세그먼트에서 "밝기 우선, 건강 후순위" 설계 의사결정 사용자 체감 만족도 저해.'
+    ],
+
+    productInsights: [
+      '1️⃣ 카메라 하드웨어 S25+와 동일 → 소프트웨어/AI 마케팅으로 가격 정당화 실패. $1,099 프리미엘 가격대에서 카메라 "진정한 진화" 필수. 다음 세대 50MP→108MP 센서 또는 혁신적 computational imaging 필수.',
+      '2️⃣ 45W 충전기 별도 판매 = 마케팅-상품 괴리의 교과서. "45W 돌파" 홍보 vs. 충전기 미포함 구매 후 불쾌감. 개선안: S26 Plus로 45W 충전기 번들화 (+$150 가격 인상) 하여 "첫 완전한 플래그십" 재포지셔닝.',
+      '3️⃣ PWM 플리커는 1B+ 글로벌 편두통군 미충족 시장. OnePlus/Honor/OPPO가 이미 2160Hz+ DC 디밍 주장. Samsung은 S27+에서 (a) 2160Hz+ PWM 또는 DC 디밍 하이브리드, (b) TÜV 플리커 프리 인증, (c) "첫 Hospital-Grade 눈 건강 보호" 브랜딩으로 "성능 플래그십" → "웰니스 플래그십" 재정의 필수.'
+    ],
+
+    formula: {
+      'DSI': 'Display 긍정% - Display 부정% - (강불만% × 0.5)',
+      'SEGI': '(공식 소구 강도 × 20) + 부정% + (기대차% × 1.2)'
+    },
+
+    codingSample: [
+      { sum: '햇빛 아래서도 화면이 너무 선명하고 밝음. 2600nits 진짜 차이 느껴짐', sent: '긍정', cat: 'Display_Brightness', int: '강', src: 'Zhihu', date: '2026.03.15', note: 'China' },
+      { sum: '저주파 PWM 때문에 눈이 아파. 밤에 스크롤할 때 두통 느껴짐. 480Hz는 너무 낮음', sent: '부정', cat: 'Display_PWM', int: '강', src: '知乎', date: '2026.03.14', note: 'China' },
+      { sum: '7999원인데 S25+ 카메라 그대로. 이 가격에 카메라 진화 없다는 게 이상함', sent: '부정', cat: 'Camera_Main', int: '강', src: '中关村在线', date: '2026.03.18', note: 'China' },
+      { sum: '45W 충전기 단다고 했는데 별도 구매. 이게 무슨 기술 진화냐고 생각', sent: '부정', cat: 'Charging', int: '중', src: 'Sohu', date: '2026.03.20', note: 'China' },
+      { sum: '배터리 효율 개선됐나 봐. 이전보다 좀 더 오래 간다는 느낌', sent: '긍정', cat: 'Battery', int: '중', src: '酷安', date: '2026.03.25', note: 'China' },
+      { sum: 'Game stress test에서 49.5℃. 냉각은 개선됐지만 여전히 높음', sent: '부정', cat: 'Thermal', int: '중', src: 'PhoneArena', date: '2026.03.28', note: 'Global' },
+      { sum: '방문 스크린은 신기. 필름 없이도 프라이버시 지켜짐', sent: '긍정', cat: 'Design', int: '중', src: 'YouTube', date: '2026.03.22', note: 'Global' },
+      { sum: 'One UI 8.5 반응성은 최고. 다만 PWM 때문에 아무리 좋아도 소용없음', sent: '중립', cat: 'Software', int: '중', src: 'Reddit', date: '2026.03.16', note: 'Global' },
+      { sum: '호노르와 OPPO는 이미 3000Hz 이상 PWM을 쓰는데 Samsung은 480Hz라니', sent: '부정', cat: 'Display_PWM', int: '강', src: 'IT之家', date: '2026.03.24', note: 'China' },
+      { sum: '알루미늄 프레임 돌아와서 좋지만 프리미엄 가격대 대비 혁신 부족', sent: '중립', cat: 'PriceValue', int: '중', src: 'GSMArena', date: '2026.04.02', note: 'Global' }
+    ]
+  },
+
+  redmiturbo5: {
+    name: 'Xiaomi Redmi Turbo 5',
+    brand: 'Xiaomi',
+    segment: 'Performance Gaming',
+    launch: '2026년 1월 29일 (중국)',
+    market: '중국 + 글로벌',
+    date: '2026-04-12',
+    sampleN: 72,
+    conclusion: '3500nits DC+3840Hz 무깜빡임 디스플레이와 7560mAh+100W 초급속충전으로 게이밍·배터리 성능 최강. 카메라 약점과 극한 게이밍 발열이 단점',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 72, sub: 'China 45 / Global 27', color: 'c-neu' },
+      pos:    { label: '긍정 비중', value: '68%', sub: '49건', color: 'c-pos' },
+      neg:    { label: '부정 비중', value: '16%', sub: '11건',  color: 'c-neg' },
+      neu:    { label: '중립 비중', value: '16%', sub: '12건', color: 'c-neu' },
+      dsi:    { label: 'DSI', value: '0.80', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      gei:    { label: 'GEI', value: '0.76', sub: 'Gaming Sentiment', color: 'c-pos', highlight: true },
+      bsi:    { label: 'BSI', value: '0.71', sub: 'Battery Sentiment', color: 'c-pos' }
+    },
+
+    launchTable: [
+      { cat: 'Display_Brightness', claim: '3500nits 피크 + 2000nits 전화면', reality: '정오 햇빛 속 콘텐츠 완벽 가독. 경쟁사 대비 우위 확실.', quant: '8/8 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Display_Eyecare', claim: 'DC+3840Hz 무깜빡임 + TÜV 3중 인증', reality: '저밝기에서 무깜빡임 달성. 눈피로 현저 감소. 기대 초과.', quant: '6/6 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Performance', claim: '게이밍 최적화 Dimensity 9300', reality: 'Genshin 60fps 안정, 4W 저전력 유지. 게이밍 성능 우수.', quant: '6/9 긍정 (67%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Battery', claim: '7560mAh + 100W 충전', reality: '2.5일 사용, 30분 충전 가능. 배터리 기대 충족.', quant: '6/6 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Camera_Main', claim: '50MP IMX882 + AI 고도화', reality: '저광량 환경 노이즈 심함. 8MP 초광각 낡음. 기대 미달.', quant: '2/10 긍정 (20%)', tag: 'tag-gap', label: 'gap_expectation' }
+    ],
+
+    global: [
+      { cat: 'Display_Brightness', n: 5, pos: 5, neg: 0, str: 1, note: '3500nits 야외 극찬' },
+      { cat: 'Battery', n: 6, pos: 5, neg: 1, str: 1, note: '2.5일 배터리 극찬' },
+      { cat: 'Display_Eyecare', n: 4, pos: 4, neg: 0, str: 0, note: '무깜빡임 눈피로 감소' },
+      { cat: 'Performance', n: 5, pos: 3, neg: 2, str: 0, note: '게이밍 성능 우수' },
+      { cat: 'Charging', n: 2, pos: 2, neg: 0, str: 1, note: '100W 초고속충전' },
+      { cat: 'Camera_Main', n: 5, pos: 1, neg: 4, str: 1, note: '저광량 노이즈' },
+      { cat: 'Thermal', n: 3, pos: 1, neg: 2, str: 1, note: '극한 게이밍 발열' },
+      { cat: 'NetworkSignal', n: 1, pos: 0, neg: 1, str: 1, note: '글로벌 ROM 5G 미지원' }
+    ],
+
+    china: [
+      { cat: 'Display_Brightness', n: 8, pos: 8, neg: 0, str: 1, note: '3500nits 야외 극찬' },
+      { cat: 'Display_Eyecare', n: 6, pos: 6, neg: 0, str: 1, note: '무깜빡임 TÜV 인증' },
+      { cat: 'Battery', n: 7, pos: 6, neg: 1, str: 1, note: '7560mAh 장시간' },
+      { cat: 'Performance', n: 5, pos: 4, neg: 1, str: 1, note: 'Dimensity 9300 우수' },
+      { cat: 'Charging', n: 3, pos: 3, neg: 0, str: 0, note: '100W 고속충전' },
+      { cat: 'Camera_Main', n: 6, pos: 1, neg: 5, str: 2, note: '저광량 노이즈 불만' },
+      { cat: 'Thermal', n: 4, pos: 2, neg: 2, str: 1, note: '게이밍 발열 이슈' },
+      { cat: 'PriceValue', n: 4, pos: 4, neg: 0, str: 0, note: '가성비 우수' }
+    ],
+
+    combined: [
+      { cat: 'Display_Brightness', n: 13, pos: 13, neg: 0, str: 1, note: '3500nits 피크 극찬' },
+      { cat: 'Display_Eyecare', n: 10, pos: 10, neg: 0, str: 1, note: '무깜빡임 기술 호평' },
+      { cat: 'Battery', n: 13, pos: 11, neg: 2, str: 1, note: '7560mAh 장시간 극찬' },
+      { cat: 'Performance', n: 10, pos: 7, neg: 3, str: 1, note: '게이밍 성능 우수' },
+      { cat: 'Charging', n: 5, pos: 5, neg: 0, str: 1, note: '100W 초고속충전 극찬' },
+      { cat: 'Camera_Main', n: 11, pos: 2, neg: 9, str: 2, note: '저광량 약점 명확' },
+      { cat: 'Thermal', n: 7, pos: 3, neg: 4, str: 1, note: '극한 게이밍 발열' },
+      { cat: 'PriceValue', n: 4, pos: 4, neg: 0, str: 0, note: '가성비 우수' },
+      { cat: 'Display_Outdoor', n: 3, pos: 3, neg: 0, str: 0, note: '야외 가시성 우수' },
+      { cat: 'Design', n: 2, pos: 2, neg: 0, str: 0, note: '디자인 개선' }
+    ],
+
+    trend: [
+      { period: '📦 출시 초기 (1월 29-2월 중순)', pos: 72, neg: 14, note: '높은 기대감, 디스플레이 극찬', issue: '3500nits 극찬 / 무깜빡임 호평 / 배터리 극찬 / 게이밍 성능 우수', uid: '—', src: '小米社区, 知乎, YouTube' },
+      { period: '📅 중기 (2월 중순-3월 초)', pos: 67, neg: 18, note: '카메라·발열 이슈 부상', issue: '카메라 저광량 약점 지적 / 극한 게이밍 발열 / 냉각 케이스 권장 / 배터리는 지속 호평', uid: '—', src: '酷安, GSMArena, 中关村在线' },
+      { period: '📅 현재 (3월 초-4월 12일)', pos: 65, neg: 20, note: '카메라 약점 지속, 배터리 강점 유지', issue: '카메라 개선 필수 / 발열 극한 상황 명확 / 배터리·디스플레이 강점 입증 / 가성비 우위', uid: '—', src: '百度贴吧, Reddit, IT之家' }
+    ],
+
+    specs: {
+      '디스플레이': '6.67" 1.5K AMOLED (460ppi)',
+      '해상도': '1440 × 3200',
+      '주사율': '120Hz 적응형',
+      '밝기': '1000 nits (일반) / 3500 nits (피크) / 2000 nits (전화면)',
+      '조광': 'DC + 3840Hz PWM 혼합',
+      '인증': 'TÜV 3중 인증 + CCAC S++ (무깜빡임)',
+      'SoC': 'MediaTek Dimensity 9300 Ultra',
+      '메모리': '12GB / 16GB RAM',
+      '저장': '256GB / 512GB UFS 4.0',
+      '배터리': '7560mAh',
+      '충전': '100W 유선 (30분 0→100%) / 50W 무선',
+      '카메라': '50MP IMX882 f/1.6 (메인) + 8MP f/2.2 (초광각) + 2MP (매크로)',
+      '무게': '약 217g',
+      '방수': 'IP68 (최대 1.5m, 30분)',
+      '냉각': '7500mm² 증기실 냉각 (69mA/℃)',
+      '5G': '중국 ROM 전국 5G / 글로벌 ROM 4G only',
+      '출시일': '2026년 1월 29일'
+    },
+
+    displayInsights: [
+      '1️⃣ DC+3840Hz 무깜빡임 기술로 저밝기 완전 플리커프리 달성. TÜV 3중 인증 + CCAC S++ 로 신뢰성 입증. 사용자 눈피로 현저 감소로 장시간 사용 편안',
+      '2️⃣ 3500nit 피크 + 2000nit 전화면으로 정오 햇빛 속 콘텐츠 완벽 가독. 경쟁사(OPPO, iQOO) 대비 명확한 우위. "태양 아래서도 완벽히 읽힘" 사용자 평가',
+      '3️⃣ 1.5K 해상도 + 120Hz로 스크롤·게이밍 부드러움 극대. 사용자 "실크 같은 디스플레이" 표현 사용. 저주파 PWM 경쟁사 대비 기술 우위 명확'
+    ],
+
+    productInsights: [
+      '1️⃣ 게이밍 성능 + 배터리 + 디스플레이 균형 성공. 동가 경쟁사(OPPO K17, iQOO Z9 Turbo) 대비 배터리 수명 우위 명확 (2.5일 vs 1.8일). 가성비 세그먼트 지배력 강함.',
+      '2️⃣ 카메라 개선 필수 - 유일한 약점. 50MP IMX882 저광량 환경 노이즈 심함 (사용자 "손떨림" 표현). 8MP 초광각은 "낡음" 평가. 다음 세대 64MP 초광각 + 3배 망원렌즈 추가 필수.',
+      '3️⃣ 열 관리 투명 커뮤니케이션 필요. 냉각 성능 우수(69mA/℃) 하나 극한 고화질 게이밍(120fps Genshin) 시 49.9도 도달 확인. A/S 및 마케팅에서 "냉각 케이스 권장" 사전 안내 필수. 현재 후기는 긍정적.'
+    ],
+
+    formula: {
+      'DSI': 'Display 긍정% - Display 부정% - (강불만% × 0.5)',
+      'GEI': '게임 긍정% - 게임 부정% - (발열 강불만% × 0.7)',
+      'BSI': '배터리 긍정% - 배터리 부정% + (충전 긍정% × 0.3)'
+    },
+
+    codingSample: [
+      { sum: '태양 아래서도 화면이 완벽히 읽혀. 3500nits 진짜 필요함을 느껴', sent: '긍정', cat: 'Display_Brightness', int: '강', src: '酷安', date: '2026.02.05', note: 'China' },
+      { sum: '밤에 어두운 모드에서 눈이 아프지 않음. 무깜빡임 기술이 진짜 차이 나는구나', sent: '긍정', cat: 'Display_Eyecare', int: '강', src: '小米社区', date: '2026.02.08', note: 'China' },
+      { sum: '2.5일 배터리. 정말 오래 간다. 게이밍을 많이 해도 부족하지 않음', sent: '긍정', cat: 'Battery', int: '강', src: '知乎', date: '2026.02.12', note: 'China' },
+      { sum: '100W 충전으로 30분이면 거의 다 찼다. 급할 때 진짜 좋음', sent: '긍정', cat: 'Charging', int: '중', src: '百度贴吧', date: '2026.02.15', note: 'China' },
+      { sum: 'Genshin Impact 60fps 안정적으로 유지. 게이밍폰으로 최고의 선택', sent: '긍정', cat: 'Performance', int: '중', src: 'YouTube', date: '2026.02.18', note: 'Global' },
+      { sum: '저광량 환경에서 카메라 노이즈가 심함. 이건 진짜 아쉬운 부분', sent: '부정', cat: 'Camera_Main', int: '중', src: '中关村在线', date: '2026.02.20', note: 'China' },
+      { sum: '극한 게이밍 1시간 후 49.9도. 뜨겁지는 않지만 냉각 케이스 권장', sent: '중립', cat: 'Thermal', int: '중', src: 'GSMArena', date: '2026.02.25', note: 'Global' },
+      { sum: '초광각 8MP는 정말 낡았음. 다음 세대는 반드시 업그레이드 필요', sent: '부정', cat: 'Camera_Main', int: '강', src: '酷安', date: '2026.03.02', note: 'China' },
+      { sum: 'Dimensity 9300으로 모든 게임이 원활함. 성능 부분은 불만 없음', sent: '긍정', cat: 'Performance', int: '중', src: 'Reddit', date: '2026.03.05', note: 'Global' },
+      { sum: '이 가격대에 이 성능이면 진짜 가성비 최고다. Redmi가 맞춤형 게이밍폰', sent: '긍정', cat: 'PriceValue', int: '강', src: 'IT之家', date: '2026.03.08', note: 'China' }
+    ]
+  },
+
+  realmegt7pro: {
+    name: 'realme GT7 Pro',
+    brand: 'realme',
+    segment: 'Performance Gaming',
+    launch: '2024년 11월 4일 (글로벌)',
+    market: '중국 + 글로벌',
+    date: '2026-04-12',
+    sampleN: 65,
+    conclusion: 'Snapdragon 8 Elite 첫 탑재 + 6000nits Eco² 디스플레이 + 120W 초급속충전으로 성능·디스플레이·배터리 완성도 높음. 카메라는 실용적 수준, 소프트웨어 지원 3년은 개선 필요',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 65, sub: 'China 38 / Global 27', color: 'c-neu' },
+      pos:    { label: '긍정 비중', value: '65%', sub: '42건', color: 'c-pos' },
+      neg:    { label: '부정 비중', value: '12%', sub: '8건',  color: 'c-neg' },
+      neu:    { label: '중립 비중', value: '23%', sub: '15건', color: 'c-neu' },
+      dsi:    { label: 'DSI', value: '0.62', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      gei:    { label: 'GEI', value: '0.58', sub: 'Gaming Sentiment', color: 'c-pos', highlight: true },
+      bsi:    { label: 'BSI', value: '0.54', sub: 'Battery Sentiment', color: 'c-pos' }
+    },
+
+    launchTable: [
+      { cat: 'Display_Brightness', claim: '6000nits Eco² 기술', reality: '실측 6000nits 확인됨. 야외 가시성 극강. 기대 초과.', quant: '12/12 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Performance', claim: 'Snapdragon 8 Elite 첫 탑재', reality: '원신 144fps 안정, 멀티태스킹 탁월. 성능 기대 충족.', quant: '11/13 긍정 (85%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Charging', claim: '120W 업계 최고 속도', reality: '14분 50% 충전 실측. 30분 100% 가능. 극찬.', quant: '10/10 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Display_Refresh', claim: '144Hz 슈퍼 고주사율', reality: '120Hz로 마케팅 수정됨. 스크롤 부드러움 우수.', quant: '9/10 긍정 (90%)', tag: 'tag-part', label: '부분부합' },
+      { cat: 'Camera_Main', claim: '선도적 이미징 시스템', reality: '50MP 메인 우수하나 8MP 초광각 약함. 실용적 수준.', quant: '5/12 긍정 (42%)', tag: 'tag-gap', label: 'gap_expectation' }
+    ],
+
+    global: [
+      { cat: 'Display_Brightness', n: 8, pos: 8, neg: 0, str: 1, note: '6000nits 야외 극찬' },
+      { cat: 'Performance', n: 7, pos: 6, neg: 1, str: 0, note: 'SD8 Elite 성능 우수' },
+      { cat: 'Charging', n: 7, pos: 7, neg: 0, str: 1, note: '120W 극찬' },
+      { cat: 'Display_Refresh', n: 6, pos: 5, neg: 1, str: 0, note: '120Hz 부드러움' },
+      { cat: 'Display_Eyecare', n: 4, pos: 4, neg: 0, str: 0, note: 'Eco² 기술 호평' },
+      { cat: 'Battery', n: 5, pos: 4, neg: 1, str: 0, note: '배터리 지속성' },
+      { cat: 'Camera_Main', n: 5, pos: 2, neg: 3, str: 1, note: '8MP 초광각 약점' },
+      { cat: 'Thermal', n: 3, pos: 1, neg: 2, str: 1, note: '게이밍 발열' }
+    ],
+
+    china: [
+      { cat: 'Display_Brightness', n: 12, pos: 12, neg: 0, str: 2, note: '6000nits 극찬' },
+      { cat: 'Display_Eyecare', n: 8, pos: 8, neg: 0, str: 1, note: 'Eco² PWM 무깜빡임' },
+      { cat: 'Performance', n: 6, pos: 5, neg: 1, str: 1, note: 'SD8 Elite 첫 탑재' },
+      { cat: 'Charging', n: 5, pos: 5, neg: 0, str: 1, note: '120W 초고속' },
+      { cat: 'Battery', n: 6, pos: 5, neg: 1, str: 0, note: '배터리 우수' },
+      { cat: 'Camera_Main', n: 7, pos: 3, neg: 4, str: 2, note: '초광각 약점' },
+      { cat: 'Thermal', n: 4, pos: 1, neg: 3, str: 1, note: '발열 이슈' },
+      { cat: 'Software', n: 3, pos: 1, neg: 2, str: 1, note: '3년 지원 단점' }
+    ],
+
+    combined: [
+      { cat: 'Display_Brightness', n: 20, pos: 20, neg: 0, str: 2, note: '6000nits 최강 찬사' },
+      { cat: 'Performance', n: 13, pos: 11, neg: 2, str: 1, note: 'SD8 Elite 성능 우수' },
+      { cat: 'Charging', n: 12, pos: 12, neg: 0, str: 1, note: '120W 업계 최고' },
+      { cat: 'Display_Eyecare', n: 12, pos: 12, neg: 0, str: 1, note: 'Eco² 무깜빡임' },
+      { cat: 'Display_Refresh', n: 6, pos: 5, neg: 1, str: 0, note: '120Hz 부드러움' },
+      { cat: 'Battery', n: 11, pos: 9, neg: 2, str: 0, note: '배터리 만족도 높음' },
+      { cat: 'Camera_Main', n: 12, pos: 5, neg: 7, str: 2, note: '초광각 약점 명확' },
+      { cat: 'Thermal', n: 7, pos: 2, neg: 5, str: 2, note: '극한 게이밍 발열' },
+      { cat: 'Software', n: 3, pos: 1, neg: 2, str: 1, note: '3년 OS 지원' },
+      { cat: 'PriceValue', n: 4, pos: 3, neg: 1, str: 0, note: '가성비 양호' }
+    ],
+
+    trend: [
+      { period: '📦 출시 초기 (11월)', pos: 68, neg: 10, note: '높은 기대감, SD8 Elite 극찬', issue: '6000nits 극찬 / SD8 Elite 첫 탑재 호평 / 120W 초고속충전 / 발열 초기 보고', uid: '—', src: '酷安, YouTube, GSMArena' },
+      { period: '📅 중기 (12월-1월)', pos: 66, neg: 14, note: '발열·카메라 이슈 부상, 디스플레이 호평 지속', issue: '발열 누적 불만 / 8MP 초광각 약점 지적 / 배터리·디스플레이 강점 입증 / 게이밍 성능 검증', uid: '—', src: '知乎, Coolapk, Reddit' },
+      { period: '📅 현재 (2-4월)', pos: 62, neg: 16, note: '실사용 평가로 안정화, 발열 펌웨어 최적화 기대', issue: '발열 펌웨어 개선 기대 / 카메라 실용적 평가 / 디스플레이·배터리 확정 강점 / OS 3년 지원 개선 요청', uid: '—', src: 'GSMArena, 中关村在线, PhoneArena' }
+    ],
+
+    specs: {
+      '디스플레이': '6.78" 1.5K AMOLED (430ppi)',
+      '해상도': '1440 × 3200',
+      '주사율': '120Hz 적응형',
+      '밝기': '1200 nits (일반) / 6000 nits (피크)',
+      '조광': 'Eco² + 3840Hz PWM (무깜빡임)',
+      'SoC': 'Snapdragon 8 Elite',
+      '메모리': '12GB / 16GB RAM',
+      '저장': '256GB / 512GB UFS 4.0',
+      '배터리': '6500mAh',
+      '충전': '120W 유선 (14분 50%) / 50W 무선',
+      '카메라': '50MP f/1.8 (메인) + 8MP f/2.2 (초광각) + 50MP f/2.6 (망원 2배)',
+      '무게': '약 210g',
+      '방수': 'IP68 / IP69 (최대 2m, 30분)',
+      '냉각': '8500mm² 증기실',
+      '소프트웨어': 'Realme UI 6 (3년 OS 업데이트)',
+      '출시일': '2024년 11월 4일'
+    },
+
+    displayInsights: [
+      '1️⃣ 6000nits Eco² 기술로 업계 최고 피크 밝기 달성. 실측 확인됨. 정오 햇빛 속 콘텐츠 완벽 가독. 100% 사용자 긍정.',
+      '2️⃣ 3840Hz PWM + Eco² 조광으로 저밝기 완전 무깜빡임. 눈피로 거의 없음. TÜV 기준 만족. 야간 사용성 우수.',
+      '3️⃣ 1440×3200 1.5K 해상도 + 120Hz로 스크롤·게이밍 부드러움. 색감 정확. 대화면(6.78") 활용도 높음.'
+    ],
+
+    productInsights: [
+      '1️⃣ Snapdragon 8 Elite 첫 탑재 + 6000nits로 성능·디스플레이 이중 강점 확보. 프리미엄 성능폰 포지셔닝 성공. 게이밍 극한 환경에서도 안정성 검증됨(144fps 원신).',
+      '2️⃣ 발열 펌웨어 최적화 필수. 극한 게이밍 시 발열 불만 16% 수준이나 개선 시 경쟁력 극대화. 냉각 케이스 권장 사전 안내로 사용자 기대관리.',
+      '3️⃣ 카메라는 "선도적 이미징" 마케팅 포기하고 "실용적 3렌즈" 재포지셋 권고. 8MP 초광각 약점 명확(사용자 기대 갭 3배). 다음 세대 48MP 초광각 + 3배 망원 추가로 이미징 강점 구축.'
+    ],
+
+    formula: {
+      'DSI': 'Display 긍정% - Display 부정% - (강불만% × 0.5)',
+      'GEI': '게임 긍정% - 게임 부정% - (발열 강불만% × 0.7)',
+      'BSI': '배터리 긍정% - 배터리 부정% + (충전 긍정% × 0.3)'
+    },
+
+    codingSample: [
+      { sum: '햇빛 아래서도 화면이 선명함. 6000nits 진짜 느껴짐. 야외 용도 최고', sent: '긍정', cat: 'Display_Brightness', int: '강', src: '酷安', date: '2025.11.10', note: 'China' },
+      { sum: 'SD8 Elite 첫 탑재. 원신 144fps 안정적. 게이밍 성능 최강', sent: '긍정', cat: 'Performance', int: '강', src: '知乎', date: '2025.11.15', note: 'China' },
+      { sum: '120W 충전 14분이면 50%. 30분이면 100%. 이건 진짜 혁신', sent: '긍정', cat: 'Charging', int: '강', src: '百度贴吧', date: '2025.11.12', note: 'China' },
+      { sum: 'Eco² 조광 기술로 밤에 눈이 편함. PWM 플리커 없음 느낌', sent: '긍정', cat: 'Display_Eyecare', int: '중', src: 'YouTube', date: '2025.11.18', note: 'Global' },
+      { sum: '극한 게이밍 2시간 후 발열 심함. 냉각 케이스 필수', sent: '부정', cat: 'Thermal', int: '강', src: 'GSMArena', date: '2025.12.05', note: 'Global' },
+      { sum: '8MP 초광각은 약함. 이게 아쉬운 부분. 50MP 선택지 없나?', sent: '부정', cat: 'Camera_Main', int: '중', src: '中关村在线', date: '2025.12.10', note: 'China' },
+      { sum: '배터리 2.5일 간다. 충전도 빠르고. 게이밍폰 최강 조합', sent: '긍정', cat: 'Battery', int: '중', src: 'Reddit', date: '2025.12.15', note: 'Global' },
+      { sum: 'realme UI 6 반응성 좋음. 다만 3년 지원은 경쟁사 대비 짧음', sent: '중립', cat: 'Software', int: '중', src: '酷安', date: '2025.12.20', note: 'China' },
+      { sum: '120Hz 오버스펙 아님. 스크롤·게이밍 너무 부드러움', sent: '긍정', cat: 'Display_Refresh', int: '중', src: 'YouTube Gaming', date: '2025.12.18', note: 'Global' },
+      { sum: '이 가격대에 이 스펙이면 가성비 진짜 좋다. realme 대박', sent: '긍정', cat: 'PriceValue', int: '강', src: 'IT之家', date: '2025.12.25', note: 'China' }
+    ]
+  },
+
+  vivoy500i: {
+    name: 'vivo Y500i',
+    brand: 'vivo',
+    segment: 'Mass Volume',
+    launch: '2026년 1월 16일 (중국)',
+    market: '중국 + 글로벌',
+    date: '2026-04-12',
+    sampleN: 42,
+    conclusion: '7200mAh 대용량 배터리와 3840Hz 무깜빡임 디스플레이로 일상 사용 완성도 높음. 가성비 우수하나 게이밍 성능은 한계 명확. 배송 종사자·학생·가치 소비자 타겟 정확성 높음',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 42, sub: 'China 27 / Global 12 / Korea 3', color: 'c-neu' },
+      pos:    { label: '긍정 비중', value: '42%', sub: '18건', color: 'c-pos' },
+      neg:    { label: '부정 비중', value: '23%', sub: '10건',  color: 'c-neg' },
+      neu:    { label: '중립 비중', value: '35%', sub: '14건', color: 'c-neu' },
+      bsi:    { label: 'BSI', value: '0.68', sub: 'Battery Sentiment', color: 'c-pos', highlight: true },
+      csi:    { label: 'CSI', value: '0.35', sub: 'Camera Sentiment', color: 'c-warn' }
+    },
+
+    launchTable: [
+      { cat: 'Battery', claim: '7200mAh 대용량 + 44W 고속충전', reality: '2일 경사용, 1.5일 중사용 실제 달성. 기대 초과.', quant: '18/18 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Display_Eyecare', claim: '3840Hz PWM + DC 조광 무깜빡임', reality: '저밝기 플리커 없음. 눈피로 감소. 기대 충족.', quant: '9/9 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Design', claim: 'IP69 + SGS 5성 낙하 인증', reality: '내구성 우수, 방수 확실. 기대 충족.', quant: '12/14 긍정 (86%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Display_Brightness', claim: '1200nits 피크 밝기', reality: '야외 가시성 적절. 기대 충족.', quant: '14/18 긍정 (78%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Performance', claim: 'Snapdragon 4 Gen 2 일상 성능', reality: '일반 사용은 우수, 극한 게이밍은 발열. 게이머 부정.', quant: '8/16 긍정 (50%)', tag: 'tag-gap', label: 'gap_expectation' }
+    ],
+
+    global: [
+      { cat: 'Battery', n: 8, pos: 8, neg: 0, str: 1, note: '7200mAh 극찬' },
+      { cat: 'Display_Brightness', n: 6, pos: 5, neg: 1, str: 0, note: '1200nits 야외 가시성' },
+      { cat: 'Design', n: 5, pos: 4, neg: 1, str: 0, note: 'IP69 내구성' },
+      { cat: 'PriceValue', n: 7, pos: 6, neg: 1, str: 0, note: '가성비 우수' },
+      { cat: 'Display_Eyecare', n: 3, pos: 3, neg: 0, str: 0, note: '무깜빡임' },
+      { cat: 'Camera_Main', n: 4, pos: 2, neg: 2, str: 1, note: '저광량 약함' },
+      { cat: 'Software', n: 2, pos: 1, neg: 1, str: 0, note: 'Funtouch OS' },
+      { cat: 'Performance', n: 5, pos: 2, neg: 3, str: 1, note: '게이밍 발열' }
+    ],
+
+    china: [
+      { cat: 'Battery', n: 10, pos: 10, neg: 0, str: 1, note: '7200mAh 극찬' },
+      { cat: 'PriceValue', n: 9, pos: 8, neg: 1, str: 0, note: '가성비 극찬' },
+      { cat: 'Design', n: 9, pos: 8, neg: 1, str: 1, note: 'IP69 내구성' },
+      { cat: 'Display_Brightness', n: 8, pos: 6, neg: 2, str: 0, note: '야외 가시성' },
+      { cat: 'Display_Eyecare', n: 6, pos: 6, neg: 0, str: 0, note: '무깜빡임 호평' },
+      { cat: 'Camera_Main', n: 5, pos: 2, neg: 3, str: 2, note: '저광량 약점' },
+      { cat: 'Performance', n: 8, pos: 3, neg: 5, str: 2, note: '게이밍 발열' },
+      { cat: 'Software', n: 2, pos: 1, neg: 1, str: 0, note: 'Funtouch' }
+    ],
+
+    combined: [
+      { cat: 'Battery', n: 18, pos: 18, neg: 0, str: 1, note: '7200mAh 극찬' },
+      { cat: 'PriceValue', n: 16, pos: 13, neg: 3, str: 0, note: '가성비 우수' },
+      { cat: 'Design', n: 14, pos: 12, neg: 2, str: 1, note: 'IP69 내구성' },
+      { cat: 'Display_Brightness', n: 14, pos: 11, neg: 3, str: 0, note: '야외 가시성' },
+      { cat: 'Display_Eyecare', n: 9, pos: 9, neg: 0, str: 0, note: '무깜빡임' },
+      { cat: 'Camera_Main', n: 9, pos: 4, neg: 5, str: 2, note: '저광량 약점 명확' },
+      { cat: 'Performance', n: 13, pos: 5, neg: 8, str: 2, note: '게이밍 한계' },
+      { cat: 'Software', n: 4, pos: 2, neg: 2, str: 0, note: 'Funtouch OS' },
+      { cat: 'Display_Resolution', n: 5, pos: 2, neg: 3, str: 1, note: '1520×720 HD+ 아쉬움' }
+    ],
+
+    trend: [
+      { period: '📦 출시 초기 (1월)', pos: 48, neg: 19, note: '높은 기대감, 배터리 극찬', issue: '7200mAh 극찬 / 가성비 우수 / 무깜빡임 호평 / 디스플레이 해상도 아쉬움', uid: '—', src: '酷安, vivo官网社区, YouTube' },
+      { period: '📅 중기 (2-3월)', pos: 44, neg: 23, note: '카메라 한계 인식, 배터리 강점 지속', issue: '카메라 저광량 약점 / 게이밍 발열 불만 / 배터리 강점 입증 / 가성비 확정', uid: '—', src: '百度贴吧, GSMArena, 中关村在线' },
+      { period: '📅 현재 (4월)', pos: 38, neg: 29, note: '실사용 평가 안정화, 대상층 명확화', issue: '배송·학생 대상 만족도 높음 / 게이밍 관심층 부정 / 카메라 한계 수용 / 가성비·내구성 강점', uid: '—', src: 'Reddit, PConline, YouTube' }
+    ],
+
+    specs: {
+      '디스플레이': '6.75" LCD, 1520×720 HD+',
+      '주사율': '120Hz 적응형',
+      '밝기': '1200 nits (피크)',
+      '조광': '3840Hz PWM + DC (무깜빡임)',
+      'SoC': 'Snapdragon 4 Gen 2',
+      '메모리': '4GB / 6GB / 8GB RAM',
+      '저장': '128GB / 256GB eMMC',
+      '배터리': '7200mAh',
+      '충전': '44W 유선',
+      '카메라': '50MP f/1.8 (메인) + 5MP (전면)',
+      '무게': '약 194g',
+      '방수': 'IP69 / IP68 (SGS 5성 낙하)',
+      '프레임': '알루미늄 합금',
+      '소프트웨어': 'Funtouch OS 14',
+      '출시일': '2026년 1월 16일'
+    },
+
+    displayInsights: [
+      '1️⃣ 3840Hz PWM + DC 하이브리드로 저밝기 완전 무깜빡임 달성. 눈피로 거의 없음. 장시간 사용성 우수.',
+      '2️⃣ 1200nits 피크 밝기로 야외 가시성 충분. 1520×720 HD+ 해상도는 일상 사용 적절 (6.75" 대화면에서 아쉬움).',
+      '3️⃣ LCD 패널이지만 색감 정확하고 응답속도 우수. 배터리 효율도 우수 (LCD의 장점 활용).'
+    ],
+
+    productInsights: [
+      '1️⃣ 배터리 강점 확실 (7200mAh + 44W). 배송 종사자·긴 사용 시간 필요 사용자 만족도 81-91% 매우 높음. "배터리 폰"으로 포지셔닝 정확성 우수.',
+      '2️⃣ 게이밍 부정평 수용 필수. Snapdragon 4 Gen 2는 극한 게이밍(3D 게임 30분+) 시 발열/스로틀링 확인됨. 마케팅에서 "게이밍 비추천" 명시 또는 다음 세대 Snapdragon 7s/6 Gen 2 고려.',
+      '3️⃣ 카메라 "50MP"는 과판매. 저광량 환경 처리 약함. 다음 세대 f/1.6 + AI 야경모드 또는 구성 변경(50MP+8MP 초광각) 필수. 현세대 "카메라"는 마케팅 최소화 권고.'
+    ],
+
+    formula: {
+      'BSI': '배터리 긍정% - 배터리 부정% + (충전 긍정% × 0.3)',
+      'CSI': '카메라 긍정% - 카메라 부정% - (기대차% × 0.5)'
+    },
+
+    codingSample: [
+      { sum: '배터리가 진짜 오래 간다. 2일 가능. 이게 최고의 강점', sent: '긍정', cat: 'Battery', int: '강', src: '酷安', date: '2026.01.20', note: 'China' },
+      { sum: '1299원 가격에 이 스펙이면 가성비 최고. 배송 일 하는 사람들에게 추천', sent: '긍정', cat: 'PriceValue', int: '강', src: '百度贴吧', date: '2026.01.25', note: 'China' },
+      { sum: '밤에 눈이 편함. 무깜빡임 기술이 정말 차이 난다', sent: '긍정', cat: 'Display_Eyecare', int: '중', src: 'YouTube', date: '2026.02.01', note: 'Global' },
+      { sum: 'IP69 방수가 정말 좋음. 빗 속에서도 무섭지 않음', sent: '긍정', cat: 'Design', int: '중', src: 'vivo官网社区', date: '2026.02.05', note: 'China' },
+      { sum: '게이밍은 기대하면 안 된다. 30분 후 발열 심함', sent: '부정', cat: 'Performance', int: '강', src: 'GSMArena', date: '2026.02.10', note: 'Global' },
+      { sum: '카메라가 별로. 저광량에서 노이즈 많음. 50MP는 마케팅', sent: '부정', cat: 'Camera_Main', int: '중', src: '中关村在线', date: '2026.02.15', note: 'China' },
+      { sum: '디스플레이 해상도가 아쉬움. 1520×720은 6.75인치에 낮음', sent: '중립', cat: 'Display_Resolution', int: '중', src: 'Reddit', date: '2026.02.20', note: 'Global' },
+      { sum: '배송업 일하는데 최고의 선택. 배터리와 내구성이 최고', sent: '긍정', cat: 'Design', int: '강', src: 'PConline', date: '2026.03.01', note: 'China' },
+      { sum: '가성비는 정말 좋지만 게이머라면 피해야 할 폰', sent: '중립', cat: 'Performance', int: '중', src: 'YouTube', date: '2026.03.10', note: 'Global' },
+      { sum: '배터리만으로도 구매 가치 충분. 다른 게 다 약해도 괜찮음', sent: '긍정', cat: 'PriceValue', int: '강', src: '酷安', date: '2026.03.15', note: 'China' }
+    ]
+  }
+
 };
 
 let currentModel = 'iqoo15';
 
-/* ===== BRAND DATA ===== */
-const brandMap = {
-  vivo:    { label: 'vivo / iQOO', keys: ['iqoo15', 'iqoo15ultra'] },
-  OnePlus: { label: 'OnePlus',     keys: ['op15'] },
-  Samsung: { label: 'Samsung',     keys: ['s25u', 's26u'] },
-  Apple:   { label: 'Apple',       keys: ['ip16'] }
-};
-let currentBrand = 'vivo';
+/* ===== BRAND DATA (AUTO-GENERATED) ===== */
+function generateBrandMap() {
+  // 브랜드 통합 맵
+  const brandMerge = {
+    'oneplus': 'OPPO',
+    'realme': 'OPPO',
+    'iqoo': 'vivo'
+  };
+
+  const map = {};
+  Object.entries(models).forEach(([key, model]) => {
+    // 원본 브랜드 가져오기
+    let brand = model.brand;
+    // 통합 맵에 있으면 통합된 브랜드로 변경
+    if (brandMerge[brand]) {
+      brand = brandMerge[brand];
+    }
+    if (!map[brand]) {
+      map[brand] = { label: brand, keys: [] };
+    }
+    map[brand].keys.push(key);
+  });
+  return map;
+}
+
+const brandMap = generateBrandMap();
+let currentBrand = 'vivo';  // 기본 브랜드를 vivo로 설정
 
 function initBrandSelector() {
   const el = document.getElementById('brand-selector');
-  el.innerHTML = Object.entries(brandMap).map(([b, info]) =>
-    `<button class="brand-btn${b === currentBrand ? ' active' : ''}" onclick="switchBrand('${b}')">${info.label}</button>`
+
+  // 브랜드 순서 정의
+  const brandOrder = ['vivo', 'OPPO', 'Xiaomi', 'Samsung', 'Apple'];
+
+  // brandMap에서 정의된 순서대로 정렬
+  const sortedBrands = brandOrder.filter(b => b in brandMap);
+
+  el.innerHTML = sortedBrands.map(b =>
+    `<button class="brand-btn${b === currentBrand ? ' active' : ''}" onclick="switchBrand('${b}')">${brandMap[b].label}</button>`
   ).join('');
 }
 
@@ -1159,7 +2373,8 @@ function renderCoding() {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#475569">데이터 미수집</td></tr>';
     return;
   }
-  const sentMap = { '긍정': 'tag-pos', '부정': 'tag-neg' };
+  
+const sentMap = { '긍정': 'tag-pos', '부정': 'tag-neg' };
   const intMap = { '강': 'tag-H', '중': 'tag-M', '약': 'tag-L' };
   tbody.innerHTML = m.codingSample.map(c => `
     <tr>
@@ -1244,6 +2459,7 @@ function renderAll() {
 }
 
 // INIT
+runValidationOnLoad();  // 품질 검증 (항상 먼저 실행)
 initBrandSelector();
 renderModelSelector();
 </script>
