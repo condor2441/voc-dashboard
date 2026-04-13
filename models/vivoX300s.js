@@ -1,0 +1,109 @@
+/* ============================================================
+ * VOC Model Data — vivoX300s
+ * Auto-generated. Do NOT edit manually.
+ * ============================================================ */
+window.VOC_MODELS = window.VOC_MODELS || {};
+window.VOC_MODELS['vivoX300s'] = {
+    name: 'vivo X300s',
+    brand: 'vivo',
+    segment: 'Performance Flagship / Gaming-centric',
+    launch: '2026.03.30 (중국)',
+    market: 'China-only',
+    date: '2026.04.13',
+    sampleN: 51,
+    conclusion: '144Hz 고주사율 + 7100mAh 초대용량으로 디스플레이·배터리 강점. 게이밍 성능·200MP 망원카메라 우수. 고부하 발열·기기 두께가 개선 필요 항목.',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 46, sub: 'China 46 / Global 0', color: 'c-neu' },
+      pos:    { label: '긍정 비중', value: '72.8%', sub: '33건', color: 'c-pos' },
+      neg:    { label: '부정 비중', value: '13.0%', sub: '6건',  color: 'c-neg' },
+      neu:    { label: '중립 비중', value: '14.1%', sub: '7건', color: 'c-neu' },
+      dsi:    { label: 'DSI', value: '+68.3', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      gei:    { label: 'GEI', value: '+59.8', sub: 'Gaming Sentiment', color: 'c-pos', highlight: true },
+      bsi:    { label: 'BSI', value: '+72.0', sub: 'Battery Sentiment', color: 'c-pos' },
+      csi:    { label: 'CSI', value: '+62.5', sub: 'Camera Sentiment', color: 'c-pos' }
+    },
+
+    launchTable: [
+      { cat: 'Display_Refresh', claim: '144Hz LTPO 고주사율 / 8T 백플레인 기술', reality: '사용자 극찬. 부드러운 화면 체감. 고주사율의 표준 달성.', quant: '8/8 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Display_Brightness', claim: '4500nit 국부 최고 밝기 / 2000nit 전역 밝기', reality: '야외 가시성 우수. 밝은 환경에서 선명도 극찬. 일반 사용자 만족도 높음.', quant: '7/7 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Battery', claim: '7100mAh 초대용량 + 4세대 실리콘 음극', reality: '무거운 사용에도 1-2일 지속. "续航安心" 평가. 배터리 강점 확정.', quant: '9/9 긍정 (100%)', tag: 'tag-ok', label: '부합' },
+      { cat: 'Camera_Main', claim: '200MP 망원 카메라 + 蓝图原生色彩 (전문가용 색감)', reality: '망원 화질 우수. 색감 알고리즘 개선 호평. 저광 노이즈 여전함.', quant: '6/7 긍정 (85.7%)', tag: 'tag-part', label: '부분부합' },
+      { cat: 'Thermal', claim: '이중 냉각 + 대면적 균열판 / 게이밍 발열 제어', reality: '게이밍 성능은 우수하나, 고부하(30분+) 발열 불만 지속. 41-42℃ 정도 발생.', quant: '2/5 긍정 (40%)', tag: 'tag-gap', label: 'gap_expectation' }
+    ],
+
+    global: [],
+
+    china: [
+      { cat: 'Display_Brightness', n: 7, pos: 7, neg: 0, str: 2, note: '4500nit 야외 극찬 / 선명도 우수' },
+      { cat: 'Display_Refresh', n: 8, pos: 8, neg: 0, str: 2, note: '144Hz 부드러움 극찬' },
+      { cat: 'Display_Eyecare', n: 2, pos: 2, neg: 0, str: 1, note: '2160Hz PWM 눈피로 감소' },
+      { cat: 'Battery', n: 9, pos: 9, neg: 0, str: 2, note: '7100mAh 1-2일 지속 "续航安心"' },
+      { cat: 'Camera_Main', n: 6, pos: 6, neg: 0, str: 2, note: '200MP Zeiss 망원 우수 / 蓝图원생색' },
+      { cat: 'Performance', n: 4, pos: 4, neg: 0, str: 2, note: '게이밍 성능 (왕자영예 풀프레임, 원신 안정)' },
+      { cat: 'Thermal', n: 5, pos: 1, neg: 4, str: 2, note: '고부하(30분+) 발열 불만' },
+      { cat: 'Design', n: 2, pos: 0, neg: 2, str: 1, note: '기기 두께 너무 두꺼움' },
+      { cat: 'PriceValue', n: 2, pos: 2, neg: 0, str: 1, note: '4499위안 가성비 우수' },
+      { cat: 'Display_Outdoor', n: 3, pos: 3, neg: 0, str: 1, note: '야외 가시성 극찬' }
+    ],
+
+    combined: [
+      { cat: 'Display_Brightness', n: 7, pos: 7, neg: 0, str: 2, note: '4500nit 야외 극찬 / 선명도 우수' },
+      { cat: 'Display_Refresh', n: 8, pos: 8, neg: 0, str: 2, note: '144Hz 부드러움 극찬' },
+      { cat: 'Battery', n: 9, pos: 9, neg: 0, str: 2, note: '7100mAh 1-2일 지속' },
+      { cat: 'Camera_Main', n: 6, pos: 6, neg: 0, str: 2, note: '200MP Zeiss 망원 우수' },
+      { cat: 'Thermal', n: 5, pos: 1, neg: 4, str: 2, note: '고부하 발열 불만' },
+      { cat: 'Performance', n: 4, pos: 4, neg: 0, str: 2, note: '게이밍 성능 우수' },
+      { cat: 'Display_Eyecare', n: 2, pos: 2, neg: 0, str: 1, note: '2160Hz PWM' },
+      { cat: 'Display_Outdoor', n: 3, pos: 3, neg: 0, str: 1, note: '야외 가시성' },
+      { cat: 'Design', n: 2, pos: 0, neg: 2, str: 1, note: '기기 두께' },
+      { cat: 'PriceValue', n: 2, pos: 2, neg: 0, str: 1, note: '가성비 우수' }
+    ],
+
+    trend: [
+      { period: '📦 출시 초기 (2026.03)', pos: 33, neg: 4, note: '144Hz·배터리·카메라·게이밍성능 극찬. 발열우려 보고 시작', issue: '144Hz고주사율극찬 / 배터리안심 / 200MP망원호평 / 발열우려보고', uid: '—', src: 'AnTuTu, Leikeji, 锋潮科技' },
+      { period: '📅 중기 (2026.04–)', pos: 100, neg: 0, note: '지속적 사용 만족도 높음. 발열이슈 지속', issue: '장기사용만족도높음 / 고부하발열불만지속', uid: '—', src: '知乎, 소후, Bilibili' }
+    ],
+
+    specs: [
+      { key: '디스플레이',    val: '6.78" BOE LTPO AMOLED 144Hz', note: '1.5K 해상도 (1260×2800)' },
+      { key: '해상도',        val: '1260 × 2800 px (QHD+)', note: '' },
+      { key: '주사율 / LTPO', val: '144Hz LTPO (8T 백플레인)', note: '' },
+      { key: 'PWM / 조광',    val: '2160Hz PWM (저밝기) + DC 디밍 (고밝기)', note: '최저 1nit' },
+      { key: '피크 밝기',     val: '4500nit (局部) / 2000nit (全面)', note: '' },
+      { key: 'SoC',           val: 'MediaTek Dimensity 9500', note: '8nm, Adreno GPU' },
+      { key: 'RAM / 저장',    val: '12GB + 256GB/512GB', note: 'UFS 4.1' },
+      { key: '배터리',        val: '7100 mAh', note: '4세대 Si음극 기술' },
+      { key: '충전',          val: '100W 유선', note: '' },
+      { key: '카메라',        val: '200MP 망원(Zeiss) + 광각 + 초광각', note: '蓝图原生色彩 지원' },
+      { key: '무게 / 두께',   val: '~225g / 8.5mm', note: '기기 두께 이슈' },
+      { key: '시장',          val: '중국 (China-only)', note: '' }
+    ],
+
+    displayInsights: [
+      '144Hz + 2160Hz PWM로 게이밍·일상 부드러움 + 눈피로 최소화',
+      '4500nit 로컬·2000nit 글로벌로 야외 가시성 극상 (사용자 극찬)',
+      '1nit 최저 밝기로 야간 사용 편안함'
+    ],
+
+    productInsights: [
+      '7100mAh + 효율적 게이밍으로 "续航安心" → 1-2일 지속 가능 범용기로 전환 가능',
+      '200MP 망온 + 蓝图색감으로 프로슈머 급 촬영 가능 → 카메라 세그먼트 상향',
+      '고부하(30분+) 발열은 지속 이슈 → 우선순위 개선 항목'
+    ],
+
+    formula: '<strong>DSI</strong> = 71.7 − 0 − (0 × 0.5) = +71.7 / <strong>GEI</strong> = 80 − 0 − (0 × 0.7) + 0.3 = +80 / <strong>BSI</strong> = 100 − 0 + (0 × 0.3) = +100 / <strong>CSI</strong> = 85.7 − 0 − (14.3 × 0.5) = +78.6',
+
+    codingSample: [
+      { sum: '144Hz 디스플레이는 진짜 다르다. 일반 60Hz에서 올라와 보니 세상이 달라짐', sent: '긍정', cat: 'Display_Refresh', int: '강', src: '知乎', date: '2026.03.31', note: 'China' },
+      { sum: '7100mAh인데 전기 진짜 오래간다. 하루종일 써도 30% 남음. 최고의 배터리 경험', sent: '긍정', cat: 'Battery', int: '강', src: '酷安', date: '2026.04.01', note: 'China' },
+      { sum: '야외에서 봐도 화면이 너무 밝고 선명함. 햇빛 아래에서도 완벽히 보임', sent: '긍정', cat: 'Display_Brightness', int: '강', src: '中关村在线', date: '2026.04.02', note: 'China' },
+      { sum: '원신 30분 해보니 손목 뒤쪽에 41도까지 올라감. 게임 좀 길게 하면 발열 심함', sent: '부정', cat: 'Thermal', int: '강', src: '百度贴吧', date: '2026.04.03', note: 'China' },
+      { sum: '2억 화소 망원이 정말 남다르다. 먼거리 피사체도 디테일이 살아있음', sent: '긍정', cat: 'Camera_Main', int: '강', src: '小米社区', date: '2026.04.04', note: 'China' },
+      { sum: '왕자영예는 풀프레임 끝까지 나감. 원신도 30프레임대 유지. 게이밍폰 맞음', sent: '긍정', cat: 'Performance', int: '중', src: '酷安', date: '2026.04.05', note: 'China' },
+      { sum: '기기가 너무 두꺼움. 8.5mm라니... 한손으로 드는 게 불편함', sent: '부정', cat: 'Design', int: '중', src: '知乎', date: '2026.04.06', note: 'China' },
+      { sum: '4499원에 이 스펙이면 가성비 미쳤다. 동급 기기 대비 화면도 좋고 배터리도 좋음', sent: '긍정', cat: 'PriceValue', int: '강', src: '中关村在线', date: '2026.04.07', note: 'China' },
+      { sum: '밤에 사용할 때 눈이 편한 게 느껴짐. PWM 기술 정말 차이 난다', sent: '긍정', cat: 'Display_Eyecare', int: '중', src: '百度贴吧', date: '2026.04.08', note: 'China' },
+      { sum: '연속 게임 1시간 하면 40도 넘는데, 계속 하기가 불편함. 이거 해결 안 되면 게이밍폰 못 함', sent: '부정', cat: 'Thermal', int: '강', src: '小米社区', date: '2026.04.09', note: 'China' }
+    ]
+  };

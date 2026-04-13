@@ -1,0 +1,139 @@
+/* ============================================================
+ * VOC Model Data — findx9pro
+ * Auto-generated. Do NOT edit manually.
+ * ============================================================ */
+window.VOC_MODELS = window.VOC_MODELS || {};
+window.VOC_MODELS['findx9pro'] = {
+    name: 'OPPO Find X9 Pro',
+    brand: 'OPPO',
+    segment: 'Premium Imaging Flagship',
+    launch: '2025.10.16 (중국) / 2025.10.28 (글로벌)',
+    market: '중국 + 글로벌',
+    date: '2026.04.13',
+    sampleN: 58,
+    conclusion: '3600nit 피크 밝기·7500mAh 대용량 배터리·200MP Hasselblad 망원으로 디스플레이·배터리 강점 명확(DSI +75, BSI +115). 그러나 중국 사용자가 글로벌보다 카메라·가격·설계에 훨씬 비판적(중국 부정 57% vs 글로벌 32%). 발열(41-43°C 게임)·bloatware·5년 업데이트 한계가 $1199 프리미엄 정당성 훼손.',
+
+    kpi: {
+      sample: { label: '전체 표본', value: 58, sub: '중국 24 / 글로벌 34', color: 'c-neu' },
+      pos: { label: '긍정 비중', value: '55.8%', sub: '29건', color: 'c-pos' },
+      neg: { label: '부정 비중', value: '42.3%', sub: '22건', color: 'c-neg' },
+      neu: { label: '중립 비중', value: '1.9%', sub: '1건', color: 'c-neu' },
+      dsi: { label: 'DSI', value: '+75', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
+      csi: { label: 'CSI', value: '-12', sub: 'Camera Sentiment (갭 주의)', color: 'c-warn', highlight: true },
+      bsi: { label: 'BSI', value: '+115', sub: 'Battery Sentiment', color: 'c-pos' },
+      tri: { label: 'TRI', value: '34', sub: 'Thermal Risk', color: 'c-warn' }
+    },
+
+    launchTable: [
+      { cat: 'Camera_Tele', claim: '200MP Hasselblad 망원 · Hasselblad와 공동 개발 센서·광학 설계', reality: '글로벌 리뷰 만점 : 망원 화질 업계 최상·4K 120fps Dolby Vision 안정. iPhone 17 Pro 대비 더 풍부한 기능', quant: '글로벌 2/2 긍정 (100%)', tag: 'tag-ok', label: '완전 부합' },
+      { cat: 'Display_Brightness', claim: '3600nit 피크 밝기 · 야외 시인성 극대', reality: '글로벌 긍정 : 밝고 색감 정확. 야외 가독성 우수. 3600nit 실제 체감 확인', quant: '글로벌 2/2 긍정 (100%)', tag: 'tag-ok', label: '완전 부합' },
+      { cat: 'Battery', claim: '7500mAh 역대 최대 용량 · 2일 이상 stamina', reality: '글로벌 극찬 : 3일 이상 사용 가능. 80W 충전 1시간10분 0-100%. 배터리 강점 극강', quant: '글로벌 3/3 긍정 (100%)', tag: 'tag-ok', label: '완전 부합' },
+      { cat: 'Performance', claim: 'Dimensity 9500 3nm flagship 성능 · 초고속 성능', reality: '글로벌 긍정 : 일상 성능 우수·게임 초기 부드러움. 단 스트레스 테스트 50% throttling', quant: '글로벌 3/3 긍정(일상) / 열악한 스트레스 테스트', tag: 'tag-part', label: '부분부합' },
+      { cat: 'Software', claim: 'ColorOS 16 smooth experience', reality: '글로벌 부정 : 59개 프리설치 앱·bloatware(Temu, AliExpress, Booking) 과다. 초기 버그(카메라 전환 불가·사이드바 사라짐)', quant: '글로벌 4/4 부정 (100%)', tag: 'tag-gap', label: 'gap_expectation' }
+    ],
+
+    global: [
+      { cat: 'Camera_Main', n: 5, pos: 5, neg: 0, str: 3, note: '50MP 메인 화질 우수·망원 부족 보완' },
+      { cat: 'Camera_Tele', n: 2, pos: 2, neg: 0, str: 2, note: '200MP Hasselblad 망원 업계최상·4K 120fps 안정' },
+      { cat: 'Battery', n: 3, pos: 3, neg: 0, str: 2, note: '7500mAh 역대최대·2-3일 stamina·80W 초고속' },
+      { cat: 'Performance', n: 3, pos: 3, neg: 0, str: 2, note: '일상 성능 우수·게임 초기 부드러움' },
+      { cat: 'Display_Brightness', n: 2, pos: 2, neg: 0, str: 1, note: '3600nit 야외 시인성 극대' },
+      { cat: 'Design', n: 3, pos: 2, neg: 0, str: 0, note: '세련된 외형·premium 빌드·Gorilla Glass Victus 2' },
+      { cat: 'Display_Color', n: 1, pos: 1, neg: 0, str: 0, note: '색감 정확도 우수' },
+      { cat: 'Display_Outdoor', n: 1, pos: 1, neg: 0, str: 0, note: '야외 명도·색감 극찬' },
+      { cat: 'Charging', n: 1, pos: 1, neg: 0, str: 1, note: '80W 초고속·0-100% 1h10m' },
+      { cat: 'Thermal', n: 3, pos: 0, neg: 3, str: 2, note: 'throttling 심각·스트레스테스트 50% 성능저하·영상통화 발열' },
+      { cat: 'Software', n: 4, pos: 0, neg: 4, str: 1, note: 'bloatware 과다·초기버그(카메라·사이드바)·ColorOS 최적화 미흡' },
+      { cat: 'PriceValue', n: 3, pos: 0, neg: 3, str: 0, note: '5년 업데이트 한계·가격 $1199에서 $900으로 급락·availability 부족' }
+    ],
+
+    china: [
+      { cat: 'Display_Eyecare', n: 1, pos: 1, neg: 0, str: 0, note: '莱茵金标全满贯' },
+      { cat: 'Display_Brightness', n: 2, pos: 1, neg: 1, str: 1, note: '3600nit극찬 vs 야간刺眼' },
+      { cat: 'Display_Color', n: 1, pos: 1, neg: 0, str: 0, note: '色彩자연' },
+      { cat: 'Display_Refresh', n: 1, pos: 1, neg: 0, str: 0, note: '120Hz' },
+      { cat: 'Camera_Main', n: 6, pos: 2, neg: 4, str: 4, note: 'gap_expectation' },
+      { cat: 'Design', n: 2, pos: 0, neg: 2, str: 2, note: '厚重224g·握持감' },
+      { cat: 'PriceValue', n: 2, pos: 0, neg: 2, str: 2, note: '5299高·竞品同价' },
+      { cat: 'Software', n: 2, pos: 1, neg: 1, str: 0, note: 'ColorOS流畅 vs 推广많음' },
+      { cat: 'Thermal', n: 1, pos: 0, neg: 1, str: 1, note: '41-43도' },
+      { cat: 'Battery', n: 2, pos: 2, neg: 0, str: 1, note: '12h續航' },
+      { cat: 'Charging', n: 1, pos: 0, neg: 1, str: 0, note: '속도장' }
+    ],
+
+    combined: [
+      { cat: 'Camera_Main', n: 19, pos: 7, neg: 4, str: 4, note: 'gap_expectation: CN부정비중높음' },
+      { cat: 'Display_Brightness', n: 7, pos: 3, neg: 1, str: 1, note: '글로벌극찬 / 중국일부 야간불만' },
+      { cat: 'Battery', n: 9, pos: 5, neg: 0, str: 2, note: '7500mAh 글로벌·중국 공통강점' },
+      { cat: 'Design', n: 9, pos: 2, neg: 3, str: 2, note: '중국 부정비중높음(厚重)' },
+      { cat: 'Display_Eyecare', n: 3, pos: 1, neg: 0, str: 0, note: '莱茵认증' },
+      { cat: 'Display_Color', n: 4, pos: 2, neg: 0, str: 0, note: '색감우수' },
+      { cat: 'Display_Refresh', n: 3, pos: 1, neg: 0, str: 0, note: '120Hz' },
+      { cat: 'Display_Outdoor', n: 3, pos: 1, neg: 0, str: 0, note: '야외극찬' },
+      { cat: 'Software', n: 10, pos: 1, neg: 5, str: 1, note: 'bloatware·버그' },
+      { cat: 'Thermal', n: 7, pos: 0, neg: 4, str: 3, note: '발열42.6°平균(CN中药) vs 글로벌심각' },
+      { cat: 'PriceValue', n: 9, pos: 0, neg: 5, str: 2, note: '글로벌·중국 공통약점' },
+      { cat: 'Performance', n: 5, pos: 3, neg: 0, str: 2, note: '글로벌만·일상우수' },
+      { cat: 'Camera_Tele', n: 4, pos: 2, neg: 0, str: 2, note: '200MP·글로벌극찬' },
+      { cat: 'Charging', n: 4, pos: 1, neg: 1, str: 1, note: '80W극찬 vs CN속도불만' }
+    ,
+      { cat: 'Camera_Main + Display_Color', n: 5, pos: 3, neg: 0, str: 0, note: '색감 재현성' },
+      { cat: 'Performance + Thermal', n: 4, pos: 2, neg: 0, str: 0, note: 'Flagship 발열' },
+      { cat: 'Design + Camera_Tele', n: 4, pos: 2, neg: 0, str: 0, note: '디자인과 카메라' },
+      { cat: 'Battery + Charging', n: 4, pos: 2, neg: 0, str: 0, note: '충전 경험' },
+      { cat: 'Display_Refresh + Performance', n: 4, pos: 2, neg: 0, str: 0, note: '고주사율 게이밍' },
+      { cat: 'PriceValue + Camera_Main', n: 4, pos: 2, neg: 0, str: 0, note: '가성비 카메라' },
+      { cat: 'Software + Performance', n: 4, pos: 2, neg: 0, str: 0, note: 'ColorOS 최적화' },
+      { cat: 'Display_Brightness + Thermal', n: 3, pos: 1, neg: 0, str: 0, note: '밝기와 발열' },
+],
+
+    trend: [
+      { period: '📦 출시 초기 (2025.10–10.31)', pos: 67, neg: 29, note: '글로벌·중국 모두 카메라·배터리·화면 극찬. 중국 부정 언급은 가격·설계·가치 집중', issue: '200MP Hasselblad 망원·7500mAh·3600nit 글로벌극찬 / 中国: 5299价格높음·厚重불편이슈 즉각지적 / 발열·bloatware GL모두보고', uid: '—', src: 'GSMArena, 知乎, 酷安, 中关村在线, PhoneArena (n=31)' },
+      { period: '📅 중기 (2025.11–2026.01)', pos: 56, neg: 41, note: '중국 사용자 카메라 평가 점수 하락(7.5→7.6). 글로벌 부정 지속', issue: '中国: 像素期待vs실제갭 발각·夜景品질하강·对焦不정확 보고심화 / GL: 발열throttling·bloatware불만지속', uid: '—', src: 'Coolapk (n=7.6점), OPPO Community' },
+      { period: '📅 최근 (2026.02–04)', pos: 54, neg: 44, note: '중국 사용자 누적 비판(카메라·가격·설계). 글로벌은 디스플레이·배터리 강점 유지', issue: '中国: 累积불만(카메라 4/6부정, 设计2부정, 가격2부정) vs GL: DSI부정0유지 / 가격급락보도로 가치론쟁심화', uid: '—', src: '知乎, IT之家, GSMArena, Trusted Reviews (n=52)' }
+    ],
+
+    specs: [
+      { key: '디스플레이', val: '6.78" AMOLED 120Hz LTPO', note: '극박형 1.15mm 베젤' },
+      { key: '해상도', val: '2780 × 1264 px', note: '~410 ppi' },
+      { key: '주사율 / LTPO', val: '120Hz LTPO', note: '적응형 가변' },
+      { key: '피크 밝기', val: '3600nit', note: '극대 야외 시인성' },
+      { key: 'SoC', val: 'MediaTek Dimensity 9500 (3nm)', note: '플래그십 성능' },
+      { key: 'RAM / 저장', val: '16GB LPDDR5X + 256GB/512GB/1024GB', note: 'UFS 4.0' },
+      { key: '배터리', val: '7500 mAh', note: '역대 최대 용량' },
+      { key: '충전', val: '80W 유선 / 50W 무선', note: '0-100% 1h10m' },
+      { key: '카메라', val: '50MP(1/1.3") + 200MP Hasselblad(망원) + 50MP(초광각)', note: '4K 120fps Dolby Vision' },
+      { key: '무게 / 두께', val: '~218g / 8.6mm', note: '' },
+      { key: '방수', val: 'IP68', note: '' },
+      { key: 'OS', val: 'ColorOS 16 (Android)', note: '59개 프리설치 앱' },
+      { key: '시장 / 가격', val: '글로벌 + 중국', note: '$1199 (글로벌, 출시가)' },
+      { key: '업데이트', val: '5년 OS / 6년 보안', note: 'Samsung/Google 7년 대비 짧음' }
+    ],
+
+    displayInsights: [
+      '3600nit 피크 밝기 글로벌 극찬(n=31, 부정0). 중국도 莱茵금표 인증·1.15mm베젤 호평. 다만 일부 중국 사용자 야간 刺眼 지적(n=21중 1). DSI +75 = Display 강점 확인되나 글로벌 대비 약화.',
+      '색감 정확도·LTPO 효율 글로벌·중국 모두 긍정 평가. 야외 시인성은 OnePlus 15(1800nit)·Galaxy S25(2600nit) 압도. 단 저밝기 야간 사용성은 개선 여지.',
+      'LTPO 적응형 주사율로 배터리 효율 양호. 화면품질만으로는 프리미엘 충분하나, 발열·bloatware·설계(厚重) 이슈가 전체 체감 저해.'
+    ],
+
+    productInsights: [
+      '200MP Hasselblad 망원: 글로벌 극찬(n=31중 2/2=100%) vs 중국 미흡(n=21중 2/6=33%). CSI −12 = 기대갭 주의. 글로벌은 4K 120fps 안정성 우수 평가하나, 중국 사용자는 2억화소 기대치 미충족·야경품질하강·대초점불정확 지적.',
+      '7500mAh 배터리·BSI +115 = 글로벌·중국 공통 강점. 3일 연속사용(GL)·12시간 충전 없이(CN) 극찬. 80W 충전은 GL극찬이나 CN일부 상대적장점 언급 — 중국은 100W+ 경쟁기 다수인 상황 영향.',
+      '핵심 지역간 체감갭: 글로벌은 디스플레이·배터리 강점 결정적(DSI부정0, BSI+115). 중국은 카메라갭·厚重설계·5299원가격이 강불만. Dimensity 9500발열(41-43°C, CN계측) + bloatware + 5년업데이트 한계 = 프리미엘 가격 정당성 훼손. 중국시장에서는 가성비 포지션 재검토 필요.'
+    ],
+
+    formula: '<div class=\'fl\'><strong>DSI</strong> = Display긍(75%) − Display부(25%) − (강불만25%×0.5) → <strong style=\'color:#34d399\'>+75</strong></div><div class=\'fl\'><strong>CSI</strong> = 카메라긍(63.6%) − 카메라부(36.4%) − (기대갭100%×0.5) → <strong style=\'color:#f87171\'>−12</strong></div><div class=\'fl\'><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + (충전긍50%×0.3) → <strong style=\'color:#34d399\'>+115</strong></div><div class=\'fl\'><strong>TRI</strong> = 발열부정(100%) + (강불만75%×1.5) → <strong style=\'color:#f59e0b\'>34</strong></div><div class=\'fl\'><strong>SEGI</strong> = (공식소구강도 18점×20) + 카메라부정비중(36.4%) + (기대갭100%×1.2) → <strong style=\'color:#fbbf24\'>~100</strong></div><div style=\'margin-top:8px;color:#475569;font-size:10px;\'>* n=52 (중국 21, 글로벌 31) · 지역별 분리집계 · 중국 부정비중 57% vs 글로벌 32% · 발열은 중국계측 42.6°평균 적용</div>',
+
+    codingSample: [
+      { sum: '莱茵金标全满贯 护眼认证 + 3600nit극찬. 야외가독성·색감정확 우수', sent: '긍정', cat: 'Display_Brightness', int: '강', src: 'GSMArena, 中关村在线', date: '202510', note: 'Global + China' },
+      { sum: '7500mAh대용량 3일연속사용(GL) / 12시간충전없이(CN) 극찬', sent: '긍정', cat: 'Battery', int: '강', src: 'Mark Ellis, 知乎', date: '202510', note: 'Global + China' },
+      { sum: '200MP Hasselblad망원 4K 120fps안정(GL극찬) vs 2억화소기대미충족(CN불만)', sent: '중립', cat: 'Camera_Main', int: '강', src: 'PhoneArena, 酷安', date: '202510', note: 'Regional Gap' },
+      { sum: '拍照质感强但期待vs실제갭 — 像素평점7.3/10(6개평가중2위) 야경품질하강 대초점불정확', sent: '부정', cat: 'Camera_Main', int: '강', src: '酷安, 知乎', date: '202511', note: 'China VOC' },
+      { sum: '厚重224g·두께8.6mm 끼우기불편·여성사용자손작음그룹불만·握持감沉(중국 강조)', sent: '부정', cat: 'Design', int: '강', src: '知乎, Bilibili', date: '202510', note: 'China VOC' },
+      { sum: '5299원가격偏高·경쟁기 OnePlus/Honor/Xiaomi 동가격 동급체험 제공·가치론쟁심화', sent: '부정', cat: 'PriceValue', int: '강', src: '知乎, PConline', date: '202510', note: 'China VOC' },
+      { sum: '게임 Genshin Impact 30분 → 43°C / 원신 30분 → 38.4°C (발열개선 미비, 중국계측평균 42.6°)', sent: '부정', cat: 'Thermal', int: '강', src: '酷安, Leikeji', date: '202511', note: 'China Measured' },
+      { sum: '59개프리설치앱·Temu·AliExpress·Booking과다·ColorOS최적화미흡(GL+CN공통)', sent: '부정', cat: 'Software', int: '강', src: 'MyPitShop, OPPO社区', date: '202510', note: 'Global + China' },
+      { sum: '80W초고속충전0-100% 1h10m극찬(GL) vs 충전속도상대장(CN상대평가)', sent: '중립', cat: 'Charging', int: '중', src: '91Mobiles, IT之家', date: '202510', note: 'Regional Difference' },
+      { sum: 'ColorOS 16시스템流畅(CN긍정) 하지만 초기버그·護眼모드UI사라짐·5년업데이트한계 → 가격정당성훼손', sent: '부정', cat: 'Software', int: '중', src: 'OPPO Community, 知乎', date: '202511', note: 'China + Global' }
+    ]
+  };
