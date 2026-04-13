@@ -5,8 +5,8 @@
  * ============================================================ */
 
 window.NEWS_DATA = {
-  "date": "2026.04.13",
-  "lastUpdated": "2026-04-13T23:59:00+09:00",
+  "date": "2026.04.14",
+  "lastUpdated": "2026-04-14T09:00:00+09:00",
   "samsung": [
     {
       "title": "Galaxy S26·S26 Ultra 흥행 돌풍, 삼성 생산량 긴급 확대",
@@ -51,6 +51,14 @@ window.NEWS_DATA = {
   ],
   "apple": [
     {
+      "title": "Apple, iPhone 18 시리즈 출시 일정 분리 확정 — 일부 모델 2027년으로 연기",
+      "description": "iPhone 18 Pro·Ultra·Fold는 2026년 9월 예정대로 출시, 기본·Plus 모델은 2027년으로 연기. 프리미엄 라인 집중 전략 채택.",
+      "source": "National Today",
+      "region": "US",
+      "date": "2026.04.12",
+      "url": "https://nationaltoday.com/us/ca/cupertino/news/2026/04/12/apple-splits-iphone-18-launch-across-2026-and-2027/"
+    },
+    {
       "title": "iPhone Fold, 삼성디스플레이 폴더블 OLED 3년 독점 공급 계약",
       "description": "애플이 iPhone Fold용 폴더블 OLED 패널을 삼성디스플레이에서만 조달. 대안 공급사 부재로 독점 조건 수용.",
       "source": "MacRumors",
@@ -81,17 +89,25 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.07",
       "url": "https://www.bloomberg.com/news/articles/2026-04-07/apple-s-foldable-iphone-remains-on-track-for-september-debut"
-    },
-    {
-      "title": "iPhone 18 Pro 12가지 신기능 확정, Face ID 화면 아래로 이동",
-      "description": "A20 Pro 칩 (2nm), 가변 조리개, Dynamic Island 축소. 6.3인치 및 6.9인치 2종 출시.",
-      "source": "MacRumors",
-      "region": "US",
-      "date": "2026.04.03",
-      "url": "https://www.macrumors.com/2026/04/03/iphone-18-pro-new-features/"
     }
   ],
   "xiaomi": [
+    {
+      "title": "Xiaomi 18 Pro·18 Pro Max 강화 사양 상세 공개, 카메라·배터리 업그레이드",
+      "description": "GSMArena 보도: 18 Pro는 6.3인치 컴팩트 플래그십, 18 Pro Max는 대용량 배터리 탑재 예정. 200MP 듀얼 카메라 시스템 공통 탑재.",
+      "source": "GSMArena",
+      "region": "Global",
+      "date": "2026.04.13",
+      "url": "https://www.gsmarena.com/xiaomi_18_pro_and_xiaomi_18_pro_max_enhancements_detailed-news-72250.php"
+    },
+    {
+      "title": "Xiaomi 18 Pro 배터리·카메라 세부 스펙 추가 공개",
+      "description": "Gizmochina 보도: 7000mAh 이상 대용량 배터리 및 Leica 협력 200MP 카메라 구성 확인. Snapdragon 8 Elite Gen 6 탑재 전망.",
+      "source": "Gizmochina",
+      "region": "CN",
+      "date": "2026.04.13",
+      "url": "https://www.gizmochina.com/2026/04/13/xiaomi-18-pro-battery-and-camera-details-leak/"
+    },
     {
       "title": "Xiaomi 18 Pro, 후면 AI 스마트 디스플레이 업그레이드 예정",
       "description": "후면 디스플레이가 맥락 인식 AI 인터페이스로 진화. 실시간 번역·텔레프롬프터 기능 탑재 전망. 9월 출시 예상.",
@@ -110,6 +126,22 @@ window.NEWS_DATA = {
     }
   ],
   "oppo": [
+    {
+      "title": "OPPO Find X9 Ultra 핸즈온: 144Hz LTPO·3600nits 디스플레이 실물 확인",
+      "description": "Android Central 체험기: 6.82인치 LTPO AMOLED 직접 확인. 1nit 최저 밝기·IP69 방수·Snapdragon 8 Elite Gen 5 실물 검증. 2026 최고 카메라폰 후보.",
+      "source": "Android Central",
+      "region": "Global",
+      "date": "2026.04.13",
+      "url": "https://www.androidcentral.com/phones/oppo-phones/oppo-find-x9-ultra-hands-on"
+    },
+    {
+      "title": "OPPO Find X9 Ultra 카메라 스펙 공식 확인, 하셀블라드 200MP 4중 구성",
+      "description": "200MP 메인·200MP 3x 인물·50MP 10x 망원·50MP 초광각 4개 구성 공식 확인. 4월 21일 출시 직전 상세 스펙 공개.",
+      "source": "Business Standard",
+      "region": "Global",
+      "date": "2026.04.10",
+      "url": "https://www.business-standard.com/technology/tech-news/oppo-find-x9-ultra-camera-specs-revealed-april-21-launch-126041000381_1.html"
+    },
     {
       "title": "OPPO Find X9 Ultra 'Earth Explorer' 에디션 공개, 4월 21일 출시 확정",
       "description": "지구 탐험가 콘셉트 스페셜 에디션 발표. 144Hz LTPO AMOLED, 피크 밝기 3600nits, Snapdragon 8 Elite Gen 5 탑재.",
@@ -145,23 +177,39 @@ window.NEWS_DATA = {
       "url": "https://www.gsmarena.com/vivo_x300_ultra_in_for_review-news-72268.php"
     },
     {
-      "title": "Vivo X300 Ultra MWC 2026 공개, 400mm 망원 익스텐더",
-      "description": "듀얼 200MP 센서, 6600mAh 배터리, ZEISS Telephoto Extender Gen 2 Ultra 탑재.",
-      "source": "GadgetMatch",
-      "region": "US",
-      "date": "2026.03.04",
-      "url": "https://www.gadgetmatch.com/vivo-x300-ultra-officially-unveiled-at-mwc-2026-telephoto-extender-400mm-camera-cage/"
-    },
-    {
       "title": "Vivo X300 Ultra 실사용 리뷰: 역대 최고의 카메라폰",
       "description": "모든 조명 환경에서 탁월한 사진 품질. 영상 촬영 성능도 최고 수준 평가.",
       "source": "Android Central",
       "region": "US",
       "date": "2026.04.10",
       "url": "https://www.androidcentral.com/phones/vivo/vivo-x300-ultra-review"
+    },
+    {
+      "title": "Vivo X300 Ultra MWC 2026 공개, 400mm 망원 익스텐더",
+      "description": "듀얼 200MP 센서, 6600mAh 배터리, ZEISS Telephoto Extender Gen 2 Ultra 탑재.",
+      "source": "GadgetMatch",
+      "region": "US",
+      "date": "2026.03.04",
+      "url": "https://www.gadgetmatch.com/vivo-x300-ultra-officially-unveiled-at-mwc-2026-telephoto-extender-400mm-camera-cage/"
     }
   ],
   "huawei": [
+    {
+      "title": "Huawei Pura 90 Pro·Pro Max, 출시 직전 컬러 디자인 전모 공개",
+      "description": "NotebookCheck: 옵시디안 블랙·던 골드·퍼플 선셋 등 다양한 컬러 공식 확인. 삼각형 카메라 모듈 유지, 전면 플랫 스크린으로 복귀.",
+      "source": "NotebookCheck",
+      "region": "CN",
+      "date": "2026.04.13",
+      "url": "https://www.notebookcheck.net/Huawei-Pura-90-Pro-Max-shows-off-its-brand-new-look-days-before-launch.1270612.0.html"
+    },
+    {
+      "title": "Huawei Pura 90 Pro·Pro Max 컬러 변형 라인업 첫 공개",
+      "description": "에메랄드 레이크·오렌지 오션·오렌지 씨 그라디언트 컬러 확인. 4월 20일 발표 앞두고 디자인 최종 공개.",
+      "source": "Huawei Central",
+      "region": "CN",
+      "date": "2026.04.13",
+      "url": "https://www.huaweicentral.com/take-a-look-at-huawei-pura-90-pro-and-pro-max-in-different-colors/"
+    },
     {
       "title": "Huawei Pura 90 Pro 디자인·스펙 공식 확인, 8000nits LTPO 패널 탑재",
       "description": "6.87인치 1.5K LTPO AMOLED, 피크 밝기 8000nits. Kirin 9030 Pro, HarmonyOS 6.1. 4월 22일 판매 시작.",
@@ -188,6 +236,14 @@ window.NEWS_DATA = {
     }
   ],
   "honor": [
+    {
+      "title": "Honor Magic 8 Pro TechRadar 리뷰: 전방위 완성도 호평, 디스플레이 최고 수준",
+      "description": "TechRadar: 6.71인치 LTPO OLED, 6000nits 피크 밝기, 4320Hz PWM 디밍 검증. AI Eye Care·Dolby Vision 호환 등 종합 평가 우수.",
+      "source": "TechRadar",
+      "region": "Global",
+      "date": "2026.04.11",
+      "url": "https://www.techradar.com/phones/honor-phones/honor-magic-8-pro-review"
+    },
     {
       "title": "Honor Magic 8 Pro 리뷰: Galaxy S26 Ultra의 유력한 대안",
       "description": "6.71인치 QHD OLED, AI Eye Comfort Display 탑재. 카메라·디스플레이 모두 플래그십 수준으로 평가.",
