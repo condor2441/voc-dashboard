@@ -6,8 +6,16 @@
 
 window.NEWS_DATA = {
   "date": "2026.04.14",
-  "lastUpdated": "2026-04-14T09:00:00+09:00",
+  "lastUpdated": "2026-04-14T09:30:00+09:00",
   "samsung": [
+    {
+      "title": "삼성, M16 OLED로 iPhone 18·Pixel 11 공급 확정 — 역대 최고 밝기·전력효율",
+      "description": "삼성디스플레이 M16 유기물 기반 OLED 패널이 Apple iPhone 18 Pro 시리즈와 Google Pixel 11에 탑재 확정. 최고 밝기·색재현율·전력효율 모두 역대 최고 수준으로 Galaxy S27 탑재 여부 주목.",
+      "source": "Sammy Fans",
+      "region": "US",
+      "date": "2026.04.09",
+      "url": "https://www.sammyfans.com/2026/04/09/samsung-m16-oled-powers-iphone-18-and-pixel-11/amp/"
+    },
     {
       "title": "Galaxy S26·S26 Ultra 흥행 돌풍, 삼성 생산량 긴급 확대",
       "description": "갤럭시 S26 시리즈 초기 수요가 공급을 초과하며 삼성이 생산 확대에 돌입. 특히 S26 Ultra Privacy Display 수요 급증.",
@@ -33,23 +41,23 @@ window.NEWS_DATA = {
       "url": "https://www.sammyfans.com/2026/04/09/galaxy-s25-april-2026-update-europe-india/"
     },
     {
-      "title": "Galaxy S26 4월 업데이트 국제판 배포, 3x 카메라 개선",
-      "description": "4월 보안 패치 포함, 3x 망원 카메라 화질 개선 내용 포함. 글로벌 순차 배포 중.",
+      "title": "Galaxy S26 4월 업데이트 국제판 배포, 3x 카메라 개선 및 신규 필터 3종",
+      "description": "4월 보안 패치 포함, 3x 망원 카메라 화질 개선 및 Classic Film·Pop Film·Blanc 카메라 필터 신규 추가. 글로벌 순차 배포 중.",
       "source": "SamMobile",
       "region": "US",
       "date": "2026.04.09",
       "url": "https://www.sammobile.com/news/galaxy-s26-april-2026-software-update-camera-improvements-released/"
-    },
-    {
-      "title": "Galaxy A37·A57 출시, 미드레인지 AMOLED 라인업 강화",
-      "description": "Galaxy A37은 미국 기준 $449.99부터 시작. 4월 9일 공식 출시.",
-      "source": "Samsung Newsroom",
-      "region": "US",
-      "date": "2026.04.09",
-      "url": "https://news.samsung.com/us/"
     }
   ],
   "apple": [
+    {
+      "title": "iPhone 18 Pro, 삼성 M16 OLED 탑재 확정 — 최고 밝기·전력 효율 동시 개선",
+      "description": "삼성디스플레이 M16 소재셋 OLED가 iPhone 18 Pro·Pro Max·Fold에 독점 공급. 피크 밝기·HDR 선명도·소자 수명 모두 역대 최고 수준 예상.",
+      "source": "SamMobile",
+      "region": "US",
+      "date": "2026.04.09",
+      "url": "https://www.sammobile.com/news/samsung-make-most-advanced-oled-display-iphone-18-pro/"
+    },
     {
       "title": "Apple, iPhone 18 시리즈 출시 일정 분리 확정 — 일부 모델 2027년으로 연기",
       "description": "iPhone 18 Pro·Ultra·Fold는 2026년 9월 예정대로 출시, 기본·Plus 모델은 2027년으로 연기. 프리미엄 라인 집중 전략 채택.",
@@ -81,14 +89,6 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.08",
       "url": "https://www.macrumors.com/2026/04/08/apple-three-year-plan-to-reinvent-iphone/"
-    },
-    {
-      "title": "iPhone Fold, 9월 iPhone 18 Pro와 동시 출시 확정",
-      "description": "블룸버그 Gurman: iPhone 역사상 가장 중요한 변화. 내부 7.6인치 + 외부 5.3인치 OLED.",
-      "source": "Bloomberg",
-      "region": "US",
-      "date": "2026.04.07",
-      "url": "https://www.bloomberg.com/news/articles/2026-04-07/apple-s-foldable-iphone-remains-on-track-for-september-debut"
     }
   ],
   "xiaomi": [
@@ -127,20 +127,28 @@ window.NEWS_DATA = {
   ],
   "oppo": [
     {
+      "title": "OPPO Find X9 Ultra 9to5Google 핸즈온: 글로벌 출시 환영, 2026 최고 카메라폰",
+      "description": "9to5Google: Find X9 Ultra는 하셀블라드 카메라에서 영감 받은 디자인으로 글로벌 동시 출시. 역대 가장 아름다운 스마트폰이라 극찬.",
+      "source": "9to5Google",
+      "region": "US",
+      "date": "2026.04.13",
+      "url": "https://9to5google.com/2026/04/13/oppo-find-x9-ultra-hands-on-hardware/"
+    },
+    {
+      "title": "OPPO Find X9 Ultra TechRadar 핸즈온: 하셀블라드 영감, 2026 최고 미형 스마트폰",
+      "description": "TechRadar: 하셀블라드 카메라에서 영감 받은 디자인으로 2026년 지금까지 가장 아름다운 스마트폰으로 평가. 144Hz LTPO AMOLED, IP69 방수.",
+      "source": "TechRadar",
+      "region": "Global",
+      "date": "2026.04.13",
+      "url": "https://www.techradar.com/phones/the-oppo-find-x9-ultra-is-inspired-by-my-favorite-hasselblad-camera-and-i-think-its-the-most-beautiful-phone-of-2026-so-far"
+    },
+    {
       "title": "OPPO Find X9 Ultra 핸즈온: 144Hz LTPO·3600nits 디스플레이 실물 확인",
       "description": "Android Central 체험기: 6.82인치 LTPO AMOLED 직접 확인. 1nit 최저 밝기·IP69 방수·Snapdragon 8 Elite Gen 5 실물 검증. 2026 최고 카메라폰 후보.",
       "source": "Android Central",
       "region": "Global",
       "date": "2026.04.13",
       "url": "https://www.androidcentral.com/phones/oppo-phones/oppo-find-x9-ultra-hands-on"
-    },
-    {
-      "title": "OPPO Find X9 Ultra 카메라 스펙 공식 확인, 하셀블라드 200MP 4중 구성",
-      "description": "200MP 메인·200MP 3x 인물·50MP 10x 망원·50MP 초광각 4개 구성 공식 확인. 4월 21일 출시 직전 상세 스펙 공개.",
-      "source": "Business Standard",
-      "region": "Global",
-      "date": "2026.04.10",
-      "url": "https://www.business-standard.com/technology/tech-news/oppo-find-x9-ultra-camera-specs-revealed-april-21-launch-126041000381_1.html"
     },
     {
       "title": "OPPO Find X9 Ultra 'Earth Explorer' 에디션 공개, 4월 21일 출시 확정",
@@ -157,14 +165,6 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.13",
       "url": "https://www.91mobiles.com/oppo-find-x9-ultra-price-in-india"
-    },
-    {
-      "title": "OPPO Find X9 Ultra 글로벌 출시 공식 확인",
-      "description": "중국 외 글로벌 시장 동시 출시 공식 발표. 하셀블라드 협력 카메라 시스템 탑재.",
-      "source": "GSMArena",
-      "region": "US",
-      "date": "2026.04.08",
-      "url": "https://www.gsmarena.com/oppo_find_x9_ultra_global_launch_confirmed-news-71785.php"
     }
   ],
   "vivo": [
@@ -194,6 +194,14 @@ window.NEWS_DATA = {
     }
   ],
   "huawei": [
+    {
+      "title": "Huawei Pura 90 Pro 시리즈 4월 20일 출시 공식 확인 — 디자인·스펙 전모 공개",
+      "description": "Gizmochina: 8000nits LTPO AMOLED, Kirin 9030 Pro, HarmonyOS 6.1. 그라디언트 컬러 전 라인업 및 삼각형 카메라 모듈 공개. 4월 22일 판매 시작.",
+      "source": "Gizmochina",
+      "region": "CN",
+      "date": "2026.04.10",
+      "url": "https://www.gizmochina.com/2026/04/10/huawei-pura-90-pro-pro-max-launch-date-design-specs/"
+    },
     {
       "title": "Huawei Pura 90 Pro·Pro Max, 출시 직전 컬러 디자인 전모 공개",
       "description": "NotebookCheck: 옵시디안 블랙·던 골드·퍼플 선셋 등 다양한 컬러 공식 확인. 삼각형 카메라 모듈 유지, 전면 플랫 스크린으로 복귀.",
@@ -225,14 +233,6 @@ window.NEWS_DATA = {
       "region": "CN",
       "date": "2026.04.10",
       "url": "https://nokiamob.net/2026/04/10/huawei-pura-90-pro-and-pro-max-launch-date-design-specs-and-camera-details/"
-    },
-    {
-      "title": "Huawei, Honor, OPPO, Xiaomi 2026년 대형 폴더블 집중 투자",
-      "description": "4개 브랜드 모두 대형 화면 폴더블 라인업 확대. 디스플레이 혁신 경쟁 가열.",
-      "source": "Huawei Central",
-      "region": "CN",
-      "date": "2026.04.08",
-      "url": "https://www.huaweicentral.com/huawei-honor-oppo-xiaomi-prioritizing-big-foldables-in-2026/"
     }
   ],
   "honor": [
