@@ -6,8 +6,16 @@
 
 window.NEWS_DATA = {
   "date": "2026.04.14",
-  "lastUpdated": "2026-04-14T09:30:00+09:00",
+  "lastUpdated": "2026-04-14T17:35:00+09:00",
   "samsung": [
+    {
+      "title": "Galaxy S27 Pro 모델 부활 소문 재점화 — S26에서 취소된 Pro 라인 다시 검토",
+      "description": "Sammy Fans: Galaxy S26에서 취소됐던 Pro 모델이 S27 라인업에서 부활할 가능성 제기. 삼성 내부 프리미엄 라인업 재편 논의 지속. 한편 중국 BOE·Visionox는 ICDT 2026에서 무주름 폴더블 모듈 공개하며 삼성디스플레이 M16 소재셋 대비 기술 격차 추격 중.",
+      "source": "Sammy Fans",
+      "region": "US",
+      "date": "2026.04.12",
+      "url": "https://www.sammyfans.com/2026/04/12/cancelled-with-galaxy-s26-pro-model-rumors-reignites-for-s27/"
+    },
     {
       "title": "삼성, M16 OLED로 iPhone 18·Pixel 11 공급 확정 — 역대 최고 밝기·전력효율",
       "description": "삼성디스플레이 M16 유기물 기반 OLED 패널이 Apple iPhone 18 Pro 시리즈와 Google Pixel 11에 탑재 확정. 최고 밝기·색재현율·전력효율 모두 역대 최고 수준으로 Galaxy S27 탑재 여부 주목.",
@@ -33,14 +41,6 @@ window.NEWS_DATA = {
       "url": "https://www.sammyfans.com/2026/04/08/galaxy-s26-ultra-is-driving-a-massive-privacy-display-boom/"
     },
     {
-      "title": "Galaxy S25 4월 보안 업데이트 유럽·인도 배포 시작",
-      "description": "Galaxy S25 시리즈에 4월 2026 보안 패치 국제 배포 시작. US는 이후 순차 적용 예정.",
-      "source": "Sammy Fans",
-      "region": "US",
-      "date": "2026.04.09",
-      "url": "https://www.sammyfans.com/2026/04/09/galaxy-s25-april-2026-update-europe-india/"
-    },
-    {
       "title": "Galaxy S26 4월 업데이트 국제판 배포, 3x 카메라 개선 및 신규 필터 3종",
       "description": "4월 보안 패치 포함, 3x 망원 카메라 화질 개선 및 Classic Film·Pop Film·Blanc 카메라 필터 신규 추가. 글로벌 순차 배포 중.",
       "source": "SamMobile",
@@ -50,6 +50,14 @@ window.NEWS_DATA = {
     }
   ],
   "apple": [
+    {
+      "title": "iPhone 18 Pro 레드 컬러 유출 신빙성 재확인 — 블랙 2년 연속 제외, Dynamic Island 35% 축소",
+      "description": "9to5Mac: 유출자가 iPhone 18 Pro 레드 컬러 가능성 추가 확인. 클래식 블랙은 2년 연속 Pro 라인업 제외 전망. Face ID 부품 화면 내 이전으로 Dynamic Island 약 35% 축소, 48MP 메인 카메라 가변 조리개 채택 유력. A20 Pro 칩은 TSMC 1세대 2nm 공정.",
+      "source": "9to5Mac",
+      "region": "US",
+      "date": "2026.04.13",
+      "url": "https://9to5mac.com/2026/04/13/leaker-adds-support-for-red-iphone-18-color-rumor-in-a-slightly-weird-way/"
+    },
     {
       "title": "iPhone 18 Pro, 삼성 M16 OLED 탑재 확정 — 최고 밝기·전력 효율 동시 개선",
       "description": "삼성디스플레이 M16 소재셋 OLED가 iPhone 18 Pro·Pro Max·Fold에 독점 공급. 피크 밝기·HDR 선명도·소자 수명 모두 역대 최고 수준 예상.",
@@ -82,14 +90,6 @@ window.NEWS_DATA = {
       "date": "2026.04.10",
       "url": "https://news.quantosei.com/2026/04/10/apple-apparently-still-undecided-on-iphone-18-pro-dynamic-island/"
     },
-    {
-      "title": "애플, iPhone 전면 개편 3개년 로드맵 본격 가동",
-      "description": "iPhone Fold, iPhone 18 Pro, 전면 화면 확장 목표. 역대 최대 규모 디스플레이 혁신 계획 진행.",
-      "source": "MacRumors",
-      "region": "US",
-      "date": "2026.04.08",
-      "url": "https://www.macrumors.com/2026/04/08/apple-three-year-plan-to-reinvent-iphone/"
-    }
   ],
   "xiaomi": [
     {
@@ -127,6 +127,22 @@ window.NEWS_DATA = {
   ],
   "oppo": [
     {
+      "title": "OPPO, Find X9 Ultra 공식 공개 — 4월 21일 글로벌 출시 D-7, 3종 컬러 확정",
+      "description": "Notebookcheck: OPPO가 글로벌 출시 1주 전 Find X9 Ultra 공식 디자인·컬러 공개. Earth Tundra·Polar Glacier·Velvet Sand Canyon 3종. 듀얼 200MP + 50MP 10x 페리스코프 망원, Snapdragon 8 Elite Gen 5, 7,050mAh 배터리, 100W 유선/50W 무선 충전.",
+      "source": "Notebookcheck",
+      "region": "Global",
+      "date": "2026.04.14",
+      "url": "https://www.notebookcheck.net/Oppo-officially-reveals-Find-X9-Ultra-days-before-global-launch.1272159.0.html"
+    },
+    {
+      "title": "OPPO Find X9 Ultra 디자인·컬러 옵션 공식 확인 — GSMArena 보도",
+      "description": "GSMArena: OPPO가 Find X9 Ultra 디자인·컬러 라인업 공식 공개. 1nit 최저 밝기 아이케어 기술 탑재, 144Hz 고주사율 디스플레이. 4/16 사전예약·4/21 중국 출시 예정.",
+      "source": "GSMArena",
+      "region": "Global",
+      "date": "2026.04.13",
+      "url": "https://www.gsmarena.com/oppo_find_x9_ultra_design_and_color_options_officially_revealed-news-72344.php"
+    },
+    {
       "title": "OPPO Find X9 Ultra 9to5Google 핸즈온: 글로벌 출시 환영, 2026 최고 카메라폰",
       "description": "9to5Google: Find X9 Ultra는 하셀블라드 카메라에서 영감 받은 디자인으로 글로벌 동시 출시. 역대 가장 아름다운 스마트폰이라 극찬.",
       "source": "9to5Google",
@@ -150,24 +166,24 @@ window.NEWS_DATA = {
       "date": "2026.04.13",
       "url": "https://www.androidcentral.com/phones/oppo-phones/oppo-find-x9-ultra-hands-on"
     },
-    {
-      "title": "OPPO Find X9 Ultra 'Earth Explorer' 에디션 공개, 4월 21일 출시 확정",
-      "description": "지구 탐험가 콘셉트 스페셜 에디션 발표. 144Hz LTPO AMOLED, 피크 밝기 3600nits, Snapdragon 8 Elite Gen 5 탑재.",
-      "source": "Gizmochina",
-      "region": "CN",
-      "date": "2026.04.13",
-      "url": "https://www.gizmochina.com/2026/04/13/oppo-find-x9-ultra-specs-hasselblad-200mp-launch/"
-    },
-    {
-      "title": "OPPO Find X9 Ultra 스펙 공식 확인, 4월 21일 중국 출시",
-      "description": "듀얼 200MP 카메라, QHD LTPO AMOLED 디스플레이, Snapdragon 8 Elite 탑재.",
-      "source": "91mobiles",
-      "region": "US",
-      "date": "2026.04.13",
-      "url": "https://www.91mobiles.com/oppo-find-x9-ultra-price-in-india"
-    }
   ],
   "vivo": [
+    {
+      "title": "Vivo X300 Ultra 글로벌 출시 4월 24일 확정 — €1,900부터, 사전예약 4/16 시작",
+      "description": "AndroidHeadlines/TechAdvisor: X300 Ultra 글로벌 4/24 정식 출시, 사전예약 4/16 시작. 16GB+1TB €1,900(~$2,190), 줌 렌즈 키트 번들 €2,300. Green·Black 2종. 인도 5/7 출시·5/14 판매. 듀얼 200MP + ZEISS Telephoto Extender 2 Ultra 유지.",
+      "source": "AndroidHeadlines",
+      "region": "Global",
+      "date": "2026.04.14",
+      "url": "https://www.androidheadlines.com/2026/04/vivo-x300-ultra-leak-reveals-global-price-color-details.html"
+    },
+    {
+      "title": "Vivo X Fold 6, X300 시리즈 200MP 카메라 이식 — 폴더블 카메라 플래그십급 전환",
+      "description": "Startup News: X Fold 6가 X300 Ultra에서 검증된 200MP 페리스코프 망원 센서 이식. ZEISS 협력 유지. 폴더블 카메라 성능 격상하며 Huawei Mate X7/Honor Magic V6 견제 강화.",
+      "source": "Startup News",
+      "region": "Global",
+      "date": "2026.04.14",
+      "url": "https://startupnews.fyi/2026/04/14/vivo-x-fold-6-to-use-a-200mp-camera-from-the-x300-series/"
+    },
     {
       "title": "GSMArena, vivo X300 Ultra 정식 리뷰 착수 — 2026 최강 카메라폰 평가",
       "description": "GSMArena 리뷰 팀 X300 Ultra 수령 확인. 200MP 듀얼 센서·6600mAh 배터리 전면 검증 예정.",
@@ -236,6 +252,14 @@ window.NEWS_DATA = {
     }
   ],
   "honor": [
+    {
+      "title": "HONOR, 4월 23일 MagicBook X14/X16 Plus·WIN 게이밍 노트북 신제품 발표 예고",
+      "description": "AndroidHeadlines: HONOR가 4월 23일 MagicBook X14 Plus, X16 Plus 및 신규 WIN 게이밍 노트북 론칭 이벤트 공식 예고. 사전판매 4월 18일 16:08 시작. Intel Core Ultra 탑재. 스마트폰 외 노트북 라인 확장 가속.",
+      "source": "AndroidHeadlines",
+      "region": "CN",
+      "date": "2026.04.14",
+      "url": "https://www.androidheadlines.com/2026/04/honor-new-laptop-launch-event-april-23.html"
+    },
     {
       "title": "Honor Magic 8 Pro TechRadar 리뷰: 전방위 완성도 호평, 디스플레이 최고 수준",
       "description": "TechRadar: 6.71인치 LTPO OLED, 6000nits 피크 밝기, 4320Hz PWM 디밍 검증. AI Eye Care·Dolby Vision 호환 등 종합 평가 우수.",
