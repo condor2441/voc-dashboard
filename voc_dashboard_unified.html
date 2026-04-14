@@ -662,15 +662,7 @@
     <div class="tab-section" id="specs-tab">
       <div class="specs-container">
         <div class="specs-page-title">제품 스펙</div>
-        <div class="specs-subtitle">조사 대상 모델 스펙 DB · 디스플레이 상품기획 관점 중심 · 루머 표기 구분</div>
-
-        <!-- 필터 바 -->
-        <div class="specs-filter-bar" id="specs-filter-bar">
-          <label>필터:</label>
-          <button class="specs-filter-btn active" data-filter="all" onclick="specsFilter('all', this)">전체</button>
-          <button class="specs-filter-btn" data-filter="confirmed" onclick="specsFilter('confirmed', this)">확인 출시</button>
-          <button class="specs-filter-btn" data-filter="rumor" onclick="specsFilter('rumor', this)">루머/예상</button>
-        </div>
+        <div class="specs-subtitle">VOC 분석 모델 스펙 DB · 디스플레이 상품기획 관점 중심 · VOC 데이터와 자동 동기화</div>
 
         <!-- 브랜드 탭 -->
         <div class="specs-brand-tabs" id="specs-brand-tabs"></div>
@@ -1321,156 +1313,129 @@ window.initDashboard = function() {
 };
 
 /* ===================================================
- * SPECS TAB — 렌더링 로직
+ * SPECS TAB — VOC 모델 데이터 동기화 렌더링
+ * VOC_MODELS의 specs 배열에서 직접 가져옴 (별도 파일 불필요)
  * =================================================== */
-let specsCurrentBrand = 'samsung';
-let specsCurrentFilter = 'all'; // 'all' | 'confirmed' | 'rumor'
+let specsCurrentBrand = null;
 let specsInitialized = false;
 
+function getSpecsBrands() {
+  const vocModels = window.VOC_MODELS || {};
+  const brandMap = {};
+  const brandOrder = ['Samsung', 'Apple', 'Huawei', 'Xiaomi', 'OPPO', 'vivo', 'Honor', 'realme'];
+  Object.keys(vocModels).forEach(key => {
+    const m = vocModels[key];
+    if (!m.brand) return;
+    if (!brandMap[m.brand]) brandMap[m.brand] = [];
+    brandMap[m.brand].push({ key, ...m });
+  });
+  // 정렬: brandOrder 순서 우선, 나머지는 뒤에
+  const sorted = [];
+  brandOrder.forEach(b => { if (brandMap[b]) sorted.push(b); });
+  Object.keys(brandMap).forEach(b => { if (!sorted.includes(b)) sorted.push(b); });
+  return { brands: sorted, brandModels: brandMap };
+}
+
 function initSpecsTab() {
-  if (specsInitialized) return;
-  specsInitialized = true;
+  // VOC 모델 변경 시 재초기화 허용
+  specsInitialized = false;
 
   const tabsEl = document.getElementById('specs-brand-tabs');
   const sectionsEl = document.getElementById('specs-brand-sections');
   if (!tabsEl || !sectionsEl) return;
 
-  const allBrands = window.SPEC_BRANDS || ['samsung', 'apple', 'huawei', 'xiaomi', 'oppo', 'vivo', 'honor'];
-  const labels = window.SPEC_BRAND_LABELS || {};
-
-  // SPEC_DATA에 데이터가 있는 브랜드만 필터링 (VOC 모델 기반)
-  const availableBrands = allBrands.filter(brand => {
-    return window.SPEC_DATA && window.SPEC_DATA[brand] && window.SPEC_DATA[brand].models && window.SPEC_DATA[brand].models.length > 0;
-  });
-
-  if (availableBrands.length === 0) {
-    tabsEl.innerHTML = '<div style="padding:12px;color:#888;font-size:11px">VOC 분석 모델 없음</div>';
+  const { brands, brandModels } = getSpecsBrands();
+  if (brands.length === 0) {
+    sectionsEl.innerHTML = '<div class="specs-loading" style="color:#475569">VOC 모델 데이터 없음</div>';
     return;
   }
 
-  // 브랜드 탭 버튼 생성 (VOC 데이터 있는 것만)
-  availableBrands.forEach((brand, i) => {
+  tabsEl.innerHTML = '';
+  sectionsEl.innerHTML = '';
+
+  brands.forEach((brand, i) => {
+    const count = brandModels[brand].length;
     const btn = document.createElement('button');
     btn.className = 'specs-brand-btn' + (i === 0 ? ' active' : '');
-    btn.textContent = labels[brand] || brand;
+    btn.textContent = `${brand} (${count})`;
     btn.onclick = () => switchSpecsBrand(brand, btn);
     tabsEl.appendChild(btn);
 
-    // 섹션 플레이스홀더
     const sec = document.createElement('div');
     sec.className = 'specs-brand-section' + (i === 0 ? ' active' : '');
     sec.id = 'specs-section-' + brand;
-    sec.innerHTML = '<div class="specs-loading">로딩 중…</div>';
     sectionsEl.appendChild(sec);
   });
 
-  // 첫 번째 브랜드 로드
-  switchSpecsBrand(availableBrands[0], tabsEl.querySelector('.specs-brand-btn'));
+  switchSpecsBrand(brands[0], tabsEl.querySelector('.specs-brand-btn'));
+  specsInitialized = true;
 }
 
 function switchSpecsBrand(brand, btn) {
   specsCurrentBrand = brand;
-
   document.querySelectorAll('.specs-brand-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-
   document.querySelectorAll('.specs-brand-section').forEach(s => s.classList.remove('active'));
   const sec = document.getElementById('specs-section-' + brand);
   if (sec) sec.classList.add('active');
-
-  // Lazy 로드 후 렌더
-  if (typeof loadSpecBrand === 'function') {
-    loadSpecBrand(brand).then(() => renderSpecsTable(brand));
-  } else {
-    renderSpecsTable(brand);
-  }
-}
-
-function specsFilter(filter, btn) {
-  specsCurrentFilter = filter;
-  document.querySelectorAll('.specs-filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderSpecsTable(specsCurrentBrand);
+  renderSpecsTable(brand);
 }
 
 function renderSpecsTable(brand) {
   const sec = document.getElementById('specs-section-' + brand);
   if (!sec) return;
 
-  const data = window.SPEC_DATA && window.SPEC_DATA[brand];
-  if (!data || !data.models) {
+  const { brandModels } = getSpecsBrands();
+  const modelList = brandModels[brand];
+  if (!modelList || modelList.length === 0) {
     sec.innerHTML = '<div class="specs-loading" style="color:#475569">데이터 없음</div>';
     return;
   }
 
-  let models = data.models;
-  if (specsCurrentFilter === 'confirmed') models = models.filter(m => !m.isRumor);
-  if (specsCurrentFilter === 'rumor')     models = models.filter(m => m.isRumor);
+  // VOC 모델의 specs 배열에서 모든 고유 key 수집 (테이블 행 헤더용)
+  const allKeys = [];
+  const keySet = new Set();
+  modelList.forEach(m => {
+    if (!m.specs) return;
+    m.specs.forEach(s => {
+      if (!keySet.has(s.key)) { keySet.add(s.key); allKeys.push(s.key); }
+    });
+  });
 
-  if (models.length === 0) {
-    sec.innerHTML = '<div class="specs-loading" style="color:#475569">해당 필터에 해당하는 모델 없음</div>';
+  if (allKeys.length === 0) {
+    sec.innerHTML = '<div class="specs-loading" style="color:#475569">스펙 데이터 미수집</div>';
     return;
   }
 
-  function supplierBadge(sup) {
-    if (!sup || sup === '—') return '<span style="color:#1e3a5f">—</span>';
-    const s = sup.toUpperCase();
-    if (s.includes('SDC')) return `<span class="supplier-badge sup-sdc">SDC</span>`;
-    if (s.includes('BOE')) return `<span class="supplier-badge sup-boe">BOE</span>`;
-    if (s.includes('CSOT')) return `<span class="supplier-badge sup-csot">CSOT</span>`;
-    if (s.includes('VISIONOX')) return `<span class="supplier-badge sup-etc">Visionox</span>`;
-    if (s.includes('TIANMA')) return `<span class="supplier-badge sup-etc">Tianma</span>`;
-    const short = sup.replace(/\s*\(.*?\)/g, '').trim().substring(0, 10);
-    return `<span class="supplier-badge sup-etc">${short}</span>`;
-  }
+  // 모델별 specs를 key→{val,note} 맵으로 변환
+  const modelMaps = modelList.map(m => {
+    const map = {};
+    if (m.specs) m.specs.forEach(s => { map[s.key] = s; });
+    return map;
+  });
 
-  function brightnessCell(val) {
-    if (!val || val === '—') return '<span style="color:#1e3a5f">—</span>';
-    const nit = parseInt(val.replace(/[^0-9]/g, ''));
-    const cls = nit >= 4000 ? 'b-high' : nit >= 2500 ? 'b-mid' : 'b-low';
-    return `<span class="brightness-cell ${cls}">${val}</span>`;
-  }
+  // 테이블 헤더: 항목 | 모델1 | 모델2 | ...
+  const thModels = modelList.map(m =>
+    `<th style="min-width:180px;white-space:normal;text-align:center">
+      <div class="model-name-cell" style="font-size:11px">${m.name}</div>
+      <div class="launch-cell">${m.launch || '—'}</div>
+      <div style="font-size:9px;color:#334155;margin-top:2px">${m.segment || ''}</div>
+    </th>`
+  ).join('');
 
-  function camCell(cam) {
-    if (!cam) return '—';
-    const parts = [];
-    if (cam.main) parts.push(`<div style="font-size:10px"><span style="color:#60a5fa;font-weight:700">광각</span> ${cam.main}</div>`);
-    if (cam.tele && cam.tele !== '—') parts.push(`<div style="font-size:10px"><span style="color:#a78bfa;font-weight:700">망원</span> ${cam.tele}</div>`);
-    if (cam.uw   && cam.uw   !== '—') parts.push(`<div style="font-size:10px"><span style="color:#34d399;font-weight:700">UW</span> ${cam.uw}</div>`);
-    return parts.join('');
-  }
+  // 디스플레이 관련 키 강조
+  const displayKeys = new Set(['디스플레이', '밝기 / 색감', '밝기/색감', '혁신 기술', 'PWM', 'HDR']);
 
-  const rows = models.map(m => {
-    const d = m.display || {};
-    const c = m.charging || {};
-    const rumorTag = m.isRumor ? '<span class="rumor-badge">루머</span>' : '';
-    return `<tr>
-      <td class="td-model">
-        <div class="model-name-cell">${m.model}${rumorTag}</div>
-        <div class="launch-cell">${m.launch}</div>
-        <div style="font-size:9px;color:#334155;margin-top:2px">${m.market}</div>
-      </td>
-      <td>${d.size || '—'}</td>
-      <td>${supplierBadge(d.panelSupplier)}</td>
-      <td style="font-size:10px;color:#94a3b8;white-space:normal;min-width:110px">${d.panelType || '—'}</td>
-      <td style="font-size:10px">${d.resolution || '—'}</td>
-      <td style="font-weight:700;color:#cbd5e1">${d.ppi || '—'}</td>
-      <td style="color:#fbbf24;font-weight:700">${d.hzRange || '—'}</td>
-      <td>${brightnessCell(d.brightness)}</td>
-      <td style="font-size:10px;color:#64748b">${d.pwm || '—'}</td>
-      <td style="font-size:10px;color:#818cf8">${d.hdr || '—'}</td>
-      <td class="td-display-notes">${d.notes || '—'}</td>
-      <td style="font-size:10px;white-space:normal;min-width:160px;color:#94a3b8">${m.soc || '—'}</td>
-      <td>${m.ram || '—'}</td>
-      <td style="font-size:10px">${m.storage || '—'}</td>
-      <td style="font-weight:700;color:#34d399">${m.battery || '—'}</td>
-      <td style="font-size:10px;white-space:normal;min-width:100px">${c.wired || '—'}${c.wireless ? ' / ' + c.wireless : ''}</td>
-      <td style="min-width:200px">${camCell(m.camera)}</td>
-      <td>${m.weight || '—'}</td>
-      <td style="font-size:10px;color:#64748b">${m.waterproof || '—'}</td>
-      <td style="font-size:10px;color:#64748b;white-space:normal;min-width:80px">${m.os || '—'}</td>
-      <td class="td-display-notes" style="min-width:140px">${m.notes || '—'}</td>
-    </tr>`;
+  const rows = allKeys.map(key => {
+    const isDisplay = displayKeys.has(key);
+    const keyStyle = isDisplay ? 'color:#60a5fa;font-weight:800' : 'color:#cbd5e1;font-weight:700';
+    const cells = modelMaps.map(map => {
+      const s = map[key];
+      if (!s) return '<td style="color:#1e3a5f;text-align:center">—</td>';
+      const note = s.note ? `<div style="font-size:9px;color:#64748b;margin-top:2px">${s.note}</div>` : '';
+      return `<td style="white-space:normal;min-width:180px"><div style="color:#e2e8f0;font-size:11px">${s.val}</div>${note}</td>`;
+    }).join('');
+    return `<tr><td style="${keyStyle};white-space:nowrap;font-size:11px;padding-right:16px">${key}</td>${cells}</tr>`;
   }).join('');
 
   sec.innerHTML = `
@@ -1478,34 +1443,15 @@ function renderSpecsTable(brand) {
       <table>
         <thead>
           <tr>
-            <th>모델명</th>
-            <th class="th-display">크기</th>
-            <th class="th-display">패널 공급사</th>
-            <th class="th-display">패널 타입</th>
-            <th class="th-display">해상도</th>
-            <th class="th-display">PPI</th>
-            <th class="th-display">주사율</th>
-            <th class="th-display">피크 밝기</th>
-            <th class="th-display">PWM</th>
-            <th class="th-display">HDR</th>
-            <th class="th-display">디스플레이 특이사항</th>
-            <th>SoC</th>
-            <th>RAM</th>
-            <th>저장</th>
-            <th>배터리</th>
-            <th>충전</th>
-            <th>카메라</th>
-            <th>무게</th>
-            <th>방수</th>
-            <th>OS</th>
-            <th>기타</th>
+            <th style="min-width:100px">항목</th>
+            ${thModels}
           </tr>
         </thead>
         <tbody>${rows}</tbody>
       </table>
     </div>
     <div style="margin-top:10px;font-size:10px;color:#1e3a5f;text-align:right">
-      ${models.length}개 모델 표시 · 루머/예상 스펙은 <span class="rumor-badge">루머</span> 표기 · 디스플레이 컬럼 <span style="color:#60a5fa">파란색</span> 헤더
+      ${modelList.length}개 모델 · VOC 제품 테이블과 자동 동기화 · 디스플레이 항목 <span style="color:#60a5fa">파란색</span> 강조
     </div>`;
 }
 
@@ -1521,6 +1467,5 @@ function switchTab(tab, btn) {
 </script>
 <script src="news/news_data.js"></script>
 <script src="models/_index.js"></script>
-<script src="specs/_index.js"></script>
 </body>
 </html>
