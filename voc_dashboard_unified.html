@@ -1300,57 +1300,86 @@ function loadNewsData() {
   });
 }
 
-/* ===== PRODUCT SPECS (Lazy-loaded per brand) ===== */
-window.PRODUCT_SPECS = window.PRODUCT_SPECS || {};
-window._specsLoaded = window._specsLoaded || {}; // { brandKey: true|Promise }
+/* ===== PRODUCT SPECS (Auto-synced with VOC models, lazy-loaded per brand) =====
+ * 구조:
+ *   window.PRODUCT_SPECS_BY_KEY[vocModelKey] = { key, brand, name, launch, display, ... }
+ * Brand 탭 & 모델 리스트는 window.VOC_MODELS 를 source-of-truth 로 삼아 자동 생성.
+ * VOC 에 있지만 specs 데이터 없는 모델은 "스펙 조사 예정" 플레이스홀더 로우로 자동 렌더.
+ * 새 VOC 모델 추가만으로 specs 탭에 자동 반영됨.
+ */
+window.PRODUCT_SPECS_BY_KEY = window.PRODUCT_SPECS_BY_KEY || {};
+window._specsLoaded = window._specsLoaded || {};      // { brandSlug: true|Promise }
+window._specsLoadFailed = window._specsLoadFailed || {}; // { brandSlug: true }
 window._specsCurrentBrand = null;
 
-const SPECS_BRAND_ORDER = [
-  { key: 'samsung', label: 'Samsung' },
-  { key: 'apple',   label: 'Apple'   },
-  { key: 'huawei',  label: 'Huawei'  },
-  { key: 'xiaomi',  label: 'Xiaomi'  },
-  { key: 'oppo',    label: 'OPPO'    },
-  { key: 'vivo',    label: 'vivo'    },
-  { key: 'honor',   label: 'Honor'   }
-];
+// Brand label → 스펙 파일 slug. VOC 브랜드명을 소문자화하면 기본 매핑됨.
+// 필요시 여기서 override (OnePlus 같이 VOC에 'OPPO' 로 들어있지만 별도 파일 경우 등)
+const SPECS_BRAND_SLUG_OVERRIDES = {
+  // 'OPPO': 'oppo'  // default lower-case 로 충분
+};
+function brandToSlug(brand) {
+  if (SPECS_BRAND_SLUG_OVERRIDES[brand]) return SPECS_BRAND_SLUG_OVERRIDES[brand];
+  return String(brand || '').toLowerCase();
+}
+
+// VOC_MODELS 순회하여 {brand: label, slug, modelKeys: [...]} 배열 반환
+function getSpecsBrandsFromVoc() {
+  const voc = window.VOC_MODELS || {};
+  const order = {};
+  const vocIndex = (typeof MODEL_KEYS !== 'undefined') ? MODEL_KEYS : Object.keys(voc);
+  vocIndex.forEach(key => {
+    const m = voc[key];
+    if (!m || !m.brand) return;
+    if (!order[m.brand]) order[m.brand] = { brand: m.brand, slug: brandToSlug(m.brand), modelKeys: [] };
+    order[m.brand].modelKeys.push(key);
+  });
+  // 한 번에 표시 — VOC 등장 순서 유지
+  return Object.values(order);
+}
 
 function initSpecsBrandTabs() {
   const tabs = document.getElementById('specs-brand-tabs');
   if (!tabs) return;
-  if (tabs.dataset.inited === '1') return;
-  tabs.innerHTML = SPECS_BRAND_ORDER.map(b =>
-    `<button class="specs-brand-btn" onclick="selectSpecsBrand('${b.key}', this)">${b.label}</button>`
+  const brands = getSpecsBrandsFromVoc();
+  if (brands.length === 0) {
+    tabs.innerHTML = '<div class="specs-loading" style="padding:14px;">VOC 모델 데이터 로딩 대기…</div>';
+    tabs.dataset.inited = '0';
+    return;
+  }
+  tabs.innerHTML = brands.map(b =>
+    `<button class="specs-brand-btn" data-brand="${escHtml(b.brand)}" data-slug="${escHtml(b.slug)}" onclick="selectSpecsBrand('${escHtml(b.brand)}', this)">${escHtml(b.brand)} <span style="opacity:.5;font-weight:500;margin-left:4px;">${b.modelKeys.length}</span></button>`
   ).join('');
   tabs.dataset.inited = '1';
 }
 
-function loadSpecsScript(brandKey) {
-  if (window._specsLoaded[brandKey] === true) return Promise.resolve();
-  if (window._specsLoaded[brandKey] instanceof Promise) return window._specsLoaded[brandKey];
-  const p = new Promise((resolve, reject) => {
+function loadSpecsScript(slug) {
+  if (window._specsLoaded[slug] === true) return Promise.resolve();
+  if (window._specsLoaded[slug] instanceof Promise) return window._specsLoaded[slug];
+  const p = new Promise((resolve) => {
     const s = document.createElement('script');
-    s.src = 'specs/' + brandKey + '.js?v=' + Date.now();
-    s.onload = () => { window._specsLoaded[brandKey] = true; resolve(); };
-    s.onerror = () => reject(new Error('Failed to load specs/' + brandKey + '.js'));
+    s.src = 'specs/' + slug + '.js?v=' + Date.now();
+    s.onload = () => { window._specsLoaded[slug] = true; resolve(); };
+    s.onerror = () => {
+      console.warn('[specs] specs/' + slug + '.js 로드 실패 — 전체 플레이스홀더 로 렌더');
+      window._specsLoadFailed[slug] = true;
+      window._specsLoaded[slug] = true; // 더 이상 재시도 안 함
+      resolve();
+    };
     document.body.appendChild(s);
   });
-  window._specsLoaded[brandKey] = p;
+  window._specsLoaded[slug] = p;
   return p;
 }
 
-function selectSpecsBrand(brandKey, btn) {
-  window._specsCurrentBrand = brandKey;
+function selectSpecsBrand(brand, btn) {
+  window._specsCurrentBrand = brand;
   document.querySelectorAll('.specs-brand-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   const content = document.getElementById('specs-content');
   if (!content) return;
-  content.innerHTML = '<div class="specs-loading">📥 ' + brandKey + ' 스펙 로드 중…</div>';
-  loadSpecsScript(brandKey)
-    .then(() => renderSpecsForBrand(brandKey))
-    .catch(err => {
-      content.innerHTML = '<div class="specs-loading">❌ 로드 실패: ' + (err.message || err) + '</div>';
-    });
+  const slug = brandToSlug(brand);
+  content.innerHTML = '<div class="specs-loading">📥 ' + escHtml(brand) + ' 스펙 로드 중…</div>';
+  loadSpecsScript(slug).then(() => renderSpecsForBrand(brand));
 }
 
 function escHtml(s) {
@@ -1364,26 +1393,27 @@ function launchFlagChip(flag) {
   if (flag === 'released') return '<span class="spec-chip chip-released">출시</span>';
   if (flag === 'planned')  return '<span class="spec-chip chip-planned">예정</span>';
   if (flag === 'rumor')    return '<span class="spec-chip chip-rumor">루머</span>';
+  if (flag === 'tbd')      return '<span class="spec-chip chip-rumor">조사 예정</span>';
   return '';
 }
 
 function renderDisplayCell(d) {
-  if (!d) return '—';
+  if (!d) return '<span class="spec-sub">—</span>';
   const rows = [
-    ['Size',     d.size],
-    ['Res.',     d.resolution],
-    ['Refresh',  d.refresh],
-    ['Supplier', d.supplier],
-    ['Panel',    d.panelType],
-    ['Gen.',     d.generation],
-    ['LTPO',     d.ltpo],
-    ['PPI',      d.ppi],
-    ['HDR',      d.hdr],
+    ['Size',       d.size],
+    ['Res.',       d.resolution],
+    ['Refresh',    d.refresh],
+    ['Supplier',   d.supplier],
+    ['Panel',      d.panelType],
+    ['Gen.',       d.generation],
+    ['LTPO',       d.ltpo],
+    ['PPI',        d.ppi],
+    ['HDR',        d.hdr],
     ['Brightness', d.maxBrightness]
   ];
   return rows.filter(r => r[1] !== undefined && r[1] !== null && r[1] !== '')
     .map(r => `<span class="spec-display-line"><span class="label">${escHtml(r[0])}</span>${escHtml(r[1])}</span>`)
-    .join('');
+    .join('') || '<span class="spec-sub">—</span>';
 }
 
 function renderBatteryCell(b) {
@@ -1413,32 +1443,61 @@ function renderPriceCell(p) {
   return parts.join('') || '—';
 }
 
-function renderSpecsForBrand(brandKey) {
-  const data = window.PRODUCT_SPECS[brandKey];
+// 플레이스홀더 로우: specs 데이터 없는 VOC 모델 — VOC 메타만 사용해 최소 행 생성
+function buildPlaceholderSpec(vocKey) {
+  const v = (window.VOC_MODELS || {})[vocKey] || {};
+  return {
+    key: vocKey,
+    brand: v.brand || '—',
+    name: v.name || vocKey,
+    launch: v.launch || '미확인',
+    launchFlag: 'tbd',
+    display: null, soc: '—', ram: '—', storage: '—',
+    battery: null, camera: null,
+    os: '—', price: null,
+    features: '⏳ 스펙 조사 예정 — VOC 데이터만 취합된 상태입니다.'
+  };
+}
+
+function renderSpecsForBrand(brand) {
   const content = document.getElementById('specs-content');
   if (!content) return;
-  if (!data || !Array.isArray(data.models) || data.models.length === 0) {
-    content.innerHTML = '<div class="specs-loading">해당 브랜드 스펙 데이터가 없습니다.</div>';
+  const brands = getSpecsBrandsFromVoc();
+  const target = brands.find(b => b.brand === brand);
+  if (!target || target.modelKeys.length === 0) {
+    content.innerHTML = '<div class="specs-loading">해당 브랜드의 VOC 모델이 없습니다.</div>';
     return;
   }
 
-  const rows = data.models.map(m => `
-    <tr>
-      <td class="model-cell">${escHtml(m.name)} ${launchFlagChip(m.launchFlag)}</td>
-      <td>${escHtml(m.launch || '—')}</td>
-      <td class="display-cell">${renderDisplayCell(m.display)}</td>
-      <td>${escHtml(m.soc || '—')}</td>
-      <td>${escHtml(m.ram || '—')}</td>
-      <td>${escHtml(m.storage || '—')}</td>
-      <td>${renderBatteryCell(m.battery)}</td>
-      <td>${renderCameraCell(m.camera)}</td>
-      <td>${escHtml(m.os || '—')}</td>
-      <td>${renderPriceCell(m.price)}</td>
-      <td class="spec-sub">${escHtml(m.features || '—')}</td>
-    </tr>`).join('');
+  let placeholderCount = 0;
+  const specsByKey = window.PRODUCT_SPECS_BY_KEY || {};
+  const rows = target.modelKeys.map(k => {
+    let m = specsByKey[k];
+    if (!m) { m = buildPlaceholderSpec(k); placeholderCount++; }
+    return `
+      <tr>
+        <td class="model-cell">${escHtml(m.name)} ${launchFlagChip(m.launchFlag)}</td>
+        <td>${escHtml(m.launch || '—')}</td>
+        <td class="display-cell">${renderDisplayCell(m.display)}</td>
+        <td>${escHtml(m.soc || '—')}</td>
+        <td>${escHtml(m.ram || '—')}</td>
+        <td>${escHtml(m.storage || '—')}</td>
+        <td>${renderBatteryCell(m.battery)}</td>
+        <td>${renderCameraCell(m.camera)}</td>
+        <td>${escHtml(m.os || '—')}</td>
+        <td>${renderPriceCell(m.price)}</td>
+        <td class="spec-sub">${escHtml(m.features || '—')}</td>
+      </tr>`;
+  }).join('');
+
+  const slug = brandToSlug(brand);
+  const loadFailedNote = window._specsLoadFailed[slug]
+    ? `<span style="color:#fb923c;margin-left:8px;">⚠ specs/${escHtml(slug)}.js 파일 없음 — VOC 메타만으로 플레이스홀더 생성</span>` : '';
+  const placeholderNote = placeholderCount > 0
+    ? `<span style="color:#fb923c;margin-left:8px;">(${placeholderCount}종 "스펙 조사 예정" 플레이스홀더)</span>` : '';
 
   content.innerHTML = `
-    <div class="specs-section-title">${escHtml(data.label || brandKey)} · 최신 플래그십 주요 스펙 (${data.models.length}종)</div>
+    <div class="specs-section-title">${escHtml(brand)} · VOC 취합 모델 스펙 (${target.modelKeys.length}종)${placeholderNote}${loadFailedNote}</div>
     <div class="specs-table-wrap">
       <table class="specs-table">
         <thead>
@@ -1460,17 +1519,19 @@ function renderSpecsForBrand(brandKey) {
       </table>
     </div>
     <div style="margin-top:12px;font-size:10px;color:#475569;line-height:1.6;">
-      ※ "루머"/"미확인" 표기 항목은 공식 발표 전 정보 기반입니다. 디스플레이 컬럼은 상품기획 관점에서 패널 공급사(SDC/BOE/CSOT/Tianma/Visionox)·세대(M14/M15/M16 등)·LTPO·PPI·HDR 규격·최대 휘도를 별도 제공합니다.
+      ※ 이 탭의 모델 리스트는 <b>VOC 탭(window.VOC_MODELS)</b>에서 자동 추출됩니다. VOC에 새 모델을 추가하면 여기에도 자동 반영되며, 스펙 상세가 없으면 "스펙 조사 예정" 플레이스홀더로 표시됩니다. · 디스플레이 컬럼은 상품기획 관점에서 패널 공급사(SDC/BOE/CSOT/Tianma/Visionox)·세대(M14/M15/M16 등)·LTPO·PPI·HDR·최대 휘도를 별도 제공합니다.
     </div>`;
 }
 
 // Called when user switches to specs tab
 function ensureSpecsTabReady() {
   initSpecsBrandTabs();
-  if (!window._specsCurrentBrand) {
-    // auto-select first brand (Samsung — SDC 관점 기본)
-    const firstBtn = document.querySelector('.specs-brand-btn');
-    if (firstBtn) selectSpecsBrand(SPECS_BRAND_ORDER[0].key, firstBtn);
+  const brands = getSpecsBrandsFromVoc();
+  if (brands.length === 0) return;
+  if (!window._specsCurrentBrand || !brands.find(b => b.brand === window._specsCurrentBrand)) {
+    const first = brands[0];
+    const firstBtn = document.querySelector('.specs-brand-btn[data-brand="' + CSS.escape(first.brand) + '"]');
+    selectSpecsBrand(first.brand, firstBtn);
   }
 }
 

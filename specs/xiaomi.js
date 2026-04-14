@@ -1,97 +1,100 @@
 /* ============================================================
- * Product Specs — Xiaomi
+ * Product Specs — Xiaomi (Redmi 포함)
  * ============================================================ */
-window.PRODUCT_SPECS = window.PRODUCT_SPECS || {};
-window.PRODUCT_SPECS['xiaomi'] = {
+window.PRODUCT_SPECS_BY_KEY = window.PRODUCT_SPECS_BY_KEY || {};
+
+window.PRODUCT_SPECS_BY_KEY['xiaomi17'] = {
+  key: 'xiaomi17',
   brand: 'Xiaomi',
-  label: 'Xiaomi',
-  models: [
-    {
-      name: 'Xiaomi 17 Pro',
-      launch: '2025.09.25',
-      launchFlag: 'released',
-      display: {
-        size: '6.3"',
-        resolution: '2670×1220',
-        refresh: '1–120Hz LTPO',
-        supplier: 'TCL CSOT',
-        panelType: 'Flat OLED (M10)',
-        maxBrightness: '3,200 nit (peak) / 1,200 nit HBM',
-        generation: 'CSOT T9 (M10)',
-        ltpo: 'Yes',
-        ppi: 460,
-        hdr: 'Dolby Vision / HDR10+'
-      },
-      soc: 'Snapdragon 8 Elite Gen 5',
-      ram: '12 / 16 GB LPDDR5X',
-      storage: '256GB / 512GB / 1TB UFS 4.1',
-      battery: { capacity: '6,300 mAh (Si-C)', chargeWired: '100W', chargeWireless: '50W' },
-      camera: {
-        main: '50MP F1.67 Light Fusion 950 (1/1.28")',
-        tele: '50MP F2.6 5x Periscope',
-        uw: '50MP F2.2 Ultra-wide'
-      },
-      os: 'HyperOS 3 (Android 16)',
-      price: { KR: '미출시', US: '—', CN: '¥4,999~' },
-      features: 'Leica · 샤오미 최초 후면 2차 화면 "Magic Back Screen" (Pro Max와 공유)'
-    },
-    {
-      name: 'Xiaomi 17 Pro Max',
-      launch: '2025.09.25',
-      launchFlag: 'released',
-      display: {
-        size: '6.9"',
-        resolution: '2880×1320',
-        refresh: '1–120Hz LTPO',
-        supplier: 'TCL CSOT',
-        panelType: 'Flat OLED (M10)',
-        maxBrightness: '3,500 nit (peak)',
-        generation: 'CSOT T9 (M10)',
-        ltpo: 'Yes',
-        ppi: 460,
-        hdr: 'Dolby Vision / HDR10+'
-      },
-      soc: 'Snapdragon 8 Elite Gen 5',
-      ram: '12 / 16 GB',
-      storage: '256GB / 512GB / 1TB',
-      battery: { capacity: '7,500 mAh (Si-C)', chargeWired: '100W', chargeWireless: '50W' },
-      camera: {
-        main: '50MP F1.67 Light Fusion 950',
-        tele: '50MP F2.6 5x Periscope',
-        uw: '50MP F2.2'
-      },
-      os: 'HyperOS 3',
-      price: { KR: '미출시', US: '—', CN: '¥5,999~' },
-      features: 'Leica · 2.7" 후면 보조디스플레이(Magic Back Screen) · 티타늄 프레임'
-    },
-    {
-      name: 'Xiaomi 17 Ultra (루머)',
-      launch: '2026.03 예정 (루머)',
-      launchFlag: 'rumor',
-      display: {
-        size: '6.8" (추정)',
-        resolution: '2K급 (추정)',
-        refresh: '1–120Hz LTPO',
-        supplier: 'TCL CSOT (추정)',
-        panelType: 'Quad-curve OLED',
-        maxBrightness: '3,500 nit (추정)',
-        generation: 'CSOT T10',
-        ltpo: 'Yes',
-        ppi: '미확인',
-        hdr: 'Dolby Vision'
-      },
-      soc: 'Snapdragon 8 Elite Gen 5 (추정)',
-      ram: '16 / 24 GB (루머)',
-      storage: '512GB / 1TB',
-      battery: { capacity: '6,500 mAh+ (Si-C)', chargeWired: '120W', chargeWireless: '80W' },
-      camera: {
-        main: '1" Sony LYT-900 (루머)',
-        tele: '200MP HP9 Periscope',
-        uw: '50MP'
-      },
-      os: 'HyperOS 3',
-      price: { KR: '미출시', US: '—', CN: '¥6,500~ (추정)' },
-      features: '루머: 1"메인 + 200MP 망원 · 프로 이미징 모듈 · Leica 협력 강화'
-    }
-  ]
+  name: 'Xiaomi 17',
+  launch: '2025.09.25 (중국)',
+  launchFlag: 'released',
+  display: {
+    size: '6.3"',
+    resolution: '2620×1220 (1.5K)',
+    refresh: '1–120Hz LTPO',
+    supplier: 'TCL CSOT',
+    panelType: 'Flat OLED',
+    maxBrightness: '1,000 nit 일반 / 3,500 nit peak',
+    generation: 'CSOT T9 (M10)',
+    ltpo: 'Yes',
+    ppi: 440,
+    hdr: 'Dolby Vision / HDR10+'
+  },
+  soc: 'Snapdragon 8 Elite Gen 5 (3nm)',
+  ram: '12 GB LPDDR5X',
+  storage: '256GB / 512GB',
+  battery: { capacity: '7,000 mAh (CN) / 6,330 mAh (Global)', chargeWired: '100W', chargeWireless: '50W' },
+  camera: {
+    main: '50MP Light Hunter 950',
+    tele: '50MP Periscope',
+    uw: '50MP Ultra-wide'
+  },
+  os: 'HyperOS 3 (Android 15)',
+  price: { KR: '미출시', US: '—', CN: '¥4,499~' },
+  features: 'Leica 튜닝 · IP68 · 193g / 8.1mm · 컴팩트 플래그십'
+};
+
+window.PRODUCT_SPECS_BY_KEY['xiaomi17ultra'] = {
+  key: 'xiaomi17ultra',
+  brand: 'Xiaomi',
+  name: 'Xiaomi 17 Ultra',
+  launch: '2025.12.25 (중국) / 2026.03.06 (Leica Leitzphone)',
+  launchFlag: 'released',
+  display: {
+    size: '6.9"',
+    resolution: '2608×1200 (1200P)',
+    refresh: '1–120Hz LTPO',
+    supplier: 'TCL CSOT',
+    panelType: 'M10 LTPO OLED',
+    maxBrightness: '3,500 nit (peak)',
+    generation: 'CSOT T9 (M10)',
+    ltpo: 'Yes',
+    ppi: 460,
+    hdr: 'Dolby Vision'
+  },
+  soc: 'Snapdragon 8 Elite Gen 5',
+  ram: '12 / 16 GB',
+  storage: '256GB / 512GB / 1TB',
+  battery: { capacity: '7,500 mAh (Si-C)', chargeWired: '100W', chargeWireless: '50W' },
+  camera: {
+    main: '50MP 1" Light Fusion',
+    tele: '50MP + 200MP 5x Dual Periscope',
+    uw: '50MP F2.2'
+  },
+  os: 'HyperOS 3',
+  price: { KR: '미출시', US: '—', CN: '¥6,999~' },
+  features: 'Leica · 후면 Magic Back Screen (2.7") · 티타늄 프레임'
+};
+
+window.PRODUCT_SPECS_BY_KEY['redmiturbo5'] = {
+  key: 'redmiturbo5',
+  brand: 'Xiaomi',
+  name: 'Xiaomi Redmi Turbo 5',
+  launch: '2026.01.29 (중국)',
+  launchFlag: 'released',
+  display: {
+    size: '6.67"',
+    resolution: '3200×1440 (1.5K)',
+    refresh: '120Hz 적응형 LTPO',
+    supplier: 'Tianma / CSOT (추정)',
+    panelType: 'AMOLED',
+    maxBrightness: '1,000 nit 일반 / 3,500 nit peak / 2,000 nit 전화면',
+    generation: 'Tianma TM2',
+    ltpo: 'Yes',
+    ppi: 460,
+    hdr: 'HDR10+'
+  },
+  soc: 'MediaTek Dimensity 9300 Ultra',
+  ram: '12 / 16 GB',
+  storage: '256GB / 512GB UFS 4.0',
+  battery: { capacity: '7,560 mAh', chargeWired: '100W', chargeWireless: '50W' },
+  camera: {
+    main: '50MP Sony IMX882 F1.6',
+    tele: '—',
+    uw: '8MP + 2MP Macro'
+  },
+  os: 'HyperOS 3 (Android 15)',
+  price: { KR: '미출시', US: '—', CN: '¥1,999~' },
+  features: '7,500mm² 증기실 · TÜV 3중 인증 · 217g · CN 전용 5G (Global은 4G)'
 };
