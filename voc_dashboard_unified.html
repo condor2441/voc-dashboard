@@ -401,7 +401,7 @@
     background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.3);
     padding: 2px 7px; border-radius: 20px; letter-spacing: 1px;
   }
-  .specs-subtitle { font-size: 11px; color: #888888; margin-bottom: 20px; font-weight: 500; }
+  .specs-subtitle { font-size: 11px; color: #333333; margin-bottom: 20px; font-weight: 600; }
   .specs-brand-tabs {
     display: flex; gap: 6px; margin-bottom: 0;
     border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -409,7 +409,7 @@
   }
   .specs-brand-btn {
     background: transparent; border: none; border-bottom: 2px solid transparent;
-    color: #666666; font-size: 11px; font-weight: 700; padding: 9px 16px;
+    color: #1a1a1a; font-size: 11px; font-weight: 700; padding: 9px 16px;
     cursor: pointer; transition: all 0.2s; white-space: nowrap;
     letter-spacing: 0.3px; margin-bottom: -1px; border-radius: 6px 6px 0 0;
   }
@@ -425,8 +425,8 @@
   .specs-tbl-wrap thead tr { background: linear-gradient(90deg, #f8f9fa, #ffffff); }
   .specs-tbl-wrap th {
     padding: 10px 12px; text-align: left; font-size: 9px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 1px; color: #888888; white-space: nowrap;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    text-transform: uppercase; letter-spacing: 1px; color: #1a1a1a; white-space: nowrap;
+    border-bottom: 2px solid #2563eb;
   }
   .specs-tbl-wrap th.th-display { color: #2563eb; border-bottom: 1px solid rgba(59,130,246,0.15); }
   .specs-tbl-wrap td {
@@ -434,12 +434,12 @@
     color: #1a1a1a; vertical-align: top; white-space: nowrap;
   }
   .specs-tbl-wrap td.td-model { min-width: 160px; white-space: normal; }
-  .specs-tbl-wrap td.td-display-notes { white-space: normal; max-width: 200px; font-size: 10px; color: #777777; }
+  .specs-tbl-wrap td.td-display-notes { white-space: normal; max-width: 200px; font-size: 10px; color: #333333; font-weight: 500; }
   .specs-tbl-wrap tbody tr:nth-child(even) { background: rgba(0,0,0,0.02); }
   .specs-tbl-wrap tr:last-child td { border-bottom: none; }
   .specs-tbl-wrap tbody tr:hover { background: rgba(124,58,237,0.06); }
   .model-name-cell { font-weight: 700; color: #1a1a1a; font-size: 12px; }
-  .launch-cell { font-size: 10px; color: #666666; }
+  .launch-cell { font-size: 10px; color: #333333; font-weight: 500; }
   .rumor-badge {
     display: inline-block; font-size: 9px; font-weight: 800; padding: 1px 6px;
     border-radius: 8px; background: rgba(251,146,60,0.15); color: #fb923c;
@@ -452,21 +452,21 @@
   .sup-sdc { background: rgba(59,130,246,0.1); color: #2563eb; border: 1px solid rgba(59,130,246,0.3); }
   .sup-boe { background: rgba(124,58,237,0.1); color: #7c3aed; border: 1px solid rgba(124,58,237,0.3); }
   .sup-csot { background: rgba(5,46,22,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
-  .sup-etc { background: rgba(0,0,0,0.03); color: #666666; border: 1px solid rgba(0,0,0,0.1); }
+  .sup-etc { background: rgba(0,0,0,0.03); color: #1a1a1a; border: 1px solid rgba(0,0,0,0.1); font-weight: 600; }
   .brightness-cell { font-weight: 700; }
   .b-high { color: #34d399; }
   .b-mid  { color: #fbbf24; }
   .b-low  { color: #f87171; }
   .specs-loading {
-    text-align: center; padding: 40px; color: #888888; font-size: 13px;
+    text-align: center; padding: 40px; color: #333333; font-size: 13px; font-weight: 600;
   }
   .specs-filter-bar {
     display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
   }
-  .specs-filter-bar label { font-size: 10px; color: #666666; font-weight: 700; letter-spacing: 0.5px; }
+  .specs-filter-bar label { font-size: 10px; color: #1a1a1a; font-weight: 700; letter-spacing: 0.5px; }
   .specs-filter-btn {
     background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1);
-    color: #666666; font-size: 10px; font-weight: 600; padding: 4px 10px;
+    color: #1a1a1a; font-size: 10px; font-weight: 700; padding: 4px 10px;
     border-radius: 6px; cursor: pointer; transition: all .2s;
   }
   .specs-filter-btn:hover { background: rgba(0,0,0,0.06); color: #333333; }
@@ -516,7 +516,7 @@
 <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0 16px;border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:0;">
   <div style="font-size:11px;font-weight:800;color:#1e3a5f;letter-spacing:1.5px;text-transform:uppercase;">Smartphone Display VOC</div>
   <div style="text-align:right;font-size:10px;color:#334155;line-height:1.8;">
-    <div>Latest Data: <span id="last-updated-stamp" style="color:#475569;font-weight:700;">—</span></div>
+    <div>Latest Data: <span id="last-updated-stamp" style="color:#0f172a;font-weight:700;">—</span></div>
     <div>Dashboard: <span id="dashboard-updated-stamp" style="color:#2d3f55;font-weight:500;">—</span></div>
   </div>
 </div>
@@ -573,19 +573,19 @@
   <div id="tab-global" class="tab-content active">
     <div class="two-col">
       <div class="tbl-wrap"><table><thead><tr><th>카테고리</th><th>n</th><th>긍정</th><th>부정</th><th>강불만</th><th>비고</th></tr></thead><tbody id="g-tbody"></tbody></table></div>
-      <div><div style="font-size:11px;color:#64748b;margin-bottom:8px;">언급 수 / 긍·부 스택바</div><div class="bar-chart" id="g-bar"></div></div>
+      <div><div style="font-size:11px;color:#0f172a;margin-bottom:8px;">언급 수 / 긍·부 스택바</div><div class="bar-chart" id="g-bar"></div></div>
     </div>
   </div>
   <div id="tab-china" class="tab-content">
     <div class="two-col">
       <div class="tbl-wrap"><table><thead><tr><th>카테고리</th><th>n</th><th>긍정</th><th>부정</th><th>강불만</th><th>비고</th></tr></thead><tbody id="c-tbody"></tbody></table></div>
-      <div><div style="font-size:11px;color:#64748b;margin-bottom:8px;">언급 수 / 긍·부 스택바</div><div class="bar-chart" id="c-bar"></div></div>
+      <div><div style="font-size:11px;color:#0f172a;margin-bottom:8px;">언급 수 / 긍·부 스택바</div><div class="bar-chart" id="c-bar"></div></div>
     </div>
   </div>
   <div id="tab-combined" class="tab-content">
     <div class="two-col">
       <div class="tbl-wrap"><table><thead><tr><th>카테고리</th><th>n</th><th>긍정</th><th>부정</th><th>강불만</th><th>비고</th></tr></thead><tbody id="m-tbody"></tbody></table></div>
-      <div><div style="font-size:11px;color:#64748b;margin-bottom:8px;">언급 수 / 긍·부 스택바</div><div class="bar-chart" id="m-bar"></div></div>
+      <div><div style="font-size:11px;color:#0f172a;margin-bottom:8px;">언급 수 / 긍·부 스택바</div><div class="bar-chart" id="m-bar"></div></div>
     </div>
   </div>
 </div>
@@ -905,7 +905,7 @@ function renderKPI() {
   const m = models[currentModel];
   const grid = document.getElementById('kpi-grid');
   if (!m.kpi || Object.keys(m.kpi).length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#475569;padding:20px">데이터 미수집</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#0f172a;padding:20px">데이터 미수집</div>';
     return;
   }
   grid.innerHTML = Object.values(m.kpi).map(k => `
@@ -921,7 +921,7 @@ function renderLaunch() {
   const m = models[currentModel];
   const tbody = document.getElementById('launch-tbody');
   if (!m.launchTable || m.launchTable.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#475569">데이터 미수집</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#0f172a">데이터 미수집</td></tr>';
     return;
   }
   tbody.innerHTML = m.launchTable.map(r => `
@@ -938,7 +938,7 @@ function renderLaunch() {
 function renderVOC(data, tbodyId, barId) {
   const tbody = document.getElementById(tbodyId);
   if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#475569">데이터 미수집</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#0f172a">데이터 미수집</td></tr>';
     return;
   }
   const mx = Math.max(...data.map(d => d.n));
@@ -949,7 +949,7 @@ function renderVOC(data, tbodyId, barId) {
       <td class="c-pos">${d.pos}</td>
       <td class="c-neg">${d.neg}</td>
       <td>${d.str > 0 ? `<span class="tag tag-H">${d.str}</span>` : '—'}</td>
-      <td style="font-size:11px;color:#64748b">${d.note || '—'}</td>
+      <td style="font-size:11px;color:#0f172a">${d.note || '—'}</td>
     </tr>
   `).join('');
 
@@ -972,7 +972,7 @@ function renderTrend() {
   const m = models[currentModel];
   const grid = document.getElementById('trend-grid');
   if (!m.trend || m.trend.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#475569;padding:20px">데이터 미수집</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#0f172a;padding:20px">데이터 미수집</div>';
     return;
   }
   grid.innerHTML = m.trend.map(t => `
@@ -991,7 +991,7 @@ function renderTrend() {
       <td class="c-pos">${t.pos}%</td>
       <td class="c-neg">${t.neg}%</td>
       <td>${t.uid}</td>
-      <td style="font-size:11px;color:#64748b">${t.src}</td>
+      <td style="font-size:11px;color:#0f172a">${t.src}</td>
     </tr>
   `).join('');
 }
@@ -1000,14 +1000,14 @@ function renderSpec() {
   const m = models[currentModel];
   const tbody = document.getElementById('spec-tbody');
   if (!m.specs || m.specs.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#475569">데이터 미수집</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#0f172a">데이터 미수집</td></tr>';
     return;
   }
   tbody.innerHTML = m.specs.map(s => `
     <tr>
       <td class="spec-key">${s.key}</td>
       <td>${s.val}</td>
-      <td style="font-size:11px;color:#64748b">${s.note || ''}</td>
+      <td style="font-size:11px;color:#0f172a">${s.note || ''}</td>
     </tr>
   `).join('');
 }
@@ -1016,7 +1016,7 @@ function renderCoding() {
   const m = models[currentModel];
   const tbody = document.getElementById('coding-tbody');
   if (!m.codingSample || m.codingSample.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#475569">데이터 미수집</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#0f172a">데이터 미수집</td></tr>';
     return;
   }
   
@@ -1029,8 +1029,8 @@ const sentMap = { '긍정': 'tag-pos', '부정': 'tag-neg' };
       <td><span class="tag tag-cat">${c.cat}</span></td>
       <td><span class="tag ${intMap[c.int]}">${c.int}</span></td>
       <td style="font-size:11px;color:#94a3b8">${c.src}</td>
-      <td style="font-size:11px;color:#64748b;white-space:nowrap">${c.date}</td>
-      <td style="font-size:11px;color:#64748b">${c.note || '—'}</td>
+      <td style="font-size:11px;color:#0f172a;white-space:nowrap">${c.date}</td>
+      <td style="font-size:11px;color:#0f172a">${c.note || '—'}</td>
     </tr>
   `).join('');
 }
@@ -1041,8 +1041,8 @@ function renderInsights() {
   const pInsights = document.getElementById('product-insights');
 
   if (!m.displayInsights || m.displayInsights.length === 0) {
-    dInsights.innerHTML = '<div style="color:#475569;padding:10px">데이터 미수집</div>';
-    pInsights.innerHTML = '<div style="color:#475569;padding:10px">데이터 미수집</div>';
+    dInsights.innerHTML = '<div style="color:#0f172a;padding:10px">데이터 미수집</div>';
+    pInsights.innerHTML = '<div style="color:#0f172a;padding:10px">데이터 미수집</div>';
     return;
   }
 
@@ -1064,7 +1064,7 @@ function renderInsights() {
 function renderFormula() {
   const m = models[currentModel];
   const box = document.getElementById('formula-box');
-  box.innerHTML = m.formula || '<div style="color:#475569">데이터 미수집</div>';
+  box.innerHTML = m.formula || '<div style="color:#0f172a">데이터 미수집</div>';
 }
 
 function renderFooter() {
@@ -1284,7 +1284,7 @@ function loadNewsData() {
     // 월 내부: 날짜 소헤더 → 브랜드 그리드
     Object.keys(monthMap[ym]).sort((a, b) => b.localeCompare(a)).forEach(date => {
       const header = document.createElement('div');
-      header.style.cssText = 'font-size:11px;font-weight:700;color:#475569;letter-spacing:1px;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px dashed #1e293b;';
+      header.style.cssText = 'font-size:11px;font-weight:700;color:#0f172a;letter-spacing:1px;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px dashed #1e293b;';
       header.textContent = date;
       section.appendChild(header);
       section.appendChild(buildBrandGrid(monthMap[ym][date], brandLabels));
@@ -1346,7 +1346,7 @@ function initSpecsTab() {
 
   const { brands, brandModels } = getSpecsBrands();
   if (brands.length === 0) {
-    sectionsEl.innerHTML = '<div class="specs-loading" style="color:#475569">VOC 모델 데이터 없음</div>';
+    sectionsEl.innerHTML = '<div class="specs-loading" style="color:#0f172a">VOC 모델 데이터 없음</div>';
     return;
   }
 
@@ -1388,7 +1388,7 @@ function renderSpecsTable(brand) {
   const { brandModels } = getSpecsBrands();
   const modelList = brandModels[brand];
   if (!modelList || modelList.length === 0) {
-    sec.innerHTML = '<div class="specs-loading" style="color:#475569">데이터 없음</div>';
+    sec.innerHTML = '<div class="specs-loading" style="color:#0f172a">데이터 없음</div>';
     return;
   }
 
@@ -1403,7 +1403,7 @@ function renderSpecsTable(brand) {
   });
 
   if (allKeys.length === 0) {
-    sec.innerHTML = '<div class="specs-loading" style="color:#475569">스펙 데이터 미수집</div>';
+    sec.innerHTML = '<div class="specs-loading" style="color:#0f172a">스펙 데이터 미수집</div>';
     return;
   }
 
@@ -1432,7 +1432,7 @@ function renderSpecsTable(brand) {
     const cells = modelMaps.map(map => {
       const s = map[key];
       if (!s) return '<td style="color:#1e3a5f;text-align:center">—</td>';
-      const note = s.note ? `<div style="font-size:9px;color:#64748b;margin-top:2px">${s.note}</div>` : '';
+      const note = s.note ? `<div style="font-size:9px;color:#0f172a;margin-top:2px">${s.note}</div>` : '';
       return `<td style="white-space:normal;min-width:180px"><div style="color:#e2e8f0;font-size:11px">${s.val}</div>${note}</td>`;
     }).join('');
     return `<tr><td style="${keyStyle};white-space:nowrap;font-size:11px;padding-right:16px">${key}</td>${cells}</tr>`;
