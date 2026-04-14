@@ -11,6 +11,7 @@ const MODEL_KEYS = [
   'op15',
   's26u',
   'reno15pro',
+  'reno15c',
   'findx9pro',
   'xiaomi17ultra',
   'vivox300ultra',
