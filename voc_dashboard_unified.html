@@ -415,6 +415,7 @@
     <div class="sidebar-nav">
       <button class="sidebar-btn active" onclick="switchTab('news', this)">📰 Daily News</button>
       <button class="sidebar-btn" onclick="switchTab('voc', this)">📊 제품별 VOC 분석</button>
+      <button class="sidebar-btn" onclick="switchTab('spec', this)">📋 제품 스펙</button>
     </div>
     <div class="sidebar-footer">Samsung Display · SDC</div>
   </div>
@@ -553,6 +554,44 @@
 
 </div><!-- /page -->
     </div><!-- /voc-tab -->
+
+    <!-- PRODUCT SPEC TAB -->
+    <div class="tab-section" id="spec-tab">
+      <div class="page">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0 16px;border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:0;">
+          <div style="font-size:11px;font-weight:800;color:#1e3a5f;letter-spacing:1.5px;text-transform:uppercase;">Smartphone Product Specifications</div>
+          <div style="text-align:right;font-size:10px;color:#334155;" id="spec-model-count">Total: — models</div>
+        </div>
+        
+        <!-- BRAND FILTER -->
+        <div class="brand-selector" id="spec-brand-selector"></div>
+        
+        <!-- SPEC TABLE -->
+        <div class="section">
+          <div class="section-title">제품 스펙 비교표</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:14%">모델명</th>
+                  <th style="width:10%">브랜드</th>
+                  <th style="width:12%">세그먼트</th>
+                  <th style="width:16%">디스플레이</th>
+                  <th style="width:10%">해상도</th>
+                  <th style="width:8%">Hz</th>
+                  <th style="width:8%">SoC</th>
+                  <th style="width:10%">배터리</th>
+                  <th style="width:12%">카메라(메인)</th>
+                  <th style="width:8%">무게</th>
+                  <th style="width:6%">n값</th>
+                </tr>
+              </thead>
+              <tbody id="spec-all-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /spec-tab -->
 
     <!-- DAILY NEWS TAB -->
     <div class="tab-section active" id="news-tab">
@@ -727,6 +766,7 @@ function generateBrandMap() {
 
 let brandMap = {};
 let currentBrand = '';
+let specCurrentBrand = ''; // 스펙 탭용 브랜드 필터
 
 function initBrandSelector() {
   const el = document.getElementById('brand-selector');
@@ -975,6 +1015,61 @@ function renderFooter() {
     : `VOC Dashboard · ${m.name} · [데이터 미수집 상태] · 분석일 ${m.date}`;
 }
 
+/* ===== SPEC TAB FUNCTIONS ===== */
+function initSpecBrandSelector() {
+  const el = document.getElementById('spec-brand-selector');
+  if (!el) return;
+  const brandOrder = ['vivo', 'OPPO', 'Xiaomi', 'Samsung', 'Apple'];
+  const sortedBrands = brandOrder.filter(b => b in brandMap);
+  el.innerHTML = sortedBrands.map(b =>
+    `<button class="brand-btn${b === specCurrentBrand ? ' active' : ''}" onclick="switchSpecBrand('${b}')">${brandMap[b].label}</button>`
+  ).join('');
+}
+
+function switchSpecBrand(brand) {
+  specCurrentBrand = brand;
+  document.querySelectorAll('#spec-brand-selector .brand-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderAllSpecTable();
+}
+
+function renderAllSpecTable() {
+  const tbody = document.getElementById('spec-all-tbody');
+  if (!tbody) return;
+  const keys = brandMap[specCurrentBrand]?.keys || [];
+  if (keys.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#475569;padding:20px">해당 브랜드 모델 없음</td></tr>';
+    return;
+  }
+  tbody.innerHTML = keys.map(key => {
+    const m = models[key];
+    if (!m) return '';
+    const displayVal = m.specs?.find(s => s.key.includes('디스플레이'))?.val || '-';
+    const resVal = m.specs?.find(s => s.key.includes('해상도'))?.val || '-';
+    const hzVal = m.specs?.find(s => s.key.includes('주사율'))?.val || '-';
+    const socVal = m.specs?.find(s => s.key.includes('SoC'))?.val || '-';
+    const batVal = m.specs?.find(s => s.key.includes('배터리'))?.val || '-';
+    const camVal = m.specs?.find(s => s.key.includes('카메라'))?.val || '-';
+    const weightVal = m.specs?.find(s => s.key.includes('무게'))?.val || '-';
+    const nVal = m.sampleN || 0;
+    return `<tr>
+      <td style="font-weight:600">${m.name}</td>
+      <td><span class="tag tag-cat" style="font-size:9px">${m.brand}</span></td>
+      <td style="font-size:10px;color:#666">${m.segment.split('/')[0]}</td>
+      <td style="font-size:11px;color:#555;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${displayVal.substring(0,30)}</td>
+      <td style="font-size:10px;color:#666">${resVal.split('×')[0] || '-'}p</td>
+      <td style="font-weight:600;color:#2563eb">${hzVal.split('-')[0] || '-'}Hz</td>
+      <td style="font-size:10px;color:#666;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${socVal.substring(0,20)}</td>
+      <td style="font-size:10px;color:#666">${batVal.split(' ')[0] || '-'}</td>
+      <td style="font-size:10px;color:#666">${camVal.split('M')[0] || '-'}MP</td>
+      <td style="font-weight:600;color:#34d399">${weightVal.split('g')[0] || '-'}g</td>
+      <td style="text-align:center;font-weight:700;color:#2563eb">${nVal > 0 ? 'n=' + nVal : '-'}</td>
+    </tr>`;
+  }).join('');
+  const countEl = document.getElementById('spec-model-count');
+  if (countEl) countEl.textContent = `Total: ${keys.length} models`;
+}
+
 function renderAll() {
   renderHeader();
   renderKPI();
@@ -1025,13 +1120,14 @@ function renderLastUpdated() {
   if (dashEl) dashEl.textContent = dashFormatted;
 }
 
-// SIDEBAR TAB SWITCHING (기본 정의 — 하단에 specs 확장 버전으로 덮어씌워짐)
+// SIDEBAR TAB SWITCHING
 function switchTab(tab, btn) {
   document.querySelectorAll('.tab-section').forEach(section => section.classList.remove('active'));
   document.getElementById(tab + '-tab').classList.add('active');
   document.querySelectorAll('.sidebar-btn').forEach(button => button.classList.remove('active'));
   btn.classList.add('active');
   if (tab === 'news' && typeof updateNewsDate === 'function') updateNewsDate();
+  if (tab === 'spec') renderAllSpecTable();
 }
 
 // NEWS DATE TAB SWITCHING
@@ -1200,13 +1296,13 @@ window.initDashboard = function() {
   brandMap = generateBrandMap();
   const brandOrder = ['vivo', 'OPPO', 'Xiaomi', 'Samsung', 'Apple'];
   currentBrand = brandOrder.find(b => b in brandMap) || Object.keys(brandMap)[0] || '';
+  specCurrentBrand = currentBrand; // 스펙 탭 초기값
   runValidationOnLoad();
   initBrandSelector();
+  initSpecBrandSelector();
   renderModelSelector();
   renderLastUpdated();
   loadNewsData();
-
-
 };
 
 </script>
