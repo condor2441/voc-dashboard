@@ -239,6 +239,40 @@ window.SPEC_DATA['vivo'] = {
       waterproof: 'IPX8 (예상)',
       os: 'OriginOS 6 / Android 16 (예상)',
       notes: '루머 기반 · 미확인 스펙 다수'
+    },
+    {
+      key: 'iqoo15ultra',
+      model: 'iQOO 15 Ultra',
+      launch: '2026.02.04 (중국) / 2026.02~ (글로벌)',
+      isRumor: false,
+      market: '중국 + 글로벌',
+      segment: 'Performance Gaming',
+      display: {
+        size: '6.85"',
+        panelSupplier: 'Samsung',
+        panelType: 'M14 LTPO AMOLED',
+        resolution: '2K (3168×1440, ~507ppi)',
+        ppi: '507',
+        hzRange: '60–144Hz',
+        brightness: '2600nit (실측) / 8000nit (peak)',
+        pwm: '2160Hz',
+        hdr: 'HDR10+',
+        notes: '118% DCI-P3, 3200Hz 터치 샘플링, 360Hz 멀티터치'
+      },
+      soc: 'Snapdragon 8 Elite Gen 5 (3nm) + Q3 게이밍칩',
+      ram: '24GB LPDDR5X Ultra Pro',
+      storage: '1TB UFS 4.1',
+      battery: '7400mAh (단일셀)',
+      charging: { wired: '100W SUPERVOOC', wireless: '40W' },
+      camera: {
+        main: '50MP Sony (1/1.56") OIS',
+        tele: '50MP 잠망식 3x (CIPA 4.5 방진)',
+        uw: '50MP 초광각 118°'
+      },
+      weight: '~221g',
+      waterproof: 'IP68 + IP69',
+      os: 'Funtouch OS 14 / OriginOS 4 (Android 15)',
+      notes: '활성냉각 Ice Dome (59-blade fan, 액체금속) · 어깨트리거 · AnTuTu 4.51M'
     }
   ]
 };

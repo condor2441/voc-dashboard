@@ -243,6 +243,41 @@ window.SPEC_DATA['oppo'] = {
       waterproof: '—',
       os: 'Realme UI 6 / Android 15',
       notes: '7000nit 업계 최고 피크 · Ricoh GR 협업'
+    },
+    {
+      key: 'reno15c',
+      model: 'OPPO Reno15C',
+      launch: '2025.12.19 (중국) / 2026.02.05 (인도)',
+      isRumor: false,
+      market: '중국 + 인도 (variant_difference)',
+      segment: 'Premium Volume',
+      note: '⚠️ 중국판(SD7G4+1.5K) vs 인도판(SD6G1+FHD+) 스펙 상이',
+      displayCN: {
+        size: '6.59"',
+        panelType: 'LTPS OLED',
+        resolution: '2760×1256 (1.5K)',
+        brightness: '1200nit',
+        pwm: '3840Hz',
+        notes: '저청색광 인증'
+      },
+      displayIN: {
+        size: '6.57"',
+        panelType: 'AMOLED',
+        resolution: '2760×1256 (FHD+)',
+        brightness: '1200nit HBM / 1400nit peak',
+        notes: '야외 가시성 불충분 VOC'
+      },
+      socCN: 'Snapdragon 7 Gen 4',
+      socIN: 'Snapdragon 6 Gen 1 (언더스펙)',
+      batteryCN: '6500mAh + 80W (54분)',
+      batteryIN: '7000mAh + 80W (40분)',
+      cameraCN: '50MP Sony LYT-600 + 50MP 망원 + 8MP UW',
+      cameraIN: '50MP + 8MP UW + 2MP 매크로 (망원 없음)',
+      weight: '~195g',
+      waterproof: 'IP66 + IP68 + IP69',
+      priceCN: '2899 CNY~',
+      priceIN: '₹34,999 / ₹37,999',
+      os: 'ColorOS 16 / Android 15'
     }
   ]
 };

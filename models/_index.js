@@ -8,9 +8,11 @@ window.VOC_MODELS = window.VOC_MODELS || {};
 
 const MODEL_KEYS = [
   'iqoo15',
+  'iqoo15ultra',
   'op15',
   's26u',
   'reno15pro',
+  'reno15c',
   'findx9pro',
   'xiaomi17ultra',
   'vivox300ultra',
