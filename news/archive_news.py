@@ -107,6 +107,44 @@ def load_archive(archive_file):
 
     return parse_js_object(content)
 
+def compute_date_fingerprints(news_data):
+    """날짜별 기사 URL 집합을 fingerprint dict로 반환 { 'YYYY.MM.DD': frozenset([url,...]) }"""
+    brands = [k for k in news_data if k not in ('date', 'lastUpdated', 'dates')]
+    fp = {}
+    for brand in brands:
+        articles = news_data.get(brand)
+        if not isinstance(articles, list):
+            continue
+        for a in articles:
+            d = a.get('date', '미확인')
+            url = a.get('url', a.get('title', ''))
+            fp.setdefault(d, set()).add(url)
+    return {d: frozenset(urls) for d, urls in fp.items()}
+
+
+def update_dates_timestamps(news_data, old_fingerprints, now_iso=None):
+    """변경된 날짜만 dates[date].updatedAt 갱신. 변경 없으면 기존 값 유지."""
+    if now_iso is None:
+        now_iso = datetime.now().isoformat(timespec='seconds') + '+09:00'
+
+    new_fingerprints = compute_date_fingerprints(news_data)
+    dates = news_data.get('dates', {})
+
+    for date, new_fp in new_fingerprints.items():
+        old_fp = old_fingerprints.get(date, frozenset())
+        if new_fp != old_fp:
+            dates[date] = {'updatedAt': now_iso}
+
+    # 더 이상 활성 데이터에 없는 날짜는 dates에서 제거
+    active_dates = set(new_fingerprints.keys())
+    for date in list(dates.keys()):
+        if date not in active_dates:
+            del dates[date]
+
+    news_data['dates'] = dates
+    return news_data
+
+
 def extract_yesterday_news(news_data, yesterday_date):
     """어제 날짜의 뉴스를 추출"""
     yesterday_news = {}
@@ -200,6 +238,9 @@ def archive_news():
         print("ERROR: news_data.js를 파싱할 수 없습니다.")
         return False
 
+    # 기존 fingerprint 저장 (변경 감지용)
+    old_fingerprints = compute_date_fingerprints(news_data)
+
     # 2. 어제 뉴스 추출
     yesterday_news = extract_yesterday_news(news_data, yesterday_date)
 
@@ -237,6 +278,9 @@ def archive_news():
 
     news_data['date'] = today
     news_data['lastUpdated'] = now_iso
+
+    # 날짜별 updatedAt 갱신 (아카이브 후 변경된 날짜만)
+    news_data = update_dates_timestamps(news_data, old_fingerprints, now_iso)
 
     # news_data.js 저장
     json_str = json.dumps(news_data, ensure_ascii=False, indent=2)
