@@ -1,196 +1,244 @@
 /* ============================================================
- * Product Specs — vivo (iQOO 포함)
+ * Spec Data — vivo (vivo · iQOO)
+ * isRumor: true → 미출시/루머 플래그
  * ============================================================ */
-window.PRODUCT_SPECS_BY_KEY = window.PRODUCT_SPECS_BY_KEY || {};
-
-window.PRODUCT_SPECS_BY_KEY['iqoo15'] = {
-  key: 'iqoo15',
+window.SPEC_DATA = window.SPEC_DATA || {};
+window.SPEC_DATA['vivo'] = {
   brand: 'vivo',
-  name: 'vivo iQOO 15',
-  launch: '2025.10.20 (중국) / 2025.11 (글로벌)',
-  launchFlag: 'released',
-  display: {
-    size: '6.85"',
-    resolution: '3168×1440 QHD+',
-    refresh: '1–144Hz LTPO (8T)',
-    supplier: 'SDC',
-    panelType: 'LEAD OLED 珠峰屏 (무편광층 제거)',
-    maxBrightness: '2,600 nit 全面 / 6,000 nit 局部',
-    generation: 'M14',
-    ltpo: 'Yes (8T LTPO)',
-    ppi: 508,
-    hdr: 'HDR10+'
-  },
-  soc: 'Snapdragon 8850 (8 Elite Gen 5, 3nm)',
-  ram: '12 / 16 / 24 GB',
-  storage: '256GB / 512GB / 1TB UFS 4.1',
-  battery: { capacity: '7,000 mAh (4세대 Si음극)', chargeWired: '100W', chargeWireless: '100W' },
-  camera: {
-    main: '50MP 메인',
-    tele: '50MP Periscope',
-    uw: '50MP Ultra-wide'
-  },
-  os: 'OriginOS 6 (Android 15)',
-  price: { KR: '미출시', US: '—', CN: '¥4,199~' },
-  features: '珠峰屏 무편광 · Q3 e스포츠칩 · IP69 · 3광선센서'
-};
-
-window.PRODUCT_SPECS_BY_KEY['iqooz11turbo'] = {
-  key: 'iqooz11turbo',
-  brand: 'vivo',
-  name: 'iQOO Z11 Turbo',
-  launch: '2026.01.15 (중국)',
-  launchFlag: 'released',
-  display: {
-    size: '6.59"',
-    resolution: '1620×720 (1.5K, 직화면)',
-    refresh: '144Hz 고정',
-    supplier: 'Tianma / Visionox (추정)',
-    panelType: 'LTPS AMOLED',
-    maxBrightness: '5,000 nit @APL',
-    generation: 'LTPS G6',
-    ltpo: 'No',
-    ppi: 270,
-    hdr: 'HDR10'
-  },
-  soc: 'Snapdragon 8 Gen 5 (4nm)',
-  ram: '12 / 16 GB LPDDR6X',
-  storage: '256GB / 512GB / 1TB UFS 4.0',
-  battery: { capacity: '7,600 mAh (단셀, 28.43Wh)', chargeWired: '100W', chargeWireless: '—' },
-  camera: {
-    main: '200MP Sony HP5 F1.88 OIS (1/1.56")',
-    tele: '— (ISZ 4x)',
-    uw: '—'
-  },
-  os: 'OriginOS 6 (Android 16)',
-  price: { KR: '미출시', US: '—', CN: '¥1,999~ (추정)' },
-  features: '8K@30fps 영상 · 알루미늄 · 209g / 7.98mm · 무선충전 없음'
-};
-
-window.PRODUCT_SPECS_BY_KEY['vivoV70'] = {
-  key: 'vivoV70',
-  brand: 'vivo',
-  name: 'vivo v70',
-  launch: '2026.02.19 (글로벌)',
-  launchFlag: 'released',
-  display: {
-    size: '6.59"',
-    resolution: '2750×1260',
-    refresh: '120Hz (Smart Adaptation 60–90Hz)',
-    supplier: 'SDC',
-    panelType: 'AMOLED 10-bit',
-    maxBrightness: '1,800 nit HBM / 5,000 nit peak',
-    generation: 'M13',
-    ltpo: 'No (Smart Adaptive)',
-    ppi: 460,
-    hdr: 'HDR10+'
-  },
-  soc: 'Snapdragon 7 Gen 4',
-  ram: '12 GB',
-  storage: '512GB UFS 4.1',
-  battery: { capacity: '6,500 mAh', chargeWired: '90W FlashCharge', chargeWireless: '—' },
-  camera: {
-    main: '50MP Sony LYT-700V OIS',
-    tele: '50MP 3x',
-    uw: '8MP Ultra-wide'
-  },
-  os: 'FuntouchOS 15 / OriginOS (Android 15)',
-  price: { KR: '미출시', US: '—', CN: '—' },
-  features: 'Zeiss 전면 50MP · Active Use 16:52h · India/SEA 중심 · 190g / 7.7mm'
-};
-
-window.PRODUCT_SPECS_BY_KEY['vivoX300s'] = {
-  key: 'vivoX300s',
-  brand: 'vivo',
-  name: 'vivo X300s',
-  launch: '2026.03.30 (중국)',
-  launchFlag: 'released',
-  display: {
-    size: '6.78"',
-    resolution: '2800×1260 (QHD+ 1.5K)',
-    refresh: '1–144Hz LTPO (8T)',
-    supplier: 'BOE',
-    panelType: 'AMOLED LTPO',
-    maxBrightness: '4,500 nit 局部 / 2,000 nit 全面',
-    generation: 'BOE Q9+',
-    ltpo: 'Yes (8T)',
-    ppi: 460,
-    hdr: 'HDR10+'
-  },
-  soc: 'MediaTek Dimensity 9500',
-  ram: '12 GB',
-  storage: '256GB / 512GB UFS 4.1',
-  battery: { capacity: '7,100 mAh (4세대 Si음극)', chargeWired: '100W', chargeWireless: '—' },
-  camera: {
-    main: '메인',
-    tele: '200MP Zeiss 망원',
-    uw: '초광각'
-  },
-  os: 'OriginOS 6',
-  price: { KR: '미출시', US: '—', CN: '¥3,999~ (추정)' },
-  features: '蓝图原生色彩 · China-only · 225g / 8.5mm (두께 이슈)'
-};
-
-window.PRODUCT_SPECS_BY_KEY['vivox300ultra'] = {
-  key: 'vivox300ultra',
-  brand: 'vivo',
-  name: 'vivo X300 Ultra',
-  launch: '2026.03.30 (중국) / 2026 Q2 (글로벌)',
-  launchFlag: 'released',
-  display: {
-    size: '6.8"',
-    resolution: '2800×1260 (1.5K)',
-    refresh: '1–120Hz LTPO',
-    supplier: 'BOE',
-    panelType: 'AMOLED (Zeiss Master Color)',
-    maxBrightness: '4,500 nit (peak)',
-    generation: 'BOE Q10 Plus',
-    ltpo: 'Yes',
-    ppi: 460,
-    hdr: 'Dolby Vision'
-  },
-  soc: 'Snapdragon 8 Elite Gen 5',
-  ram: '16 / 24 GB',
-  storage: '512GB / 1TB',
-  battery: { capacity: '6,500 mAh (Si-C)', chargeWired: '90W', chargeWireless: '40W' },
-  camera: {
-    main: '1" Sony LYT-900 Variable F1.7–F4.0',
-    tele: '200MP Samsung HP9 APO Periscope',
-    uw: '50MP F1.8 + 외장 2.35x 렌즈 킷'
-  },
-  os: 'OriginOS 6',
-  price: { KR: '미출시', US: '—', CN: '¥7,499~ (추정)' },
-  features: 'ZEISS Vario-APO · V3+ 이미징칩 · 프로 이미징 모듈'
-};
-
-window.PRODUCT_SPECS_BY_KEY['vivoy500i'] = {
-  key: 'vivoy500i',
-  brand: 'vivo',
-  name: 'vivo Y500i',
-  launch: '2026.01.16 (중국)',
-  launchFlag: 'released',
-  display: {
-    size: '6.75"',
-    resolution: '1520×720 HD+',
-    refresh: '120Hz 적응형',
-    supplier: '—',
-    panelType: 'LCD (IPS)',
-    maxBrightness: '1,200 nit (peak)',
-    generation: 'LCD',
-    ltpo: 'No',
-    ppi: 260,
-    hdr: '—'
-  },
-  soc: 'Snapdragon 4 Gen 2',
-  ram: '4 / 6 / 8 GB',
-  storage: '128GB / 256GB eMMC',
-  battery: { capacity: '7,200 mAh', chargeWired: '44W', chargeWireless: '—' },
-  camera: {
-    main: '50MP F1.8',
-    tele: '—',
-    uw: '—'
-  },
-  os: 'FuntouchOS 14',
-  price: { KR: '미출시', US: '—', CN: '¥1,099~ (추정)' },
-  features: 'IP69/IP68 · SGS 5성 낙하 · 3840Hz PWM · 194g · 알루미늄 프레임'
+  models: [
+    {
+      key: 'vivox300ultra',
+      model: 'vivo X300 Ultra',
+      launch: '2026.03.30 (중국)',
+      isRumor: false,
+      market: '중국 (China-only)',
+      segment: 'Imaging Flagship',
+      display: {
+        size: '6.8"',
+        panelSupplier: 'BOE',
+        panelType: 'BOE Q10 Plus LTPO',
+        resolution: '1440×3200 (2K)',
+        ppi: '510',
+        hzRange: '1–144Hz',
+        brightness: '4500nit (국소) / 1946nit (전역)',
+        pwm: '2160Hz PWM + DC',
+        hdr: 'HDR10+ / Dolby Vision / Zeiss Master Color',
+        notes: '144Hz 8T 백플레인 LTPO · Zeiss 색감 보정'
+      },
+      soc: 'Snapdragon 8 Elite Gen5 (4nm)',
+      ram: '12GB LPDDR6X',
+      storage: '512GB UFS 4.0',
+      battery: '6600–7000mAh',
+      charging: { wired: '100W', wireless: '—' },
+      camera: {
+        main: '200MP Sony LYT-900 (f/1.9)',
+        tele: '200MP Samsung (f/2.2)',
+        uw: '50MP 초광각 (f/2.2)'
+      },
+      weight: '약 215g',
+      waterproof: 'IP69',
+      os: 'OriginOS 6 / Android 16',
+      notes: '이중 200MP · 4K120 Dolby Vision 영상 · 무선충전 없음'
+    },
+    {
+      key: 'vivox300s',
+      model: 'vivo X300s',
+      launch: '2026.01 (중국)',
+      isRumor: false,
+      market: '중국 (China-only)',
+      segment: 'Imaging Flagship',
+      display: {
+        size: '6.78"',
+        panelSupplier: 'BOE',
+        panelType: 'BOE LTPO AMOLED',
+        resolution: '1260×2800 (1.5K)',
+        ppi: '~460',
+        hzRange: '1–144Hz',
+        brightness: '4500nit (국소) / 2000nit (전역)',
+        pwm: '2160Hz PWM + DC',
+        hdr: 'HDR10+',
+        notes: '144Hz 8T 백플레인 LTPO · 최저 1nit'
+      },
+      soc: 'MediaTek Dimensity 9500',
+      ram: '12GB',
+      storage: '256GB / 512GB',
+      battery: '7100mAh',
+      charging: { wired: '100W', wireless: '—' },
+      camera: {
+        main: '200MP Zeiss 망원',
+        tele: '200MP 잠망경',
+        uw: '초광각'
+      },
+      weight: '약 225g',
+      waterproof: '—',
+      os: 'OriginOS 6 / Android 15',
+      notes: '중국 전용 · 기기 두께·무게 이슈'
+    },
+    {
+      key: 'vivoV70',
+      model: 'vivo V70',
+      launch: '2025.12 (글로벌)',
+      isRumor: false,
+      market: '글로벌 (인도·동남아)',
+      segment: 'Premium Volume',
+      display: {
+        size: '6.59"',
+        panelSupplier: 'SDC (예상)',
+        panelType: 'AMOLED',
+        resolution: '1260×2750 (1.5K)',
+        ppi: '~460',
+        hzRange: '120Hz',
+        brightness: '5000nit (피크) / 1800nit (HBM)',
+        pwm: 'DC 디밍',
+        hdr: 'HDR10+',
+        notes: 'Zeiss 전면 50MP · 프리미엄 설계'
+      },
+      soc: 'Snapdragon 7 Gen 4',
+      ram: '12GB',
+      storage: '512GB',
+      battery: '6500mAh',
+      charging: { wired: '90W (FlashCharge)', wireless: '—' },
+      camera: {
+        main: '50MP Sony LYT 700V (OIS)',
+        tele: '50MP 3x',
+        uw: '8MP'
+      },
+      weight: '약 190g',
+      waterproof: '—',
+      os: 'Funtouch OS 15',
+      notes: '글로벌 미들급 프리미엄 · Zeiss 전면 50MP'
+    },
+    {
+      key: 'vivoy500i',
+      model: 'vivo Y500i',
+      launch: '2026.01 (인도·동남아)',
+      isRumor: false,
+      market: '글로벌 (인도 중심)',
+      segment: 'Mass Volume',
+      display: {
+        size: '6.75"',
+        panelSupplier: '—',
+        panelType: 'LCD',
+        resolution: '1520×720 (HD+)',
+        ppi: '—',
+        hzRange: '120Hz',
+        brightness: '1200nit (피크)',
+        pwm: '3840Hz PWM + DC',
+        hdr: '—',
+        notes: 'LCD 패널 · 엔트리 세그먼트'
+      },
+      soc: 'Snapdragon 4 Gen 2',
+      ram: '4GB / 6GB / 8GB',
+      storage: '128GB / 256GB (eMMC)',
+      battery: '7200mAh',
+      charging: { wired: '44W', wireless: '—' },
+      camera: {
+        main: '50MP f/1.8',
+        tele: '—',
+        uw: '—'
+      },
+      weight: '약 194g',
+      waterproof: 'IP69 / IP68 · SGS 5성 낙하',
+      os: 'Funtouch OS 15',
+      notes: '엔트리 가성비 · 7200mAh 초대용량'
+    },
+    {
+      key: 'iqoo15',
+      model: 'iQOO 15',
+      launch: '2026.01 (중국)',
+      isRumor: false,
+      market: '중국 + 인도 (iQOO 브랜드)',
+      segment: 'Performance Gaming',
+      display: {
+        size: '6.85"',
+        panelSupplier: 'SDC',
+        panelType: 'SDC LEAD OLED (珠峰屏, 무편광층)',
+        resolution: '1440×3168 (QHD+)',
+        ppi: '508',
+        hzRange: '1–144Hz',
+        brightness: '6000nit (국소) / 2600nit (전역)',
+        pwm: '2160Hz PWM + DC',
+        hdr: 'HDR10+',
+        notes: '무편광층 제거 → 자연광 출력 / 3광선 센서'
+      },
+      soc: 'Snapdragon 8850 (Elite Gen5, 3nm)',
+      ram: '12GB / 16GB / 24GB',
+      storage: '256GB / 512GB / 1TB',
+      battery: '7000mAh',
+      charging: { wired: '100W', wireless: '100W' },
+      camera: {
+        main: '50MP 주카메라',
+        tele: '50MP 잠망경',
+        uw: '50MP 초광각'
+      },
+      weight: '약 215g',
+      waterproof: 'IP69',
+      os: 'OriginOS 6 / Android 15',
+      notes: 'SDC LEAD OLED 무편광층 세계 최초 · Q3 e스포츠칩'
+    },
+    {
+      key: 'iqooz11turbo',
+      model: 'iQOO Z11 Turbo',
+      launch: '2026.02 (중국)',
+      isRumor: false,
+      market: '중국 (China-only)',
+      segment: 'Value-centric',
+      display: {
+        size: '6.59"',
+        panelSupplier: '—',
+        panelType: 'LTPS AMOLED',
+        resolution: '1620×720',
+        ppi: '270',
+        hzRange: '144Hz (고정)',
+        brightness: '5000nit (피크)',
+        pwm: '2160Hz PWM',
+        hdr: '—',
+        notes: '게이밍 최적화 144Hz · 직화면'
+      },
+      soc: 'Snapdragon 8 Gen 5',
+      ram: '12GB / 16GB',
+      storage: '256GB / 1TB',
+      battery: '7600mAh',
+      charging: { wired: '100W', wireless: '—' },
+      camera: {
+        main: '200MP Sony HP5 (1/1.56") f/1.88 OIS',
+        tele: '—',
+        uw: '12MP'
+      },
+      weight: '209g',
+      waterproof: '—',
+      os: 'OriginOS 6 / Android 15',
+      notes: '가성비 게이밍 · 15분 만에 100% 충전'
+    },
+    {
+      key: 'vivoxfold4',
+      model: 'vivo X Fold 4',
+      launch: '2026 Q2 예상',
+      isRumor: true,
+      market: '중국',
+      segment: 'Foldable',
+      display: {
+        size: '내부 ~8.0" / 커버 ~6.5"',
+        panelSupplier: 'SDC 또는 BOE (예상)',
+        panelType: 'LTPO AMOLED (예상)',
+        resolution: '내부 QHD+ / 커버 FHD+',
+        ppi: '—',
+        hzRange: '1–120Hz',
+        brightness: '—',
+        pwm: '—',
+        hdr: 'HDR10+',
+        notes: '루머 기반 · 힌지 개선 예상'
+      },
+      soc: 'Snapdragon 8 Elite Gen5 또는 Gen6 (예상)',
+      ram: '12GB / 16GB (예상)',
+      storage: '512GB / 1TB',
+      battery: '~6000mAh (예상)',
+      charging: { wired: '120W (예상)', wireless: '50W' },
+      camera: { main: '50MP+', tele: '—', uw: '—' },
+      weight: '—',
+      waterproof: 'IPX8 (예상)',
+      os: 'OriginOS 6 / Android 16 (예상)',
+      notes: '루머 기반 · 미확인 스펙 다수'
+    }
+  ]
 };

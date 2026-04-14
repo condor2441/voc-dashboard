@@ -1,132 +1,248 @@
 /* ============================================================
- * Product Specs — OPPO (OnePlus 포함, BBK Electronics)
+ * Spec Data — OPPO (OPPO · OnePlus · realme)
+ * isRumor: true → 미출시/루머 플래그
  * ============================================================ */
-window.PRODUCT_SPECS_BY_KEY = window.PRODUCT_SPECS_BY_KEY || {};
-
-window.PRODUCT_SPECS_BY_KEY['findx9pro'] = {
-  key: 'findx9pro',
+window.SPEC_DATA = window.SPEC_DATA || {};
+window.SPEC_DATA['oppo'] = {
   brand: 'OPPO',
-  name: 'OPPO Find X9 Pro',
-  launch: '2025.10.16 (중국) / 2025.10.28 (글로벌)',
-  launchFlag: 'released',
-  display: {
-    size: '6.78"',
-    resolution: '2780×1264',
-    refresh: '1–120Hz LTPO',
-    supplier: 'BOE',
-    panelType: 'Flat OLED',
-    maxBrightness: '3,600 nit (peak)',
-    generation: 'BOE Q9+',
-    ltpo: 'Yes',
-    ppi: 450,
-    hdr: 'Dolby Vision'
-  },
-  soc: 'MediaTek Dimensity 9500',
-  ram: '12 / 16 GB LPDDR5X',
-  storage: '256GB / 512GB / 1TB UFS 4.1',
-  battery: { capacity: '7,500 mAh (Si-C)', chargeWired: '80W', chargeWireless: '50W' },
-  camera: {
-    main: '50MP F1.6 Sony LYT-828 OIS',
-    tele: '200MP F2.1 Samsung HP9 3x Periscope',
-    uw: '50MP F2.0'
-  },
-  os: 'ColorOS 16 (Android 16)',
-  price: { KR: '미출시', US: '—', CN: '¥5,299~' },
-  features: 'Hasselblad · Cryo-velocity 히트파이프 · IP68/IP69'
-};
-
-window.PRODUCT_SPECS_BY_KEY['op15'] = {
-  key: 'op15',
-  brand: 'OPPO',
-  name: 'OnePlus 15',
-  launch: '2025.10.28 (중국) / 2025.11 (글로벌)',
-  launchFlag: 'released',
-  display: {
-    size: '6.82"',
-    resolution: '2780×1264 (1.5K)',
-    refresh: '1–165Hz LTPO (첫 165Hz LTPO)',
-    supplier: 'CSOT',
-    panelType: 'ProXDR LTPO AMOLED',
-    maxBrightness: '4,500 nit (peak)',
-    generation: 'CSOT T10',
-    ltpo: 'Yes',
-    ppi: 444,
-    hdr: 'HDR10+ / Dolby Vision'
-  },
-  soc: 'Snapdragon 8 Elite (3nm)',
-  ram: '12 / 16 / 24 GB LPDDR5X',
-  storage: '256GB / 512GB / 1TB UFS 4.0',
-  battery: { capacity: '7,300 mAh (Si-C)', chargeWired: '120W', chargeWireless: '50W' },
-  camera: {
-    main: '50MP Sony IMX906 (1/1.56")',
-    tele: '50MP 3.5x Periscope',
-    uw: '50MP Ultra-wide'
-  },
-  os: 'ColorOS 16 / OxygenOS 15 (Android 15)',
-  price: { KR: '미출시', US: '—', CN: '¥3,999~' },
-  features: 'LUMO 凝光 영상 · Hasselblad 파트너십 종료 · IP69 · 210g / 8.05mm'
-};
-
-window.PRODUCT_SPECS_BY_KEY['oppok15pro'] = {
-  key: 'oppok15pro',
-  brand: 'OPPO',
-  name: 'OPPO K15 Pro',
-  launch: '2026.04.03 (중국)',
-  launchFlag: 'released',
-  display: {
-    size: '6.59"',
-    resolution: '2760×1256 (1.5K)',
-    refresh: '144Hz 초감고주사율',
-    supplier: 'BOE / CSOT (추정)',
-    panelType: 'AMOLED (게이밍 최적화)',
-    maxBrightness: '2,000+ nit (peak)',
-    generation: 'BOE Q8 (추정)',
-    ltpo: 'No (고정 144Hz)',
-    ppi: 460,
-    hdr: 'HDR10'
-  },
-  soc: 'MediaTek Dimensity 8500 Super',
-  ram: '12 GB',
-  storage: '256GB / 512GB',
-  battery: { capacity: '7,500 mAh', chargeWired: '80W', chargeWireless: '—' },
-  camera: {
-    main: '50MP OIS',
-    tele: '—',
-    uw: '8MP + 2MP Macro'
-  },
-  os: 'ColorOS 16 (Android 15)',
-  price: { KR: '미출시', US: '—', CN: '¥2,199~ (추정)' },
-  features: '능동형 냉각팬 (19dB@50%) · IP69 · 게이밍 스태미나 193g'
-};
-
-window.PRODUCT_SPECS_BY_KEY['reno15pro'] = {
-  key: 'reno15pro',
-  brand: 'OPPO',
-  name: 'OPPO Reno 15 Pro',
-  launch: '2025.11.17 (중국) / 2026.01 (글로벌)',
-  launchFlag: 'released',
-  display: {
-    size: '6.78"',
-    resolution: '2780×1264 QHD+',
-    refresh: '60–120Hz LTPO',
-    supplier: 'BOE',
-    panelType: 'AMOLED LTPO',
-    maxBrightness: '3,600 nit 공칭 / 1,800 nit 실측',
-    generation: 'BOE Q9',
-    ltpo: 'Yes (적응형)',
-    ppi: 450,
-    hdr: 'HDR10+'
-  },
-  soc: 'MediaTek Dimensity 8450 (4nm)',
-  ram: '12 / 16 GB',
-  storage: '256GB / 512GB / 1TB UFS 3.1',
-  battery: { capacity: '6,500 mAh (dual-cell)', chargeWired: '80W', chargeWireless: '50W' },
-  camera: {
-    main: '200MP ISOCELL HP5 (1/1.56")',
-    tele: '50MP 3.5x Periscope',
-    uw: '50MP 118°'
-  },
-  os: 'ColorOS 16 (Android 15)',
-  price: { KR: '미출시', US: '—', CN: '¥2,999~' },
-  features: 'Active Use 17h · 야간 처리 10-15s 지연 · UFS 3.1 (경쟁 대비 한단계↓)'
+  models: [
+    {
+      key: 'findx9pro',
+      model: 'OPPO Find X9 Pro',
+      launch: '2026.02 (글로벌) / 2025.12 (중국)',
+      isRumor: false,
+      market: '글로벌 + 중국',
+      segment: 'Imaging Flagship',
+      display: {
+        size: '6.78"',
+        panelSupplier: 'BOE',
+        panelType: 'LTPO AMOLED',
+        resolution: '2780×1264 (1.5K)',
+        ppi: '~410',
+        hzRange: '1–120Hz',
+        brightness: '3600nit',
+        pwm: '2160Hz PWM + DC',
+        hdr: 'HDR10+ / Dolby Vision',
+        notes: '극박형 1.15mm 베젤 · Hasselblad 협력 종료'
+      },
+      soc: 'MediaTek Dimensity 9500 (3nm)',
+      ram: '16GB LPDDR5X',
+      storage: '256GB / 512GB / 1TB',
+      battery: '7500mAh',
+      charging: { wired: '80W', wireless: '50W' },
+      camera: {
+        main: '50MP (1/1.3") f/1.8',
+        tele: '200MP Hasselblad 3x',
+        uw: '50MP 초광각'
+      },
+      weight: '약 218g',
+      waterproof: 'IP68',
+      os: 'ColorOS 16 / Android 16',
+      notes: '5년 OS · 6년 보안 · 59개 프리설치 앱 지적'
+    },
+    {
+      key: 'findx9ultra',
+      model: 'OPPO Find X9 Ultra',
+      launch: '2026.01 (중국)',
+      isRumor: false,
+      market: '중국 (China-only)',
+      segment: 'Imaging Flagship',
+      display: {
+        size: '6.82"',
+        panelSupplier: 'BOE',
+        panelType: 'LTPO AMOLED',
+        resolution: '2780×1264 (1.5K)',
+        ppi: '~444',
+        hzRange: '1–120Hz',
+        brightness: '3600nit+',
+        pwm: '2160Hz PWM + DC',
+        hdr: 'HDR10+ / Dolby Vision',
+        notes: 'Ultra = 중국 독점 · 4중 카메라'
+      },
+      soc: 'Snapdragon 8 Elite Gen5 (예상)',
+      ram: '16GB',
+      storage: '512GB / 1TB',
+      battery: '6500mAh',
+      charging: { wired: '100W', wireless: '50W' },
+      camera: {
+        main: '50MP 1인치 센서',
+        tele: '200MP + 50MP 이중 망원',
+        uw: '50MP 초광각'
+      },
+      weight: '—',
+      waterproof: 'IP68',
+      os: 'ColorOS 16 / Android 16',
+      notes: '중국 전용 초울트라 플래그십'
+    },
+    {
+      key: 'reno15pro',
+      model: 'OPPO Reno 15 Pro',
+      launch: '2026.01 (중국) / 2026.03 (글로벌)',
+      isRumor: false,
+      market: '글로벌 + 중국',
+      segment: 'Premium Volume',
+      display: {
+        size: '6.78"',
+        panelSupplier: '—',
+        panelType: 'LTPO AMOLED',
+        resolution: '2780×1264 (~450ppi)',
+        ppi: '~450',
+        hzRange: '60–120Hz',
+        brightness: '3600nit (공칭) / 1800nit (실측)',
+        pwm: '—',
+        hdr: 'HDR10+',
+        notes: '공칭 3600nit vs 실측 1800nit 괴리'
+      },
+      soc: 'MediaTek Dimensity 8450 (4nm)',
+      ram: '12GB / 16GB',
+      storage: '256GB / 512GB / 1TB',
+      battery: '6500mAh',
+      charging: { wired: '80W', wireless: '50W' },
+      camera: {
+        main: '200MP (1/1.56" HP5) f/1.9',
+        tele: '50MP 3.5x 잠망경',
+        uw: '50MP 초광각 118°'
+      },
+      weight: '약 218g',
+      waterproof: 'IP68 / IP69',
+      os: 'ColorOS 16 / Android 15',
+      notes: '미들급 SoC · UFS 3.1 경쟁사 대비 열위'
+    },
+    {
+      key: 'oppok15pro',
+      model: 'OPPO K15 Pro',
+      launch: '2026.04.03 (중국)',
+      isRumor: false,
+      market: '중국 (China-only)',
+      segment: 'Gaming-centric',
+      display: {
+        size: '6.59"',
+        panelSupplier: '—',
+        panelType: 'AMOLED',
+        resolution: '2760×1256 (1.5K)',
+        ppi: '~460',
+        hzRange: '144Hz',
+        brightness: '2000nit+',
+        pwm: '—',
+        hdr: '—',
+        notes: '게이밍 최적화 · 능동형 냉각팬'
+      },
+      soc: 'MediaTek Dimensity 8500 Super',
+      ram: '12GB',
+      storage: '256GB / 512GB',
+      battery: '7500mAh',
+      charging: { wired: '80W', wireless: '—' },
+      camera: {
+        main: '50MP f/1.8 (OIS)',
+        tele: '—',
+        uw: '8MP 초광각'
+      },
+      weight: '약 193g',
+      waterproof: 'IP69',
+      os: 'ColorOS 16 / Android 15',
+      notes: '냉각팬 탑재 · 게이밍 특화 가성비'
+    },
+    {
+      key: 'op15',
+      model: 'OnePlus 15',
+      launch: '2025.10 (중국) / 2026.01 (글로벌)',
+      isRumor: false,
+      market: '글로벌 + 중국',
+      segment: 'Imaging Flagship',
+      display: {
+        size: '6.82"',
+        panelSupplier: 'BOE',
+        panelType: 'BOE T10 LTPO',
+        resolution: '2780×1264 (1.5K)',
+        ppi: '444',
+        hzRange: '1–165Hz',
+        brightness: '4500nit',
+        pwm: '2160Hz PWM + DC',
+        hdr: 'HDR10+ / Dolby Vision',
+        notes: '세계 첫 165Hz LTPO · TÜV 明眸护眼 5.0 · 최저 0.5nit'
+      },
+      soc: 'Snapdragon 8 Elite (3nm)',
+      ram: '12GB / 16GB / 24GB',
+      storage: '256GB / 512GB / 1TB',
+      battery: '7300mAh',
+      charging: { wired: '120W', wireless: '50W' },
+      camera: {
+        main: '50MP Sony IMX906 (1/1.56") f/1.8',
+        tele: '50MP 3.5x 잠망경',
+        uw: '50MP 초광각'
+      },
+      weight: '210g',
+      waterproof: 'IP69',
+      os: 'OxygenOS 15 (글로벌) / ColorOS 16 (중국)',
+      notes: '165Hz LTPO 세계 최초 · 7300mAh · Hasselblad 협력 종료'
+    },
+    {
+      key: 'realmegt7pro',
+      model: 'realme GT 7 Pro',
+      launch: '2024.11 (중국) / 2025.02 (글로벌)',
+      isRumor: false,
+      market: '글로벌 + 중국',
+      segment: 'Performance Gaming',
+      display: {
+        size: '6.78"',
+        panelSupplier: 'SDC (예상)',
+        panelType: 'LTPO AMOLED',
+        resolution: '2780×1264',
+        ppi: '~450',
+        hzRange: '60–120Hz',
+        brightness: '6000nit (피크)',
+        pwm: '3840Hz PWM',
+        hdr: 'HDR10+',
+        notes: '6000nit 피크 · Eco² 기술'
+      },
+      soc: 'Snapdragon 8 Elite (3nm)',
+      ram: '12GB / 16GB',
+      storage: '256GB / 512GB',
+      battery: '6500mAh',
+      charging: { wired: '120W', wireless: '50W' },
+      camera: {
+        main: '50MP f/1.8 (OIS)',
+        tele: '50MP f/2.6 3x 잠망경',
+        uw: '8MP f/2.2'
+      },
+      weight: '약 210g',
+      waterproof: 'IP68 / IP69 (2m, 30분)',
+      os: 'Realme UI 6 / Android 15',
+      notes: '가성비 플래그십 · 8500mm² 증기실'
+    },
+    {
+      key: 'realmegt8pro',
+      model: 'realme GT 8 Pro',
+      launch: '2026.01 (중국)',
+      isRumor: false,
+      market: '중국 (China-only)',
+      segment: 'Performance Gaming',
+      display: {
+        size: '6.79"',
+        panelSupplier: '—',
+        panelType: 'LTPO OLED 2K',
+        resolution: '1440×3136 (2K)',
+        ppi: '508',
+        hzRange: '1–144Hz',
+        brightness: '7000nit (피크) / 2000nit (전역)',
+        pwm: 'DC 디밍 (전광 지원)',
+        hdr: 'HDR10+',
+        notes: '7000nit 피크 업계 최고 · Active Use 20:24h'
+      },
+      soc: 'Snapdragon 8 Elite Gen5 (3nm)',
+      ram: '16GB',
+      storage: '512GB / 1TB',
+      battery: '7000mAh (Titan)',
+      charging: { wired: '120W', wireless: '50W' },
+      camera: {
+        main: '50MP (Ricoh GR 협업)',
+        tele: '200MP 3x 잠망경',
+        uw: '50MP 초광각 116°'
+      },
+      weight: '214g',
+      waterproof: '—',
+      os: 'Realme UI 6 / Android 15',
+      notes: '7000nit 업계 최고 피크 · Ricoh GR 협업'
+    }
+  ]
 };
