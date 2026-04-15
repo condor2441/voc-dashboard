@@ -5,33 +5,41 @@
  * ============================================================ */
 
 window.NEWS_DATA = {
-  "date": "2026.04.14",
-  "lastUpdated": "2026-04-14T17:35:00+09:00",
+  "date": "2026.04.15",
+  "lastUpdated": "2026-04-15T09:00:00+09:00",
   "dates": {
-    "2026.04.14": { "updatedAt": "2026-04-14T17:35:00+09:00" },
-    "2026.04.13": { "updatedAt": "2026-04-14T17:35:00+09:00" },
+    "2026.04.15": { "updatedAt": "2026-04-15T09:00:00+09:00" },
+    "2026.04.14": { "updatedAt": "2026-04-15T09:00:00+09:00" },
+    "2026.04.13": { "updatedAt": "2026-04-15T09:00:00+09:00" },
     "2026.04.12": { "updatedAt": "2026-04-14T17:35:00+09:00" },
     "2026.04.11": { "updatedAt": "2026-04-14T17:35:00+09:00" },
     "2026.04.10": { "updatedAt": "2026-04-14T17:35:00+09:00" },
-    "2026.04.09": { "updatedAt": "2026-04-14T17:35:00+09:00" },
-    "2026.04.08": { "updatedAt": "2026-04-14T17:35:00+09:00" }
+    "2026.04.09": { "updatedAt": "2026-04-15T09:00:00+09:00" }
   },
   "samsung": [
     {
-      "title": "Galaxy S27 Pro 모델 부활 소문 재점화 — S26에서 취소된 Pro 라인 다시 검토",
-      "description": "Sammy Fans: Galaxy S26에서 취소됐던 Pro 모델이 S27 라인업에서 부활할 가능성 제기. 삼성 내부 프리미엄 라인업 재편 논의 지속. 한편 중국 BOE·Visionox는 ICDT 2026에서 무주름 폴더블 모듈 공개하며 삼성디스플레이 M16 소재셋 대비 기술 격차 추격 중.",
-      "source": "Sammy Fans",
-      "region": "US",
-      "date": "2026.04.12",
-      "url": "https://www.sammyfans.com/2026/04/12/cancelled-with-galaxy-s26-pro-model-rumors-reignites-for-s27/"
+      "title": "Galaxy S26 시리즈 2차 4월 업데이트 배포 — 멕시코 첫 출시, AZD4 펌웨어",
+      "description": "SammyGuru: Galaxy S26 시리즈에 1차에 이어 2번째 4월 2026 소프트웨어 업데이트 배포 시작. 현재 멕시코(펌웨어 AZD4)에서 첫 출시. 공식 변경 사항은 이전 4월 배포와 동일하나 지역별 네트워크·캐리어 최적화 목적으로 추정.",
+      "source": "SammyGuru",
+      "region": "Global",
+      "date": "2026.04.15",
+      "url": "https://sammyguru.com/galaxy-s26-series-second-april-2026-update/"
     },
     {
-      "title": "삼성, M16 OLED로 iPhone 18·Pixel 11 공급 확정 — 역대 최고 밝기·전력효율",
-      "description": "삼성디스플레이 M16 유기물 기반 OLED 패널이 Apple iPhone 18 Pro 시리즈와 Google Pixel 11에 탑재 확정. 최고 밝기·색재현율·전력효율 모두 역대 최고 수준으로 Galaxy S27 탑재 여부 주목.",
+      "title": "Galaxy S26 포함 삼성 스마트폰, 2026년 3월 Google Play 시스템 업데이트 배포",
+      "description": "Sammy Fans: Galaxy S26·S25·S24 등 삼성 스마트폰에 2026년 3월 Google Play 시스템 업데이트 순차 배포 중. 보안 강화 및 Google 서비스 최적화 포함. Galaxy S26 기준 4월 보안 패치와 병행 적용.",
       "source": "Sammy Fans",
       "region": "US",
-      "date": "2026.04.09",
-      "url": "https://www.sammyfans.com/2026/04/09/samsung-m16-oled-powers-iphone-18-and-pixel-11/amp/"
+      "date": "2026.04.14",
+      "url": "https://www.sammyfans.com/2026/04/14/samsung-phones-getting-march-2026-google-play-system-update/"
+    },
+    {
+      "title": "삼성, 4월 Galaxy S26 생산 60만 대 긴급 증설 — S26 Ultra 수요가 전체 판매 60-70% 견인",
+      "description": "Digitimes: 삼성전자가 4월 Galaxy S26 시리즈 생산 계획을 240만→300만 대로 상향. S26 Ultra가 판매의 60-70% 차지하며 생산을 130만→150만 대로 확대. S26+ 는 30만→20만 대로 축소 조정.",
+      "source": "Digitimes",
+      "region": "Global",
+      "date": "2026.04.13",
+      "url": "https://www.digitimes.com/news/a20260413PD222/samsung-galaxy-smartphone-production-sales-2026.html"
     },
     {
       "title": "Galaxy S26·S26 Ultra 흥행 돌풍, 삼성 생산량 긴급 확대",
@@ -42,23 +50,23 @@ window.NEWS_DATA = {
       "url": "https://www.androidheadlines.com/2026/04/galaxy-s26-galaxy-s26-ultra-are-a-hit-samsung-scrambles-to-make-more.html"
     },
     {
-      "title": "Galaxy S26 Ultra Privacy Display, 2026년 글로벌 수요 2100만대 견인",
-      "description": "S26 Ultra 탑재 Privacy Display 기술이 스마트폰 디스플레이 시장 새 카테고리 개척. 2027년 2900만대 성장 전망.",
+      "title": "Galaxy S27 Pro 모델 부활 소문 재점화 — S26에서 취소된 Pro 라인 다시 검토",
+      "description": "Sammy Fans: Galaxy S26에서 취소됐던 Pro 모델이 S27 라인업에서 부활할 가능성 제기. 삼성 내부 프리미엄 라인업 재편 논의 지속. 한편 중국 BOE·Visionox는 ICDT 2026에서 무주름 폴더블 모듈 공개하며 삼성디스플레이 M16 소재셋 대비 기술 격차 추격 중.",
       "source": "Sammy Fans",
       "region": "US",
-      "date": "2026.04.08",
-      "url": "https://www.sammyfans.com/2026/04/08/galaxy-s26-ultra-is-driving-a-massive-privacy-display-boom/"
-    },
-    {
-      "title": "Galaxy S26 4월 업데이트 국제판 배포, 3x 카메라 개선 및 신규 필터 3종",
-      "description": "4월 보안 패치 포함, 3x 망원 카메라 화질 개선 및 Classic Film·Pop Film·Blanc 카메라 필터 신규 추가. 글로벌 순차 배포 중.",
-      "source": "SamMobile",
-      "region": "US",
-      "date": "2026.04.09",
-      "url": "https://www.sammobile.com/news/galaxy-s26-april-2026-software-update-camera-improvements-released/"
+      "date": "2026.04.12",
+      "url": "https://www.sammyfans.com/2026/04/12/cancelled-with-galaxy-s26-pro-model-rumors-reignites-for-s27/"
     }
   ],
   "apple": [
+    {
+      "title": "iPhone 18 Pro 기다려야 할 10가지 이유 — Under-Display Face ID·가변 조리개·A20 Pro 2nm",
+      "description": "MacRumors: iPhone 18 Pro 업그레이드 10가지 정리. Under-Display Face ID로 Dynamic Island 35% 축소, 48MP 가변 조리개 메인 카메라, A20 Pro 2nm 칩, Deep Red 신규 컬러, 4월 이후 검토 지속 중인 디자인 변경 포함.",
+      "source": "MacRumors",
+      "region": "US",
+      "date": "2026.04.14",
+      "url": "https://www.macrumors.com/2026/04/14/reasons-to-wait-iphone-18-pro-2/"
+    },
     {
       "title": "iPhone 18 Pro 레드 컬러 유출 신빙성 재확인 — 블랙 2년 연속 제외, Dynamic Island 35% 축소",
       "description": "9to5Mac: 유출자가 iPhone 18 Pro 레드 컬러 가능성 추가 확인. 클래식 블랙은 2년 연속 Pro 라인업 제외 전망. Face ID 부품 화면 내 이전으로 Dynamic Island 약 35% 축소, 48MP 메인 카메라 가변 조리개 채택 유력. A20 Pro 칩은 TSMC 1세대 2nm 공정.",
@@ -66,14 +74,6 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.13",
       "url": "https://9to5mac.com/2026/04/13/leaker-adds-support-for-red-iphone-18-color-rumor-in-a-slightly-weird-way/"
-    },
-    {
-      "title": "iPhone 18 Pro, 삼성 M16 OLED 탑재 확정 — 최고 밝기·전력 효율 동시 개선",
-      "description": "삼성디스플레이 M16 소재셋 OLED가 iPhone 18 Pro·Pro Max·Fold에 독점 공급. 피크 밝기·HDR 선명도·소자 수명 모두 역대 최고 수준 예상.",
-      "source": "SamMobile",
-      "region": "US",
-      "date": "2026.04.09",
-      "url": "https://www.sammobile.com/news/samsung-make-most-advanced-oled-display-iphone-18-pro/"
     },
     {
       "title": "Apple, iPhone 18 시리즈 출시 일정 분리 확정 — 일부 모델 2027년으로 연기",
@@ -84,14 +84,6 @@ window.NEWS_DATA = {
       "url": "https://nationaltoday.com/us/ca/cupertino/news/2026/04/12/apple-splits-iphone-18-launch-across-2026-and-2027/"
     },
     {
-      "title": "iPhone Fold, 삼성디스플레이 폴더블 OLED 3년 독점 공급 계약",
-      "description": "애플이 iPhone Fold용 폴더블 OLED 패널을 삼성디스플레이에서만 조달. 대안 공급사 부재로 독점 조건 수용.",
-      "source": "MacRumors",
-      "region": "US",
-      "date": "2026.04.08",
-      "url": "https://www.macrumors.com/2026/04/08/apple-foldable-iphone-samsung-oled/"
-    },
-    {
       "title": "iPhone 18 Pro Dynamic Island 크기, 애플 내부 최종 결정 보류",
       "description": "Dynamic Island 축소 vs 유지 여부 아직 결정 미완료. 화면 내 Face ID 이동과 연계한 설계 검토 중.",
       "source": "MacRumors",
@@ -99,8 +91,24 @@ window.NEWS_DATA = {
       "date": "2026.04.10",
       "url": "https://news.quantosei.com/2026/04/10/apple-apparently-still-undecided-on-iphone-18-pro-dynamic-island/"
     },
+    {
+      "title": "iPhone 18 Pro, 삼성 M16 OLED 탑재 확정 — 최고 밝기·전력 효율 동시 개선",
+      "description": "삼성디스플레이 M16 소재셋 OLED가 iPhone 18 Pro·Pro Max·Fold에 독점 공급. 피크 밝기·HDR 선명도·소자 수명 모두 역대 최고 수준 예상.",
+      "source": "SamMobile",
+      "region": "US",
+      "date": "2026.04.09",
+      "url": "https://www.sammobile.com/news/samsung-make-most-advanced-oled-display-iphone-18-pro/"
+    }
   ],
   "xiaomi": [
+    {
+      "title": "Xiaomi 18 Pro Max, 최대 8,500mAh 초대형 배터리 탑재 유력 — 17 Pro Max 대비 13% 증가",
+      "description": "Gizmochina: Xiaomi 18 Pro Max 엔지니어링 프로토타입이 최대 8,500mAh 배터리 테스트 중. 전작 Xiaomi 17 Pro Max의 7,500mAh 대비 약 13% 증가. Snapdragon 8 Elite Gen 6 Pro 탑재 전망. 9월 출시 예상.",
+      "source": "Gizmochina",
+      "region": "CN",
+      "date": "2026.04.09",
+      "url": "https://www.gizmochina.com/2026/04/09/xiaomi-18-pro-max-battery-8500mah-leak/"
+    },
     {
       "title": "Xiaomi 18 Pro·18 Pro Max 강화 사양 상세 공개, 카메라·배터리 업그레이드",
       "description": "GSMArena 보도: 18 Pro는 6.3인치 컴팩트 플래그십, 18 Pro Max는 대용량 배터리 탑재 예정. 200MP 듀얼 카메라 시스템 공통 탑재.",
@@ -118,20 +126,20 @@ window.NEWS_DATA = {
       "url": "https://www.gizmochina.com/2026/04/13/xiaomi-18-pro-battery-and-camera-details-leak/"
     },
     {
-      "title": "Xiaomi 18 Pro, 후면 AI 스마트 디스플레이 업그레이드 예정",
-      "description": "후면 디스플레이가 맥락 인식 AI 인터페이스로 진화. 실시간 번역·텔레프롬프터 기능 탑재 전망. 9월 출시 예상.",
-      "source": "Android Headlines",
-      "region": "US",
-      "date": "2026.04.03",
-      "url": "https://www.androidheadlines.com/2026/04/xiaomi-18-pro-to-bring-impressive-rear-display-upgrade-new-ai-features.html"
-    },
-    {
       "title": "Xiaomi 18 Pro, OPPO·Vivo처럼 200MP 듀얼 망원 채택 예상",
       "description": "SmartSens 1/1.28인치 200MP 2개 탑재. LOFIC HDR 3세대, 라이카 협력 유지.",
       "source": "NotebookCheck",
       "region": "US",
       "date": "2026.04.08",
       "url": "https://www.notebookcheck.net/Xiaomi-18-Pro-Leica-camera-with-Oppo-Find-X9-Ultra-and-Vivo-X300-Ultra-features.1269333.0.html"
+    },
+    {
+      "title": "Xiaomi 18 Pro, 후면 AI 스마트 디스플레이 업그레이드 예정",
+      "description": "후면 디스플레이가 맥락 인식 AI 인터페이스로 진화. 실시간 번역·텔레프롬프터 기능 탑재 전망. 9월 출시 예상.",
+      "source": "Android Headlines",
+      "region": "US",
+      "date": "2026.04.03",
+      "url": "https://www.androidheadlines.com/2026/04/xiaomi-18-pro-to-bring-impressive-rear-display-upgrade-new-ai-features.html"
     }
   ],
   "oppo": [
@@ -174,9 +182,17 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.13",
       "url": "https://www.androidcentral.com/phones/oppo-phones/oppo-find-x9-ultra-hands-on"
-    },
+    }
   ],
   "vivo": [
+    {
+      "title": "vivo X300 Ultra 글로벌 출시 일정 공식 예고 — 4월 24일 판매, 사전예약 16일 시작",
+      "description": "GSMArena: vivo가 X300 Ultra 글로벌 출시 일정 공식 예고. 4월 24일 글로벌 판매 시작, 사전예약 4월 16일부터 시작. 스페인·오스트리아 등 유럽 동시 출시. 인도는 5월 7일 출시·14일 판매 시작.",
+      "source": "GSMArena",
+      "region": "Global",
+      "date": "2026.04.13",
+      "url": "https://www.gsmarena.com/heres_when_the_vivo_x300_ultra_is_launching_globally-news-72342.php"
+    },
     {
       "title": "Vivo X300 Ultra 글로벌 출시 4월 24일 확정 — €1,900부터, 사전예약 4/16 시작",
       "description": "AndroidHeadlines/TechAdvisor: X300 Ultra 글로벌 4/24 정식 출시, 사전예약 4/16 시작. 16GB+1TB €1,900(~$2,190), 줌 렌즈 키트 번들 €2,300. Green·Black 2종. 인도 5/7 출시·5/14 판매. 듀얼 200MP + ZEISS Telephoto Extender 2 Ultra 유지.",
@@ -208,25 +224,9 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.10",
       "url": "https://www.androidcentral.com/phones/vivo/vivo-x300-ultra-review"
-    },
-    {
-      "title": "Vivo X300 Ultra MWC 2026 공개, 400mm 망원 익스텐더",
-      "description": "듀얼 200MP 센서, 6600mAh 배터리, ZEISS Telephoto Extender Gen 2 Ultra 탑재.",
-      "source": "GadgetMatch",
-      "region": "US",
-      "date": "2026.03.04",
-      "url": "https://www.gadgetmatch.com/vivo-x300-ultra-officially-unveiled-at-mwc-2026-telephoto-extender-400mm-camera-cage/"
     }
   ],
   "huawei": [
-    {
-      "title": "Huawei Pura 90 Pro 시리즈 4월 20일 출시 공식 확인 — 디자인·스펙 전모 공개",
-      "description": "Gizmochina: 8000nits LTPO AMOLED, Kirin 9030 Pro, HarmonyOS 6.1. 그라디언트 컬러 전 라인업 및 삼각형 카메라 모듈 공개. 4월 22일 판매 시작.",
-      "source": "Gizmochina",
-      "region": "CN",
-      "date": "2026.04.10",
-      "url": "https://www.gizmochina.com/2026/04/10/huawei-pura-90-pro-pro-max-launch-date-design-specs/"
-    },
     {
       "title": "Huawei Pura 90 Pro·Pro Max, 출시 직전 컬러 디자인 전모 공개",
       "description": "NotebookCheck: 옵시디안 블랙·던 골드·퍼플 선셋 등 다양한 컬러 공식 확인. 삼각형 카메라 모듈 유지, 전면 플랫 스크린으로 복귀.",
@@ -242,6 +242,14 @@ window.NEWS_DATA = {
       "region": "CN",
       "date": "2026.04.13",
       "url": "https://www.huaweicentral.com/take-a-look-at-huawei-pura-90-pro-and-pro-max-in-different-colors/"
+    },
+    {
+      "title": "Huawei Pura 90 Pro 시리즈 4월 20일 출시 공식 확인 — 디자인·스펙 전모 공개",
+      "description": "Gizmochina: 8000nits LTPO AMOLED, Kirin 9030 Pro, HarmonyOS 6.1. 그라디언트 컬러 전 라인업 및 삼각형 카메라 모듈 공개. 4월 22일 판매 시작.",
+      "source": "Gizmochina",
+      "region": "CN",
+      "date": "2026.04.10",
+      "url": "https://www.gizmochina.com/2026/04/10/huawei-pura-90-pro-pro-max-launch-date-design-specs/"
     },
     {
       "title": "Huawei Pura 90 Pro 디자인·스펙 공식 확인, 8000nits LTPO 패널 탑재",
@@ -299,7 +307,7 @@ window.NEWS_DATA = {
       "source": "Android Central",
       "region": "Global",
       "date": "2026.03.01",
-      "url": "https://www.androidcentral.com/phones/honor-phones/honor-debuts-magic-v6-mwc-2026"
+      "url": "https://www.androidcentral.com/phones/honor-phones/honor-magic-v6-mwc-2026"
     }
   ]
 };
