@@ -33,6 +33,8 @@ const MODEL_KEYS = [
   'vivoV70',
   'realmegt8pro',
   's26',
+  'honorwinrt',
+  'honorwin',
   // ← 새 모델 추가 시 여기에 파일명 추가
 ];
 
