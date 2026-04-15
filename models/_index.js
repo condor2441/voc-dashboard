@@ -45,7 +45,7 @@ const _scriptSrc = document.currentScript ? document.currentScript.src : null;
     ? _scriptSrc.split('?')[0].replace('_index.js', '')
     : (location.href.includes('/') ? location.href.replace(/\/[^\/]*$/, '/') + 'models/' : 'models/');
 
-  const cv = 'v20260415b'; // 캐시 무효화 버전 — 모델 데이터 변경 시 갱신
+  const cv = 'v20260415c'; // 캐시 무효화 버전 — 모델 데이터 변경 시 갱신
   for (const key of MODEL_KEYS) {
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
