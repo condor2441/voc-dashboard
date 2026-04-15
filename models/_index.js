@@ -35,6 +35,10 @@ const MODEL_KEYS = [
   's26',
   'honorwinrt',
   'honorwin',
+  'op15t',
+  'opturbo6',
+  'opturbo6v',
+  'opnord6',
   // ← 새 모델 추가 시 여기에 파일명 추가
 ];
 
@@ -47,7 +51,7 @@ const _scriptSrc = document.currentScript ? document.currentScript.src : null;
     ? _scriptSrc.split('?')[0].replace('_index.js', '')
     : (location.href.includes('/') ? location.href.replace(/\/[^\/]*$/, '/') + 'models/' : 'models/');
 
-  const cv = 'v20260416a'; // 캐시 무효화 버전 — 모델 데이터 변경 시 갱신
+  const cv = 'v20260416b'; // 캐시 무효화 버전 — 모델 데이터 변경 시 갱신
   for (const key of MODEL_KEYS) {
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
