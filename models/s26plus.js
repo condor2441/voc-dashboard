@@ -9,8 +9,8 @@ window.VOC_MODELS['s26plus'] = {
     segment: 'Premium Volume / Imaging Flagship',
     launch: '2026년 3월 11일 (글로벌)',
     market: '글로벌',
-    date: '2026.04.13',
-    sampleN: 52,
+    date: '2026.04.15',
+    sampleN: 60,
     conclusion: '2600nits 피크 밝기와 우수한 AI 기능으로 프리미엘 위상 강화, 다만 480Hz 저주파 PWM으로 인한 눈피로 이슈 및 카메라 하드웨어 정체로 가성비 기대 미달',
 
     kpi: {
@@ -68,7 +68,7 @@ window.VOC_MODELS['s26plus'] = {
     trend: [
       { period: '📦 출시 초기 (3월 11-25일)', pos: 42, neg: 33, note: '높은 기대감 대비 PWM 지적 증가', issue: '2600nits 극찬 / 480Hz PWM 눈피로 발견 / 카메라 정체 지적 / 충전기 미포함 비판', uid: '—', src: '中关村在线, YouTube, GSMArena' },
       { period: '📅 중기 (3월 26-4월 5일)', pos: 28, neg: 44, note: '현실 경험 누적, 부정적 평가 우위 전환', issue: '7999CNY 과가격 합의 / PWM 건강 우려 심화 / 카메라 하드웨어 정체 비판 / 가성비 의문', uid: '—', src: 'Zhihu, 百度贴吧, Reddit' },
-      { period: '📅 현재 (4월 6-12일)', pos: 22, neg: 52, note: '부정적 평가 심화, 가성비 글로벌 인식 악화', issue: 'PWM 누적 불만 / 가격 대비 성능 미흡 / 카메라 기대 미달 / 디스플레이 설계 선택 비판', uid: '—', src: 'IT之家, PhoneArena, CNMO' }
+      { period: '📅 성숙기 (2026.04)', pos: 22, neg: 52, note: '부정적 평가 심화. Digital Trends "Consistently fine and utterly boring" 평가. 고릴라 아머·항반사·Privacy Display 미적용 지속 비판', issue: 'PWM 누적 불만 / "utterly boring" 전문 평론 / 고릴라아머·항반사·Privacy Display 없음 비판 / S26 Ultra 대비 차별화 부족 / 충전기 미포함 논란', uid: '—', src: 'DigitalTrends, SamMobile, NotebookCheck, IT之家 (n=60)' }
     ],
 
     specs: [

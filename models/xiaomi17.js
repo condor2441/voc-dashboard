@@ -9,8 +9,8 @@ window.VOC_MODELS['xiaomi17'] = {
     segment: 'Premium Volume',
     launch: '2025년 9월 25일 (중국)',
     market: '중국 + 글로벌 (예상)',
-    date: '2026.04.13',
-    sampleN: 85,
+    date: '2026.04.15',
+    sampleN: 92,
     conclusion: '컴팩트한 크기의 7000mAh 배터리로 소형 기기 중 최강 지속시간, 디스플레이와 카메라 균형 우수. 소프트웨어 정제 미흡.',
 
     kpi: {
@@ -68,7 +68,7 @@ window.VOC_MODELS['xiaomi17'] = {
     trend: [
       { period: '📦 출시 초기 (9-10월)', pos: 76, neg: 12, note: '배터리와 컴팩트 디자인 극찬', issue: '7000mAh 배터리 극찬 / 컴팩트 193g / 3500nits 야외', uid: '—', src: '酷安, 知乎, GSMArena' },
       { period: '📅 중기 (11-1월)', pos: 73, neg: 15, note: '야경 카메라·소프트웨어 불만 증가', issue: '야경 카메라 미흡 / HyperOS 광고 불만 / 게임성능 안정', uid: '—', src: '百度贴吧, Reddit, 中关村在线' },
-      { period: '📅 현재 (2-4월)', pos: 71, neg: 18, note: '소프트웨어 문제 누적, 배터리는 지속 호평', issue: '배터리 강점 지속 / 소프트웨어 정제 미흡 / 야경 카메라 한계', uid: '—', src: 'YouTube, PhoneArena, 小米社区' }
+      { period: '📅 성숙기 (2026.04)', pos: 71, neg: 18, note: '소프트웨어 문제 누적, 배터리는 지속 호평. PhoneArena "Formulaic but totally brilliant" 평. Expert Reviews "not Apple you need to worry about". HyperOS 3 버그 업데이트 불만 지속. Leica 색감 stylized 취향 갈림', issue: 'HyperOS버그업데이트 / Leica색감취향갈림 / 배터리강점지속 / 소프트웨어정제미흡 / 글로벌6.9vs중국6.3스펙차이', uid: '—', src: 'PhoneArena, Expert Reviews, Business Standard, TechRadar (n=92)' }
     ],
 
     specs: [

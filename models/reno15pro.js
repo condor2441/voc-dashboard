@@ -9,8 +9,8 @@ window.VOC_MODELS['reno15pro'] = {
     segment: 'Premium Volume',
     launch: '2025.11.17 (중국) / 2026.01 (글로벌)',
     market: '중국 + 글로벌',
-    date: '2026.04.13',
-    sampleN: 98,
+    date: '2026.04.15',
+    sampleN: 104,
     conclusion: '디스플레이·배터리·카메라 하드웨어 우수(DSI +100, BSI +100). 다만 소프트웨어 최적화 부족·과도한 발열·야간 카메라 처리 지연이 프리미엄 경험 저해(TRI 187.5). 초기 30분 게임은 쾌적하나 장시간 사용 제약.',
 
     kpi: {
@@ -75,7 +75,8 @@ window.VOC_MODELS['reno15pro'] = {
 
     trend: [
       { period: '📦 출시 초기 (2025.11–12)', pos: 46, neg: 46, note: '성능·배터리·화면 극찬 / 발열·소프트웨어·야간카메라 즉각 불만', issue: '디스플레이·배터리 강점 강조 / 발열 이슈 초기부터 보고 / ColorOS 최적화 미흡', uid: '—', src: 'GSMArena, NotebookCheck, PetaPixel, Gear Diary' },
-      { period: '📅 최근 (2026.01–03)', pos: 46, neg: 46, note: '카메라 알고리즘·발열 패치 후에도 불만 지속', issue: '발열 냉각 시스템 실패 지속 / 야간 카메라 처리 개선 미미 / ColorOS 안정화 진행중', uid: '—', src: 'Global reviews' }
+      { period: '📅 중기 (2026.01–03)', pos: 46, neg: 46, note: '카메라 알고리즘·발열 패치 후에도 불만 지속', issue: '발열 냉각 시스템 실패 지속 / 야간 카메라 처리 개선 미미 / ColorOS 안정화 진행중', uid: '—', src: 'Global reviews' },
+      { period: '📅 성숙기 (2026.04)', pos: 55, neg: 35, note: 'Reno15 Pro Mini 파생모델 출시. 표준 Pro 발열 여전. PetaPixel "High-End Cameras at Mid-Range Price" 호평. ColorOS AI HyperBoost 2.0 발열개선 일부 확인. 5년 ColorOS + 6년 보안 업데이트 발표. Pro Mini 열 관리 개선 인정', issue: 'ProMini발열개선(post_update_improved) / 표준Pro발열여전 / 5년OS업데이트발표 / 야간카메라여전이슈', uid: '—', src: 'PetaPixel, 91mobiles, PowerUp!, GSMArena (n=104)' }
     ],
 
     specs: [

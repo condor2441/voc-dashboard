@@ -9,9 +9,9 @@ window.VOC_MODELS['ip17pro'] = {
     segment: 'Premium Volume',
     launch: '2025년 9월 19일',
     market: '글로벌',
-    date: '2026.04.13',
-    sampleN: 97,
-    conclusion: '디스플레이 밝기 및 열 관리 강화로 일상 사용성 개선, 카메라 다중화로 고급 촬영 경험 제공',
+    date: '2026.04.15',
+    sampleN: 105,
+    conclusion: '3000nit·2세대 항반사·480Hz 저주파 PWM 등 디스플레이 완성도 최고 수준(DSI 0.62). 열 관리 TRI 0.15 유지. 단 iOS 26 업데이트 후 일부 사용자 "경험 저하" 보고(post_update_worsened). 배터리 실측 편차 지속·Pro 차별화 논쟁 심화.',
 
     kpi: {
       sample: { label: '전체 표본', value: 87, sub: 'Global 45 / China 35 / Korea 7', color: 'c-neu' },
@@ -63,13 +63,14 @@ window.VOC_MODELS['ip17pro'] = {
       { cat: 'Battery', n: 13, pos: 6, neg: 5, str: 1, note: '사용 패턴에 따라 편차' },
       { cat: 'Design', n: 5, pos: 4, neg: 1, str: 0, note: '알루미늄 복귀' },
       { cat: 'PriceValue', n: 9, pos: 6, neg: 3, str: 1, note: '가격 프리미엄 의문' },
-      { cat: 'Display_Eyecare', n: 3, pos: 2, neg: 0, str: 0, note: '저주파 PWM' }
+      { cat: 'Display_Eyecare', n: 5, pos: 4, neg: 0, str: 0, note: '저주파 PWM + 접근성 480Hz 준-DC 전환 옵션 호평' },
+      { cat: 'Software', n: 5, pos: 1, neg: 4, str: 2, note: 'iOS 26 업데이트 후 "경험 저하" 불만(post_update_worsened)·카메라 앱 안정성 저하' }
     ],
 
     trend: [
       { period: '📦 출시 초기 (9-10월)', pos: 75, neg: 14, note: '높은 기대감, 가격 논쟁 시작', issue: '3000nits 야외 극찬 / 냉각 효과 우수 / 카메라 품질 호평 / 가격 정당성 의문', uid: '—', src: 'Reddit, GSMArena, YouTube' },
       { period: '📅 중기 (11-1월)', pos: 70, neg: 18, note: '배터리 부족감 표출, 냉각 호평', issue: '배터리 지속성 불만 / 냉각 성능 입증 / 카메라 기대치 충족 / 가성비 논쟁 확대', uid: '—', src: 'Zhihu, MacRumors, 中关村在线' },
-      { period: '📅 현재 (2-4월)', pos: 68, neg: 20, note: '현실적 평가로 안정화, 가성비 논쟁 지속', issue: '배터리 세그먼트별 편차 / 냉각 강점 확정 / 카메라 우수성 지속 / 프리미엘 가격 논쟁 심화', uid: '—', src: 'Apple Community, PhoneArena, Reddit' }
+      { period: '📅 성숙기 (2026.02–04)', pos: 63, neg: 25, note: 'iOS 26 업데이트 후 카메라·UX 불만 증가. 배터리 실측 상하한 편차 지속. 장기 사용자 열관리 강점 재확인', issue: 'iOS 26 업데이트 "경험 저하" 불만(post_update_worsened) / 배터리 Android Authority 벤치 최하위권 vs 실사용 OK 편차 / 카메라 빠른 피사체 선명도 지적 / PWM 접근성 토글 호평', uid: '—', src: 'MacRumors, AppleInsider, AndroidAuthority, 9to5Mac (n=105)' }
     ],
 
     specs: [
@@ -115,7 +116,7 @@ window.VOC_MODELS['ip17pro'] = {
       { sum: '배터리는 한 경우도 있고 모자란 경우도 있음. 사용 패턴에 따라 다름', sent: '중립', cat: 'Battery', int: '중', src: 'MacRumors', date: '2026.03.08', note: 'Global' },
       { sum: '저주파 PWM 조광으로 눈이 덜 피로함. 밤에 편함', sent: '긍정', cat: 'Display_Eyecare', int: '중', src: 'Zhihu', date: '2026.03.12', note: 'China' },
       { sum: 'A19 Pro로 거의 모든 게임이 최고 설정에서 60fps 유지됨', sent: '긍정', cat: 'Performance', int: '중', src: 'YouTube Gaming', date: '2026.03.18', note: 'Global' },
-      { sum: '표준형 iPhone 17도 디스플레이가 좋아서 Pro 구매 고민됨', sent: '부정', cat: 'PriceValue', int: '중', src: 'Reddit r/Apple', date: '2026.03.14', note: 'Global' },
-      { sum: '장시간 촬영해도 핸드폰이 뜨거워지지 않아서 좋음', sent: '긍정', cat: 'Thermal', int: '중', src: 'Chinese Forums', date: '2026.03.16', note: 'China' }
+      { sum: 'iOS 26 업데이트 이후 카메라 앱 안정성 저하·경험 완전히 망쳤다는 사용자 다수 — post_update_worsened', sent: '부정', cat: 'Software', int: '강', src: 'MacRumors Forums', date: '2026.04', note: 'Global·post_update_worsened' },
+      { sum: '접근성 설정의 PWM 토글(480Hz→준-DC 모드)로 저밝기 화면 깜빡임 체감 현저히 개선 — 실사용자 호평', sent: '긍정', cat: 'Display_Eyecare', int: '강', src: 'AppleInsider, Zhihu', date: '2026.03', note: 'Global + China Mature VOC' }
     ]
   };

@@ -9,9 +9,9 @@ window.VOC_MODELS['oppok15pro'] = {
     segment: 'Performance Gaming',
     launch: '2026년 4월 3일 (중국)',
     market: '중국 + 글로벌 (예상)',
-    date: '2026.04.13',
-    sampleN: 76,
-    conclusion: '144Hz 초감고주사율과 능동형 냉각팬으로 게이밍 특화, 안정적 성능과 우수한 배터리 지속성 제공. 성가비 우수한 게이밍 스마트폰.',
+    date: '2026.04.15',
+    sampleN: 82,
+    conclusion: '2464~2899元 능동냉각팬 탑재로 게임 30분 후 35.9°C 최고 — 중단가 최우수 발열관리 확인. 144Hz 1.5K OLED + Dimensity 8500 SUPER 가성비 조합. 출시 직후(2026.04.03) 신규 모델, 초기 표본 위주.',
 
     kpi: {
       sample: { label: '전체 표본', value: 68, sub: 'China 42 / Global 26', color: 'c-neu' },

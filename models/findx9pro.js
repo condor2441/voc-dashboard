@@ -9,9 +9,9 @@ window.VOC_MODELS['findx9pro'] = {
     segment: 'Premium Imaging Flagship',
     launch: '2025.10.16 (중국) / 2025.10.28 (글로벌)',
     market: '중국 + 글로벌',
-    date: '2026.04.13',
-    sampleN: 58,
-    conclusion: '3600nit 피크 밝기·7500mAh 대용량 배터리·200MP Hasselblad 망원으로 디스플레이·배터리 강점 명확(DSI +75, BSI +115). 그러나 중국 사용자가 글로벌보다 카메라·가격·설계에 훨씬 비판적(중국 부정 57% vs 글로벌 32%). 발열(41-43°C 게임)·bloatware·5년 업데이트 한계가 $1199 프리미엄 정당성 훼손.',
+    date: '2026.04.15',
+    sampleN: 66,
+    conclusion: '3600nit·1nit 최저밝기·7500mAh·200MP Hasselblad로 디스플레이·배터리 강점 확고(DSI +75, BSI +115). Mature기: 실사용 21:57h 최고 기록 확인. 단 실리콘카본 배터리 180사이클 후 ±12% 용량분산 이슈 신규 보고. 중국 카메라갭·厚重설계·가격 누적불만 지속(CN 부정 57%).',
 
     kpi: {
       sample: { label: '전체 표본', value: 58, sub: '중국 24 / 글로벌 34', color: 'c-neu' },
@@ -64,9 +64,9 @@ window.VOC_MODELS['findx9pro'] = {
     combined: [
       { cat: 'Camera_Main', n: 19, pos: 7, neg: 4, str: 4, note: 'gap_expectation: CN부정비중높음' },
       { cat: 'Display_Brightness', n: 7, pos: 3, neg: 1, str: 1, note: '글로벌극찬 / 중국일부 야간불만' },
-      { cat: 'Battery', n: 9, pos: 5, neg: 0, str: 2, note: '7500mAh 글로벌·중국 공통강점' },
+      { cat: 'Battery', n: 12, pos: 7, neg: 1, str: 2, note: '7500mAh 공통강점·21:57h 최고기록 / Mature: 180사이클 ±12% 용량분산 신규이슈(커뮤니티 표본 한정)' },
       { cat: 'Design', n: 9, pos: 2, neg: 3, str: 2, note: '중국 부정비중높음(厚重)' },
-      { cat: 'Display_Eyecare', n: 3, pos: 1, neg: 0, str: 0, note: '莱茵认증' },
+      { cat: 'Display_Eyecare', n: 5, pos: 3, neg: 0, str: 0, note: '莱茵认证大满贯·1nit최저밝기·3840Hz PWM 호평 추가확인' },
       { cat: 'Display_Color', n: 4, pos: 2, neg: 0, str: 0, note: '색감우수' },
       { cat: 'Display_Refresh', n: 3, pos: 1, neg: 0, str: 0, note: '120Hz' },
       { cat: 'Display_Outdoor', n: 3, pos: 1, neg: 0, str: 0, note: '야외극찬' },
@@ -90,7 +90,7 @@ window.VOC_MODELS['findx9pro'] = {
     trend: [
       { period: '📦 출시 초기 (2025.10–10.31)', pos: 67, neg: 29, note: '글로벌·중국 모두 카메라·배터리·화면 극찬. 중국 부정 언급은 가격·설계·가치 집중', issue: '200MP Hasselblad 망원·7500mAh·3600nit 글로벌극찬 / 中国: 5299价格높음·厚重불편이슈 즉각지적 / 발열·bloatware GL모두보고', uid: '—', src: 'GSMArena, 知乎, 酷安, 中关村在线, PhoneArena (n=31)' },
       { period: '📅 중기 (2025.11–2026.01)', pos: 56, neg: 41, note: '중국 사용자 카메라 평가 점수 하락(7.5→7.6). 글로벌 부정 지속', issue: '中国: 像素期待vs실제갭 발각·夜景品질하강·对焦不정확 보고심화 / GL: 발열throttling·bloatware불만지속', uid: '—', src: 'Coolapk (n=7.6점), OPPO Community' },
-      { period: '📅 최근 (2026.02–04)', pos: 54, neg: 44, note: '중국 사용자 누적 비판(카메라·가격·설계). 글로벌은 디스플레이·배터리 강점 유지', issue: '中国: 累积불만(카메라 4/6부정, 设计2부정, 가격2부정) vs GL: DSI부정0유지 / 가격급락보도로 가치론쟁심화', uid: '—', src: '知乎, IT之家, GSMArena, Trusted Reviews (n=52)' }
+      { period: '📅 성숙기 (2026.02–04)', pos: 53, neg: 45, note: '글로벌: 실사용 21:57h 업계최고 재확인. 실리콘카본 배터리 180사이클 용량분산 신규이슈. 중국: 카메라·가격 누적불만 안정화', issue: 'GL: 배터리 21:57h 최고기록(GSMArena Active Use Score) / 배터리 ±12% 용량분산(180사이클, 커뮤니티 한정) / 발열 3D Mark 90.2%→모더레이트 / 中国: 累积카메라불만 지속·가격급락 가치손상', uid: '—', src: 'GSMArena, PhoneArena, TechRadar, 知乎, IT之家 (n=66)' }
     ],
 
     specs: [
@@ -118,7 +118,7 @@ window.VOC_MODELS['findx9pro'] = {
 
     productInsights: [
       '200MP Hasselblad 망원: 글로벌 극찬(n=31중 2/2=100%) vs 중국 미흡(n=21중 2/6=33%). CSI −12 = 기대갭 주의. 글로벌은 4K 120fps 안정성 우수 평가하나, 중국 사용자는 2억화소 기대치 미충족·야경품질하강·대초점불정확 지적.',
-      '7500mAh 배터리·BSI +115 = 글로벌·중국 공통 강점. 3일 연속사용(GL)·12시간 충전 없이(CN) 극찬. 80W 충전은 GL극찬이나 CN일부 상대적장점 언급 — 중국은 100W+ 경쟁기 다수인 상황 영향.',
+      '7500mAh·BSI +115 = 글로벌·중국 공통 최강 강점. GSMArena Active Use Score 21:57h — 2년 내 최고. 단 Mature기 실리콘카본 배터리 180사이클 ±12% 용량분산 신규이슈 (커뮤니티 표본 한정, 2월 이후 생산분 개선 보고). 장기 배터리 품질관리 요망.',
       '핵심 지역간 체감갭: 글로벌은 디스플레이·배터리 강점 결정적(DSI부정0, BSI+115). 중국은 카메라갭·厚重설계·5299원가격이 강불만. Dimensity 9500발열(41-43°C, CN계측) + bloatware + 5년업데이트 한계 = 프리미엘 가격 정당성 훼손. 중국시장에서는 가성비 포지션 재검토 필요.'
     ],
 
@@ -133,7 +133,7 @@ window.VOC_MODELS['findx9pro'] = {
       { sum: '5299원가격偏高·경쟁기 OnePlus/Honor/Xiaomi 동가격 동급체험 제공·가치론쟁심화', sent: '부정', cat: 'PriceValue', int: '강', src: '知乎, PConline', date: '202510', note: 'China VOC' },
       { sum: '게임 Genshin Impact 30분 → 43°C / 원신 30분 → 38.4°C (발열개선 미비, 중국계측평균 42.6°)', sent: '부정', cat: 'Thermal', int: '강', src: '酷安, Leikeji', date: '202511', note: 'China Measured' },
       { sum: '59개프리설치앱·Temu·AliExpress·Booking과다·ColorOS최적화미흡(GL+CN공통)', sent: '부정', cat: 'Software', int: '강', src: 'MyPitShop, OPPO社区', date: '202510', note: 'Global + China' },
-      { sum: '80W초고속충전0-100% 1h10m극찬(GL) vs 충전속도상대장(CN상대평가)', sent: '중립', cat: 'Charging', int: '중', src: '91Mobiles, IT之家', date: '202510', note: 'Regional Difference' },
-      { sum: 'ColorOS 16시스템流畅(CN긍정) 하지만 초기버그·護眼모드UI사라짐·5년업데이트한계 → 가격정당성훼손', sent: '부정', cat: 'Software', int: '중', src: 'OPPO Community, 知乎', date: '202511', note: 'China + Global' }
+      { sum: 'Active Use Score 21:57h — 최근 2년 테스트 기기 중 최고 배터리 수명. 웹브라우징 25.5h·영상 13.5h·게임 11h', sent: '긍정', cat: 'Battery', int: '강', src: 'GSMArena', date: '202604', note: 'Global Mature VOC' },
+      { sum: '실리콘카본 배터리 180사이클 후 ±12% 용량분산 — 2월 이후 생산분 개선됐으나 초기 구매자 열화 우려 제기', sent: '부정', cat: 'Battery', int: '강', src: 'Nanoreview, 커뮤니티', date: '202604', note: 'Global·커뮤니티 표본 한정' }
     ]
   };

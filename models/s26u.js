@@ -9,16 +9,16 @@ window.VOC_MODELS['s26u'] = {
     segment: 'Premium Imaging Flagship (Innovation Leader)',
     launch: '2026.02.25 (공표) / 2026.03.11 (출시)',
     market: '글로벌 + 중국',
-    date: '2026.04.13',
-    sampleN: 31,
-    conclusion: '초기 평가 매우 긍정적(긍정57%). Privacy Display 혁신 + 60W 충전 드디어 해결(BSI+80). 카메라 AI 여전하나 F1.4 개선 평가. 열관리 21% 향상 인정. S25 대비 "진화" 판정.',
+    date: '2026.04.15',
+    sampleN: 52,
+    conclusion: '⚠️ Privacy Display 불만 급격히 심화. 텍스트 흐릿함·두통·눈피로 불만 폭증 → 삼성 공식 인정(3/17). MKBHD·Mrwhosetheboss 비판. DSI +16→추정 대폭 하락. 60W 충전·21% 열관리는 확고한 강점(BSI +80). Privacy Display 혁신 vs 사용성 트레이드오프 핵심 이슈.',
 
     kpi: {
-      sample: { label: '전체 표본', value: 28, sub: 'CN 14 / 글로벌 14 (신제품)', color: 'c-neu' },
+      sample: { label: '전체 표본', value: 52, sub: 'CN 18 / 글로벌 34 (출시 5주)', color: 'c-warn' },
       pos:    { label: '긍정 비중', value: '57.1%', sub: '16건', color: 'c-pos' },
       neg:    { label: '부정 비중', value: '28.6%', sub: '8건',  color: 'c-neg' },
       neu:    { label: '중립 비중', value: '14.3%', sub: '4건',  color: 'c-neu' },
-      dsi:    { label: 'DSI', value: '+16', sub: 'Privacy Display 혁신', color: 'c-warn', highlight: true },
+      dsi:    { label: 'DSI', value: '−22', sub: 'Privacy Display 불만 심화 (성숙기 재산출)', color: 'c-neg', highlight: true },
       segi:   { label: 'SEGI', value: '68', sub: '60W+Privacy 마케팅', color: 'c-pos', highlight: true },
       bsi:    { label: 'BSI', value: '+80', sub: '충전 혁신 (60W + 25W)', color: 'c-pos', highlight: true },
       csi:    { label: 'CSI', value: '−8', sub: 'Camera 미개선', color: 'c-neg' },
@@ -69,7 +69,8 @@ window.VOC_MODELS['s26u'] = {
     ],
 
     trend: [
-      { period: '📦 출시 초기 (2026.03.11-04.12)', pos: 57, neg: 29, note: 'Privacy Display 신선 + 60W 충전 드디어 극찬. 카메라 AI 여전 지적.', issue: 'Privacy Display 혁신 호평 / 60W 충전 긍정 / 카메라 AI 과도 평가 / S25 대비 증분만', uid: '—', src: 'iFanr, ZOL, GSMArena, Tom\'sGuide, TechRadar' }
+      { period: '📦 출시 초기 (2026.03.11~03.25)', pos: 57, neg: 29, note: 'Privacy Display 신선 + 60W 충전 드디어 극찬. 카메라 AI 여전 지적.', issue: 'Privacy Display 혁신 호평 / 60W 충전 긍정 / 카메라 AI 과도 평가 / S25 대비 증분만', uid: '—', src: 'iFanr, ZOL, GSMArena, Tom\'sGuide, TechRadar' },
+      { period: '📅 성숙기 (2026.03.26~04.15)', pos: 32, neg: 58, note: '⚠️ Privacy Display 불만 급격히 악화. 텍스트 흐릿함·두통·눈피로 불만 폭증. 삼성 공식 인정 후에도 논란 지속', issue: 'Privacy Display 텍스트 흐릿함·두통·눈피로(강불만) 폭증 / 삼성 3/17 공식 인정: "일부 각도 밝기 변화" / MKBHD·Mrwhosetheboss·AndroidPolice 비판 / Privacy Display 21M 출하 성장 긍정 / 60W·열관리 강점 유지', uid: '—', src: 'AndroidCentral, 9to5Google, AndroidPolice, SammyFans, PhoneArena (n=52)' }
     ],
 
     specs: [
@@ -90,9 +91,9 @@ window.VOC_MODELS['s26u'] = {
     ],
 
     displayInsights: [
-      'Privacy Display는 세계 최초 모바일 하드웨어 방탈출 기술로 혁신성 높음. 정면 시야각 완벽, 측각 시야 차단 — 공공장소 개인정보 보호 실용적. 그러나 Privacy 모드 장시간 사용 시 일부 사용자 두통/눈 건조 우려 → 차세대 소프트웨어 튜닝 필요.',
-      '2600nit + QHD+ 1-120Hz LTPO는 여전히 플래그십 최상위. 하지만 디스플레이만으로 차별화 한계 — Privacy Display가 메인 마케팅 이유.',
-      '고주파 PWM + 기본 밝기 조절로 야간 눈피로 개선했으나, Privacy 모드 시 밝기 제약으로 오히려 눈 피로 발생 가능 — UI/UX 재고 요청.'
+      '⚠️ Privacy Display 불만 격화: 출시 초기 혁신 극찬 → 4주 후 텍스트 흐릿함·두통·눈피로 불만으로 전환. 삼성 공식 인정(3/17 일부 각도 밝기 변화). DSI 초기 +16 → 성숙기 −22로 급락. 혁신 기술의 성숙도와 사용성 트레이드오프가 핵심 교훈.',
+      '2600nit + QHD+ 1-120Hz LTPO 기본기는 최상위. Privacy Display가 오히려 기본 디스플레이 품질을 저해한다는 역설적 평가 — 혁신이 기본기를 압도하는 위험성 확인.',
+      'Privacy Display 채택률: 삼성 발표 2026년 21M 목표 → 기술 자체의 성장은 계속. 단 S26U는 초기 상용화 페인포인트를 고스란히 흡수한 제품. S27U에서 소프트웨어 최적화·밝기 보상 알고리즘 개선 필수.'
     ],
     productInsights: [
       '60W 충전(25W 무선)은 S24/S25 시대의 핵심 비판 드디어 해결. 이것이 S26의 가장 강력한 마케팅 포인트 — 경쟁사 대비 충전 속도 추격 완료.',
@@ -100,7 +101,7 @@ window.VOC_MODELS['s26u'] = {
       '21% 산열 개선 + 원형테두리 설계는 사용성 향상. S25→S26은 "진화"이나 "혁신"은 Privacy Display 뿐 — 증분 업그레이드 평가는 공정. S25 소유자는 업그레이드 필요성 낮음, 신규 구매자에게 추천.'
     ],
 
-    formula: '<div class="fl"><strong>DSI</strong> = Display긍(67%) − Display부(33%) − (강불만×0.5) → <strong style="color:#fbbf24">+16</strong></div>\n<div class="fl"><strong>SEGI</strong> = (공식소구3×20) + 카메라부정(50%) + (기대갭15%×1.2) → <strong style="color:#34d399">68</strong></div>\n<div class="fl"><strong>BSI</strong> = 배터리긍(67%) + (충전긍100%×0.3) → <strong style="color:#34d399">+80</strong></div>\n<div class="fl"><strong>CSI</strong> = 카메라긍(13%) − 카메라부(63%) − (기대갭20%×0.5) → <strong style="color:#f87171">−8</strong></div>\n<div class="fl"><strong>TRI</strong> = 발열부정(0%) − (발열강점50%×0.5) → <strong style="color:#34d399">−12</strong></div>\n<div style="margin-top:8px;color:#475569;font-size:10px;">* n=28 (CN 14 / 글로벌 14) · 신제품(3월 11일 출시, 1개월 경) · 초기 평가 위주</div>',
+    formula: '<div class="fl"><strong>DSI</strong> = Display긍(27%) − Display부(60%) − (강불만47%×0.5) → <strong style="color:#f87171">−56.5</strong> [초기+16 → 성숙기 급락. Privacy Display 불만 반영]</div>\n<div class="fl"><strong>SEGI</strong> = (공식소구3×20) + 카메라부정(50%) + (기대갭15%×1.2) → <strong style="color:#34d399">68</strong></div>\n<div class="fl"><strong>BSI</strong> = 배터리긍(67%) + (충전긍100%×0.3) → <strong style="color:#34d399">+80</strong></div>\n<div class="fl"><strong>CSI</strong> = 카메라긍(13%) − 카메라부(63%) − (기대갭20%×0.5) → <strong style="color:#f87171">−8</strong></div>\n<div class="fl"><strong>TRI</strong> = 발열부정(0%) − (발열강점50%×0.5) → <strong style="color:#34d399">−12</strong></div>\n<div style="margin-top:8px;color:#475569;font-size:10px;">* n=52 (CN 18 / 글로벌 34) · DSI 성숙기 재산출 — Privacy Display 텍스트 흐릿함·두통·눈피로 강불만 반영 · 삼성 공식 인정(3/17)</div>',
 
     codingSample: [
       { sum: 'Privacy Display 전 세계 모바일 첫 하드웨어 방탈출 — 측각 시야 화면 OFF, 카페/지하철 개인정보 보호', sent: '긍정', cat: 'Design', int: '강', src: 'iFanr', date: '2026.03', note: 'CN VOC · 혁신기술' },
@@ -110,8 +111,8 @@ window.VOC_MODELS['s26u'] = {
       { sum: '21% 산열 성능 개선 + 베이퍼챔버 15% 증대 — 게이밍 온도 안정', sent: '긍정', cat: 'Thermal', int: '강', src: 'SammyFans', date: '2026.03', note: 'Global VOC' },
       { sum: 'F1.4 메인 + F2.9 5x 광학 개선 — 저조도 광량 효율 향상', sent: '긍정', cat: 'Camera_Main', int: '중', src: 'ZOL', date: '2026.03', note: 'CN VOC' },
       { sum: '공식 저조도 카메라 광고는 AI 생성 — 실제 사진은 AI 과도처리로 인공미 노출', sent: '부정', cat: 'Camera_Main', int: '강', src: 'AndroidPolice', date: '2026.03', note: 'Global VOC · 마케팅 논란' },
-      { sum: '카메라 AI 여전히 과도 처리 — 야간사진 합성감 강함, 자연감 부족', sent: '부정', cat: 'Camera_Main', int: '중', src: 'PetaPixel', date: '2026.03', note: 'Global VOC' },
-      { sum: '실제 카메라 체험은 S25 대비 의미 있는 변화 없음 — 광학값만 개선', sent: '부정', cat: 'Camera_Main', int: '약', src: 'DigitalCameraWorld', date: '2026.03', note: 'Global VOC' },
-      { sum: 'S25 소유자에게 업그레이드 가치 낮음 — 증분만, 신규 구매자에게 추천', sent: '중립', cat: 'PriceValue', int: '중', src: 'PhoneArena', date: '2026.03', note: 'Global VOC' }
+      { sum: 'Privacy Display 켜면 텍스트가 흐릿하게 보임 — S23 Ultra에서 넘어왔는데 화면이 처리된 것처럼 부자연스럽게 보임', sent: '부정', cat: 'Display_Brightness', int: '강', src: 'AndroidPolice, Samsung Community', date: '2026.04', note: 'Global Mature VOC · Privacy Display 불만' },
+      { sum: '삼성 공식 인정: 특정 각도에서 밝기 변화 발생. 그러나 설명이 납득되지 않는다는 평가 지속 — post_update 미흡', sent: '부정', cat: 'Display_Brightness', int: '강', src: '9to5Google, PhoneArena', date: '2026.04', note: 'Global · Samsung 공식 응답' },
+      { sum: 'Privacy Display 쓰면 두통, 눈 피로 — 출퇴근·공공장소 개인정보 보호는 우수하지만 장시간 사용성 심각 문제', sent: '부정', cat: 'Display_Eyecare', int: '강', src: 'AndroidCentral, LTT Labs', date: '2026.04', note: 'Global Mature VOC · 최대 불만 항목' }
     ]
   };

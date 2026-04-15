@@ -9,9 +9,9 @@ window.VOC_MODELS['op15'] = {
     segment: 'Performance Gaming · Premium Volume',
     launch: '2025.10.28 (중국) / 2025.11 (글로벌)',
     market: '글로벌 + 중국',
-    date: '2026.04.13',
-    sampleN: 140,
-    conclusion: '디스플레이·배터리 압도적 강점(DSI +75) — 카메라 센서 다운그레이드·발열이 핵심 약점, 글로벌/중국 체감 갭 존재',
+    date: '2026.04.15',
+    sampleN: 148,
+    conclusion: '7300mAh 스택 배터리 Tom\'s Guide 역대 최고 25h13m 기록 확인(BSI +101). 165Hz 1.5K 아이케어 디스플레이 장기 호평 유지. 단 일부 사용자 유휴 배터리 과소모 신고(커뮤니티 표본 한정). 카메라 센서 다운그레이드·발열 약점 지속.',
 
     kpi: {
       sample: { label: '전체 표본', value: 140, sub: '글로벌 80 / 중국 60', color: 'c-neu' },
@@ -78,7 +78,7 @@ window.VOC_MODELS['op15'] = {
     trend: [
       { period: '📦 출시 초기 (2025.10–11)', pos: 58, neg: 26, note: '디스플레이·배터리·성능 극찬. 카메라 센서 다운그레이드·발열 비판 집중', issue: '카메라HW다운그레이드 / 4K발열 / 센서크기축소', uid: '—', src: 'Reddit, GSMArena, YouTube, 酷安' },
       { period: '📅 중기 (2025.12–2026.01)', pos: 42, neg: 31, note: '소프트웨어 안정화. 카메라불만 지속. 배터리·디스플레이 장기 호평', issue: '카메라SW업데이트요청 / 발열개선미비', uid: '—', src: 'OnePlus Community, Reddit' },
-      { period: '📅 최근 (2026.02–04)', pos: 40, neg: 40, note: '안정적 장기사용. 디스플레이·배터리 강점 확인. 차세대 기대이동', issue: '안정적사용 / OnePlus 16 기대', uid: '—', src: 'GSMArena, PhoneArena' }
+      { period: '📅 성숙기 (2026.02–04)', pos: 42, neg: 38, note: '배터리 Tom\'s Guide 25h13m 역대 최고 재확인. 유휴 과소모 이슈 일부 커뮤니티 제기. 디스플레이·성능 장기 강점 유지', issue: 'Tom\'s Guide 25h13m 역대 최고 기록 / 유휴 배터리 과소모 신고(OnePlus 커뮤니티, 커뮤니티 표본 한정) / 카메라 SW 업데이트 요청 지속 / 소프트웨어 산발적 버그', uid: '—', src: 'Tom\'sGuide, AndroidPolice, OnePlus Community (n=148)' }
     ],
 
     specs: [

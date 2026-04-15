@@ -9,9 +9,9 @@ window.VOC_MODELS['vivoV70'] = {
     segment: 'Premium volume / Camera-centric',
     launch: '2026.02.19 (글로벌)',
     market: '글로벌 (India, Southeast Asia)',
-    date: '2026.04.13',
-    sampleN: 42,
-    conclusion: '1966nits @75% 고밝기 + 50MP 망원(3x)로 촬영 강점. 프리미엄 빌드·90W 충전 만족. 초광각 화질·무선충전 부재가 개선 필요 항목.',
+    date: '2026.04.15',
+    sampleN: 47,
+    conclusion: '1966nits @75% 고밝기 + 50MP 망원(3x)로 촬영 강점. 프리미엄 빌드·90W 충전 만족. 집중 사용 시 발열 43.1°C·저조도 빛번짐·초광각 화질·무선충전 부재가 개선 필요 항목.',
 
     kpi: {
       sample: { label: '전체 표본', value: 38, sub: 'Global 38 / China 0', color: 'c-neu' },
@@ -61,12 +61,14 @@ window.VOC_MODELS['vivoV70'] = {
       { cat: 'Display_Color', n: 3, pos: 3, neg: 0, str: 1, note: '색감 활발' },
       { cat: 'Camera_UltraWide', n: 2, pos: 0, neg: 2, str: 1, note: '초광각 약함' },
       { cat: 'Charging_Wireless', n: 2, pos: 0, neg: 2, str: 1, note: '무선충전 없음' },
-      { cat: 'PriceValue', n: 2, pos: 2, neg: 0, str: 1, note: '가성비 우수' }
+      { cat: 'PriceValue', n: 2, pos: 2, neg: 0, str: 1, note: '가성비 우수' },
+      { cat: 'Thermal', n: 3, pos: 0, neg: 3, str: 1, note: '집중 사용 시 최대 43.1°C (평균 34°C 대비 높음)' }
     ],
 
     trend: [
       { period: '📦 출시 초기 (2026.02)', pos: 24, neg: 5, note: '디스플레이 밝기·카메라 망원·배터리 극찬. 무선충전 미제공 아쉬움', issue: '1800nits밝기극찬 / 망원화질호평 / 무선충전없음 / 초광각약함', uid: '—', src: 'GSMArena, NotebookCheck, Business Standard' },
-      { period: '📅 중기 (2026.03–)', pos: 100, neg: 0, note: '지속 사용 만족도 높음. 카메라 강점 확정. 무선충전은 계속 이슈', issue: '장기사용카메라만족 / 무선충전아쉬움지속', uid: '—', src: 'Mark Ellis Reviews, TechPP, PetaPixel' }
+      { period: '📅 중기 (2026.03)', pos: 22, neg: 4, note: '지속 사용 만족도 높음. 카메라 강점 확정. 무선충전은 계속 이슈', issue: '장기사용카메라만족 / 무선충전아쉬움지속', uid: '—', src: 'Mark Ellis Reviews, TechPP, PetaPixel' },
+      { period: '📅 성숙기 (2026.04)', pos: 16, neg: 9, note: '발열 43.1°C 집중 사용 시 다소 높음 확인. 저조도 촬영 빛번짐 약점 지적. 디스플레이·망원 카메라 장기 호평 유지. V70 FE 파생 모델 출시', issue: '발열43.1°C높음 / 저조도빛번짐약점 / 망원카메라장기호평 / V70FE출시', uid: '—', src: 'NotebookCheck, GSMArena, PetaPixel (n=47)' }
     ],
 
     specs: [

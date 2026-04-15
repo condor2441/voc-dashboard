@@ -9,16 +9,16 @@ window.VOC_MODELS['xiaomi17ultra'] = {
     segment: 'Premium Imaging Flagship',
     launch: '2025.12.25 (중국) / 2026.03.06 (글로벌 - Leica Leitzphone)',
     market: '중국 + 글로벌',
-    date: '2026.04.13',
-    sampleN: 53,
-    conclusion: '1-inch 50MP Leica + 200MP 연속 줌 + 3500nit으로 카메라·화질 업계 최강(CSI +85, DSI +70). 6800mAh + 90W 충전 배터리 우수(BSI +95). 열관리 3D IceLoop 50% 개선(TRI −15). 글로벌 소프트웨어 제약만 제외하면 완성도 높은 프리미엄 이미징 플래그십.',
+    date: '2026.04.15',
+    sampleN: 62,
+    conclusion: '1-inch 50MP Leica + 200MP 연속 줌 + 3500nit으로 카메라·화질 업계 최강(CSI +72, DSI +70). 6800mAh + 90W 충전 배터리 우수(BSI +95). 성숙기에 소프트웨어 문제 부상: 셔터 랙·렌즈간 화이트밸런스 점프·렌즈 포깅 불만. AndroidPolice "best camera phone with a serious problem" 평.',
 
     kpi: {
       sample: { label: '전체 표본', value: 47, sub: '중국 24 / 글로벌 23', color: 'c-neu' },
       pos: { label: '긍정 비중', value: '80.9%', sub: '38건', color: 'c-pos' },
       neg: { label: '부정 비중', value: '12.8%', sub: '6건', color: 'c-neg' },
       neu: { label: '중립 비중', value: '6.4%', sub: '3건', color: 'c-neu' },
-      csi: { label: 'CSI', value: '+85', sub: 'Camera Sentiment', color: 'c-pos', highlight: true },
+      csi: { label: 'CSI', value: '+72', sub: 'Camera Sentiment', color: 'c-pos', highlight: true },
       dsi: { label: 'DSI', value: '+70', sub: 'Display Sentiment', color: 'c-pos', highlight: true },
       bsi: { label: 'BSI', value: '+95', sub: 'Battery Sentiment', color: 'c-pos' },
       tri: { label: 'TRI', value: '−15', sub: 'Thermal Risk', color: 'c-pos' }
@@ -64,12 +64,13 @@ window.VOC_MODELS['xiaomi17ultra'] = {
       { cat: 'Performance', n: 9, pos: 9, neg: 0, str: 0, note: '성능' },
       { cat: 'Design', n: 9, pos: 9, neg: 0, str: 0, note: '디자인' },
       { cat: 'Display_Eyecare', n: 7, pos: 7, neg: 0, str: 0, note: '눈피로' },
-      { cat: 'Software', n: 2, pos: 0, neg: 2, str: 1, note: '소프트웨어' }
+      { cat: 'Software', n: 8, pos: 0, neg: 8, str: 2, note: '셔터랙·렌즈WB점프·렌즈포깅·글로벌HyperOS제약' }
     ],
 
     trend: [
       { period: '📦 출시 초기 (2025.12)', pos: 95, neg: 5, note: '카메라·디스플레이·배터리 삼중 극찬', issue: '1" Leica 극찬 / 연속 줌 혁신 / 3500nit 야외 / 6800mAh', uid: '—', src: '知乎, ZOL, 安兔兔, 酷安' },
-      { period: '📅 글로벌 출시 (2026.03)', pos: 89, neg: 11, note: '카메라·화질 극찬 / 소프트웨어 제약 지적', issue: '카메라 극찬 / Leica 호평 / HyperOS 미지원 불만', uid: '—', src: 'PhoneArena, Digital Camera World, Mark Ellis' }
+      { period: '📅 글로벌 출시 (2026.03)', pos: 89, neg: 11, note: '카메라·화질 극찬 / 소프트웨어 제약 지적', issue: '카메라 극찬 / Leica 호평 / HyperOS 미지원 불만', uid: '—', src: 'PhoneArena, Digital Camera World, Mark Ellis' },
+      { period: '📅 성숙기 (2026.04)', pos: 52, neg: 48, note: 'AndroidPolice "best camera phone of 2026 has a serious problem". 셔터 랙·렌즈간 화이트밸런스 점프·렌즈 포깅 문제 보고. PhoneArena "Hardware perfection, software frustration". Medium 마케팅 트랩 비판. 카메라 HW 강점은 유효', issue: '셔터랙/어려운조명 / 렌즈WB점프 / 렌즈포깅온도변화 / HyperOS글로벌제약 / 마케팅과대포장비판', uid: '—', src: 'AndroidPolice, PhoneArena, Medium, Beebom Gadgets (n=62)' }
     ],
 
     specs: [

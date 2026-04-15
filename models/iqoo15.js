@@ -9,9 +9,9 @@ window.VOC_MODELS['iqoo15'] = {
     segment: 'Performance Gaming',
     launch: '2025.10.20 (중국) / 2025.11 (글로벌)',
     market: '중국 + 글로벌 (India iQOO)',
-    date: '2026.04.13',
-    sampleN: 68,
-    conclusion: '2K 珠峰屏 + 무편광 기술로 디스플레이 강점(Display 부정 0건). 성능 게이밍 최강. 셀카 카메라·소프트웨어 안정성이 개선 필요 영역.',
+    date: '2026.04.15',
+    sampleN: 75,
+    conclusion: '2K 珠峰屏 + 무편광 기술로 디스플레이 강점(DSI +54, Display 부정 0건). 장기 게이밍 발열 40°C 이내 안정 재확인(GEI +52). 셀카 납작화·100W 유선 퇴보는 미해결 약점 지속.',
 
     kpi: {
       sample: { label: '전체 표본', value: 68, sub: 'China 42 / Global 26', color: 'c-neu' },
@@ -83,7 +83,7 @@ window.VOC_MODELS['iqoo15'] = {
     trend: [
       { period: '📦 출시 초기 (2025.10–11)', pos: 58, neg: 26, note: '珠峰屏·성능·배터리 극찬. 충전퇴보·셀카·소프트웨어 이슈 보고', issue: '2600nit 야외극찬 / 100W유선퇴보 / 셀카납작 / 초기버그', uid: '—', src: 'AnTuTu, Leikeji, 知乎, GSMArena' },
       { period: '📅 중기 (2025.12–2026.01)', pos: 40, neg: 20, note: '업데이트로 소프트웨어 개선. 카메라불만 지속', issue: '소프트웨어업데이트개선 / 셀카개선미비', uid: '—', src: 'iQOO Community, Reddit' },
-      { period: '📅 최근 (2026.02–04)', pos: 68, neg: 14, note: '장기사용자 안정성 만족. 디스플레이 자극감·카메라 색감 보정방법 공유. 배터리·발열 강점 재확인', issue: '화면자극감 (개인차) / 카메라색감조정필요 / 배터리·발열 우수입증', uid: '—', src: 'Nasi Lemak Tech, Gizmochina, 爱搞机, 新浪众测, 知乎' }
+      { period: '📅 성숙기 (2026.02–04)', pos: 68, neg: 14, note: '장기 게임 온도 40°C 이내 안정 최종 확인. 珠峰屏 무편광 자연광 장기 사용성 극찬 지속. 셀카·충전 약점 누적 지적', issue: '王者荣耀 등 일반 게임 온도 40°C 이내 안정(AnTuTu 검증) / 高负载 3시간 45.8°C 확인·수용가능 / 셀카납작화·무아레 미해결 / 100W 퇴보 계속 언급', uid: '—', src: 'AnTuTu, Leikeji, 爱搞机, 新浪众测, 知乎 (n=75)' }
     ],
 
     specs: [

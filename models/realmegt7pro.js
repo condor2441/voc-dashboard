@@ -9,8 +9,8 @@ window.VOC_MODELS['realmegt7pro'] = {
     segment: 'Performance Gaming',
     launch: '2024년 11월 4일 (글로벌)',
     market: '중국 + 글로벌',
-    date: '2026.04.13',
-    sampleN: 72,
+    date: '2026.04.15',
+    sampleN: 78,
     conclusion: 'Snapdragon 8 Elite 첫 탑재 + 6000nits Eco² 디스플레이 + 120W 초급속충전으로 성능·디스플레이·배터리 완성도 높음. 카메라는 실용적 수준, 소프트웨어 지원 3년은 개선 필요',
 
     kpi: {
@@ -69,7 +69,7 @@ window.VOC_MODELS['realmegt7pro'] = {
     trend: [
       { period: '📦 출시 초기 (11월)', pos: 68, neg: 10, note: '높은 기대감, SD8 Elite 극찬', issue: '6000nits 극찬 / SD8 Elite 첫 탑재 호평 / 120W 초고속충전 / 발열 초기 보고', uid: '—', src: '酷安, YouTube, GSMArena' },
       { period: '📅 중기 (12월-1월)', pos: 66, neg: 14, note: '발열·카메라 이슈 부상, 디스플레이 호평 지속', issue: '발열 누적 불만 / 8MP 초광각 약점 지적 / 배터리·디스플레이 강점 입증 / 게이밍 성능 검증', uid: '—', src: '知乎, Coolapk, Reddit' },
-      { period: '📅 현재 (2-4월)', pos: 62, neg: 16, note: '실사용 평가로 안정화, 발열 펌웨어 최적화 기대', issue: '발열 펌웨어 개선 기대 / 카메라 실용적 평가 / 디스플레이·배터리 확정 강점 / OS 3년 지원 개선 요청', uid: '—', src: 'GSMArena, 中关村在线, PhoneArena' }
+      { period: '📅 성숙기 (2026.02–04)', pos: 62, neg: 16, note: '발열 펌웨어 업데이트 일부 개선. Eco2 디스플레이 장기 호평 유지. 8MP 초광각 약점 여전. 출시 17개월—차세대 관심 이동', issue: '발열 일부 개선 (post_update_improved 한정) / Eco2 자연광 장기호평 / 8MP 초광각 지속 약점 / GT8 Pro 비교 시 스펙 우위 논의', uid: '—', src: 'GSMArena, 中关村在线, realme Community (n=78)' }
     ],
 
     specs: [

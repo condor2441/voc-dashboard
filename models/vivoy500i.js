@@ -9,8 +9,8 @@ window.VOC_MODELS['vivoy500i'] = {
     segment: 'Mass Volume',
     launch: '2026년 1월 16일 (중국)',
     market: '중국 + 글로벌',
-    date: '2026.04.13',
-    sampleN: 47,
+    date: '2026.04.15',
+    sampleN: 51,
     conclusion: '7200mAh 대용량 배터리와 3840Hz 무깜빡임 디스플레이로 일상 사용 완성도 높음. 가성비 우수하나 게이밍 성능은 한계 명확. 배송 종사자·학생·가치 소비자 타겟 정확성 높음',
 
     kpi: {
@@ -67,7 +67,7 @@ window.VOC_MODELS['vivoy500i'] = {
     trend: [
       { period: '📦 출시 초기 (1월)', pos: 48, neg: 19, note: '높은 기대감, 배터리 극찬', issue: '7200mAh 극찬 / 가성비 우수 / 무깜빡임 호평 / 디스플레이 해상도 아쉬움', uid: '—', src: '酷安, vivo官网社区, YouTube' },
       { period: '📅 중기 (2-3월)', pos: 44, neg: 23, note: '카메라 한계 인식, 배터리 강점 지속', issue: '카메라 저광량 약점 / 게이밍 발열 불만 / 배터리 강점 입증 / 가성비 확정', uid: '—', src: '百度贴吧, GSMArena, 中关村在线' },
-      { period: '📅 현재 (4월)', pos: 38, neg: 29, note: '실사용 평가 안정화, 대상층 명확화', issue: '배송·학생 대상 만족도 높음 / 게이밍 관심층 부정 / 카메라 한계 수용 / 가성비·내구성 강점', uid: '—', src: 'Reddit, PConline, YouTube' }
+      { period: '📅 성숙기 (4월)', pos: 38, neg: 29, note: '실사용 평가 안정화, 대상층 명확화. 전문 리뷰어 배터리 10/10 평가. 이충전 2일 지속 재확인', issue: '배송·학생 대상 만족도 높음 / 게이밍 관심층 부정 / 카메라 한계 수용 / 배터리10/10전문리뷰 / 가성비·내구성 강점', uid: '—', src: 'Reddit, PConline, thehatke.com (n=51)' }
     ],
 
     specs: [

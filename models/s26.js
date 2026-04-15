@@ -9,8 +9,8 @@ window.VOC_MODELS['s26'] = {
     segment: 'Premium volume / Compact flagship',
     launch: '2026.02.25 발표 / 2026.03.11 출시',
     market: '글로벌 (한국 포함)',
-    date: '2026.04.13',
-    sampleN: 53,
+    date: '2026.04.15',
+    sampleN: 60,
     conclusion: '7.9mm 경량 컴팩트 플래그십. 발열·배터리 효율 개선으로 일상 만족도 상승. 4세대 동일 카메라 HW·낮은 PWM(480Hz)·25W 충전이 비판 집중.',
 
     kpi: {
@@ -65,7 +65,7 @@ window.VOC_MODELS['s26'] = {
 
     trend: [
       { period: '📦 출시 초기 (2026.03)', pos: 20, neg: 9, note: '경량·발열개선 극찬. 카메라 HW 동일·PWM·25W 충전 비판 집중', issue: '경량컴팩트극찬 / 발열해결호평 / 카메라HW4세대동일비판 / 480Hz눈시림 / 25W충전느림', uid: '—', src: 'Samsung Members, GSMArena, Clien' },
-      { period: '📅 중기 (2026.04–)', pos: 7, neg: 6, note: '실사용 만족도 유지. 카메라·충전 불만 지속', issue: '배터리효율확인 / 카메라SW업데이트요청지속', uid: '—', src: 'Samsung Members, 나무위키' }
+      { period: '📅 중기 (2026.04)', pos: 7, neg: 6, note: '실사용 만족도 유지. 카메라·충전 불만 지속. Digital Trends "너무 안전한 플래그십" 평가', issue: '배터리효율확인 / 카메라SW업데이트요청지속 / 고릴라아머·항반사 코팅 미적용 비판 / "too safe" 평론 언급', uid: '—', src: 'Samsung Members, AndroidCentral, DigitalTrends (n=60)' }
     ],
 
     specs: [

@@ -58,7 +58,7 @@ window.VOC_MODELS['iqoo15ultra'] = {
 
     combined: [
       { cat: 'Performance', n: 9, pos: 9, neg: 0, str: 5, note: '게이밍 성능 압도 — SD8G5+Q3칩, AnTuTu 4.51M, 원신 2K 120fps 1h 지속' },
-      { cat: 'Thermal', n: 7, pos: 7, neg: 0, str: 4, note: '액화냉각 혁신 유효 — 36-43℃ 유지, 경쟁사 45-48℃ 대비 우위, 풍냐 음성 무시' },
+      { cat: 'Thermal', n: 7, pos: 7, neg: 0, str: 4, note: '액화냉각 실측 확인: 15분 게임 40°C/39.2°C(전·후면), 1시간 41.7°C/41.2°C, 라이브스트리밍 45.3°C (쾌적 임계선). 경쟁사 45-48°C 대비 명확한 우위. 풍냐 음소거 가능' },
       { cat: 'Display_Brightness', n: 5, pos: 5, neg: 0, str: 2, note: '2600nit 실측 극밝음 — M14패널, 118% DCI-P3' },
       { cat: 'Display_Refresh', n: 4, pos: 4, neg: 0, str: 1, note: '144Hz LTPO — 스크롤·게이밍 부드러움' },
       { cat: 'Display_Color', n: 2, pos: 2, neg: 0, str: 1, note: '10.7억 색상 · 10bit · HDR10+ 명확' },
@@ -87,7 +87,7 @@ window.VOC_MODELS['iqoo15ultra'] = {
     ],
 
     specs: [
-      { key: '디스플레이', val: '6.85" 2K LTPO AMOLED (3168×1440, ~507ppi)', note: 'M14패널, 118% DCI-P3, 2160Hz PWM, 3200Hz 터치 샘플링' },
+      { key: '디스플레이', val: '6.85" 2K LTPO AMOLED (3168×1440, ~507ppi)', note: 'M14패널, 118% DCI-P3, 2160Hz PWM, 4000Hz 터치 샘플링(Ultra 전용 업그레이드)' },
       { key: '밝기', val: '2600nit (실측) / 8000nit (peak), HBM 지원', note: '업계 최고 수준' },
       { key: '주사율 / LTPO', val: '60–144Hz LTPO 적응형', note: '10단계 가변 → 저전력' },
       { key: 'SoC', val: 'Qualcomm Snapdragon 8 Elite Gen 5 (3nm)', note: 'Adreno 840 GPU + 자체 Q3 esports 칩' },

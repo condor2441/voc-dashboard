@@ -9,8 +9,8 @@ window.VOC_MODELS['vivoX300s'] = {
     segment: 'Performance Flagship / Gaming-centric',
     launch: '2026.03.30 (중국)',
     market: 'China-only',
-    date: '2026.04.13',
-    sampleN: 51,
+    date: '2026.04.15',
+    sampleN: 57,
     conclusion: '144Hz 고주사율 + 7100mAh 초대용량으로 디스플레이·배터리 강점. 게이밍 성능·200MP 망원카메라 우수. 고부하 발열·기기 두께가 개선 필요 항목.',
 
     kpi: {
@@ -41,7 +41,7 @@ window.VOC_MODELS['vivoX300s'] = {
       { cat: 'Battery', n: 9, pos: 9, neg: 0, str: 2, note: '7100mAh 1-2일 지속 "续航安心"' },
       { cat: 'Camera_Main', n: 6, pos: 6, neg: 0, str: 2, note: '200MP Zeiss 망원 우수 / 蓝图원생색' },
       { cat: 'Performance', n: 4, pos: 4, neg: 0, str: 2, note: '게이밍 성능 (왕자영예 풀프레임, 원신 안정)' },
-      { cat: 'Thermal', n: 5, pos: 1, neg: 4, str: 2, note: '고부하(30분+) 발열 불만' },
+      { cat: 'Thermal', n: 5, pos: 1, neg: 4, str: 2, note: '고부하(30분+) 발열 불만 / 원신 30분 실측 43.2°C' },
       { cat: 'Design', n: 2, pos: 0, neg: 2, str: 1, note: '기기 두께 너무 두꺼움' },
       { cat: 'PriceValue', n: 2, pos: 2, neg: 0, str: 1, note: '4499위안 가성비 우수' },
       { cat: 'Display_Outdoor', n: 3, pos: 3, neg: 0, str: 1, note: '야외 가시성 극찬' }
@@ -62,7 +62,7 @@ window.VOC_MODELS['vivoX300s'] = {
 
     trend: [
       { period: '📦 출시 초기 (2026.03)', pos: 33, neg: 4, note: '144Hz·배터리·카메라·게이밍성능 극찬. 발열우려 보고 시작', issue: '144Hz고주사율극찬 / 배터리안심 / 200MP망원호평 / 발열우려보고', uid: '—', src: 'AnTuTu, Leikeji, 锋潮科技' },
-      { period: '📅 중기 (2026.04–)', pos: 100, neg: 0, note: '지속적 사용 만족도 높음. 발열이슈 지속', issue: '장기사용만족도높음 / 고부하발열불만지속', uid: '—', src: '知乎, 소후, Bilibili' }
+      { period: '📅 중기 (2026.04)', pos: 28, neg: 8, note: '배터리 실측 최우수 확인. 발열 43.2°C 정밀 실측. 직면 스크린 오터치 없음 호평', issue: '배터리6시간53%잔량 / 발열원신30분43.2°C / 직면스크린오터치없음 / 충전55분완충', uid: '—', src: '中关村在线, AnTuTu, 腾讯新闻 (n=57)' }
     ],
 
     specs: [

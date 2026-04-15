@@ -9,8 +9,8 @@ window.VOC_MODELS['redmiturbo5'] = {
     segment: 'Performance Gaming',
     launch: '2026년 1월 29일 (중국)',
     market: '중국 + 글로벌',
-    date: '2026.04.13',
-    sampleN: 80,
+    date: '2026.04.15',
+    sampleN: 86,
     conclusion: '3500nits DC+3840Hz 무깜빡임 디스플레이와 7560mAh+100W 초급속충전으로 게이밍·배터리 성능 최강. 카메라 약점과 극한 게이밍 발열이 단점',
 
     kpi: {
@@ -69,7 +69,7 @@ window.VOC_MODELS['redmiturbo5'] = {
     trend: [
       { period: '📦 출시 초기 (1월 29-2월 중순)', pos: 72, neg: 14, note: '높은 기대감, 디스플레이 극찬', issue: '3500nits 극찬 / 무깜빡임 호평 / 배터리 극찬 / 게이밍 성능 우수', uid: '—', src: '小米社区, 知乎, YouTube' },
       { period: '📅 중기 (2월 중순-3월 초)', pos: 67, neg: 18, note: '카메라·발열 이슈 부상', issue: '카메라 저광량 약점 지적 / 극한 게이밍 발열 / 냉각 케이스 권장 / 배터리는 지속 호평', uid: '—', src: '酷安, GSMArena, 中关村在线' },
-      { period: '📅 현재 (3월 초-4월 12일)', pos: 65, neg: 20, note: '카메라 약점 지속, 배터리 강점 유지', issue: '카메라 개선 필수 / 발열 극한 상황 명확 / 배터리·디스플레이 강점 입증 / 가성비 우위', uid: '—', src: '百度贴吧, Reddit, IT之家' }
+      { period: '📅 성숙기 (2026.03~04)', pos: 65, neg: 20, note: '카메라 약점 지속, 배터리 강점 유지', issue: '카메라 개선 필수 / 발열 극한 상황 명확 / 배터리·디스플레이 강점 입증 / 가성비 우위', uid: '—', src: '百度贴吧, Reddit, IT之家' }
     ],
 
     specs: [

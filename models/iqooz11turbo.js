@@ -9,9 +9,9 @@ window.VOC_MODELS['iqooz11turbo'] = {
     segment: 'Performance Gaming',
     launch: '2026.01.15',
     market: 'China + Global',
-    date: '2026.04.13',
-    sampleN: 58,
-    conclusion: '게임 성능 우수(GEI +32.5), 디스플레이 고주사율+밝기 균형(DSI +24), 가성비 우수(BSI +28). 카메라 개선 및 글로벌 시장 진출 필요.',
+    date: '2026.04.15',
+    sampleN: 64,
+    conclusion: '2399元 게이밍 플래그십 성능(GEI +32.5)·5000nit·4320Hz PWM 디스플레이(DSI +24) 성비 최강. 하이퍼샘플링·슈퍼프레임 장시간 활성화 시 발열 증가 → 방열케이스 권장. 카메라 야간 개선 여지 지속.',
 
     kpi: {
       sample: { label: '전체 표본', value: 52, sub: '중국 28 / 글로벌 24', color: 'c-neu' },
@@ -61,7 +61,7 @@ window.VOC_MODELS['iqooz11turbo'] = {
 
     trend: [
       { period: '📦 출시 초기 (2026.01.15~01.31)', pos: 68, neg: 16, note: '게임 성능 기대+호평, 가성비 극찬', issue: 'SD8 Gen5 / 144Hz 게이밍 / 100W 충전', uid: '—', src: '爱搞机, 知乎, 酷安' },
-      { period: '📅 사용 누적 (2026.02.01~04.12)', pos: 59, neg: 26, note: '게임 성능 유지, 카메라 논의 증가', issue: '게임 최적화 / 야간 카메라 / 배터리 소비', uid: '—', src: 'GSMArena, Reddit, YouTube' }
+      { period: '📅 성숙기 (2026.02~04)', pos: 59, neg: 26, note: '게임 성능·디스플레이 강점 유지. 하이퍼샘플링·슈퍼프레임 장시간 사용 시 발열 증가 이슈 신규 보고. 곡면 라지 R 코너 UI 버튼 잘림 인터페이스 불만', issue: '하이퍼샘플링+슈퍼프레임 발열 증가 / UI 라지 R-코너 버튼 잘림 / 글로벌 출시 여부 불명확 / 야간 카메라 미해결', uid: '—', src: 'ZOL, 知乎, Leikeji, 新浪众测 (n=64)' }
     ],
 
     specs: [

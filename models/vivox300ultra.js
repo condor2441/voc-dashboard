@@ -9,8 +9,8 @@ window.VOC_MODELS['vivox300ultra'] = {
     segment: 'Imaging Flagship',
     launch: '2026.03.30 (중국) / 2026 Q2 (글로벌)',
     market: '중국 + 글로벌',
-    date: '2026.04.13',
-    sampleN: 53,
+    date: '2026.04.15',
+    sampleN: 59,
     conclusion: 'Zeiss 협업 카메라 성능 우수(CSI +28.8), 2K 디스플레이 야외 가시성 최강(DSI +21.5), 배터리 충분(BSI +24.5). 카메라 모듈 두께와 글로벌 가격 전략 보완 필요.',
 
     kpi: {
@@ -67,7 +67,8 @@ window.VOC_MODELS['vivox300ultra'] = {
 
     trend: [
       { period: '📦 출시 초기 (2026.03.30~04.07)', pos: 58, neg: 24, note: '기대 높음+카메라 극찬', issue: 'Zeiss 협업 / 200MP 저조도 / 4K120 HDR', uid: '—', src: '知乎, 酷安, 百度贴吧' },
-      { period: '📅 사용 누적 (2026.04.08~04.12)', pos: 54, neg: 30, note: '평가 분산+디자인 불만 증가', issue: '알고리즘 간섭 / 두께 불편 / 글로벌 가격', uid: '—', src: 'GSMArena, Reddit, YouTube' }
+      { period: '📅 사용 누적 (2026.04.08~04.12)', pos: 54, neg: 30, note: '평가 분산+디자인 불만 증가', issue: '알고리즘 간섭 / 두께 불편 / 글로벌 가격', uid: '—', src: 'GSMArena, Reddit, YouTube' },
+      { period: '📅 성숙기 (2026.04.13~)', pos: 36, neg: 18, note: '14일 장기 사용 후기 Bilibili 8.6만뷰. 쌍2억 화소 카메라 강점 재확인. 배터리 용량 아쉬움 신규 언급. 발열은 정상 범위 확인', issue: '쌍200MP카메라강점 / 배터리용량아쉬움 / 발열30.7°C정상수준 / 케이스호환문제지속', uid: '—', src: 'Bilibili, 知乎, AnTuTu (n=59)' }
     ],
 
     specs: [

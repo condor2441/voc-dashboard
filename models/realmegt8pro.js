@@ -9,8 +9,8 @@ window.VOC_MODELS['realmegt8pro'] = {
     segment: 'Performance Flagship / Gaming-centric / Camera-centric',
     launch: '2025.10.21 (중국) / 2025.11.20 (인도)',
     market: '글로벌 (India, China)',
-    date: '2026.04.13',
-    sampleN: 58,
+    date: '2026.04.15',
+    sampleN: 65,
     conclusion: '7000nit 피크 밝기 + Ricoh GR 거리촬영 전문성으로 카메라 강점 극대화. 7000mAh Titan 배터리 + 120W 충전, 게이밍 성능 우수. 두께·무게·메인캠 센서가 개선 필요 항목.',
 
     kpi: {
@@ -66,7 +66,8 @@ window.VOC_MODELS['realmegt8pro'] = {
 
     trend: [
       { period: '📦 출시 초기 (2025.10)', pos: 36, neg: 7, note: '디스플레이 밝기·Ricoh 카메라·배터리 극찬. 두께·무게 불만 시작. 안투투 좋평榜 등극', issue: '7000nit극찬 / Ricoh거리촬영호평 / 7000mAh만족 / 두께무게부담', uid: '—', src: 'AnTuTu, 中关村在线, Leikeji' },
-      { period: '📅 중기 (2025.11–2026.01)', pos: 100, neg: 0, note: '지속 사용 만족도 높음. 카메라·배터리 강점 확정. 성가비 극찬', issue: '카메라배터리장기만족 / 게이밍성능입증 / 성가비극찬', uid: '—', src: '知乎, GSMArena, Beebom Gadgets' }
+      { period: '📅 중기 (2025.11–2026.01)', pos: 100, neg: 0, note: '지속 사용 만족도 높음. 카메라·배터리 강점 확정. 성가비 극찬', issue: '카메라배터리장기만족 / 게이밍성능입증 / 성가비극찬', uid: '—', src: '知乎, GSMArena, Beebom Gadgets' },
+      { period: '📅 성숙기 (2026.02–04)', pos: 72, neg: 18, note: '7000nit·2K 144Hz 디스플레이 장기 호평 유지. 두께·무게 누적 불만 지속. 거리촬영 Ricoh 연계 니치 포지션 확고', issue: '두께·무게 장기 불만 지속 / 7000nit·圆偏光片 장기 아이케어 호평 / 배터리 7000mAh 성숙기 강점 재확인', uid: '—', src: 'ZOL, 知乎, Leikeji (n=65)' }
     ],
 
     specs: [
