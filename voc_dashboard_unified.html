@@ -620,11 +620,11 @@
   <div class="section-title">인사이트</div>
   <div class="insight-grid">
     <div class="insight-col">
-      <div class="insight-col-title ic-display">🖥 디스플레이 핵심 인사이트</div>
+      <div class="insight-col-title ic-display">📱 제품 인사이트</div>
       <div id="display-insights"></div>
     </div>
     <div class="insight-col">
-      <div class="insight-col-title ic-product">📦 상품기획 시사점</div>
+      <div class="insight-col-title ic-product">🔬 SDC 인사이트</div>
       <div id="product-insights"></div>
     </div>
   </div>
@@ -1046,14 +1046,14 @@ function renderInsights() {
     return;
   }
 
-  dInsights.innerHTML = m.displayInsights.map((d, i) => `
+  dInsights.innerHTML = m.displayInsights.slice(0, 5).map((d, i) => `
     <div class="insight-item">
       <div class="in in-d">${i + 1}</div>
       <div>${d}</div>
     </div>
   `).join('');
 
-  pInsights.innerHTML = m.productInsights.map((p, i) => `
+  pInsights.innerHTML = m.productInsights.slice(0, 5).map((p, i) => `
     <div class="insight-item">
       <div class="in in-p">${i + 1}</div>
       <div>${p}</div>

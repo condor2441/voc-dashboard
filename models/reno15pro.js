@@ -95,15 +95,19 @@ window.VOC_MODELS['reno15pro'] = {
     ],
 
     displayInsights: [
-      '1800nit 야외 시인성 우수나 공칭값 3600nit 과대표기. 실측 경쟁사(Galaxy S25/OnePlus 15) 2000nit 대비 낮음.',
-      'AMOLED 1967nit HDR 모드로 영상 감상 생생. 색감 정확도·명도 분포 우수.',
-      'DSI +100으로 디스플레이만으로는 최상. 하지만 소프트웨어와 발열 throttling이 고주사율 체감을 심각 저해.'
+      'DSI +100 | 공칭 3600nit 과대표기(실측 1800nit). AMOLED 1967nit HDR 모드로 영상 생생. 색감·명도 우수(n=3, 100% 긍정). 차세대: 실측값 기준 2000nit 달성 + 공칭값 정정(2000→2200nit).',
+      'BSI +100 | 6500mAh + 80W 초고속 충전(54분 완충). 17시간 Active Use 달성. 무선충전 50W 호평. 차세대: 7000mAh + 120W 유선으로 경쟁사 추월 시도.',
+      'TRI 187.5(치명) | 웹 브라우징 30분 후 발열·게임 20분 후 throttling·4K 촬영 불가. Nano Ice Crystal 냉각 실패 명확. 차세대: 냉각 프린트 3배 강화 필수(TRI 0으로 개선 목표).',
+      'PriceValue 4건 중 부정 2건 (50% 저항) | 무선충전 미지원·UFS 3.1·USB 3.2 없음. 프리미엄 가격대 대비 기능 생략. 차세대: 무선충전 50W + UFS 4.0 + USB 3.1 필수.',
+      'SoC Dimensity 8450 + ColorOS 16 | 성능 충분하나 SW 최적화 미흡(부정 4건, 느림·버벅임·강제종료). 고주사율 체감 불가. 차세대: ColorOS 최적화 우선 + 메모리 12GB 이상 강화.'
     ],
 
     productInsights: [
-      '발열·냉각 시스템이 최우선 과제(TRI 187.5). 웹 30분·게임 20분·4K 촬영 불가능 — 냉각 솔루션 강화 필수.',
-      'ColorOS 최적화 미흡 — Dimensity 8450은 게임 충분하나 SW가 체감 품질 급락. 안정화 필수.',
-      '카메라 야간 10-15s 처리 지연·노출 과도 — AI ISP 튜닝 또는 센서 업그레이드로 개선 필요.'
+      'BOE 패널 탑재(추정). SDC 기술 도입 기회: 1800nit 실측값 기반 공칭 2000-2200nit 선언 + 색감 정확도 강화. OPPO 발열 이슈 해결 시 디스플레이 신뢰도 회복.',
+      'Reno 15 Pro → Pro Plus 또는 Reno 16 Pro 파생 전략: Pro는 "냉각 강화"(발열 개선), Pro Plus는 "카메라 고도화" + "배터리 7000mAh"로 세그먼트 분화.',
+      'Vivo X300s·Xiaomi 17 경쟁사 고주사율 강화. OPPO는 발열 해결 우선. SDC는 냉각 솔루션 고도화(VC Chamber + Nano Ice Crystal 결합)로 차별화.',
+      '발열 냉각 시스템 실패 최우선 해결 과제(TRI 187.5). ColorOS AI HyperBoost 2.0 발표하나 효과 미미. Reno 15 Pro Mini(파생 모델)에서 발열 개선 보고 — 표준 Pro 개선 가능성 확인.',
+      'Reno 15 Pro는 "디스플레이·배터리" 하드웨어 우수하나 "발열·소프트웨어" 치명적 약점. 5년 ColorOS + 6년 보안 업데이트 발표로 신뢰 회복 시도. 차세대: 발열 해결 + ColorOS 최적화 완성이 성공 조건. Pro Mini(발열개선)로 전략 전환 검토.'
     ],
 
     formula: '<div class=\'fl\'><strong>DSI</strong> = Display긍(100%) − Display부(0%) → <strong style=\'color:#34d399\'>+100</strong></div><div class=\'fl\'><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + (충전긍100%×0.3) → <strong style=\'color:#34d399\'>+100</strong></div><div class=\'fl\'><strong>TRI</strong> = 발열부(75%) + (강불만75%×1.5) → <strong style=\'color:#f59e0b\'>187.5</strong></div><div style=\'margin-top:8px;color:#475569;font-size:10px;\'>* n=28 (글로벌) · 2026.01–03 단일시점</div>',

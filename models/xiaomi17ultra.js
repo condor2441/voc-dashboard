@@ -90,15 +90,19 @@ window.VOC_MODELS['xiaomi17ultra'] = {
     ],
 
     displayInsights: [
-      '3500nit 피크 밝기는 OPPO Find X9 Pro(3600nit) 다음 최고수준. 1nit 최저 + 2160Hz PWM + DC 전환으로 야간·낮 모두 최강(DSI +70). 구글 픽셀 9 Pro XL(3000nit)도 초과.',
-      '2160Hz PWM + DC 전환 선택 가능으로 눈 피로 관리 업계 최우수. 글로벌 고민산 유저도 DC 방식 선호 — 수동 제어로 차별화.',
-      '1.5K (1200P) 해상도는 경쟁사 QHD+ 대비 낮으나, 120Hz LTPO + 3500nit + Xiaomi CMF 튜닝으로 체감 화질 최강.'
+      'DSI +70 | 3500nit 피크 밝기는 OPPO Find X9 Pro 다음 최강(중국 시장 톱3). 1nit 최저 + 2160Hz PWM + DC 수동 전환으로 야간·낮 모두 최우수. 차세대: 3600nit 로컬로 OPPO 추월.',
+      '눈피로 관리 7건/7건 긍정 (100%) | 2160Hz PWM + DC 전환 선택으로 업계 최우수 eye-care. 글로벌 유저도 DC 방식 선호. 차세대: 1nit 유지 + 5000K 색온도 선택지 추가.',
+      '해상도 1200P(1200×2608) 전략 | QHD+ 대비 낮으나 120Hz LTPO + 3500nit + Xiaomi CMF 튜닝으로 체감 화질 최강. 배터리 효율 우위. 차세대: QHD+ 진입하되 110Hz 유지로 효율성 병행.',
+      'PriceValue 글로벌 제약 높음 | 가격 미표기(Leica Leitzphone 브랜딩). 중국 시장 100% 긍정, 글로벌 제약/HyperOS 미지원으로 평가 분산. 차세대: 글로벌 가격 £1399 선언 필요.',
+      'SoC Snapdragon 8 Elite Gen5 | 게이밍 성능 최강. TRI −15(발열 우수)로 장시간 사용 쾌적. 3D IceLoop 냉각 효율 95% 이상. 차세대: 3D IceLoop 유지 + 노스트롬 냉각 추가 검토.'
     ],
 
     productInsights: [
-      'CSI +85: 1-inch 50MP Leica + 200MP 연속 줌으로 카메라 시장 리드. 저조도·망원·초광각 모두 업계 최상 — 이미징 플래그십 최강.',
-      'DSI +70 + BSI +95로 디스플레이·배터리 우수. 글로벌 HyperOS 미지원이 약점. 중국 시장 집중 또는 소프트웨어 개선 필요.',
-      '열관리 TRI −15: 3D IceLoop로 게임·장시간 사용 쾌적. 차세대 안드로이드 게이밍 플래그십 포지션 강화.'
+      'BOE M10 LTPO 탑재(추정). SDC 기술 도입 기회: 1-inch 센서와의 시너지로 "전문가급 카메라 디스플레이" 카테고리 확립. 2160Hz PWM + DC 조광 고도화 필수.',
+      '17 Ultra → 18 Ultra 파생 전략 명확: 17U는 "카메라·화질·냉각 최강" 포지셔닝, 18U는 글로벌 HyperOS 완전 지원 + 배터리 7000mAh + 무선충전 80W로 글로벌 이미징 플래그십 재정의.',
+      'Apple iPhone 16 Pro Max(3500nit) 경쟁 직접화. Xiaomi 17U는 카메라 강점으로 차별화. SDC는 고밝기·고주사율 디스플레이로 영상 감상 체험 극대화.',
+      '소프트웨어 문제 치명적(n=8, 100% 부정) | 셔터 랙·렌즈간 화이트밸런스 점프·렌즈 포깅 심각. 중국 HyperOS3 완성도 우수하나 글로벌 미지원. 차세대: 글로벌 AndroidOS 선택지 추가 또는 HyperOS 완전 번역.',
+      'CSI +72(하향 추세) | 카메라 HW 강점(1" 50MP + 200MP 연속줌)은 명확하나 SW 이슈로 신뢰도 저해. 차세대: 셔터 랙 해결(프로 모드 AI 최적화) + 렌즈 WB 점프 자동보정. 중국 집중 전략 수립 필수.'
     ],
 
     formula: '<div class="fl"><strong>CSI</strong> = 카메라긍(100%) − 카메라부(0%) + 0.5 → <strong style="color:#34d399">+85</strong></div><div class="fl"><strong>DSI</strong> = Display긍(100%) − Display부(0%) + 0.3 → <strong style="color:#34d399">+70</strong></div><div class="fl"><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + 0.5 → <strong style="color:#34d399">+95</strong></div><div class="fl"><strong>TRI</strong> = 발열부(0%) + 0 → <strong style="color:#4ade80">−15</strong></div><div style="margin-top:8px;color:#475569;font-size:10px;">* n=47 (중국 24 / 글로벌 23) · 지역 VOC 분리</div>',

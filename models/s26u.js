@@ -91,14 +91,19 @@ window.VOC_MODELS['s26u'] = {
     ],
 
     displayInsights: [
-      '⚠️ Privacy Display 불만 격화: 출시 초기 혁신 극찬 → 4주 후 텍스트 흐릿함·두통·눈피로 불만으로 전환. 삼성 공식 인정(3/17 일부 각도 밝기 변화). DSI 초기 +16 → 성숙기 −22로 급락. 혁신 기술의 성숙도와 사용성 트레이드오프가 핵심 교훈.',
-      '2600nit + QHD+ 1-120Hz LTPO 기본기는 최상위. Privacy Display가 오히려 기본 디스플레이 품질을 저해한다는 역설적 평가 — 혁신이 기본기를 압도하는 위험성 확인.',
-      'Privacy Display 채택률: 삼성 발표 2026년 21M 목표 → 기술 자체의 성장은 계속. 단 S26U는 초기 상용화 페인포인트를 고스란히 흡수한 제품. S27U에서 소프트웨어 최적화·밝기 보상 알고리즘 개선 필수.'
+      '배터리: BSI +80.0(극강) + 60W 충전 + 25W 무선 = S24/S25 시대 느린 충전 비판 드디어 해결. 43분 완충 체감 극찬. 차세대 65W 목표로 경쟁사 추격 지속 필수.',
+      '게이밍: GEI 미산출하나 TRI −12(발열위험도 낮음) + 21% 산열 개선 확인 — 게이밍 온도 안정성 강점 유지. 차세대에서 수냉 검토.',
+      '카메라: CSI −8 + F1.4 메인/F2.9 망원 개선도 "의미 있는 변화 없음" 평가 — AI 과도처리가 근본 원인. 차세대 AI 최적화 또는 RAW 모드 강화 권고.',
+      '가격: SEGI 68(극강 소구) + 60W·Privacy Display 강점 강조. 단, Privacy Display 불만 심화(DSI −22) 때문에 프리미엘 가치 훼손. S27U에서 기술 완성도 필수.',
+      'SoC: SD 8 Elite Gen 5(custom) + 성능 게이밍 안정성 우수 — 이것이 Privacy Display 불만을 상쇄하는 유일한 기술 강점. 차세대에서도 customized chipset 전략 유지.'
     ],
+
     productInsights: [
-      '60W 충전(25W 무선)은 S24/S25 시대의 핵심 비판 드디어 해결. 이것이 S26의 가장 강력한 마케팅 포인트 — 경쟁사 대비 충전 속도 추격 완료.',
-      '카메라는 F1.4 + F2.9 어퍼처 개선했으나, AI 처리 여전히 과도 → 원천적 카메라 대미지 미해결. "의미 있는 변화 없음" 글로벌 평가에 주목.',
-      '21% 산열 개선 + 원형테두리 설계는 사용성 향상. S25→S26은 "진화"이나 "혁신"은 Privacy Display 뿐 — 증분 업그레이드 평가는 공정. S25 소유자는 업그레이드 필요성 낮음, 신규 구매자에게 추천.'
+      '디스플레이 공급사 현황: Samsung Display 자사 패널(6.9" Dynamic AMOLED 2X + Privacy Display, QHD+ 3120×1440). Privacy Display는 SDC 독점 기술.',
+      '진입 기회: Privacy Display 텍스트 흐릿함·두통 불만(성숙기 강불만 47%) = SDC의 기술 최적화 긴급 필요. "Privacy Display 2.0"으로 (a) 밝기 보상 알고리즘, (b) 텍스트 선명도 향상, (c) 안경 호환성 개선 → 2027년 재상용화.',
+      '대응 전략: (a) Privacy Display 소프트웨어 최적화(밝기·텍스트 선명도), (b) S27U에서 기술 완성도 95% 이상 검증 후 출시, (c) "Privacy Display 3.0" 로드맵 공개 — 초기 사용자 신뢰 회복.',
+      '경쟁 위협: BOE/CSOT가 Privacy Display 모방 추격 시작(2027년 목표). Samsung이 기술 완성도로 먼저 확보 시 특허 강화 및 라이선스 기회 확대.',
+      '차기 세대 로드맵: S27 Ultra(2026.09 예상) → Privacy Display 2.0(밝기 보상·텍스트 선명), 70W 충전, 카메라 AI 최적화, TÜV 플리커프리 인증 추가 → "완성된 혁신"으로 재포지셔닝.'
     ],
 
     formula: '<div class="fl"><strong>DSI</strong> = Display긍(27%) − Display부(60%) − (강불만47%×0.5) → <strong style="color:#f87171">−56.5</strong> [초기+16 → 성숙기 급락. Privacy Display 불만 반영]</div>\n<div class="fl"><strong>SEGI</strong> = (공식소구3×20) + 카메라부정(50%) + (기대갭15%×1.2) → <strong style="color:#34d399">68</strong></div>\n<div class="fl"><strong>BSI</strong> = 배터리긍(67%) + (충전긍100%×0.3) → <strong style="color:#34d399">+80</strong></div>\n<div class="fl"><strong>CSI</strong> = 카메라긍(13%) − 카메라부(63%) − (기대갭20%×0.5) → <strong style="color:#f87171">−8</strong></div>\n<div class="fl"><strong>TRI</strong> = 발열부정(0%) − (발열강점50%×0.5) → <strong style="color:#34d399">−12</strong></div>\n<div style="margin-top:8px;color:#475569;font-size:10px;">* n=52 (CN 18 / 글로벌 34) · DSI 성숙기 재산출 — Privacy Display 텍스트 흐릿함·두통·눈피로 강불만 반영 · 삼성 공식 인정(3/17)</div>',
