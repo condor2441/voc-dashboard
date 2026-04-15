@@ -839,11 +839,14 @@ let currentBrand = '';
 function initBrandSelector() {
   const el = document.getElementById('brand-selector');
 
-  // 브랜드 순서 정의
+  // 알려진 브랜드 우선 순서 — 목록 외 신규 브랜드는 자동으로 뒤에 추가됨
   const brandOrder = ['vivo', 'OPPO', 'Xiaomi', 'Samsung', 'Apple', 'Honor'];
 
-  // brandMap에서 정의된 순서대로 정렬
-  const sortedBrands = brandOrder.filter(b => b in brandMap);
+  // brandOrder 순서 우선, brandMap에 있는 나머지 신규 브랜드 자동 추가
+  const sortedBrands = [
+    ...brandOrder.filter(b => b in brandMap),
+    ...Object.keys(brandMap).filter(b => !brandOrder.includes(b))
+  ];
 
   el.innerHTML = sortedBrands.map(b =>
     `<button class="brand-btn${b === currentBrand ? ' active' : ''}" onclick="switchBrand('${b}')">${brandMap[b].label}</button>`
@@ -1307,7 +1310,8 @@ window.initDashboard = function() {
   models = window.VOC_MODELS || {};
   brandMap = generateBrandMap();
   const brandOrder = ['vivo', 'OPPO', 'Xiaomi', 'Samsung', 'Apple', 'Honor'];
-  currentBrand = brandOrder.find(b => b in brandMap) || Object.keys(brandMap)[0] || '';
+  // 알려진 순서 우선, 없으면 brandMap 첫 번째 브랜드로 fallback
+  currentBrand = [...brandOrder, ...Object.keys(brandMap)].find(b => b in brandMap) || '';
   runValidationOnLoad();
   initBrandSelector();
   renderModelSelector();
