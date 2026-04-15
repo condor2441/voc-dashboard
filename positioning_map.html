@@ -264,7 +264,6 @@ const BRANDS = [...new Set(MODELS.map(m => m.brand))];
 // State
 let activeBrands = new Set();
 let sdcOnly = false;
-let selectedKey = null;
 
 // Chart constants
 const MT = 36, MR = 50, MB = 52, ML = 72;
@@ -343,7 +342,6 @@ function render() {
     let faded = false;
     if (activeBrands.size > 0 && !activeBrands.has(m.brand)) faded = true;
     if (sdcOnly && !m.sdcSupply) faded = true;
-    if (selectedKey && selectedKey !== m.key) faded = true;
 
     const strokeCol = m.sdcSupply ? '#f59e0b' : col;
     const strokeW   = m.sdcSupply ? 3 : 1.5;
@@ -365,10 +363,9 @@ function render() {
   // Re-attach events
   svg.querySelectorAll('.bubble').forEach((g, i) => {
     const m = MODELS[i];
-    g.addEventListener('mouseenter', e => showTip(e, m));
+    g.addEventListener('mouseenter', e => { hoverOn(m.key); showTip(e, m); });
     g.addEventListener('mousemove', e => moveTip(e));
-    g.addEventListener('mouseleave', hideTip);
-    g.addEventListener('click', () => selectBubble(m.key));
+    g.addEventListener('mouseleave', () => { hoverOff(); hideTip(); });
   });
 }
 
@@ -405,10 +402,26 @@ function moveTip(e) {
 }
 function hideTip() { tip.classList.remove('show'); }
 
-// Bubble click (single select toggle)
-function selectBubble(key) {
-  selectedKey = selectedKey === key ? null : key;
-  render();
+// Hover highlight — DOM 직접 조작 (재렌더링 없이 부드럽게)
+function baseOpacity(m) {
+  if (activeBrands.size > 0 && !activeBrands.has(m.brand)) return 0.1;
+  if (sdcOnly && !m.sdcSupply) return 0.1;
+  return 1;
+}
+function hoverOn(hoveredKey) {
+  document.querySelectorAll('.bubble').forEach((g, i) => {
+    const m = MODELS[i];
+    if (m.key === hoveredKey) {
+      g.style.opacity = 1;
+    } else {
+      g.style.opacity = Math.min(baseOpacity(m), 0.12);
+    }
+  });
+}
+function hoverOff() {
+  document.querySelectorAll('.bubble').forEach((g, i) => {
+    g.style.opacity = baseOpacity(MODELS[i]);
+  });
 }
 
 // Brand filter
