@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스마트폰 포지셔닝 맵</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif; background: #f8fafc; color: #1a1a1a; }
+
+.container { max-width: 1440px; margin: 0 auto; padding: 28px 32px; }
+
+.page-header { margin-bottom: 20px; }
+.page-title { font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+.page-sub { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+
+/* Controls */
+.controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+.left-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.filter-label { font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 0.8px; text-transform: uppercase; margin-right: 4px; }
+
+.brand-pill {
+  padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  cursor: pointer; border: 2px solid; background: transparent;
+  transition: all 0.15s; white-space: nowrap;
+}
+.brand-pill.faded { opacity: 0.25; }
+.brand-pill:hover { transform: translateY(-1px); }
+
+.reset-btn {
+  padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  cursor: pointer; border: 2px solid #cbd5e1; background: #fff; color: #64748b;
+  transition: all 0.15s;
+}
+.reset-btn:hover { border-color: #94a3b8; color: #1e293b; }
+
+/* SDC Toggle */
+.right-controls { display: flex; align-items: center; gap: 10px; }
+.sdc-label { font-size: 11px; font-weight: 700; color: #64748b; }
+.toggle-wrap { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.toggle-track {
+  width: 38px; height: 20px; background: #e2e8f0; border-radius: 10px;
+  position: relative; transition: background 0.2s; cursor: pointer;
+}
+.toggle-track.on { background: #f59e0b; }
+.toggle-knob {
+  width: 16px; height: 16px; background: #fff; border-radius: 50%;
+  position: absolute; top: 2px; left: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 0.2s;
+}
+.toggle-track.on .toggle-knob { left: 20px; }
+
+/* Chart */
+.chart-card { background: #fff; border-radius: 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); padding: 20px 24px 16px; }
+#chart-svg { width: 100%; display: block; overflow: visible; }
+
+/* Bubble styles */
+.bubble { cursor: pointer; transition: opacity 0.2s; }
+.bubble circle { transition: r 0.1s, filter 0.1s; }
+.bubble:hover circle { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25)); }
+.bubble.faded { opacity: 0.1; }
+.bubble.selected circle { stroke-width: 3.5 !important; }
+
+/* Tooltip */
+#tooltip {
+  position: fixed; pointer-events: none; z-index: 9999;
+  background: #1e293b; border-radius: 10px; padding: 12px 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3); min-width: 200px;
+  opacity: 0; transition: opacity 0.12s; border: 1px solid #334155;
+}
+#tooltip.show { opacity: 1; }
+.tt-name { font-size: 13px; font-weight: 800; color: #f1f5f9; margin-bottom: 2px; }
+.tt-seg { font-size: 10px; color: #64748b; margin-bottom: 8px; }
+.tt-row { display: flex; justify-content: space-between; gap: 20px; font-size: 11px; margin-bottom: 3px; }
+.tt-k { color: #64748b; }
+.tt-v { color: #e2e8f0; font-weight: 600; }
+.tt-ltpo-y { color: #34d399; font-weight: 700; }
+.tt-ltpo-n { color: #64748b; }
+.tt-divider { border-top: 1px solid #334155; margin: 7px 0; }
+.tt-supplier { font-size: 10px; }
+.tt-sdc { color: #fbbf24; font-weight: 700; }
+.tt-nosdc { color: #64748b; }
+
+/* Legend */
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #f1f5f9; align-items: center; }
+.leg-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #64748b; }
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.leg-sdc { width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid #f59e0b; flex-shrink: 0; }
+.leg-divider { width: 1px; height: 14px; background: #e2e8f0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="page-header">
+    <div class="page-title">스마트폰 포지셔닝 맵</div>
+    <div class="page-sub">X축: 출시 타임라인 · Y축: 출시 가격(USD) · 버블 클릭: 단일 강조 · 브랜드 필터: 멀티 선택</div>
+  </div>
+
+  <div class="controls">
+    <div class="left-controls">
+      <span class="filter-label">Brand</span>
+      <div id="brand-pills"></div>
+      <button class="reset-btn" onclick="resetFilters()">전체 보기</button>
+    </div>
+    <div class="right-controls">
+      <span class="sdc-label">SDC 공급만 보기</span>
+      <div class="toggle-wrap" onclick="toggleSDC()">
+        <div class="toggle-track" id="sdc-track"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <svg id="chart-svg" height="560"></svg>
+    <div class="legend" id="legend"></div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+const MODELS = [
+  {
+    key:'realmegt7pro', name:'realme GT 7 Pro', brand:'realme', segment:'Performance Gaming',
+    launch:'2024-11-04', priceUSD:649,
+    panel:{ size:'6.78"', res:'FHD+ 1080p', ltpo:true },
+    supplier:'BOE/CSOT 추정', sdcSupply:false
+  },
+  {
+    key:'ip17pro', name:'iPhone 17 Pro', brand:'Apple', segment:'Premium Volume',
+    launch:'2025-09-19', priceUSD:1099,
+    panel:{ size:'6.3"', res:'QHD+ 1080p', ltpo:true },
+    supplier:'Samsung Display', sdcSupply:true
+  },
+  {
+    key:'xiaomi17', name:'Xiaomi 17', brand:'Xiaomi', segment:'Premium Volume',
+    launch:'2025-09-25', priceUSD:740,
+    panel:{ size:'6.36"', res:'FHD+ 1080p', ltpo:true },
+    supplier:'BOE/SDC 미확인', sdcSupply:false
+  },
+  {
+    key:'findx9pro', name:'OPPO Find X9 Pro', brand:'OPPO', segment:'Premium Imaging Flagship',
+    launch:'2025-10-16', priceUSD:1199,
+    panel:{ size:'6.78"', res:'1.5K 1264p', ltpo:true },
+    supplier:'BOE 추정', sdcSupply:false
+  },
+  {
+    key:'iqoo15', name:'iQOO 15', brand:'iQOO', segment:'Performance Gaming',
+    launch:'2025-10-20', priceUSD:690,
+    panel:{ size:'6.85"', res:'QHD+ 1440p', ltpo:true },
+    supplier:'Samsung LEAD', sdcSupply:false
+  },
+  {
+    key:'realmegt8pro', name:'realme GT 8 Pro', brand:'realme', segment:'Performance Flagship',
+    launch:'2025-10-21', priceUSD:520,
+    panel:{ size:'6.78"', res:'QHD+ 1440p', ltpo:true },
+    supplier:'BOE/CSOT 추정', sdcSupply:false
+  },
+  {
+    key:'op15', name:'OnePlus 15', brand:'OnePlus', segment:'Performance Gaming',
+    launch:'2025-10-28', priceUSD:800,
+    panel:{ size:'6.82"', res:'1.5K 1264p', ltpo:true },
+    supplier:'BOE T10', sdcSupply:false
+  },
+  {
+    key:'reno15pro', name:'OPPO Reno 15 Pro', brand:'OPPO', segment:'Premium Volume',
+    launch:'2025-11-17', priceUSD:410,
+    panel:{ size:'6.8"', res:'FHD+ 1080p', ltpo:false },
+    supplier:'BOE 추정', sdcSupply:false
+  },
+  {
+    key:'reno15c', name:'OPPO Reno 15C', brand:'OPPO', segment:'Premium Volume',
+    launch:'2025-12-19', priceUSD:400,
+    panel:{ size:'6.7"', res:'1.5K 1080p', ltpo:false },
+    supplier:'CSOT/Tianma 추정', sdcSupply:false
+  },
+  {
+    key:'xiaomi17ultra', name:'Xiaomi 17 Ultra', brand:'Xiaomi', segment:'Premium Imaging Flagship',
+    launch:'2025-12-25', priceUSD:950,
+    panel:{ size:'6.82"', res:'2K 1440p', ltpo:true },
+    supplier:'BOE M10', sdcSupply:false
+  },
+  {
+    key:'iqooz11turbo', name:'iQOO Z11 Turbo', brand:'iQOO', segment:'Performance Gaming',
+    launch:'2026-01-15', priceUSD:330,
+    panel:{ size:'6.59"', res:'1.5K 720p', ltpo:false },
+    supplier:'CSOT 추정', sdcSupply:false
+  },
+  {
+    key:'vivoy500i', name:'vivo Y500i', brand:'vivo', segment:'Mass Volume',
+    launch:'2026-01-16', priceUSD:205,
+    panel:{ size:'6.75"', res:'HD+ 720p', ltpo:false },
+    supplier:'Tianma 추정', sdcSupply:false
+  },
+  {
+    key:'redmiturbo5', name:'Redmi Turbo 5', brand:'Xiaomi', segment:'Performance Gaming',
+    launch:'2026-01-29', priceUSD:345,
+    panel:{ size:'6.67"', res:'FHD+ 1080p', ltpo:false },
+    supplier:'BOE/CSOT 추정', sdcSupply:false
+  },
+  {
+    key:'iqoo15ultra', name:'iQOO 15 Ultra', brand:'iQOO', segment:'Performance Gaming',
+    launch:'2026-02-04', priceUSD:785,
+    panel:{ size:'6.85"', res:'QHD+ 1440p', ltpo:true },
+    supplier:'BOE M14', sdcSupply:false
+  },
+  {
+    key:'vivoV70', name:'vivo V70', brand:'vivo', segment:'Premium Volume',
+    launch:'2026-02-19', priceUSD:450,
+    panel:{ size:'6.67"', res:'FHD+ 1080p', ltpo:false },
+    supplier:'Samsung Display', sdcSupply:true
+  },
+  {
+    key:'s26', name:'Galaxy S26', brand:'Samsung', segment:'Premium Volume',
+    launch:'2026-03-11', priceUSD:800,
+    panel:{ size:'6.2"', res:'QHD+ 1440p', ltpo:true },
+    supplier:'Samsung Display', sdcSupply:true
+  },
+  {
+    key:'s26plus', name:'Galaxy S26+', brand:'Samsung', segment:'Premium Volume',
+    launch:'2026-03-11', priceUSD:1000,
+    panel:{ size:'6.7"', res:'QHD+ 1440p', ltpo:true },
+    supplier:'Samsung Display', sdcSupply:true
+  },
+  {
+    key:'s26u', name:'Galaxy S26 Ultra', brand:'Samsung', segment:'Premium Imaging Flagship',
+    launch:'2026-03-11', priceUSD:1300,
+    panel:{ size:'6.9"', res:'QHD+ 1440p', ltpo:true },
+    supplier:'Samsung Display', sdcSupply:true
+  },
+  {
+    key:'vivoX300s', name:'vivo X300s', brand:'vivo', segment:'Performance Flagship',
+    launch:'2026-03-30', priceUSD:700,
+    panel:{ size:'6.78"', res:'FHD+ 1080p', ltpo:true },
+    supplier:'BOE 추정', sdcSupply:false
+  },
+  {
+    key:'vivox300ultra', name:'vivo X300 Ultra', brand:'vivo', segment:'Imaging Flagship',
+    launch:'2026-03-30', priceUSD:1100,
+    panel:{ size:'6.8"', res:'2K 1440p', ltpo:true },
+    supplier:'BOE Q10 Plus', sdcSupply:false
+  },
+  {
+    key:'oppok15pro', name:'OPPO K15 Pro', brand:'OPPO', segment:'Performance Gaming',
+    launch:'2026-04-03', priceUSD:480,
+    panel:{ size:'6.78"', res:'FHD+ 1080p', ltpo:false },
+    supplier:'BOE/CSOT 추정', sdcSupply:false
+  },
+];
+
+const BRAND_COLORS = {
+  Samsung: '#1428A0',
+  Apple:   '#1D1D1F',
+  Xiaomi:  '#FF6900',
+  OPPO:    '#1A75C9',
+  OnePlus: '#F50514',
+  vivo:    '#415FFF',
+  iQOO:   '#BB0080',
+  realme:  '#D4850A',
+};
+
+const BRANDS = [...new Set(MODELS.map(m => m.brand))];
+
+// State
+let activeBrands = new Set();
+let sdcOnly = false;
+let selectedKey = null;
+
+// Chart constants
+const MT = 36, MR = 50, MB = 52, ML = 72;
+const MIN_DATE = new Date('2024-09-01');
+const MAX_DATE = new Date('2026-06-15');
+const MIN_P = 100, MAX_P = 1450;
+
+const BANDS = [
+  { label: 'Ultra  $1,000+',     min: 1000, max: 1450, bg: 'rgba(245,158,11,0.06)' },
+  { label: 'Premium  $650–1,000', min: 650,  max: 1000, bg: 'rgba(139,92,246,0.05)' },
+  { label: 'Mid  $350–650',       min: 350,  max: 650,  bg: 'rgba(59,130,246,0.05)' },
+  { label: 'Mass  ~$350',         min: 100,  max: 350,  bg: 'rgba(16,185,129,0.05)' },
+];
+
+function dateToNum(s) { return new Date(s) - MIN_DATE; }
+const DATE_RANGE = MAX_DATE - MIN_DATE;
+
+function render() {
+  const svg = document.getElementById('chart-svg');
+  const W = svg.parentElement.clientWidth - 48 || 1100;
+  const H = 560;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const cW = W - ML - MR;
+  const cH = H - MT - MB;
+
+  function xS(d) { return ML + (dateToNum(d) / DATE_RANGE) * cW; }
+  function yS(p) { return MT + cH - ((p - MIN_P) / (MAX_P - MIN_P)) * cH; }
+
+  let s = '';
+
+  // Band backgrounds
+  BANDS.forEach(b => {
+    const y1 = yS(b.max), y2 = yS(b.min);
+    s += `<rect x="${ML}" y="${y1}" width="${cW}" height="${y2-y1}" fill="${b.bg}"/>`;
+    // Band separator line
+    if (b.min > MIN_P) {
+      s += `<line x1="${ML}" y1="${yS(b.min)}" x2="${ML+cW}" y2="${yS(b.min)}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="5,4"/>`;
+    }
+    // Band label (right side)
+    s += `<text x="${ML+cW+8}" y="${(y1+y2)/2+4}" font-size="9" fill="#94a3b8" font-weight="600">${b.label}</text>`;
+  });
+
+  // Quarter grid + labels
+  const quarters = [];
+  let d = new Date('2024-10-01');
+  while (d <= MAX_DATE) { quarters.push(new Date(d)); d = new Date(d); d.setMonth(d.getMonth()+3); }
+  quarters.forEach(q => {
+    const x = xS(q.toISOString().slice(0,10));
+    s += `<line x1="${x}" y1="${MT}" x2="${x}" y2="${MT+cH}" stroke="#f1f5f9" stroke-width="1"/>`;
+    const ql = `${q.getFullYear()} Q${Math.ceil((q.getMonth()+1)/3)}`;
+    s += `<text x="${x}" y="${MT+cH+18}" text-anchor="middle" font-size="10" fill="#94a3b8">${ql}</text>`;
+  });
+
+  // Axes
+  s += `<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT+cH}" stroke="#e2e8f0" stroke-width="1.5"/>`;
+  s += `<line x1="${ML}" y1="${MT+cH}" x2="${ML+cW}" y2="${MT+cH}" stroke="#e2e8f0" stroke-width="1.5"/>`;
+
+  // Y ticks
+  [200, 400, 600, 800, 1000, 1200, 1400].forEach(p => {
+    const y = yS(p);
+    s += `<text x="${ML-8}" y="${y+4}" text-anchor="end" font-size="9" fill="#cbd5e1">$${p}</text>`;
+    s += `<line x1="${ML-3}" y1="${y}" x2="${ML}" y2="${y}" stroke="#e2e8f0" stroke-width="1"/>`;
+  });
+
+  // Axis labels
+  s += `<text transform="rotate(-90)" x="${-(MT+cH/2)}" y="14" text-anchor="middle" font-size="10" fill="#94a3b8" font-weight="600">출시 가격 (USD)</text>`;
+  s += `<text x="${ML+cW/2}" y="${H-6}" text-anchor="middle" font-size="10" fill="#94a3b8" font-weight="600">출시 타임라인</text>`;
+
+  // Bubbles
+  const R = 17;
+  MODELS.forEach((m, i) => {
+    const x = xS(m.launch);
+    const y = yS(m.priceUSD);
+    const col = BRAND_COLORS[m.brand] || '#888';
+
+    let faded = false;
+    if (activeBrands.size > 0 && !activeBrands.has(m.brand)) faded = true;
+    if (sdcOnly && !m.sdcSupply) faded = true;
+    if (selectedKey && selectedKey !== m.key) faded = true;
+
+    const strokeCol = m.sdcSupply ? '#f59e0b' : col;
+    const strokeW   = m.sdcSupply ? 3 : 1.5;
+    const opacity   = faded ? 0.1 : 1;
+
+    const initials = {
+      Samsung:'S', Apple:'', Xiaomi:'Mi', OPPO:'O',
+      OnePlus:'1+', vivo:'V', iQOO:'iQ', realme:'Re'
+    }[m.brand] || m.brand[0];
+
+    s += `<g class="bubble${faded?' faded':''}" data-key="${m.key}" style="opacity:${opacity};cursor:pointer;">`;
+    s += `<circle cx="${x}" cy="${y}" r="${R}" fill="${col}" fill-opacity="0.82" stroke="${strokeCol}" stroke-width="${strokeW}"/>`;
+    s += `<text x="${x}" y="${y+4}" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.95)" font-weight="800" pointer-events="none">${initials}</text>`;
+    s += `</g>`;
+  });
+
+  svg.innerHTML = s;
+
+  // Re-attach events
+  svg.querySelectorAll('.bubble').forEach((g, i) => {
+    const m = MODELS[i];
+    g.addEventListener('mouseenter', e => showTip(e, m));
+    g.addEventListener('mousemove', e => moveTip(e));
+    g.addEventListener('mouseleave', hideTip);
+    g.addEventListener('click', () => selectBubble(m.key));
+  });
+}
+
+// Tooltip
+const tip = document.getElementById('tooltip');
+
+function showTip(e, m) {
+  const ltpoHtml = m.panel.ltpo
+    ? '<span class="tt-ltpo-y">LTPO ✓</span>'
+    : '<span class="tt-ltpo-n">non-LTPO</span>';
+  const sdcHtml = m.sdcSupply
+    ? '<span class="tt-sdc">● Samsung Display</span>'
+    : `<span class="tt-nosdc">○ ${m.supplier}</span>`;
+
+  tip.innerHTML = `
+    <div class="tt-name">${m.name}</div>
+    <div class="tt-seg">${m.segment}</div>
+    <div class="tt-row"><span class="tt-k">출시</span><span class="tt-v">${m.launch}</span></div>
+    <div class="tt-row"><span class="tt-k">가격</span><span class="tt-v">~$${m.priceUSD}</span></div>
+    <div class="tt-row"><span class="tt-k">패널</span><span class="tt-v">${m.panel.size}  ${m.panel.res}</span></div>
+    <div class="tt-row"><span class="tt-k">LTPO</span><span class="tt-v">${ltpoHtml}</span></div>
+    <div class="tt-divider"></div>
+    <div class="tt-supplier">${sdcHtml}</div>`;
+  tip.classList.add('show');
+  moveTip(e);
+}
+function moveTip(e) {
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  let x = e.clientX + 16, y = e.clientY - 12;
+  if (x + tw > window.innerWidth - 8) x = e.clientX - tw - 16;
+  if (y + th > window.innerHeight - 8) y = window.innerHeight - th - 8;
+  tip.style.left = x + 'px';
+  tip.style.top  = y + 'px';
+}
+function hideTip() { tip.classList.remove('show'); }
+
+// Bubble click (single select toggle)
+function selectBubble(key) {
+  selectedKey = selectedKey === key ? null : key;
+  render();
+}
+
+// Brand filter
+function toggleBrand(brand) {
+  if (activeBrands.has(brand)) activeBrands.delete(brand);
+  else activeBrands.add(brand);
+  selectedKey = null;
+  updatePills();
+  render();
+}
+function resetFilters() {
+  activeBrands.clear();
+  sdcOnly = false;
+  selectedKey = null;
+  document.getElementById('sdc-track').classList.remove('on');
+  updatePills();
+  render();
+}
+function toggleSDC() {
+  sdcOnly = !sdcOnly;
+  const track = document.getElementById('sdc-track');
+  track.classList.toggle('on', sdcOnly);
+  render();
+}
+function updatePills() {
+  document.querySelectorAll('.brand-pill').forEach(p => {
+    const b = p.dataset.brand;
+    const active = activeBrands.size === 0 || activeBrands.has(b);
+    p.classList.toggle('faded', !active);
+  });
+}
+
+// Build brand pills
+function buildPills() {
+  const wrap = document.getElementById('brand-pills');
+  wrap.innerHTML = BRANDS.map(b => {
+    const c = BRAND_COLORS[b] || '#888';
+    return `<button class="brand-pill" data-brand="${b}"
+      style="color:${c};border-color:${c};background:${c}18;"
+      onclick="toggleBrand('${b}')">${b}</button>`;
+  }).join('');
+}
+
+// Legend
+function buildLegend() {
+  const el = document.getElementById('legend');
+  let h = BRANDS.map(b => {
+    const c = BRAND_COLORS[b] || '#888';
+    return `<div class="leg-item"><div class="leg-dot" style="background:${c}"></div>${b}</div>`;
+  }).join('');
+  h += `<div class="leg-divider"></div>`;
+  h += `<div class="leg-item"><div class="leg-sdc"></div>SDC 공급</div>`;
+  h += `<div class="leg-item" style="color:#94a3b8;font-size:10px;">* 가격은 출시 시점 중국/글로벌 기준 USD 환산 추정값</div>`;
+  el.innerHTML = h;
+}
+
+// Init
+buildPills();
+buildLegend();
+render();
+window.addEventListener('resize', () => requestAnimationFrame(render));
+</script>
+</body>
+</html>
