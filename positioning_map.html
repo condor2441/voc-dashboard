@@ -409,9 +409,10 @@ function baseOpacity(m) {
   return 1;
 }
 function hoverOn(hoveredKey) {
+  const hoveredBrand = MODELS.find(m => m.key === hoveredKey)?.brand;
   document.querySelectorAll('.bubble').forEach((g, i) => {
     const m = MODELS[i];
-    if (m.key === hoveredKey) {
+    if (m.brand === hoveredBrand) {
       g.style.opacity = 1;
     } else {
       g.style.opacity = Math.min(baseOpacity(m), 0.12);
