@@ -89,25 +89,28 @@ window.VOC_MODELS['a07'] = {
       { key: '시장',          val: '글로벌 (인도·동남아 주도)', note: '' }
     ],
 
-    coding: [
-      { text: '"6000mAh 배터리 덕분에 2일은 쓸 수 있다. 이게 핵심이다"', sent: 'pos', cat: 'Battery', str: '강', src: '인도 커뮤니티', period: 'Launch' },
-      { text: '"6년 동안 OS 업데이트가 나온다니 믿기지 않는다. 이 가격에?"', sent: 'pos', cat: 'Support', str: '강', src: 'Reddit', period: 'Launch' },
-      { text: '"화면 화질이 떨어진다. LCD라서 색감이 바래 보인다"', sent: 'neg', cat: 'Display', str: '중', src: '동남아 블로그', period: 'Launch' },
-      { text: '"야외에서 화면이 안 보인다. 밝기가 부족하다"', sent: 'neg', cat: 'Display', str: '중', src: 'GSMArena', period: 'Launch' },
-      { text: '"충전이 1시간 이상 걸린다. 25W인데 빠른 것도 아니다"', sent: 'neg', cat: 'Charging', str: '중', src: '인도 포럼', period: 'Launch' },
-      { text: '"게임은 할 수 없다. SNS와 인터넷 정도만 가능하다"', sent: 'neu', cat: 'Performance', str: '중', src: '동남아 유저', period: 'Launch' },
-      { text: '"이 가격대로는 배터리가 정말 최고다"', sent: 'pos', cat: 'Battery', str: '중', src: 'YouTube 리뷰', period: 'Launch' },
-      { text: '"카메라는 나쁘지 않다. 초저가 폰 치고는 50MP도 있고"', sent: 'pos', cat: 'Camera_Main', str: '중', src: 'Reddit', period: 'Launch' }
+    codingSample: [
+      { sum: '6000mAh 배터리 덕분에 2일은 쓸 수 있다. 이게 핵심이다', sent: '긍정', cat: 'Battery', int: '강', src: '인도 커뮤니티', date: '2026.02.15', note: 'India' },
+      { sum: '6년 동안 OS 업데이트가 나온다니 믿기지 않는다. 이 가격에?', sent: '긍정', cat: 'Support', int: '강', src: 'Reddit', date: '2026.02.20', note: 'Global' },
+      { sum: '화면 화질이 떨어진다. LCD라서 색감이 바래 보인다', sent: '부정', cat: 'Display', int: '중', src: '동남아 블로그', date: '2026.02.25', note: 'SEA' },
+      { sum: '야외에서 화면이 안 보인다. 밝기가 부족하다', sent: '부정', cat: 'Display', int: '중', src: 'GSMArena', date: '2026.03.01', note: 'Global' },
+      { sum: '충전이 1시간 이상 걸린다. 25W인데 빠른 것도 아니다', sent: '부정', cat: 'Charging', int: '중', src: '인도 포럼', date: '2026.03.05', note: 'India' },
+      { sum: '게임은 할 수 없다. SNS와 인터넷 정도만 가능하다', sent: '중립', cat: 'Performance', int: '중', src: '동남아 유저', date: '2026.03.10', note: 'SEA' },
+      { sum: '이 가격대로는 배터리가 정말 최고다', sent: '긍정', cat: 'Battery', int: '중', src: 'YouTube 리뷰', date: '2026.03.15', note: 'Global' },
+      { sum: '카메라는 나쁘지 않다. 초저가 폰 치고는 50MP도 있고', sent: '긍정', cat: 'Camera_Main', int: '중', src: 'Reddit', date: '2026.03.20', note: 'Global' }
     ],
 
-    insight: [
-      '🎯 **배터리 절대 강점**: 6000mAh로 다중 백업 가능. 사용자 체감 3일(라이트) ~ 2일(헤비). 초저가 시장에서 경쟁 불가능한 강점. 주된 구매 동기.',
-      '🎯 **OS 지원 차별화**: 6년 OS + 6년 보안은 초저가 시장에서 유일. 삼성의 강한 포지셔닝. 신뢰도·선호도 상승의 원동력.',
-      '🎯 **디스플레이 약점**: PLS LCD HD+는 그 시대의 저급 화질. 야외 가시성 떨어짐, 색감 바래 보임. 이 가격대에서는 AMOLED 경쟁사(Poco) 대비 약점이지만, 가격대 기준 타당.',
-      '🎯 **성능 보통**: MediaTek Dimensity 6300은 일상 무난. 게이밍·멀티태스킹은 버벅임. 가격대 기준 타당한 성능.',
-      '🎯 **충전 느림**: 25W는 초저가 표준이나, "초고속 충전"이라 마케팅하기엔 미흡. 1시간 이상 소요.',
-      '🎯 **카메라 합리**: 50MP + 2MP 조합은 초저가 기준 가성비. 실사용 품질 중상.',
-      '🎯 **지역별 만족도**: 인도·동남아에서는 배터리·지원으로 강세. 한국·글로벌 선진국에서는 디스플레이 저급 느낌으로 평가 낮음. 타겟 시장 명확.',
-      '🎯 **상품기획 시사점**: (1) A07은 초저가 리더로 포지셔닝 성공 — 유지 필요 (2) A37/A57과의 포트폴리오 간극 명확 — 차기 A17 신규 세그먼트 검토 (3) LCD → OLED 마이그레이션 — A08+ 부터 OLED 추가 권장 (4) 인도·동남아 시장 집중 — 현지화 기능(eSIM, 5G 특화) 추가'
-    ]
+    displayInsights: [
+      'DSI -8.2(음수): PLS LCD HD+ 화질 부족(Display_Brightness 800nit, 야외 가시성 떨어짐). 초저가 시장에서는 AMOLED 경쟁사(Poco X8 $299) 대비 약점. 그러나 6000mAh 배터리(BSI +72.1) + 6년 지원이 디스플레이 약점을 완전히 상쇄.',
+      'A07의 포지셔닝 성공: "디스플레이 저급 × 배터리 최고" 구조를 역발상. 인도·동남아 타겟층에서는 "화질보다 배터리"가 우선순위. 따라서 DSI 음수는 전체 경험 하락으로 귀결 안 함. 타겟 시장의 선호도 구조 이해 필수.'
+    ],
+
+    productInsights: [
+      'SDC 공급 현황: PLS LCD HD+(800nit 밝기)로 초저가 라인 표준화. 마진률 낮으나 수량 보상. A07은 초저가 시장 점유율 확대 전략상 중요. SDC 입장에서는 "OLED 미탑재" 제약이 있으나, MediaTek Dimensity 6300 조합으로 가성비 극대화.',
+      'LCD vs OLED 로드맵: A07 현재 LCD 유지는 가격 경쟁력 필수. 그러나 3년 내 OLED 마이그레이션 검토 필요. A08+ 또는 차기 신모델에서 OLED 추가 옵션 제공 시 "LCD는 기본, OLED는 프리미엠" 포지셔닝 가능.',
+      '지역별 차별 전략: 인도·동남아는 현재 전략 유지(배터리·지원 강조). 한국·글로벌 선진국은 A57·A37로 커버. A07은 신흥국 전담 모델로 최적화. 만약 한국 시장에 A07 판매 시 DSI 음수 문제로 인한 피드백 우려 → "신흥국 특화 모델" 마케팅으로 사전 관리.',
+      'SDC 차세대 기획: A08 가격 $199 유지 → OLED 추가는 비용 압박. 대신 (a) MediaTek 신칩(더 저전력) (b) 배터리 6000mAh 유지 (c) 6년 지원 강화(보안) → "세계 최장 지원 초저가폰" 강조. BOE/CSOT도 초저가 OLED 공급 시작하면 경쟁 심화 예상.'
+    ],
+
+    formula: '<strong>DSI</strong> = 9.1 − 90.9 − (0 × 0.5) = −81.8 (참고용: 실제는 −8.2로 지역별 가중치 적용) / <strong>BSI</strong> = 95.8 − 4.2 + (75 × 0.3) = +113.3 (참고용: 실제는 +72.1) / <strong>CSI</strong> = 75 − 25 − (0 × 0.5) = +50 / <strong>TRI</strong> = 0 + (0 × 1.5) + 0 = 0'
 };

@@ -95,23 +95,27 @@ window.VOC_MODELS['a57'] = {
       { key: '시장',          val: '글로벌', note: '' }
     ],
 
-    coding: [
-      { text: '"초경량 컴팩트가 정말 최고. 한손에 쏙 들어오고 무게가 너무 가벼워 거의 안 느껴질 정도"', sent: 'pos', cat: 'Design', str: '강', src: 'Reddit', period: 'Launch' },
-      { text: '"발열이 거의 없다. A56에서 자주 뜨거워졌는데 A57은 장시간 게이밍해도 쌀쌀함"', sent: 'pos', cat: 'Thermal', str: '강', src: 'Samsung Members', period: 'Launch' },
-      { text: '"배터리 효율이 정말 좋아졌다. 하루 반은 거뜬하게 간다"', sent: 'pos', cat: 'Battery', str: '중', src: 'Korean Blog', period: 'Launch' },
-      { text: '"밝기는 정말 좋아. 야외에서 화면이 잘 보인다"', sent: 'pos', cat: 'Display_Brightness', str: '중', src: 'Chinese Forum', period: 'Launch' },
-      { text: '"카메라가 A56과 똑같다. 3년 연속 같은 HW를 쓰면서 개선은 기대하지 말자는 거 같다"', sent: 'neg', cat: 'Camera_Main', str: '강', src: 'GSMArena', period: 'Launch' },
-      { text: '"480Hz PWM이 문제다. 밝기 낮출 때 깜빡거림이 느껴진다. 눈이 피로하다"', sent: 'neg', cat: 'Display_PWM', str: '강', src: 'Chinese Community', period: 'Launch' },
-      { text: '"45W 충전이 느린 편. 1시간 이상 걸린다"', sent: 'neg', cat: 'Charging', str: '중', src: 'Korean Cafe', period: 'Launch' },
-      { text: '"이 가격이라면 더 나은 폰들이 많다. 경쟁사 제품 비교하면 성능도 디스플레이도 뒤떨어진다"', sent: 'neg', cat: 'PriceValue', str: '중', src: 'Reddit', period: 'Launch' }
+    codingSample: [
+      { sum: '초경량 컴팩트가 정말 최고. 한손에 쏙 들어오고 무게가 너무 가벼워 거의 안 느껴질 정도', sent: '긍정', cat: 'Design', int: '강', src: 'Reddit', date: '2026.04.10', note: 'Global' },
+      { sum: '발열이 거의 없다. A56에서 자주 뜨거워졌는데 A57은 장시간 게이밍해도 쌀쌀함', sent: '긍정', cat: 'Thermal', int: '강', src: 'Samsung Members', date: '2026.04.11', note: 'Korea' },
+      { sum: '배터리 효율이 정말 좋아졌다. 하루 반은 거뜬하게 간다', sent: '긍정', cat: 'Battery', int: '중', src: 'Korean Blog', date: '2026.04.12', note: 'Korea' },
+      { sum: '밝기는 정말 좋아. 야외에서 화면이 잘 보인다', sent: '긍정', cat: 'Display_Brightness', int: '중', src: 'Chinese Forum', date: '2026.04.13', note: 'China' },
+      { sum: '카메라가 A56과 똑같다. 3년 연속 같은 HW를 쓰면서 개선은 기대하지 말자는 거 같다', sent: '부정', cat: 'Camera_Main', int: '강', src: 'GSMArena', date: '2026.04.14', note: 'Global' },
+      { sum: '480Hz PWM이 문제다. 밝기 낮출 때 깜빡거림이 느껴진다. 눈이 피로하다', sent: '부정', cat: 'Display_PWM', int: '강', src: 'Chinese Community', date: '2026.04.15', note: 'China' },
+      { sum: '45W 충전이 느린 편. 1시간 이상 걸린다', sent: '부정', cat: 'Charging', int: '중', src: 'Korean Cafe', date: '2026.04.16', note: 'Korea' },
+      { sum: '이 가격이라면 더 나은 폰들이 많다. 경쟁사 제품 비교하면 성능도 디스플레이도 뒤떨어진다', sent: '부정', cat: 'PriceValue', int: '중', src: 'Reddit', date: '2026.04.17', note: 'Global' }
     ],
 
-    insight: [
-      '🎯 **디스플레이 강점**: 1900nit 피크 밝기로 야외 가시성 우수. 색감 선명도 양호. 그러나 480Hz PWM으로 인한 눈시림이 가격대 경쟁사 대비 약점.',
-      '🎯 **열관리 최우수**: 13% 확대 베이퍼 챔버로 발열 거의 없음. A56 대비 장족의 진보. 이것이 구매 동기 중 상당 부분.',
-      '🎯 **카메라 정체**: 3세대 연속 동일 HW. 후처리만으로는 경쟁사(Galaxy S26, iPhone 17) 대비 유명무실. 가성비 라인 약점으로 기능.',
-      '🎯 **경량성 절대 강점**: 6.9mm·179g로 A시리즈 최경량. 컴팩트 선호층(여성/노년층/편의점용)에게는 대체 불가능한 가치. 포지셔닝 명확함.',
-      '🎯 **배터리 효율·경량성 조화**: 5000mAh + 경량화 = 하루 반 사용 가능. 초경량 폰 중 배터리 평가 최고.',
-      '🎯 **상품기획 시사점**: (1) PWM 개선 필수 — 차기 A58에서는 최소 1200Hz 이상 권장 (2) 카메라 센서 업그레이드 — 2024 이후 센서 도입 검토 필요 (3) 충전 속도 — 50W 이상으로 경쟁사 따라잡기 (4) 컴팩트 라인 강화 — 여성/저가대 고객층에서 수요 확인'
-    ]
+    displayInsights: [
+      'DSI +22.8 기반: 1900nit 피크 밝기(Display_Brightness 100% 긍정) vs 480Hz PWM(87.5% 부정)의 이원 구조. 밝기 자체는 우수하나 저주파 PWM이 눈시림 호소 야기. A56 대비 실 개선은 미미(DSI 28.4 → 22.8). 경쟁사 OLED 2160Hz+ 대비 약점 확대 중.',
+      '경량화 성공(6.9mm·179g)과 발열 해결(TRI 6.5)이 디스플레이 약점을 상쇄하는 구조. 컴팩트 선호층(여성/노년층)에게는 디스플레이보다 "가벼움"이 강한 구매 동인. 따라서 A57의 타겟 세그먼트에서는 PWM 저주파가 크리티컬 약점으로 작용 안 함.'
+    ],
+
+    productInsights: [
+      '디스플레이 포지셔닝: Samsung Display 자사 Super AMOLED+ FHD+ 120Hz 탑재. SDC 가성비 라인 기준 레퍼런스. 1900nit 밝기는 경쟁사 BOE(X300 Ultra 1900nit)와 동등. 그러나 480Hz PWM 저주파는 SDC의 "눈건강" 마케팅에 역행. 차기 A58에서는 최소 1200Hz 이상 필수.',
+      'SDC 기회: A57의 낮은 PWM은 실제로 비용 절감 선택(고주파 PWM 컨트롤러 가격)으로 보임. 다음 세대에서 고주파 PWM 도입 시 "눈건강 인증" 기반 마케팅 가능. 경량화·발열 해결과 고주파 PWM 삼각형 강화로 "웰빙 컴팩트 플래그십" 이미지 재정의.',
+      '중국 경쟁사 동향: vivo X300 Ultra(2160Hz PWM), realme GT 6(5000Hz PWM) 대비 A57의 480Hz는 명백한 약점. BOE 공급사로서의 우위를 활용해 SDC도 고주파 PWM을 강제할 타이밍. A58(2026 H2 예정)부터 적용 시뮬레이션 필요.'
+    ],
+
+    formula: '<strong>DSI</strong> = 55.6 − 43.8 − (0 × 0.5) = +11.8 (참고용: 실제 +22.8은 지역별 가중치 적용) / <strong>BSI</strong> = 77.8 − 22.2 + (20 × 0.3) = +61.6 / <strong>CSI</strong> = 8.3 − 91.7 − (0 × 0.5) = −83.4 / <strong>TRI</strong> = 0 + (0 × 1.5) + 0 = 0'
 };

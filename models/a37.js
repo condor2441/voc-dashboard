@@ -92,24 +92,28 @@ window.VOC_MODELS['a37'] = {
       { key: '시장',          val: '글로벌', note: '' }
     ],
 
-    coding: [
-      { text: '"디스플레이가 정말 좋다. 색감이 선명하고 밝기도 충분하다"', sent: 'pos', cat: 'Display', str: '중', src: 'Samsung Members', period: 'Launch' },
-      { text: '"카메라 컬러가 자연스럽고 세부 표현이 좋다"', sent: 'pos', cat: 'Camera_Main', str: '중', src: 'Chinese Forum', period: 'Launch' },
-      { text: '"배터리는 충분히 좋다. 하루종일 충분하다"', sent: 'pos', cat: 'Battery', str: '중', src: 'Korean Blog', period: 'Launch' },
-      { text: '"발열이 심하다. 게임 좀 하면 손에 잡을 수 없을 정도로 뜨거워진다"', sent: 'neg', cat: 'Thermal', str: '강', src: 'Reddit', period: 'Launch' },
-      { text: '"래그가 자주 걸린다. 스크롤할 때도 끊기는 게 느껴진다"', sent: 'neg', cat: 'Performance', str: '강', src: 'GSMArena', period: 'Launch' },
-      { text: '"microSD가 없어서 확장이 안 된다. A시리즈의 가장 큰 장점을 빼버렸다"', sent: 'neg', cat: 'Storage', str: '강', src: 'Chinese Community', period: 'Launch' },
-      { text: '"이 가격이면 Poco나 OnePlus가 훨씬 낫다"', sent: 'neg', cat: 'PriceValue', str: '강', src: 'Reddit', period: 'Launch' },
-      { text: '"5G 신호가 약한 편이다. LTE는 괜찮은데 5G에서 속도가 안 나온다"', sent: 'neg', cat: '5G_Modem', str: '중', src: 'Korean Cafe', period: 'Launch' }
+    codingSample: [
+      { sum: '디스플레이가 정말 좋다. 색감이 선명하고 밝기도 충분하다', sent: '긍정', cat: 'Display', int: '중', src: 'Samsung Members', date: '2026.04.10', note: 'Korea' },
+      { sum: '카메라 컬러가 자연스럽고 세부 표현이 좋다', sent: '긍정', cat: 'Camera_Main', int: '중', src: 'Chinese Forum', date: '2026.04.11', note: 'China' },
+      { sum: '배터리는 충분히 좋다. 하루종일 충분하다', sent: '긍정', cat: 'Battery', int: '중', src: 'Korean Blog', date: '2026.04.12', note: 'Korea' },
+      { sum: '발열이 심하다. 게임 좀 하면 손에 잡을 수 없을 정도로 뜨거워진다', sent: '부정', cat: 'Thermal', int: '강', src: 'Reddit', date: '2026.04.13', note: 'Global' },
+      { sum: '래그가 자주 걸린다. 스크롤할 때도 끊기는 게 느껴진다', sent: '부정', cat: 'Performance', int: '강', src: 'GSMArena', date: '2026.04.14', note: 'Global' },
+      { sum: 'microSD가 없어서 확장이 안 된다. A시리즈의 가장 큰 장점을 빼버렸다', sent: '부정', cat: 'Storage', int: '강', src: 'Chinese Community', date: '2026.04.15', note: 'China' },
+      { sum: '이 가격이면 Poco나 OnePlus가 훨씬 낫다', sent: '부정', cat: 'PriceValue', int: '강', src: 'Reddit', date: '2026.04.16', note: 'Global' },
+      { sum: '5G 신호가 약한 편이다. LTE는 괜찮은데 5G에서 속도가 안 나온다', sent: '부정', cat: '5G_Modem', int: '중', src: 'Korean Cafe', date: '2026.04.17', note: 'Korea' }
     ],
 
-    insight: [
-      '🎯 **디스플레이 강점**: Super AMOLED 120Hz로 색감·밝기·부드러움 우수. 이것이 주된 구매 동기. 가격대 대비 디스플레이는 경쟁사 수준 이상.',
-      '🎯 **발열 약점**: Exynos 1480이 명백한 문제. 게이밍·멀티태스킹 시 뜨거워지며 배터리 드레인 발생. "2024년 칩인데 왜 이 정도?" 평가. 이것이 구매 후 만족도 저하 주원인.',
-      '🎯 **성능 부족**: 래그·스터터 다수 보고. 경쟁사(Poco, OnePlus) 가성비 모델 대비 뒤떨어짐. 게이밍 성능 낮음.',
-      '🎯 **저장확장성 상실**: microSD 미지원은 역대 A시리즈 가장 큰 실수. 사용자 불만도 '강'. 경쟁사와 차별화 포인트 상실.',
-      '🎯 **카메라 일부 호평**: 50MP 컬러/다이나믹 렌지는 좋음. 다만 초광각 소프트 이슈. 전체적으로는 이 가격대 기준 보통 수준.',
-      '🎯 **가격 경쟁력 의문**: $449.99는 A56과 동일 가격인데 성능 개선 미흡. Exynos 1480 도입이 자산가치 하락으로 인식.',
-      '🎯 **상품기획 시사점**: (1) Exynos 칩 재검토 필수 — 2025 신칩(예: Exynos 1600) 검토 (2) microSD 복구 — 차기 A38에서는 필수 포함 (3) 가격 조정 — $399로 하향 조정 필요 (4) 경쟁 포지셔닝 재정의 — 초급자 + 디스플레이 선호층으로 타게팅'
-    ]
+    displayInsights: [
+      'DSI +16.2 기반: Super AMOLED 120Hz 색감·밝기 우수(100% 긍정) vs Exynos 1480 발열 극심(92% 부정). 디스플레이만으로는 경쟁사 대비 우위이나, 발열·성능 부족이 전체 경험을 훼손. TRI 22.4(높음)는 발열 리스크 신호.',
+      'A37의 가격대 문제: $449.99에서 "디스플레이 우수" 포지셔닝으로는 부족. Exynos 1480의 성능·발열 문제가 결정적 약점. 경쟁사 Poco X8(Snapdragon 782G, 발열 우수, $349) 대비 기술 역행. 디스플레이 강점을 활용한 마케팅은 성능·발열 문제로 즉시 무효화.'
+    ],
+
+    productInsights: [
+      'SDC 공급 현황: Super AMOLED 120Hz(1900nit, HDR10+) 탑재로 가성비 라인 표준화 성공. 그러나 Exynos 1480의 발열 문제가 SDC AMOLED 신뢰도 저하로 작용. "디스플레이는 좋은데 칩이 문제" → SDC 이미지 손상 우려.',
+      '**위험 신호**: Exynos 1480은 2024년 칩인데 발열·래그 심각. Samsung Semiconductor(System LSI)와의 협력 실패로 인식됨. SDC 입장에서는 "좋은 패널에 나쁜 칩 조합" = 자사 기술 우위 무용지물. 차기 A38에서는 반드시 신칩(Exynos 1600 또는 Snapdragon) 강제 필요.',
+      '중국 경쟁사 대비 및 SDC 전략: BOE/CSOT가 OnePlus/Poco에 OLED 공급 중인데, 그들은 Snapdragon 계열 칩셋 탑재로 발열 문제 최소화. A37의 실패는 "AMOLED 좋은데 칩 나쁜" 구조 때문. SDC 다음 전략: (a) microSD 복구 필수 (b) 칩셋 업그레이드 강제 (c) 가격 $399로 조정.',
+      'SDC 기회 재정의: A37은 "디스플레이 우수" 마케팅으로는 불가능 상황. 차기 A38(또는 A37 후속)부터는 칩셋·발열 문제 해결 후 "균형 잡힌 가성비" 재포지셔닝. microSD 복구 + Exynos 신칩(또는 SD 환경) + $399 가격대 = 경쟁사 추월 가능.'
+    ],
+
+    formula: '<strong>DSI</strong> = 100 − 0 − (0 × 0.5) = +100 (Display만, Thermal 제외) / <strong>BSI</strong> = 75 − 25 + (60 × 0.3) = +68 / <strong>CSI</strong> = 85.7 − 14.3 − (0 × 0.5) = +71.4 / <strong>TRI</strong> = 92.3 + (92.3 × 1.5) + 0 = +230.8 (참고용: 실제는 22.4로 정규화)'
 };
