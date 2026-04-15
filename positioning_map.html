@@ -55,7 +55,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR
 #chart-svg { width: 100%; display: block; overflow: visible; }
 
 /* Bubble styles */
-.bubble { cursor: pointer; transition: opacity 0.18s, transform 0.15s; transform-origin: center; }
+.bubble { cursor: pointer; transition: opacity 0.18s, transform 0.15s; transform-box: fill-box; transform-origin: center; }
 .bubble:hover { transform: scale(1.13); }
 .bubble:hover circle:first-of-type {
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.32)) drop-shadow(0 0 8px rgba(255,255,255,0.15));
