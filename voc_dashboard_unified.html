@@ -840,7 +840,7 @@ function initBrandSelector() {
   const el = document.getElementById('brand-selector');
 
   // 브랜드 순서 정의
-  const brandOrder = ['vivo', 'OPPO', 'Xiaomi', 'Samsung', 'Apple'];
+  const brandOrder = ['vivo', 'OPPO', 'Xiaomi', 'Samsung', 'Apple', 'Honor'];
 
   // brandMap에서 정의된 순서대로 정렬
   const sortedBrands = brandOrder.filter(b => b in brandMap);
@@ -1306,7 +1306,7 @@ function loadNewsData() {
 window.initDashboard = function() {
   models = window.VOC_MODELS || {};
   brandMap = generateBrandMap();
-  const brandOrder = ['vivo', 'OPPO', 'Xiaomi', 'Samsung', 'Apple'];
+  const brandOrder = ['vivo', 'OPPO', 'Xiaomi', 'Samsung', 'Apple', 'Honor'];
   currentBrand = brandOrder.find(b => b in brandMap) || Object.keys(brandMap)[0] || '';
   runValidationOnLoad();
   initBrandSelector();
