@@ -8,6 +8,9 @@
 window.VOC_MODELS = window.VOC_MODELS || {};
 
 const MODEL_KEYS = [
+  'a57',
+  'a37',
+  'a07',
   'iqoo15',
   'iqoo15ultra',
   'op15',
@@ -41,7 +44,7 @@ const _scriptSrc = document.currentScript ? document.currentScript.src : null;
     ? _scriptSrc.replace('_index.js', '')
     : (location.href.includes('/') ? location.href.replace(/\/[^\/]*$/, '/') + 'models/' : 'models/');
 
-  const cv = 'v20250415b'; // 캐시 무효화 버전 — 모델 데이터 변경 시 갱신
+  const cv = 'v20260415a'; // 캐시 무효화 버전 — 모델 데이터 변경 시 갱신
   for (const key of MODEL_KEYS) {
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
