@@ -15,9 +15,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR
 .page-sub { font-size: 11px; color: #94a3b8; margin-top: 3px; }
 
 /* Controls */
-.controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
-.left-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.filter-label { font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 0.8px; text-transform: uppercase; margin-right: 4px; }
+.controls { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+.left-controls { display: flex; flex-direction: column; gap: 6px; }
+.filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.filter-label { font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 0.8px; text-transform: uppercase; margin-right: 4px; min-width: 32px; }
 
 .brand-pill {
   padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700;
@@ -33,6 +34,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR
   transition: all 0.15s;
 }
 .reset-btn:hover { border-color: #94a3b8; color: #1e293b; }
+
+/* Year filter pills */
+.year-pill {
+  padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  cursor: pointer; border: 2px solid #cbd5e1; background: #fff; color: #64748b;
+  transition: all 0.15s; white-space: nowrap;
+}
+.year-pill.year-active { background: #0f172a; border-color: #0f172a; color: #fff; }
+.year-pill:hover:not(.year-active) { border-color: #94a3b8; color: #1e293b; }
 
 /* SDC Toggle */
 .right-controls { display: flex; align-items: center; gap: 10px; }
@@ -100,9 +110,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR
 
   <div class="controls">
     <div class="left-controls">
-      <span class="filter-label">Brand</span>
-      <div id="brand-pills"></div>
-      <button class="reset-btn" onclick="resetFilters()">전체 보기</button>
+      <div class="filter-row">
+        <span class="filter-label">Brand</span>
+        <div id="brand-pills" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        <button class="reset-btn" onclick="resetFilters()">전체 보기</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Year</span>
+        <div id="year-pills" style="display:flex;gap:6px;"></div>
+      </div>
     </div>
     <div class="right-controls">
       <span class="sdc-label">SDC 공급만 보기</span>
@@ -234,11 +250,19 @@ function splitLabel(s) {
 // State
 let activeBrands = new Set();
 let sdcOnly = false;
+let yearFilter = null;   // null = All, 2024 | 2025 | 2026
+
+// Year range definitions (with padding for bubble breathing room)
+const YEAR_RANGES = {
+  2024: { min: new Date('2024-08-15'), max: new Date('2025-01-20') },
+  2025: { min: new Date('2024-12-15'), max: new Date('2026-01-20') },
+  2026: { min: new Date('2025-12-15'), max: new Date('2026-07-01') },
+};
 
 // Chart constants
 const MT = 36, MR = 50, MB = 52, ML = 72;
-const MIN_DATE = new Date('2024-09-01');
-const MAX_DATE = new Date('2026-06-15');
+const GLOBAL_MIN_DATE = new Date('2024-09-01');
+const GLOBAL_MAX_DATE = new Date('2026-06-15');
 const MIN_P = 100, MAX_P = 1450;
 
 const BANDS = [
@@ -248,10 +272,12 @@ const BANDS = [
   { label: 'Mass  ~$350',         min: 100,  max: 350,  bg: 'rgba(16,185,129,0.05)' },
 ];
 
-function dateToNum(s) { return new Date(s) - MIN_DATE; }
-const DATE_RANGE = MAX_DATE - MIN_DATE;
-
 function render() {
+  // 연도 필터에 따라 X축 범위 결정
+  const rangeMin = yearFilter != null ? YEAR_RANGES[yearFilter].min : GLOBAL_MIN_DATE;
+  const rangeMax = yearFilter != null ? YEAR_RANGES[yearFilter].max : GLOBAL_MAX_DATE;
+  const dateRange = rangeMax - rangeMin;
+
   const svg = document.getElementById('chart-svg');
   const W = svg.parentElement.clientWidth - 48 || 1100;
   const H = 560;
@@ -259,7 +285,7 @@ function render() {
   const cW = W - ML - MR;
   const cH = H - MT - MB;
 
-  function xS(d) { return ML + (dateToNum(d) / DATE_RANGE) * cW; }
+  function xS(d) { return ML + ((new Date(d) - rangeMin) / dateRange) * cW; }
   function yS(p) { return MT + cH - ((p - MIN_P) / (MAX_P - MIN_P)) * cH; }
 
   let s = '';
@@ -304,16 +330,31 @@ function render() {
     s += `<text x="${ML+cW+8}" y="${(y1+y2)/2+4}" font-size="9" fill="#94a3b8" font-weight="600">${b.label}</text>`;
   });
 
-  // Quarter grid + labels
-  const quarters = [];
-  let d = new Date('2024-10-01');
-  while (d <= MAX_DATE) { quarters.push(new Date(d)); d = new Date(d); d.setMonth(d.getMonth()+3); }
-  quarters.forEach(q => {
-    const x = xS(q.toISOString().slice(0,10));
-    s += `<line x1="${x}" y1="${MT}" x2="${x}" y2="${MT+cH}" stroke="#f1f5f9" stroke-width="1"/>`;
-    const ql = `${q.getFullYear()} Q${Math.ceil((q.getMonth()+1)/3)}`;
-    s += `<text x="${x}" y="${MT+cH+18}" text-anchor="middle" font-size="10" fill="#94a3b8">${ql}</text>`;
-  });
+  // X축 눈금: 연도 선택 시 월별, 전체 보기 시 분기별
+  const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if (yearFilter != null) {
+    // 월별 눈금
+    let d = new Date(rangeMin.getFullYear(), rangeMin.getMonth(), 1);
+    while (d <= rangeMax) {
+      const x = xS(d.toISOString().slice(0, 10));
+      if (x >= ML - 1 && x <= ML + cW + 1) {
+        s += `<line x1="${x}" y1="${MT}" x2="${x}" y2="${MT+cH}" stroke="#f1f5f9" stroke-width="1"/>`;
+        s += `<text x="${x}" y="${MT+cH+18}" text-anchor="middle" font-size="10" fill="#94a3b8">${MONTH_ABBR[d.getMonth()]}</text>`;
+      }
+      d = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+    }
+  } else {
+    // 분기별 눈금
+    const quarters = [];
+    let d = new Date('2024-10-01');
+    while (d <= rangeMax) { quarters.push(new Date(d)); d = new Date(d); d.setMonth(d.getMonth()+3); }
+    quarters.forEach(q => {
+      const x = xS(q.toISOString().slice(0,10));
+      s += `<line x1="${x}" y1="${MT}" x2="${x}" y2="${MT+cH}" stroke="#f1f5f9" stroke-width="1"/>`;
+      const ql = `${q.getFullYear()} Q${Math.ceil((q.getMonth()+1)/3)}`;
+      s += `<text x="${x}" y="${MT+cH+18}" text-anchor="middle" font-size="10" fill="#94a3b8">${ql}</text>`;
+    });
+  }
 
   // Axes
   s += `<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT+cH}" stroke="#e2e8f0" stroke-width="1.5"/>`;
@@ -333,6 +374,12 @@ function render() {
   // Bubbles
   const R = 22;
   MODELS.forEach((m, i) => {
+    // 연도 필터 활성 시 범위 밖 모델 렌더링 제외
+    if (yearFilter != null) {
+      const ld = new Date(m.launch);
+      if (ld < rangeMin || ld > rangeMax) return;
+    }
+
     const x = xS(m.launch);
     const y = yS(m.priceUSD);
     const col  = BRAND_COLORS[m.brand] || '#888';
@@ -487,9 +534,24 @@ function toggleBrand(brand) {
 function resetFilters() {
   activeBrands.clear();
   sdcOnly = false;
+  yearFilter = null;
   document.getElementById('sdc-track').classList.remove('on');
   updatePills();
+  updateYearPills();
   render();
+}
+
+// Year filter
+function setYear(y) {
+  yearFilter = (yearFilter === y) ? null : y;   // 같은 버튼 재클릭 시 해제
+  updateYearPills();
+  render();
+}
+function updateYearPills() {
+  document.querySelectorAll('.year-pill').forEach(p => {
+    const val = p.dataset.year === 'null' ? null : Number(p.dataset.year);
+    p.classList.toggle('year-active', yearFilter === val);
+  });
 }
 function toggleSDC() {
   sdcOnly = !sdcOnly;
@@ -514,6 +576,20 @@ function buildPills() {
     return `<button class="brand-pill" data-brand="${b}"
       style="color:${c};border-color:${c};background:${c}18;"
       onclick="toggleBrand('${b}')">${b}</button>`;
+  }).join('');
+  buildYearPills();
+}
+
+// Build year pills (동적: MODELS에서 실존 연도만 표시)
+function buildYearPills() {
+  const years = [...new Set(MODELS.map(m => new Date(m.launch).getFullYear()))].sort();
+  const wrap = document.getElementById('year-pills');
+  const opts = [{ label: 'All', value: null }, ...years.map(y => ({ label: String(y), value: y }))];
+  wrap.innerHTML = opts.map(o => {
+    const active = yearFilter === o.value;
+    return `<button class="year-pill${active ? ' year-active' : ''}"
+      data-year="${o.value === null ? 'null' : o.value}"
+      onclick="setYear(${o.value === null ? 'null' : o.value})">${o.label}</button>`;
   }).join('');
 }
 
