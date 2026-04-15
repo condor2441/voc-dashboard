@@ -11,6 +11,8 @@ window.VOC_MODELS['findx9pro'] = {
     market: '중국 + 글로벌',
     date: '2026.04.15',
     sampleN: 66,
+    priceUSD: 1199,
+    sdcSupply: false,
     conclusion: '3600nit·1nit 최저밝기·7500mAh·200MP Hasselblad로 디스플레이·배터리 강점 확고(DSI +75, BSI +115). Mature기: 실사용 21:57h 최고 기록 확인. 단 실리콘카본 배터리 180사이클 후 ±12% 용량분산 이슈 신규 보고. 중국 카메라갭·厚重설계·가격 누적불만 지속(CN 부정 57%).',
 
     kpi: {

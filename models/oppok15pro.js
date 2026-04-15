@@ -11,6 +11,8 @@ window.VOC_MODELS['oppok15pro'] = {
     market: '중국 + 글로벌 (예상)',
     date: '2026.04.15',
     sampleN: 82,
+    priceUSD: 480,
+    sdcSupply: false,
     conclusion: '2464~2899元 능동냉각팬 탑재로 게임 30분 후 35.9°C 최고 — 중단가 최우수 발열관리 확인. 144Hz 1.5K OLED + Dimensity 8500 SUPER 가성비 조합. 출시 직후(2026.04.03) 신규 모델, 초기 표본 위주.',
 
     kpi: {

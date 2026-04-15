@@ -11,6 +11,8 @@ window.VOC_MODELS['reno15pro'] = {
     market: '중국 + 글로벌',
     date: '2026.04.15',
     sampleN: 104,
+    priceUSD: 410,
+    sdcSupply: false,
     conclusion: '디스플레이·배터리·카메라 하드웨어 우수(DSI +100, BSI +100). 다만 소프트웨어 최적화 부족·과도한 발열·야간 카메라 처리 지연이 프리미엄 경험 저해(TRI 187.5). 초기 30분 게임은 쾌적하나 장시간 사용 제약.',
 
     kpi: {

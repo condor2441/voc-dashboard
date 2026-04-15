@@ -14,6 +14,8 @@ window.VOC_MODELS['reno15c'] = {
     market: '중국 + 인도',
     date: '2026.04.15',
     sampleN: 32,
+    priceUSD: 400,
+    sdcSupply: false,
     conclusion: '⚠️ 지역판 이원화 주의: 중국(SD7G4+1.5K OLED+50MP망원) vs 인도(SD6G1+FHD++7000mAh) — 실질적으로 다른 제품. 배터리·충전(BSI +130)은 양 시장 공통 최강점. 인도판 SD6G1 성능 불만이 핵심 갭(부정 중 ~60%). 디스플레이는 실내 우수하나 인도 야외 1200nit HBM 부족 비판. DSI +54. n=32/지역편중(인도 62%) — 커뮤니티 표본 한정.',
 
     kpi: {

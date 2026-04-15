@@ -11,6 +11,8 @@ window.VOC_MODELS['xiaomi17ultra'] = {
     market: '중국 + 글로벌',
     date: '2026.04.15',
     sampleN: 62,
+    priceUSD: 950,
+    sdcSupply: false,
     conclusion: '1-inch 50MP Leica + 200MP 연속 줌 + 3500nit으로 카메라·화질 업계 최강(CSI +72, DSI +70). 6800mAh + 90W 충전 배터리 우수(BSI +95). 성숙기에 소프트웨어 문제 부상: 셔터 랙·렌즈간 화이트밸런스 점프·렌즈 포깅 불만. AndroidPolice "best camera phone with a serious problem" 평.',
 
     kpi: {

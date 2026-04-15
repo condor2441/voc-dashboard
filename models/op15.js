@@ -11,6 +11,8 @@ window.VOC_MODELS['op15'] = {
     market: '글로벌 + 중국',
     date: '2026.04.15',
     sampleN: 148,
+    priceUSD: 800,
+    sdcSupply: false,
     conclusion: '7300mAh 스택 배터리 Tom\'s Guide 역대 최고 25h13m 기록 확인(BSI +101). 165Hz 1.5K 아이케어 디스플레이 장기 호평 유지. 단 일부 사용자 유휴 배터리 과소모 신고(커뮤니티 표본 한정). 카메라 센서 다운그레이드·발열 약점 지속.',
 
     kpi: {

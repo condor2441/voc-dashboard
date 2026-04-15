@@ -11,6 +11,8 @@ window.VOC_MODELS['realmegt7pro'] = {
     market: '중국 + 글로벌',
     date: '2026.04.15',
     sampleN: 78,
+    priceUSD: 649,
+    sdcSupply: false,
     conclusion: 'Snapdragon 8 Elite 첫 탑재 + 6000nits Eco² 디스플레이 + 120W 초급속충전으로 성능·디스플레이·배터리 완성도 높음. 카메라는 실용적 수준, 소프트웨어 지원 3년은 개선 필요',
 
     kpi: {

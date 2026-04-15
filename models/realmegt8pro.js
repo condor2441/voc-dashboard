@@ -11,6 +11,8 @@ window.VOC_MODELS['realmegt8pro'] = {
     market: '글로벌 (India, China)',
     date: '2026.04.15',
     sampleN: 65,
+    priceUSD: 520,
+    sdcSupply: false,
     conclusion: '7000nit 피크 밝기 + Ricoh GR 거리촬영 전문성으로 카메라 강점 극대화. 7000mAh Titan 배터리 + 120W 충전, 게이밍 성능 우수. 두께·무게·메인캠 센서가 개선 필요 항목.',
 
     kpi: {

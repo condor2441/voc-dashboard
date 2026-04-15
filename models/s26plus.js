@@ -11,6 +11,8 @@ window.VOC_MODELS['s26plus'] = {
     market: '글로벌',
     date: '2026.04.15',
     sampleN: 60,
+    priceUSD: 1000,
+    sdcSupply: true,
     conclusion: '2600nits 피크 밝기와 우수한 AI 기능으로 프리미엘 위상 강화, 다만 480Hz 저주파 PWM으로 인한 눈피로 이슈 및 카메라 하드웨어 정체로 가성비 기대 미달',
 
     kpi: {

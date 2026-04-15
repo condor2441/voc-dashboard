@@ -11,6 +11,8 @@ window.VOC_MODELS['redmiturbo5'] = {
     market: '중국 + 글로벌',
     date: '2026.04.15',
     sampleN: 86,
+    priceUSD: 345,
+    sdcSupply: false,
     conclusion: '3500nits DC+3840Hz 무깜빡임 디스플레이와 7560mAh+100W 초급속충전으로 게이밍·배터리 성능 최강. 카메라 약점과 극한 게이밍 발열이 단점',
 
     kpi: {

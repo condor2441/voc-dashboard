@@ -11,6 +11,8 @@ window.VOC_MODELS['vivoX300s'] = {
     market: 'China-only',
     date: '2026.04.15',
     sampleN: 57,
+    priceUSD: 700,
+    sdcSupply: false,
     conclusion: '144Hz 고주사율 + 7100mAh 초대용량으로 디스플레이·배터리 강점. 게이밍 성능·200MP 망원카메라 우수. 고부하 발열·기기 두께가 개선 필요 항목.',
 
     kpi: {

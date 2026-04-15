@@ -11,6 +11,8 @@ window.VOC_MODELS['iqoo15'] = {
     market: '중국 + 글로벌 (India iQOO)',
     date: '2026.04.15',
     sampleN: 75,
+    priceUSD: 690,
+    sdcSupply: false,
     conclusion: '2K 珠峰屏 + 무편광 기술로 디스플레이 강점(DSI +54, Display 부정 0건). 장기 게이밍 발열 40°C 이내 안정 재확인(GEI +52). 셀카 납작화·100W 유선 퇴보는 미해결 약점 지속.',
 
     kpi: {

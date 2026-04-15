@@ -11,6 +11,8 @@ window.VOC_MODELS['xiaomi17'] = {
     market: '중국 + 글로벌 (예상)',
     date: '2026.04.15',
     sampleN: 92,
+    priceUSD: 740,
+    sdcSupply: false,
     conclusion: '컴팩트한 크기의 7000mAh 배터리로 소형 기기 중 최강 지속시간, 디스플레이와 카메라 균형 우수. 소프트웨어 정제 미흡.',
 
     kpi: {

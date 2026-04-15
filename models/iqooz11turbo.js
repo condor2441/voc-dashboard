@@ -11,6 +11,8 @@ window.VOC_MODELS['iqooz11turbo'] = {
     market: 'China + Global',
     date: '2026.04.15',
     sampleN: 64,
+    priceUSD: 330,
+    sdcSupply: false,
     conclusion: '2399元 게이밍 플래그십 성능(GEI +32.5)·5000nit·4320Hz PWM 디스플레이(DSI +24) 성비 최강. 하이퍼샘플링·슈퍼프레임 장시간 활성화 시 발열 증가 → 방열케이스 권장. 카메라 야간 개선 여지 지속.',
 
     kpi: {

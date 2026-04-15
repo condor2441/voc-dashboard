@@ -11,6 +11,8 @@ window.VOC_MODELS['ip17pro'] = {
     market: '글로벌',
     date: '2026.04.15',
     sampleN: 105,
+    priceUSD: 1099,
+    sdcSupply: true,
     conclusion: '3000nit·2세대 항반사·480Hz 저주파 PWM 등 디스플레이 완성도 최고 수준(DSI 0.62). 열 관리 TRI 0.15 유지. 단 iOS 26 업데이트 후 일부 사용자 "경험 저하" 보고(post_update_worsened). 배터리 실측 편차 지속·Pro 차별화 논쟁 심화.',
 
     kpi: {

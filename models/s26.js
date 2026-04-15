@@ -11,6 +11,8 @@ window.VOC_MODELS['s26'] = {
     market: '글로벌 (한국 포함)',
     date: '2026.04.15',
     sampleN: 60,
+    priceUSD: 800,
+    sdcSupply: true,
     conclusion: '7.9mm 경량 컴팩트 플래그십. 발열·배터리 효율 개선으로 일상 만족도 상승. 4세대 동일 카메라 HW·낮은 PWM(480Hz)·25W 충전이 비판 집중.',
 
     kpi: {

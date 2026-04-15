@@ -11,6 +11,8 @@ window.VOC_MODELS['vivoV70'] = {
     market: '글로벌 (India, Southeast Asia)',
     date: '2026.04.15',
     sampleN: 47,
+    priceUSD: 450,
+    sdcSupply: true,
     conclusion: '1966nits @75% 고밝기 + 50MP 망원(3x)로 촬영 강점. 프리미엄 빌드·90W 충전 만족. 집중 사용 시 발열 43.1°C·저조도 빛번짐·초광각 화질·무선충전 부재가 개선 필요 항목.',
 
     kpi: {

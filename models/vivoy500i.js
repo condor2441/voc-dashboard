@@ -11,6 +11,8 @@ window.VOC_MODELS['vivoy500i'] = {
     market: '중국 + 글로벌',
     date: '2026.04.15',
     sampleN: 51,
+    priceUSD: 205,
+    sdcSupply: false,
     conclusion: '7200mAh 대용량 배터리와 3840Hz 무깜빡임 디스플레이로 일상 사용 완성도 높음. 가성비 우수하나 게이밍 성능은 한계 명확. 배송 종사자·학생·가치 소비자 타겟 정확성 높음',
 
     kpi: {

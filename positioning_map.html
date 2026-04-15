@@ -119,134 +119,71 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR
 <div id="tooltip"></div>
 
 <script>
-const MODELS = [
-  {
-    key:'realmegt7pro', name:'realme GT 7 Pro', brand:'realme', segment:'Performance Gaming',
-    launch:'2024-11-04', priceUSD:649,
-    panel:{ size:'6.78"', res:'FHD+ 1080p', ltpo:true },
-    supplier:'BOE/CSOT 추정', sdcSupply:false
-  },
-  {
-    key:'ip17pro', name:'iPhone 17 Pro', brand:'Apple', segment:'Premium Volume',
-    launch:'2025-09-19', priceUSD:1099,
-    panel:{ size:'6.3"', res:'QHD+ 1080p', ltpo:true },
-    supplier:'Samsung Display', sdcSupply:true
-  },
-  {
-    key:'xiaomi17', name:'Xiaomi 17', brand:'Xiaomi', segment:'Premium Volume',
-    launch:'2025-09-25', priceUSD:740,
-    panel:{ size:'6.36"', res:'FHD+ 1080p', ltpo:true },
-    supplier:'BOE/SDC 미확인', sdcSupply:false
-  },
-  {
-    key:'findx9pro', name:'OPPO Find X9 Pro', brand:'OPPO', segment:'Premium Imaging Flagship',
-    launch:'2025-10-16', priceUSD:1199,
-    panel:{ size:'6.78"', res:'1.5K 1264p', ltpo:true },
-    supplier:'BOE 추정', sdcSupply:false
-  },
-  {
-    key:'iqoo15', name:'iQOO 15', brand:'iQOO', segment:'Performance Gaming',
-    launch:'2025-10-20', priceUSD:690,
-    panel:{ size:'6.85"', res:'QHD+ 1440p', ltpo:true },
-    supplier:'Samsung LEAD', sdcSupply:false
-  },
-  {
-    key:'realmegt8pro', name:'realme GT 8 Pro', brand:'realme', segment:'Performance Flagship',
-    launch:'2025-10-21', priceUSD:520,
-    panel:{ size:'6.78"', res:'QHD+ 1440p', ltpo:true },
-    supplier:'BOE/CSOT 추정', sdcSupply:false
-  },
-  {
-    key:'op15', name:'OnePlus 15', brand:'OnePlus', segment:'Performance Gaming',
-    launch:'2025-10-28', priceUSD:800,
-    panel:{ size:'6.82"', res:'1.5K 1264p', ltpo:true },
-    supplier:'BOE T10', sdcSupply:false
-  },
-  {
-    key:'reno15pro', name:'OPPO Reno 15 Pro', brand:'OPPO', segment:'Premium Volume',
-    launch:'2025-11-17', priceUSD:410,
-    panel:{ size:'6.8"', res:'FHD+ 1080p', ltpo:false },
-    supplier:'BOE 추정', sdcSupply:false
-  },
-  {
-    key:'reno15c', name:'OPPO Reno 15C', brand:'OPPO', segment:'Premium Volume',
-    launch:'2025-12-19', priceUSD:400,
-    panel:{ size:'6.7"', res:'1.5K 1080p', ltpo:false },
-    supplier:'CSOT/Tianma 추정', sdcSupply:false
-  },
-  {
-    key:'xiaomi17ultra', name:'Xiaomi 17 Ultra', brand:'Xiaomi', segment:'Premium Imaging Flagship',
-    launch:'2025-12-25', priceUSD:950,
-    panel:{ size:'6.82"', res:'2K 1440p', ltpo:true },
-    supplier:'BOE M10', sdcSupply:false
-  },
-  {
-    key:'iqooz11turbo', name:'iQOO Z11 Turbo', brand:'iQOO', segment:'Performance Gaming',
-    launch:'2026-01-15', priceUSD:330,
-    panel:{ size:'6.59"', res:'1.5K 720p', ltpo:false },
-    supplier:'CSOT 추정', sdcSupply:false
-  },
-  {
-    key:'vivoy500i', name:'vivo Y500i', brand:'vivo', segment:'Mass Volume',
-    launch:'2026-01-16', priceUSD:205,
-    panel:{ size:'6.75"', res:'HD+ 720p', ltpo:false },
-    supplier:'Tianma 추정', sdcSupply:false
-  },
-  {
-    key:'redmiturbo5', name:'Redmi Turbo 5', brand:'Xiaomi', segment:'Performance Gaming',
-    launch:'2026-01-29', priceUSD:345,
-    panel:{ size:'6.67"', res:'FHD+ 1080p', ltpo:false },
-    supplier:'BOE/CSOT 추정', sdcSupply:false
-  },
-  {
-    key:'iqoo15ultra', name:'iQOO 15 Ultra', brand:'iQOO', segment:'Performance Gaming',
-    launch:'2026-02-04', priceUSD:785,
-    panel:{ size:'6.85"', res:'QHD+ 1440p', ltpo:true },
-    supplier:'BOE M14', sdcSupply:false
-  },
-  {
-    key:'vivoV70', name:'vivo V70', brand:'vivo', segment:'Premium Volume',
-    launch:'2026-02-19', priceUSD:450,
-    panel:{ size:'6.67"', res:'FHD+ 1080p', ltpo:false },
-    supplier:'Samsung Display', sdcSupply:true
-  },
-  {
-    key:'s26', name:'Galaxy S26', brand:'Samsung', segment:'Premium Volume',
-    launch:'2026-03-11', priceUSD:800,
-    panel:{ size:'6.2"', res:'QHD+ 1440p', ltpo:true },
-    supplier:'Samsung Display', sdcSupply:true
-  },
-  {
-    key:'s26plus', name:'Galaxy S26+', brand:'Samsung', segment:'Premium Volume',
-    launch:'2026-03-11', priceUSD:1000,
-    panel:{ size:'6.7"', res:'QHD+ 1440p', ltpo:true },
-    supplier:'Samsung Display', sdcSupply:true
-  },
-  {
-    key:'s26u', name:'Galaxy S26 Ultra', brand:'Samsung', segment:'Premium Imaging Flagship',
-    launch:'2026-03-11', priceUSD:1300,
-    panel:{ size:'6.9"', res:'QHD+ 1440p', ltpo:true },
-    supplier:'Samsung Display', sdcSupply:true
-  },
-  {
-    key:'vivoX300s', name:'vivo X300s', brand:'vivo', segment:'Performance Flagship',
-    launch:'2026-03-30', priceUSD:700,
-    panel:{ size:'6.78"', res:'FHD+ 1080p', ltpo:true },
-    supplier:'BOE 추정', sdcSupply:false
-  },
-  {
-    key:'vivox300ultra', name:'vivo X300 Ultra', brand:'vivo', segment:'Imaging Flagship',
-    launch:'2026-03-30', priceUSD:1100,
-    panel:{ size:'6.8"', res:'2K 1440p', ltpo:true },
-    supplier:'BOE Q10 Plus', sdcSupply:false
-  },
-  {
-    key:'oppok15pro', name:'OPPO K15 Pro', brand:'OPPO', segment:'Performance Gaming',
-    launch:'2026-04-03', priceUSD:480,
-    panel:{ size:'6.78"', res:'FHD+ 1080p', ltpo:false },
-    supplier:'BOE/CSOT 추정', sdcSupply:false
-  },
-];
+/* ── Dynamic model loading ─────────────────────────────────────────────────
+   MODELS 배열은 window.initDashboard() 실행 시 window.VOC_MODELS에서 자동 생성
+   새 모델 추가 시 models/_index.js의 MODEL_KEYS에만 추가하면 맵에도 자동 반영
+   ────────────────────────────────────────────────────────────────────────── */
+
+let MODELS = [];
+
+/* ── Parse helpers ── */
+function parseLaunch(s) {
+  if (!s) return '2026-01-01';
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const dot = s.match(/(\d{4})\.(\d{2})\.(\d{2})/);
+  if (dot) return `${dot[1]}-${dot[2]}-${dot[3]}`;
+  const kor = s.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
+  if (kor) return `${kor[1]}-${kor[2].padStart(2,'0')}-${kor[3].padStart(2,'0')}`;
+  const mon = s.match(/(\d{4})\.(\d{2})/);
+  if (mon) return `${mon[1]}-${mon[2]}-01`;
+  return '2026-01-01';
+}
+
+function parsePanel(specs) {
+  if (!specs) return { size: '—', res: '—', ltpo: false };
+  const disp = specs.find(s => s.key === '디스플레이');
+  const res  = specs.find(s => s.key === '해상도');
+  const rate = specs.find(s => s.key === '주사율 / LTPO' || s.key === '주사율');
+  const sizeM = disp?.val.match(/(\d+\.\d+)"/);
+  const size = sizeM ? sizeM[1] + '"' : '—';
+  let resVal = '—';
+  if (res) resVal = res.val.split(/[\s,]/)[0];
+  else if (disp) { const m = disp.val.match(/HD\+|FHD\+|QHD\+|2K|1\.5K/i); if (m) resVal = m[0]; }
+  const ltpo = !!(rate?.val.toUpperCase().includes('LTPO') || disp?.val.toUpperCase().includes('LTPO'));
+  return { size, res: resVal, ltpo };
+}
+
+function extractSupplier(productInsights) {
+  if (!productInsights?.[0]) return '—';
+  const txt = productInsights[0];
+  const m = txt.match(/패널 공급 현황[:\s]+([^.]+)/);
+  if (m) return m[1].replace(/탑재.*/, '').trim();
+  if (txt.includes('Samsung Display')) return 'Samsung Display';
+  const cm = txt.match(/(BOE|CSOT|Tianma|Visionox|SDC)[^,.)·]*/i);
+  return cm ? cm[0].trim() : '—';
+}
+
+/* ── initDashboard: called by models/_index.js after all models loaded ── */
+window.initDashboard = function () {
+  MODELS = Object.entries(window.VOC_MODELS || {}).map(([key, m]) => ({
+    key,
+    name:      m.name || key,
+    brand:     m.brand || 'Unknown',
+    segment:   m.segment || '—',
+    launch:    parseLaunch(m.launch),
+    priceUSD:  m.priceUSD || 500,
+    panel:     parsePanel(m.specs),
+    supplier:  extractSupplier(m.productInsights),
+    sdcSupply: m.sdcSupply || false,
+  }));
+
+  // Sort by launch date
+  MODELS.sort((a, b) => a.launch.localeCompare(b.launch));
+
+  buildPills();
+  buildLegend();
+  render();
+};
 
 const BRAND_COLORS = {
   Samsung: '#1428A0',
@@ -259,7 +196,7 @@ const BRAND_COLORS = {
   realme:  '#D4850A',
 };
 
-const BRANDS = [...new Set(MODELS.map(m => m.brand))];
+// BRANDS is derived dynamically from MODELS inside buildPills/buildLegend
 
 // State
 let activeBrands = new Set();
@@ -429,14 +366,12 @@ function hoverOff() {
 function toggleBrand(brand) {
   if (activeBrands.has(brand)) activeBrands.delete(brand);
   else activeBrands.add(brand);
-  selectedKey = null;
   updatePills();
   render();
 }
 function resetFilters() {
   activeBrands.clear();
   sdcOnly = false;
-  selectedKey = null;
   document.getElementById('sdc-track').classList.remove('on');
   updatePills();
   render();
@@ -457,8 +392,9 @@ function updatePills() {
 
 // Build brand pills
 function buildPills() {
+  const brands = [...new Set(MODELS.map(m => m.brand))];
   const wrap = document.getElementById('brand-pills');
-  wrap.innerHTML = BRANDS.map(b => {
+  wrap.innerHTML = brands.map(b => {
     const c = BRAND_COLORS[b] || '#888';
     return `<button class="brand-pill" data-brand="${b}"
       style="color:${c};border-color:${c};background:${c}18;"
@@ -468,8 +404,9 @@ function buildPills() {
 
 // Legend
 function buildLegend() {
+  const brands = [...new Set(MODELS.map(m => m.brand))];
   const el = document.getElementById('legend');
-  let h = BRANDS.map(b => {
+  let h = brands.map(b => {
     const c = BRAND_COLORS[b] || '#888';
     return `<div class="leg-item"><div class="leg-dot" style="background:${c}"></div>${b}</div>`;
   }).join('');
@@ -479,11 +416,9 @@ function buildLegend() {
   el.innerHTML = h;
 }
 
-// Init
-buildPills();
-buildLegend();
-render();
 window.addEventListener('resize', () => requestAnimationFrame(render));
 </script>
+<!-- 모델 데이터 동적 로딩 — 새 모델은 models/_index.js의 MODEL_KEYS에 추가만 하면 자동 반영 -->
+<script src="models/_index.js"></script>
 </body>
 </html>

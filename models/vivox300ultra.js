@@ -11,6 +11,8 @@ window.VOC_MODELS['vivox300ultra'] = {
     market: '중국 + 글로벌',
     date: '2026.04.15',
     sampleN: 59,
+    priceUSD: 1100,
+    sdcSupply: false,
     conclusion: 'Zeiss 협업 카메라 성능 우수(CSI +28.8), 2K 디스플레이 야외 가시성 최강(DSI +21.5), 배터리 충분(BSI +24.5). 카메라 모듈 두께와 글로벌 가격 전략 보완 필요.',
 
     kpi: {

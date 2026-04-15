@@ -11,6 +11,8 @@ window.VOC_MODELS['s26u'] = {
     market: '글로벌 + 중국',
     date: '2026.04.15',
     sampleN: 52,
+    priceUSD: 1300,
+    sdcSupply: true,
     conclusion: '⚠️ Privacy Display 불만 급격히 심화. 텍스트 흐릿함·두통·눈피로 불만 폭증 → 삼성 공식 인정(3/17). MKBHD·Mrwhosetheboss 비판. DSI +16→추정 대폭 하락. 60W 충전·21% 열관리는 확고한 강점(BSI +80). Privacy Display 혁신 vs 사용성 트레이드오프 핵심 이슈.',
 
     kpi: {
