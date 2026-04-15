@@ -502,6 +502,7 @@
       <button class="sidebar-btn active" onclick="switchTab('news', this)">📰 Daily News</button>
       <button class="sidebar-btn" onclick="switchTab('voc', this)">📊 제품별 VOC 분석</button>
       <button class="sidebar-btn" onclick="switchTab('specs', this)">📋 제품 스펙</button>
+      <button class="sidebar-btn" onclick="switchTab('map', this)">🗺️ 포지셔닝 맵</button>
     </div>
     <div class="sidebar-footer">Samsung Display · SDC</div>
   </div>
@@ -657,6 +658,13 @@
         </div>
       </div>
     </div><!-- /news-tab -->
+
+    <!-- MAP TAB -->
+    <div class="tab-section" id="map-tab">
+      <iframe id="map-iframe" src="positioning_map.html"
+        style="width:100%;height:calc(100vh - 80px);border:none;border-radius:10px;display:block;"
+        title="포지셔닝 맵"></iframe>
+    </div>
 
     <!-- SPECS TAB -->
     <div class="tab-section" id="specs-tab">
@@ -1486,6 +1494,11 @@ function switchTab(tab, btn) {
   btn.classList.add('active');
   if (tab === 'news' && typeof updateNewsDate === 'function') updateNewsDate();
   if (tab === 'specs') initSpecsTab();
+  if (tab === 'map') {
+    // iframe이 이미 로드됐으면 재로드 없이 그대로 유지
+    const iframe = document.getElementById('map-iframe');
+    if (!iframe.src) iframe.src = 'positioning_map.html';
+  }
 }
 </script>
 <script src="news/news_data.js"></script>
