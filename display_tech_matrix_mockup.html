@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Display Tech Matrix — Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif; background: #f0f4f8; color: #0f172a; font-size: 13px; line-height: 1.6; }
+  .page { max-width: 1240px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  /* ── HERO BANNER ── */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e40af 100%);
+    border-radius: 16px; padding: 28px 32px; margin-bottom: 28px; color: #fff; position: relative; overflow: hidden;
+  }
+  .hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 240px; height: 240px; background: radial-gradient(circle, rgba(59,130,246,0.25), transparent 70%); }
+  .hero-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #93c5fd; margin-bottom: 8px; }
+  .hero h1 { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; line-height: 1.2; }
+  .hero-sub { font-size: 12px; color: #94a3b8; margin-top: 8px; }
+  .hero-meta { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  .hero-chip { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 4px 12px; font-size: 11px; color: #cbd5e1; font-weight: 600; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 28px; }
+  .sec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .sec-badge { background: linear-gradient(135deg, #1e40af, #3b82f6); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 4px; letter-spacing: 0.5px; }
+  .sec-title { font-size: 13px; font-weight: 800; color: #1e293b; letter-spacing: -0.2px; }
+  .sec-sub { font-size: 11px; color: #64748b; margin-left: auto; }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card { background: #fff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.07); padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+  /* ──────────────────────────────────────────
+     BLOCK A — Tech 항목별 체감 전환율
+  ────────────────────────────────────────── */
+  .tech-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .tech-label { font-size: 11px; font-weight: 700; color: #334155; width: 108px; flex-shrink: 0; }
+  .tech-bar-wrap { flex: 1; background: #f1f5f9; border-radius: 6px; height: 22px; overflow: hidden; display: flex; }
+  .tech-bar-pos { height: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: 10px; font-weight: 700; color: #fff; border-radius: 0; transition: width .4s; }
+  .tech-bar-neg { height: 100%; display: flex; align-items: center; padding-left: 6px; font-size: 10px; font-weight: 700; color: #fff; }
+  .tech-n { font-size: 10px; color: #94a3b8; width: 30px; text-align: right; flex-shrink: 0; }
+  .tech-pct { font-size: 11px; font-weight: 800; width: 36px; text-align: right; flex-shrink: 0; }
+  .pct-hi  { color: #16a34a; }
+  .pct-mid { color: #d97706; }
+  .pct-lo  { color: #dc2626; }
+
+  .legend { display: flex; gap: 16px; margin-bottom: 14px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #64748b; font-weight: 600; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ──────────────────────────────────────────
+     BLOCK B — 소구점 달성 히트맵
+  ────────────────────────────────────────── */
+  .heatmap-wrap { overflow-x: auto; }
+  .heatmap { width: 100%; border-collapse: separate; border-spacing: 3px; }
+  .heatmap th { font-size: 10px; font-weight: 700; color: #64748b; text-align: center; padding: 4px 6px; letter-spacing: 0.3px; }
+  .heatmap td.model-col { font-size: 10px; font-weight: 700; color: #1e293b; padding: 4px 8px 4px 0; white-space: nowrap; }
+  .heatmap td.brand { font-size: 9px; color: #94a3b8; display: block; font-weight: 500; }
+  .cell {
+    width: 68px; height: 36px; border-radius: 6px; text-align: center;
+    font-size: 10px; font-weight: 700; padding: 4px 4px;
+    line-height: 1.3; cursor: default;
+  }
+  .cell-ok   { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+  .cell-part { background: #fef9c3; color: #92400e; border: 1px solid #fde047; }
+  .cell-neg  { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+  .cell-na   { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
+  .cell small { display: block; font-size: 9px; font-weight: 500; opacity: 0.8; margin-top: 1px; }
+
+  /* ──────────────────────────────────────────
+     BLOCK C — DSI 기여 분해
+  ────────────────────────────────────────── */
+  .model-selector-c { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .ms-btn { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 12px; font-size: 10px; font-weight: 700; cursor: pointer; color: #475569; transition: all .2s; }
+  .ms-btn.active { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border-color: #3b82f6; box-shadow: 0 0 10px rgba(59,130,246,0.3); }
+  .dsi-total { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+  .dsi-val { font-size: 24px; font-weight: 900; }
+  .dsi-pos { color: #16a34a; }
+  .dsi-neg { color: #dc2626; }
+  .dsi-label { font-size: 11px; color: #64748b; }
+
+  .decomp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .decomp-label { font-size: 11px; font-weight: 700; color: #334155; width: 90px; flex-shrink: 0; }
+  .decomp-bar-wrap { flex: 1; position: relative; height: 20px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
+  .decomp-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; padding: 0 6px; font-size: 10px; font-weight: 700; color: #fff; }
+  .bar-pos  { background: linear-gradient(90deg, #22c55e, #16a34a); }
+  .bar-neg  { background: linear-gradient(90deg, #ef4444, #dc2626); }
+  .decomp-val { font-size: 11px; font-weight: 800; width: 32px; text-align: right; }
+
+  /* ──────────────────────────────────────────
+     BLOCK D — SDC vs 非SDC
+  ────────────────────────────────────────── */
+  .sdc-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .sdc-card { border-radius: 10px; padding: 16px; text-align: center; }
+  .sdc-card.sdc  { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #93c5fd; }
+  .sdc-card.nsdc { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #86efac; }
+  .sdc-card .label { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .sdc-card.sdc .label  { color: #1e40af; }
+  .sdc-card.nsdc .label { color: #15803d; }
+  .sdc-card .dsi-big { font-size: 32px; font-weight: 900; line-height: 1; }
+  .sdc-card.sdc  .dsi-big { color: #f59e0b; }
+  .sdc-card.nsdc .dsi-big { color: #16a34a; }
+  .sdc-card .sub { font-size: 10px; color: #64748b; margin-top: 4px; }
+  .sdc-card .models-list { font-size: 9px; color: #94a3b8; margin-top: 8px; line-height: 1.8; }
+
+  .sdc-scatter-wrap { margin-top: 4px; }
+  .scatter-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .scatter-model { font-size: 10px; font-weight: 700; width: 110px; flex-shrink: 0; color: #1e293b; }
+  .scatter-supply { font-size: 9px; padding: 1px 6px; border-radius: 10px; flex-shrink: 0; font-weight: 700; }
+  .scatter-supply.sdc  { background: #dbeafe; color: #1d4ed8; }
+  .scatter-supply.nsdc { background: #dcfce7; color: #15803d; }
+  .scatter-bar-wrap { flex: 1; background: #f1f5f9; border-radius: 4px; height: 18px; overflow: hidden; }
+  .scatter-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; padding: 0 6px; font-size: 10px; font-weight: 700; color: #fff; min-width: 20px; }
+  .scatter-dsi { font-size: 11px; font-weight: 800; width: 44px; text-align: right; }
+
+  /* ──────────────────────────────────────────
+     INSIGHT BOX
+  ────────────────────────────────────────── */
+  .insight-box { background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1px solid #fcd34d; border-radius: 10px; padding: 16px 18px; margin-top: 20px; }
+  .insight-title { font-size: 11px; font-weight: 800; color: #92400e; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+  .insight-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; }
+  .insight-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .insight-text { font-size: 11px; color: #78350f; line-height: 1.5; }
+  .insight-text strong { color: #92400e; }
+
+  /* ── FOOTER NOTE ── */
+  .footnote { font-size: 10px; color: #94a3b8; margin-top: 20px; padding-top: 12px; border-top: 1px solid #e2e8f0; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width: 760px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Section 7-B Mockup · Display Tech Matrix</div>
+    <h1>디스플레이 세부 Tech 비교 매트릭스</h1>
+    <div class="hero-sub">스펙 수치 → 사용자 체감 전환 효율 분해 · 소구점 달성 히트맵 · SDC 공급 효과 정량화</div>
+    <div class="hero-meta">
+      <span class="hero-chip">📱 7개 주요 모델</span>
+      <span class="hero-chip">🔬 실제 VOC 데이터 기반</span>
+      <span class="hero-chip">📐 상품기획 의사결정 지원</span>
+      <span class="hero-chip">⚡ voc_dashboard_unified.html 통합 예정</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       BLOCK A — Tech 항목별 체감 전환율
+  ══════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge">Block A</span>
+      <span class="sec-title">디스플레이 Tech 항목별 체감 전환율</span>
+      <span class="sec-sub">7개 모델 VOC 집계 (Display 관련 언급 n=183 합산)</span>
+    </div>
+    <div class="card">
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>긍정 언급</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>부정 언급</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f1f5f9; border:1px solid #e2e8f0"></div>미언급</div>
+      </div>
+
+      <!-- 밝기 -->
+      <div class="tech-row">
+        <div class="tech-label">🌟 밝기 (Brightness)</div>
+        <div class="tech-bar-wrap">
+          <div class="tech-bar-pos bar-pos" style="width:87%">87%</div>
+          <div class="tech-bar-neg bar-neg" style="width:4%; background:#ef4444"></div>
+        </div>
+        <div class="tech-n">n=69</div>
+        <div class="tech-pct pct-hi">+83pt</div>
+      </div>
+
+      <!-- PWM / 눈피로 -->
+      <div class="tech-row">
+        <div class="tech-label">👁️ PWM / 눈피로</div>
+        <div class="tech-bar-wrap">
+          <div class="tech-bar-pos bar-pos" style="width:95%">95%</div>
+          <div class="tech-bar-neg bar-neg" style="width:2%; background:#ef4444"></div>
+        </div>
+        <div class="tech-n">n=41</div>
+        <div class="tech-pct pct-hi">+93pt</div>
+      </div>
+
+      <!-- 야외 가시성 -->
+      <div class="tech-row">
+        <div class="tech-label">☀️ 야외 가시성</div>
+        <div class="tech-bar-wrap">
+          <div class="tech-bar-pos bar-pos" style="width:89%">89%</div>
+          <div class="tech-bar-neg bar-neg" style="width:6%; background:#ef4444"></div>
+        </div>
+        <div class="tech-n">n=27</div>
+        <div class="tech-pct pct-hi">+83pt</div>
+      </div>
+
+      <!-- LTPO 주사율 -->
+      <div class="tech-row">
+        <div class="tech-label">⚡ LTPO / 주사율</div>
+        <div class="tech-bar-wrap">
+          <div class="tech-bar-pos bar-pos" style="width:72%">72%</div>
+          <div class="tech-bar-neg bar-neg" style="width:5%; background:#ef4444"></div>
+        </div>
+        <div class="tech-n">n=22</div>
+        <div class="tech-pct pct-mid">+67pt</div>
+      </div>
+
+      <!-- 해상도 -->
+      <div class="tech-row">
+        <div class="tech-label">📐 해상도</div>
+        <div class="tech-bar-wrap">
+          <div class="tech-bar-pos bar-pos" style="width:58%">58%</div>
+          <div class="tech-bar-neg bar-neg" style="width:22%; background:#ef4444">22%</div>
+        </div>
+        <div class="tech-n">n=18</div>
+        <div class="tech-pct pct-mid">+36pt</div>
+      </div>
+
+      <!-- 저밝기 -->
+      <div class="tech-row">
+        <div class="tech-label">🌙 저밝기 (1nit~)</div>
+        <div class="tech-bar-wrap">
+          <div class="tech-bar-pos bar-pos" style="width:100%">100%</div>
+        </div>
+        <div class="tech-n">n=12</div>
+        <div class="tech-pct pct-hi">+100pt</div>
+      </div>
+
+      <!-- Privacy / 특수기술 -->
+      <div class="tech-row">
+        <div class="tech-label">🔒 Privacy / 특수 Tech</div>
+        <div class="tech-bar-wrap">
+          <div class="tech-bar-pos bar-pos" style="width:33%">33%</div>
+          <div class="tech-bar-neg bar-neg" style="width:55%; background:#ef4444">55%</div>
+        </div>
+        <div class="tech-n">n=7</div>
+        <div class="tech-pct pct-lo">−22pt</div>
+      </div>
+
+      <!-- 색감 -->
+      <div class="tech-row">
+        <div class="tech-label">🎨 색감 / 정확도</div>
+        <div class="tech-bar-wrap">
+          <div class="tech-bar-pos bar-pos" style="width:82%">82%</div>
+          <div class="tech-bar-neg bar-neg" style="width:8%; background:#ef4444"></div>
+        </div>
+        <div class="tech-n">n=11</div>
+        <div class="tech-pct pct-hi">+74pt</div>
+      </div>
+
+      <div class="insight-box" style="margin-top:14px;">
+        <div class="insight-title">💡 Block A 핵심 인사이트</div>
+        <div class="insight-row">
+          <div class="insight-icon">①</div>
+          <div class="insight-text"><strong>밝기·PWM·저밝기는 "투자 확실"</strong> — 체감 전환율 83~100pt. 스펙 올리면 VOC에서 반드시 긍정 언급.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-icon">②</div>
+          <div class="insight-text"><strong>해상도는 "당연시" 구간 진입</strong> — 전환율 +36pt. QHD+ 이상은 기대치로 자리잡혀 긍정 유발력 급감. 차기 소구점으로 부적합.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-icon">③</div>
+          <div class="insight-text"><strong>Privacy·특수 Tech은 위험 영역</strong> — −22pt. 혁신 클레임은 높으나 실사용 불만 급증. 미완성 기술 소구 금지 신호.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       BLOCK B — 소구점 달성 히트맵
+  ══════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge">Block B</span>
+      <span class="sec-title">디스플레이 소구점 달성 히트맵</span>
+      <span class="sec-sub">공식 클레임 vs 실제 VOC 반응 (기존 launchTable 데이터 재활용)</span>
+    </div>
+    <div class="card">
+      <div class="legend" style="margin-bottom:12px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#dcfce7; border:1px solid #86efac"></div>부합 (≥80% 긍정)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fef9c3; border:1px solid #fde047"></div>부분부합 (50~79%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fee2e2; border:1px solid #fca5a5"></div>미달 / 역효과</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f1f5f9; border:1px solid #e2e8f0"></div>소구점 없음</div>
+      </div>
+      <div class="heatmap-wrap">
+        <table class="heatmap">
+          <thead>
+            <tr>
+              <th style="text-align:left; width:130px">모델</th>
+              <th>밝기<br><small>Nit</small></th>
+              <th>PWM<br><small>눈피로</small></th>
+              <th>LTPO<br><small>주사율</small></th>
+              <th>야외<br><small>가시성</small></th>
+              <th>저밝기<br><small>1nit~</small></th>
+              <th>색감<br><small>정확도</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="model-col">Galaxy S26 Ultra<span class="brand">Samsung · SDC ✦</span></td>
+              <td><div class="cell cell-ok">✅<small>2600nit</small></div></td>
+              <td><div class="cell cell-ok">✅<small>2160Hz</small></div></td>
+              <td><div class="cell cell-ok">✅<small>LTPO 1~120</small></div></td>
+              <td><div class="cell cell-ok">✅<small>야외 극찬</small></div></td>
+              <td><div class="cell cell-neg">⚠️<small>Privacy 이슈</small></div></td>
+              <td><div class="cell cell-ok">✅<small>QHD+</small></div></td>
+            </tr>
+            <tr>
+              <td class="model-col">Xiaomi 17 Ultra<span class="brand">Xiaomi · BOE M10</span></td>
+              <td><div class="cell cell-ok">✅<small>3500nit</small></div></td>
+              <td><div class="cell cell-ok">✅<small>2160Hz</small></div></td>
+              <td><div class="cell cell-ok">✅<small>LTPO 1~120</small></div></td>
+              <td><div class="cell cell-ok">✅<small>글로벌 극찬</small></div></td>
+              <td><div class="cell cell-ok">✅<small>1nit DC전환</small></div></td>
+              <td><div class="cell cell-part">△<small>1200P 일부↓</small></div></td>
+            </tr>
+            <tr>
+              <td class="model-col">OPPO Find X9 Pro<span class="brand">OPPO · BOE</span></td>
+              <td><div class="cell cell-ok">✅<small>3600nit</small></div></td>
+              <td><div class="cell cell-ok">✅<small>3840Hz</small></div></td>
+              <td><div class="cell cell-ok">✅<small>LTPO</small></div></td>
+              <td><div class="cell cell-ok">✅<small>완전부합</small></div></td>
+              <td><div class="cell cell-ok">✅<small>1nit 莱茵</small></div></td>
+              <td><div class="cell cell-ok">✅<small>색감 정확</small></div></td>
+            </tr>
+            <tr>
+              <td class="model-col">iPhone 17 Pro<span class="brand">Apple · SDC ✦</span></td>
+              <td><div class="cell cell-ok">✅<small>3000nit</small></div></td>
+              <td><div class="cell cell-ok">✅<small>480Hz 저주파</small></div></td>
+              <td><div class="cell cell-ok">✅<small>LTPO ProMotion</small></div></td>
+              <td><div class="cell cell-ok">✅<small>항반사 극찬</small></div></td>
+              <td><div class="cell cell-na">—<small>소구점 없음</small></div></td>
+              <td><div class="cell cell-ok">✅<small>색감 자연스러움</small></div></td>
+            </tr>
+            <tr>
+              <td class="model-col">vivo X300 Ultra<span class="brand">vivo · CSOT/BOE</span></td>
+              <td><div class="cell cell-part">△<small>1946nit</small></div></td>
+              <td><div class="cell cell-ok">✅<small>2160Hz</small></div></td>
+              <td><div class="cell cell-ok">✅<small>LTPO 144Hz</small></div></td>
+              <td><div class="cell cell-ok">✅<small>야외 극찬</small></div></td>
+              <td><div class="cell cell-na">—<small>미확인</small></div></td>
+              <td><div class="cell cell-ok">✅<small>Zeiss 정확도</small></div></td>
+            </tr>
+            <tr>
+              <td class="model-col">OnePlus 15<span class="brand">OPPO · BOE T10</span></td>
+              <td><div class="cell cell-part">△<small>1.5K, 소구 약</small></div></td>
+              <td><div class="cell cell-ok">✅<small>2160Hz TÜV5.0</small></div></td>
+              <td><div class="cell cell-ok">✅<small>165Hz LTPO</small></div></td>
+              <td><div class="cell cell-ok">✅<small>야외 좋음</small></div></td>
+              <td><div class="cell cell-ok">✅<small>0.5nit</small></div></td>
+              <td><div class="cell cell-na">—<small>미확인</small></div></td>
+            </tr>
+            <tr>
+              <td class="model-col">iQOO 15 Ultra<span class="brand">iQOO · M14패널</span></td>
+              <td><div class="cell cell-ok">✅<small>2600nit</small></div></td>
+              <td><div class="cell cell-ok">✅<small>2160Hz</small></div></td>
+              <td><div class="cell cell-ok">✅<small>144Hz LTPO</small></div></td>
+              <td><div class="cell cell-ok">✅<small>야외 우수</small></div></td>
+              <td><div class="cell cell-na">—<small>소구점 없음</small></div></td>
+              <td><div class="cell cell-ok">✅<small>DCI-P3 118%</small></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="insight-box" style="margin-top:14px; background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border-color:#7dd3fc;">
+        <div class="insight-title" style="color:#075985;">💡 Block B 핵심 인사이트</div>
+        <div class="insight-row">
+          <div class="insight-icon">①</div>
+          <div class="insight-text" style="color:#0c4a6e;"><strong>LTPO·PWM은 전 모델 부합</strong> — 이미 필수 스펙으로 자리잡힘. 마케팅 소구점보다 "기본 요건" 관리 항목으로 전환 필요.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-icon">②</div>
+          <div class="insight-text" style="color:#0c4a6e;"><strong>밝기 3000nit 이상 = 부합, 미만 = 부분부합</strong> — vivo X300U(1946nit), OP15 기준 전환 임계점 확인. <strong>SDC 공급 시 3000nit 이상 필수 스펙</strong> 근거.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-icon">③</div>
+          <div class="insight-text" style="color:#0c4a6e;"><strong>1nit 저밝기 = 확실한 차별화</strong> — 소구하는 모델(Xiaomi·OPPO)은 전부 부합. 미소구 모델(Apple·iQOO)은 비교 불가. 차기 세대 소구점 확보 필요.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       BLOCK C — DSI 기여 분해
+  ══════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge">Block C</span>
+      <span class="sec-title">DSI 기여 항목 분해</span>
+      <span class="sec-sub">어떤 Tech가 DSI를 올리고 내리는가</span>
+    </div>
+    <div class="grid-2">
+      <!-- Xiaomi 17U -->
+      <div class="card">
+        <div style="font-size:11px; font-weight:800; color:#1e293b; margin-bottom:4px;">Xiaomi 17 Ultra <span style="font-size:10px; color:#94a3b8; font-weight:500;">BOE M10</span></div>
+        <div class="dsi-total">
+          <div class="dsi-val dsi-pos">DSI +70</div>
+          <div class="dsi-label">전체 긍정 80.9% / 부정 12.8%<br>n=47 · 고품질 표본</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">🌟 밝기</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-pos" style="width:100%">+28</div></div>
+          <div class="decomp-val" style="color:#16a34a">+28</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">👁️ PWM 눈피로</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-pos" style="width:64%">+18</div></div>
+          <div class="decomp-val" style="color:#16a34a">+18</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">☀️ 야외</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-pos" style="width:54%">+15</div></div>
+          <div class="decomp-val" style="color:#16a34a">+15</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">🌙 저밝기</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-pos" style="width:43%">+12</div></div>
+          <div class="decomp-val" style="color:#16a34a">+12</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">📐 해상도</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-neg" style="width:11%">−3</div></div>
+          <div class="decomp-val" style="color:#ef4444">−3</div>
+        </div>
+        <div style="border-top:1px dashed #e2e8f0; margin: 8px 0; padding-top: 8px; font-size:10px; color:#64748b;">
+          💬 3500nit 밝기가 DSI의 40%를 담당. QHD+(1200P) 선택으로 해상도 기여 음수.
+        </div>
+      </div>
+
+      <!-- Samsung S26 Ultra -->
+      <div class="card">
+        <div style="font-size:11px; font-weight:800; color:#1e293b; margin-bottom:4px;">Galaxy S26 Ultra <span style="font-size:10px; color:#1d4ed8; font-weight:600;">SDC ✦</span></div>
+        <div class="dsi-total">
+          <div class="dsi-val dsi-neg">DSI −22</div>
+          <div class="dsi-label">긍정 57.1% / 부정 28.6%<br>n=52 · Privacy 이슈 심화</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">🌟 밝기</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-pos" style="width:54%">+15</div></div>
+          <div class="decomp-val" style="color:#16a34a">+15</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">☀️ 야외</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-pos" style="width:29%">+8</div></div>
+          <div class="decomp-val" style="color:#16a34a">+8</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">👁️ PWM</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-pos" style="width:21%">+6</div></div>
+          <div class="decomp-val" style="color:#16a34a">+6</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">🔒 Privacy 불만</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-neg" style="width:100%">−36 (강불만)</div></div>
+          <div class="decomp-val" style="color:#ef4444; font-size:10px">−36</div>
+        </div>
+        <div class="decomp-row">
+          <div class="decomp-label">🔒 Privacy 텍스트</div>
+          <div class="decomp-bar-wrap"><div class="decomp-bar bar-neg" style="width:54%">−15</div></div>
+          <div class="decomp-val" style="color:#ef4444">−15</div>
+        </div>
+        <div style="border-top:1px dashed #e2e8f0; margin: 8px 0; padding-top: 8px; font-size:10px; color:#64748b;">
+          ⚠️ 밝기·야외 긍정 +29pt를 Privacy 불만 −51pt가 상쇄. 신기술 1개가 DSI를 −51pt 끌어내림.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       BLOCK D — SDC vs 非SDC
+  ══════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge">Block D</span>
+      <span class="sec-title">SDC 공급 여부 × DSI 상관 분석</span>
+      <span class="sec-sub">sdcSupply 필드 기반 자동 집계</span>
+    </div>
+    <div class="card">
+      <div class="sdc-compare">
+        <div class="sdc-card sdc">
+          <div class="label">SDC 공급 모델</div>
+          <div class="dsi-big">+20</div>
+          <div class="sub">평균 DSI (n=2모델)</div>
+          <div class="models-list">Galaxy S26 Ultra (−22)<br>iPhone 17 Pro (+62)</div>
+        </div>
+        <div class="sdc-card nsdc">
+          <div class="label" style="color:#15803d;">非SDC 모델</div>
+          <div class="dsi-big" style="color:#16a34a;">+68</div>
+          <div class="sub">평균 DSI (n=5모델)</div>
+          <div class="models-list">Xiaomi 17U (+70) · FX9P (+75)<br>OP15 (+76) · iQOO15U (+100)<br>X300U (+21.5)</div>
+        </div>
+      </div>
+
+      <!-- scatter -->
+      <div style="font-size:11px; font-weight:700; color:#475569; margin-bottom:10px; margin-top:4px;">모델별 DSI 분포 (높을수록 우수)</div>
+      <div class="sdc-scatter-wrap">
+        <div class="scatter-row">
+          <div class="scatter-model">iQOO 15 Ultra</div>
+          <span class="scatter-supply nsdc">非SDC</span>
+          <div class="scatter-bar-wrap"><div class="scatter-bar" style="width:100%; background:linear-gradient(90deg,#22c55e,#16a34a);">+100</div></div>
+          <div class="scatter-dsi" style="color:#16a34a">+100</div>
+        </div>
+        <div class="scatter-row">
+          <div class="scatter-model">OnePlus 15</div>
+          <span class="scatter-supply nsdc">非SDC</span>
+          <div class="scatter-bar-wrap"><div class="scatter-bar" style="width:76%; background:linear-gradient(90deg,#22c55e,#16a34a);">+76</div></div>
+          <div class="scatter-dsi" style="color:#16a34a">+76</div>
+        </div>
+        <div class="scatter-row">
+          <div class="scatter-model">OPPO Find X9 Pro</div>
+          <span class="scatter-supply nsdc">非SDC</span>
+          <div class="scatter-bar-wrap"><div class="scatter-bar" style="width:75%; background:linear-gradient(90deg,#22c55e,#16a34a);">+75</div></div>
+          <div class="scatter-dsi" style="color:#16a34a">+75</div>
+        </div>
+        <div class="scatter-row">
+          <div class="scatter-model">Xiaomi 17 Ultra</div>
+          <span class="scatter-supply nsdc">非SDC</span>
+          <div class="scatter-bar-wrap"><div class="scatter-bar" style="width:70%; background:linear-gradient(90deg,#22c55e,#16a34a);">+70</div></div>
+          <div class="scatter-dsi" style="color:#16a34a">+70</div>
+        </div>
+        <div class="scatter-row">
+          <div class="scatter-model">iPhone 17 Pro</div>
+          <span class="scatter-supply sdc">SDC ✦</span>
+          <div class="scatter-bar-wrap"><div class="scatter-bar" style="width:62%; background:linear-gradient(90deg,#3b82f6,#2563eb);">+62</div></div>
+          <div class="scatter-dsi" style="color:#2563eb">+62</div>
+        </div>
+        <div class="scatter-row">
+          <div class="scatter-model">vivo X300 Ultra</div>
+          <span class="scatter-supply nsdc">非SDC</span>
+          <div class="scatter-bar-wrap"><div class="scatter-bar" style="width:21.5%; background:linear-gradient(90deg,#22c55e,#16a34a);">+21</div></div>
+          <div class="scatter-dsi" style="color:#16a34a">+21.5</div>
+        </div>
+        <div class="scatter-row">
+          <div class="scatter-model">Galaxy S26 Ultra</div>
+          <span class="scatter-supply sdc">SDC ✦</span>
+          <div class="scatter-bar-wrap"><div class="scatter-bar" style="width:22%; background:linear-gradient(90deg,#ef4444,#dc2626);">−22</div></div>
+          <div class="scatter-dsi" style="color:#ef4444">−22</div>
+        </div>
+      </div>
+
+      <div class="insight-box" style="margin-top:14px; background:linear-gradient(135deg,#fdf4ff,#fae8ff); border-color:#d8b4fe;">
+        <div class="insight-title" style="color:#6b21a8;">⚠️ Block D 해석 주의</div>
+        <div class="insight-row">
+          <div class="insight-icon">①</div>
+          <div class="insight-text" style="color:#581c87;"><strong>SDC 평균 DSI +20이 낮은 원인은 패널 품질이 아님</strong> — S26U DSI −22는 Privacy Display 신기술 불만이 원인. 패널 기술 자체는 iPhone 17 Pro(+62)로 최고 수준 입증.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-icon">②</div>
+          <div class="insight-text" style="color:#581c87;"><strong>SDC 공급 + 신기술 리스크 관리 = DSI 최고치 가능</strong> — iPhone 17 Pro 수준의 검증된 소구점만 적용 시 SDC 패널의 잠재 DSI는 非SDC를 상회 추정.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-icon">③</div>
+          <div class="insight-text" style="color:#581c87;"><strong>결론 제안 (상품기획)</strong>: 고객사에 "3500nit 이상 + 2160Hz PWM + 1nit 저밝기" 패키지를 SDC로 공급 시 DSI +70 이상 달성 가능 근거 확보 필요 → 17 Ultra 급 패널 스펙으로 S26U 다음 세대 경쟁사 침투 전략.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTNOTE -->
+  <div class="footnote">
+    ※ 본 목업은 voc_dashboard_unified.html Section 7-B 통합 전 기획 검토용 시각화입니다. 수치는 기존 models/{key}.js VOC 데이터 재집계 기준.
+    DSI 산식: Display긍정% − Display부정% − (Display강불만% × 0.5) / SDC 필드: sdcSupply: true/false (기존 데이터) / n=7개 모델 합산 (2025.10~2026.04)
+  </div>
+
+</div>
+</body>
+</html>

@@ -55,11 +55,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR
 #chart-svg { width: 100%; display: block; overflow: visible; }
 
 /* Bubble styles */
-.bubble { cursor: pointer; transition: opacity 0.2s; }
-.bubble circle { transition: r 0.1s, filter 0.1s; }
-.bubble:hover circle { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25)); }
-.bubble.faded { opacity: 0.1; }
-.bubble.selected circle { stroke-width: 3.5 !important; }
+.bubble { cursor: pointer; transition: opacity 0.18s, transform 0.15s; transform-origin: center; }
+.bubble:hover { transform: scale(1.13); }
+.bubble:hover circle:first-of-type {
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.32)) drop-shadow(0 0 8px rgba(255,255,255,0.15));
+}
+.bubble.faded { opacity: 0.09; pointer-events: none; }
+.bubble.selected circle:first-of-type { stroke-width: 3 !important; }
 
 /* Tooltip */
 #tooltip {
@@ -201,6 +203,32 @@ const BRAND_COLORS = {
   iQOO:   '#BB0080',
 };
 
+/* 색상 유틸 */
+function lightenHex(hex, amt) {
+  const n = parseInt(hex.replace('#',''), 16);
+  const r = Math.min(255, (n >> 16) + amt);
+  const g = Math.min(255, ((n >> 8) & 0xFF) + amt);
+  const b = Math.min(255, (n & 0xFF) + amt);
+  return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+}
+
+/* 모델명 축약: 브랜드명 제거 + 최대 8자 */
+function shortLabel(name) {
+  return name
+    .replace(/^(Samsung Galaxy|Samsung|Apple iPhone|Apple|Xiaomi|OPPO |vivo |iQOO |OnePlus |realme )/i, '')
+    .replace(/^Galaxy /i, '')
+    .replace(/^iPhone /i, '')
+    .trim();
+}
+/* 긴 라벨을 2줄로 분할 */
+function splitLabel(s) {
+  const words = s.split(' ');
+  if (words.length <= 1) return [s, ''];
+  if (words.length === 2) return [words[0], words[1]];
+  const mid = Math.ceil(words.length / 2);
+  return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+}
+
 // BRANDS is derived dynamically from MODELS inside buildPills/buildLegend
 
 // State
@@ -235,6 +263,34 @@ function render() {
   function yS(p) { return MT + cH - ((p - MIN_P) / (MAX_P - MIN_P)) * cH; }
 
   let s = '';
+
+  /* ── SVG Defs: 브랜드별 그라디언트 + 공통 필터 ── */
+  s += `<defs>`;
+  // 브랜드별 라디알 그라디언트
+  Object.entries(BRAND_COLORS).forEach(([brand, col]) => {
+    const light = lightenHex(col, 72);
+    s += `<radialGradient id="rg-${brand.toLowerCase()}" cx="38%" cy="28%" r="68%">
+      <stop offset="0%" stop-color="${light}"/>
+      <stop offset="100%" stop-color="${col}"/>
+    </radialGradient>`;
+  });
+  // 드롭섀도우 필터
+  s += `<filter id="f-shadow" x="-40%" y="-40%" width="180%" height="180%">
+    <feDropShadow dx="0" dy="2" stdDeviation="3.5" flood-color="#000" flood-opacity="0.20"/>
+  </filter>`;
+  // SDC 골드 글로우
+  s += `<filter id="f-sdc" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="4" result="blur"/>
+    <feFlood flood-color="#f59e0b" flood-opacity="0.55" result="color"/>
+    <feComposite in="color" in2="blur" operator="in" result="glow"/>
+    <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>`;
+  // 흰색 내부 하이라이트 마스크
+  s += `<radialGradient id="rg-shine" cx="42%" cy="28%" r="55%">
+    <stop offset="0%" stop-color="#fff" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>`;
+  s += `</defs>`;
 
   // Band backgrounds
   BANDS.forEach(b => {
@@ -275,28 +331,80 @@ function render() {
   s += `<text x="${ML+cW/2}" y="${H-6}" text-anchor="middle" font-size="10" fill="#94a3b8" font-weight="600">출시 타임라인</text>`;
 
   // Bubbles
-  const R = 17;
+  const R = 22;
   MODELS.forEach((m, i) => {
     const x = xS(m.launch);
     const y = yS(m.priceUSD);
-    const col = BRAND_COLORS[m.brand] || '#888';
+    const col  = BRAND_COLORS[m.brand] || '#888';
+    const gid  = `rg-${(m.brand||'x').toLowerCase()}`;
 
     let faded = false;
     if (activeBrands.size > 0 && !activeBrands.has(m.brand)) faded = true;
     if (sdcOnly && !m.sdcSupply) faded = true;
 
-    const strokeCol = m.sdcSupply ? '#f59e0b' : col;
-    const strokeW   = m.sdcSupply ? 3 : 1.5;
-    const opacity   = faded ? 0.1 : 1;
+    const opacity = faded ? 0.09 : 1;
 
-    const initials = {
-      Samsung:'S', Apple:'', Xiaomi:'Mi', OPPO:'O',
-      OnePlus:'1+', vivo:'V', iQOO:'iQ', realme:'Re'
-    }[m.brandOrig || m.brand] || (m.brand||'?')[0];
+    // 모델명 축약 → 2줄 분할
+    const lbl   = shortLabel(m.name);
+    const lines = splitLabel(lbl);
+    const hasTwo = lines[1].length > 0;
 
-    s += `<g class="bubble${faded?' faded':''}" data-key="${m.key}" style="opacity:${opacity};cursor:pointer;">`;
-    s += `<circle cx="${x}" cy="${y}" r="${R}" fill="${col}" fill-opacity="0.82" stroke="${strokeCol}" stroke-width="${strokeW}"/>`;
-    s += `<text x="${x}" y="${y+4}" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.95)" font-weight="800" pointer-events="none">${initials}</text>`;
+    // 선택 시 stroke ring 색
+    const ringCol = m.sdcSupply ? '#f59e0b' : col;
+
+    s += `<g class="bubble${faded?' faded':''}" data-key="${m.key}"
+      style="opacity:${opacity};cursor:pointer;" pointer-events="all">`;
+
+    // SDC 모델: 바깥 골드 글로우 링
+    if (m.sdcSupply) {
+      s += `<circle cx="${x}" cy="${y}" r="${R+5}" fill="none"
+        stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2.5"
+        stroke-opacity="0.7" pointer-events="none"/>`;
+    }
+
+    // 메인 버블 (그라디언트 + 그림자)
+    s += `<circle cx="${x}" cy="${y}" r="${R}"
+      fill="url(#${gid})"
+      stroke="${ringCol}" stroke-width="${m.sdcSupply ? 2.5 : 1.5}"
+      filter="url(#f-shadow)"
+      pointer-events="all"/>`;
+
+    // 내부 하이라이트 (유리 느낌)
+    s += `<circle cx="${x}" cy="${y}" r="${R}"
+      fill="url(#rg-shine)" pointer-events="none"/>`;
+
+    // 모델명 텍스트 (1줄 or 2줄)
+    const textY = hasTwo ? y - 3 : y + 4;
+    s += `<text x="${x}" y="${textY}" text-anchor="middle"
+      font-size="8" fill="#fff" font-weight="800"
+      letter-spacing="-0.2" pointer-events="none"
+      style="text-shadow:0 1px 3px rgba(0,0,0,0.5)">${lines[0]}</text>`;
+    if (hasTwo) {
+      s += `<text x="${x}" y="${y + 9}" text-anchor="middle"
+        font-size="7.5" fill="rgba(255,255,255,0.88)" font-weight="700"
+        pointer-events="none">${lines[1]}</text>`;
+    }
+
+    // LTPO 표시: 우상단 초록 도트
+    if (m.panel.ltpo) {
+      s += `<circle cx="${x + R - 5}" cy="${y - R + 5}" r="4.5"
+        fill="#10b981" stroke="#fff" stroke-width="1.5"
+        pointer-events="none"/>`;
+      s += `<text x="${x + R - 5}" y="${y - R + 8.5}" text-anchor="middle"
+        font-size="5.5" fill="#fff" font-weight="900"
+        pointer-events="none">L</text>`;
+    }
+
+    // SDC 공급 표시: 우하단 골드 별
+    if (m.sdcSupply) {
+      s += `<circle cx="${x + R - 5}" cy="${y + R - 5}" r="5"
+        fill="#f59e0b" stroke="#fff" stroke-width="1.5"
+        pointer-events="none"/>`;
+      s += `<text x="${x + R - 5}" y="${y + R - 1.5}" text-anchor="middle"
+        font-size="6.5" fill="#fff" font-weight="900"
+        pointer-events="none">S</text>`;
+    }
+
     s += `</g>`;
   });
 
@@ -418,7 +526,20 @@ function buildLegend() {
     return `<div class="leg-item"><div class="leg-dot" style="background:${c}"></div>${b}</div>`;
   }).join('');
   h += `<div class="leg-divider"></div>`;
-  h += `<div class="leg-item"><div class="leg-sdc"></div>SDC 공급</div>`;
+  h += `<div class="leg-divider"></div>`;
+  h += `<div class="leg-item">
+    <svg width="14" height="14" viewBox="0 0 14 14">
+      <circle cx="7" cy="7" r="6" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <circle cx="7" cy="7" r="4" fill="#f59e0b"/>
+      <text x="7" y="10.5" text-anchor="middle" font-size="5.5" fill="#fff" font-weight="900">S</text>
+    </svg>
+    SDC 공급</div>`;
+  h += `<div class="leg-item">
+    <svg width="14" height="14" viewBox="0 0 14 14">
+      <circle cx="7" cy="7" r="6" fill="#10b981"/>
+      <text x="7" y="10.5" text-anchor="middle" font-size="6" fill="#fff" font-weight="900">L</text>
+    </svg>
+    LTPO</div>`;
   h += `<div class="leg-item" style="color:#94a3b8;font-size:10px;">* 가격은 출시 시점 중국/글로벌 기준 USD 환산 추정값</div>`;
   el.innerHTML = h;
 }
