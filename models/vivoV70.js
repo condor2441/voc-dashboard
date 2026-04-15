@@ -95,11 +95,11 @@ window.VOC_MODELS['vivoV70'] = {
     ],
 
     productInsights: [
-      'Samsung AMOLED 탑재. SDC 기술 도입 기회: 극저온 PWM(2160Hz→3600Hz) + DC 하이브리드로 eye-care 고도화. India·SEA 시장 프리미엄 세그먼트 확대 타겟.',
-      'V70 → V70 Ultra 파생 전략 검토. 50MP 망원을 보급형으로 유지하고, Ultra는 200MP 망원 도입으로 차별화. V70은 "성능균형형" 포지셔닝.',
-      'BOE·Tianma 경쟁사 LTPO 60Hz 공급 확대 움직임. SDC는 고주사율 120Hz + PWM 조광 결합 차별화로 대응. 글로벌 OEM 아이폰 2027 경쟁에 대비.',
-      'ColorOS·FuntouchOS 소프트웨어 최적화 미흡이 유일한 약점. 게이밍 중 43.1°C 발열로 인한 성능 제약. 차세대: 발열 25% 감소 목표 + 배터리 7000mAh 시도.',
-      'V70 FE 출시(Low-cost variant) 계획 감지. SDC 공급 기회: 6.3" LTPO 90Hz + 1800nits + 60Hz 저주사율 선택지로 가성비 세그먼트 공략.'
+      'Samsung Display E6 AMOLED 탑재(확정). 6.59" FHD+ 1260×2750 / 120Hz LTPO / DC 디밍 / 1966nits @75%. BSI +52.8 우수 — SDC 기공급 패널의 배터리 효율·화질 균형 입증 완료. India·SEA 프리미엄 시장에서 경쟁사 BOE 차별화 성공.',
+      '디스플레이 VOC 해석(SDC 시각): DSI +64.2 / 야외 가시성 극상(8건 100% 긍정) / 색감 활발(3건 100% 긍정). DC 디밍은 저밝기 눈피로 해결했으나 43.1°C 발열로 인한 디스플레이 온도 제약 존재. SDC 냉각 시너지 기회: 패널 발열 설계 협력으로 Snapdragon 7 Gen4의 열 부담 완화.',
+      '중국 경쟁사 현황: BOE LTPO 120Hz 확산 / CSOT LCD 고주사율 진출. 글로벌 SEA 시장에서는 SDC E6의 DC 디밍 + LTPO 120Hz 조합이 아직 경쟁사 BOE 대비 PWM Hz(DC 수준) 낮음. 차세대: 2160Hz PWM 도입으로 뉴트럴 경쟁 복원.',
+      'SDC 공급 확대 전략: V70의 성공적 Indian 출시(기공급)로 신뢰도 확보. V70 Ultra 부상에서 E6 유지하되, 120Hz LTPO + 색감 정확도 강화. 차세대 V70 FE: 6.3" 90Hz LTPO E5 패널 공급으로 가성비 세그먼트 신규 확보.',
+      'vivo와의 중장기 전략: V70(E6 유지·배터리 효율 강화) → V70 Ultra(고밝기·PWM 고도화) → V70 FE(가성비·LTPO 진입)의 3분할 포트폴리오. SDC는 각 세그먼트별 차별화 패널 공급으로 장기 수주 확대. 무선충전 50W 부재 → 차세대 해결 시 디스플레이 신뢰도 추가 향상.'
     ],
 
     formula: '<strong>DSI</strong> = 88.9 − 0 − (0 × 0.5) = +88.9 / <strong>CSI</strong> = 83.3 − 0 − (0 × 0.5) = +83.3 / <strong>BSI</strong> = 100 − 0 + (100 × 0.3) = +130 / <strong>Design</strong> = 100 − 0 = +100',

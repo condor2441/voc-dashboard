@@ -119,11 +119,11 @@ window.VOC_MODELS['findx9pro'] = {
     ],
 
     productInsights: [
-      '디스플레이 공급사 현황: BOE AMOLED 3600nit(극박형 1.15mm 베젤) 추정. 1nit 최저밝기·3840Hz PWM·莱茵금표 인증 = BOE 기술 검증 확인.',
-      '진입 기회: 중국 카메라갭·발열 불만이 SDC 진입 포인트 — "프리미엘 디스플레이 + 열관리" 번들로 제안. 글로벌은 3600nit 성공이 BOE 강점이나, SDC는 "Privacy Display 또는 색감 정밀도" 차별화로 경쟁 가능.',
-      '대응 전략: OPPO에 대해 (a) 3800–4000nit 극고밝기 + 저발열 디스플레이 제안, (b) 배터리 발열 피드백 공유하여 SoC 냉각 최적화 협력, (c) "Hospital-Grade 색감 정밀도" + 저PWM 플리커 인증으로 프리미엘 재포지셔닝.',
-      '경쟁 위협: BOE는 이미 3600nit·극박형 베젤로 OPPO 독점. CSOT도 3500nit급 추격 중. Samsung은 기술 완성도(색감·열관리·장기 신뢰성)로 차별화 필수.',
-      '차기 세대 로드맵: Find X10 Pro(2026.10 예상) → SDC와 협력 검토, 3800nit + 저발열 디스플레이, Dimensity 9600 + 액체냉각, 배터리 용량 8000mAh, 카메라 야경·초점 개선, 6년 업데이트 → "궁극의 프리미엘" 재정의.'
+      '패널 공급 현황: BOE AMOLED 6.78" 탑재(3600nit 피크, 극박형 1.15mm 베젤, 1nit 최저밝기, 3840Hz PWM, 莱茵认证). BOE의 기술 완성도 확인. SDC는 현재 OPPO 공급 없음 — 차세대 진입 목표 설정 필요.',
+      '디스플레이 VOC 해석(SDC 시각): DSI +75(극강) + 글로벌 밝기 긍정 100%(2/2) vs 중국 부정 포함(야간 자극감·일부불만) + 지역간 기대갭 극심(중국 부정 57% vs 글로벌 32%) = BOE 3600nit 기술 성공은 유효하나 지역별 사용자 기대 편차 큼. 장기 배터리 신뢰도 이슈(180사이클 ±12% 용량분산) 발생 = SDC 차별화 포인트(장기 신뢰성·색감 정밀도). 실리콘카본 배터리 기술이 새로운 경쟁 영역 — SDC는 디스플레이 발열량 감소 설계로 배터리 보호 협력.',
+      '중국 패널 경쟁사 동향: BOE가 OPPO Find X 시리즈 독점 공급. CSOT는 3500nit급 추격 중(OnePlus/vivo). Visionox도 고밝기 기술 개발 중. Find X10 Pro(2026.10)에서 BOE가 3800nit+ 제시할 가능성 높음. SDC는 극고밝기 경쟁에서 뒤지지 않으면서 색감·열관리·장기신뢰성 강조 필수.',
+      'SDC 공급 기회 및 차별화 소구점: Find X10 Pro 수주를 위해 SDC가 제시할 포인트: (a) 3800–4000nit 극고밝기 + 1nit 최저밝기 통합 = BOE 3600nit보다 고사양, (b) "Hospital-Grade Color Accuracy" 인증 + Hasselblad 촬영 모드 최적화 협력, (c) 배터리 발열 피드백 기반 저발열 디스플레이 설계(열량 5% 감소), (d) 6년 업데이트 지원 — 글로벌 신뢰도 강화.',
+      'SDC 전략 제언: OPPO Find X 플래그십 세그먼트는 BOE 독점이나 차세대(X10 Pro)에서 진입 기회 발생. SDC가 3800nit + 색감정밀도 + 장기신뢰성 번들로 제안하면 경쟁 가능. 특히 중국 시장 카메라갭·발열 불만을 "디스플레이 최적화" 관점에서 해결(SoC 발열 피드백, 충전 발열 최소화)하는 협력 제시. 글로벌은 배터리 신뢰성(180사이클 이후 용량 안정성) 강조로 Premium 포지셔닝 강화.'
     ],
 
     formula: '<div class=\'fl\'><strong>DSI</strong> = Display긍(75%) − Display부(25%) − (강불만25%×0.5) → <strong style=\'color:#34d399\'>+75</strong></div><div class=\'fl\'><strong>CSI</strong> = 카메라긍(63.6%) − 카메라부(36.4%) − (기대갭100%×0.5) → <strong style=\'color:#f87171\'>−12</strong></div><div class=\'fl\'><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + (충전긍50%×0.3) → <strong style=\'color:#34d399\'>+115</strong></div><div class=\'fl\'><strong>TRI</strong> = 발열부정(100%) + (강불만75%×1.5) → <strong style=\'color:#f59e0b\'>34</strong></div><div class=\'fl\'><strong>SEGI</strong> = (공식소구강도 18점×20) + 카메라부정비중(36.4%) + (기대갭100%×1.2) → <strong style=\'color:#fbbf24\'>~100</strong></div><div style=\'margin-top:8px;color:#475569;font-size:10px;\'>* n=52 (중국 21, 글로벌 31) · 지역별 분리집계 · 중국 부정비중 57% vs 글로벌 32% · 발열은 중국계측 42.6°평균 적용</div>',

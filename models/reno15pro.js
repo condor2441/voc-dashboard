@@ -103,11 +103,11 @@ window.VOC_MODELS['reno15pro'] = {
     ],
 
     productInsights: [
-      'BOE 패널 탑재(추정). SDC 기술 도입 기회: 1800nit 실측값 기반 공칭 2000-2200nit 선언 + 색감 정확도 강화. OPPO 발열 이슈 해결 시 디스플레이 신뢰도 회복.',
-      'Reno 15 Pro → Pro Plus 또는 Reno 16 Pro 파생 전략: Pro는 "냉각 강화"(발열 개선), Pro Plus는 "카메라 고도화" + "배터리 7000mAh"로 세그먼트 분화.',
-      'Vivo X300s·Xiaomi 17 경쟁사 고주사율 강화. OPPO는 발열 해결 우선. SDC는 냉각 솔루션 고도화(VC Chamber + Nano Ice Crystal 결합)로 차별화.',
-      '발열 냉각 시스템 실패 최우선 해결 과제(TRI 187.5). ColorOS AI HyperBoost 2.0 발표하나 효과 미미. Reno 15 Pro Mini(파생 모델)에서 발열 개선 보고 — 표준 Pro 개선 가능성 확인.',
-      'Reno 15 Pro는 "디스플레이·배터리" 하드웨어 우수하나 "발열·소프트웨어" 치명적 약점. 5년 ColorOS + 6년 보안 업데이트 발표로 신뢰 회복 시도. 차세대: 발열 해결 + ColorOS 최적화 완성이 성공 조건. Pro Mini(발열개선)로 전략 전환 검토.'
+      'BOE AMOLED 탑재(추정). 6.78" QHD+ 2780×1264 / 60-120Hz LTPO / 1800nit 실측(공칭 3600nit 과대표기) / 50W 무선충전. DSI +100 극상 / BSI +100 극상 — 하드웨어 우수하나 TRI 187.5 치명적 발열. 성숙기 부정 증가(초기 50% → 성숙기 35%)로 신뢰도 침식.',
+      '디스플레이 VOC 해석(SDC 시각): 1800nit 야외 극상(3건 100% 긍정) / 색감 정확도 우수(3건 100% 긍정) / QHD+ 고해상도(450ppi). 하지만 발열로 인한 디스플레이 온도 제약(웹 30분 후 발열·4K 촬영 불가). Nano Ice Crystal 냉각 시스템 실패. SDC는 VC Chamber + Nano Ice Crystal 결합 패널 설계로 차별화 기회. 또는 발열 최소화 LTPO 튜닝.',
+      '중국 경쟁사 현황: BOE(고주사율 강화) / CSOT(QHD+ 확산) / Visionox(Oppo 독점 마진). OPPO의 강점은 배터리 효율(DSI/BSI 극상)이나 Dimensity 8450 + 120Hz 고주사율 조합의 발열 관리 미흡. SDC가 냉각 우수 패널로 차별화 가능.',
+      'SDC 차별화 포인트: ① 1800nit 기반 공칭값 2000-2200nit 정직 표기 / ② 냉각 우수 LTPO OLED 설계(VC Chamber 통합) / ③ 색감 정확도 +20% 강화 / ④ 무선충전 50W 최적화. Dimensity 8450의 높은 TDP는 패널 냉각으로도 해결 한계이나, 디스플레이 측 열 발생 최소화로 시스템 발열 30% 감소 가능.',
+      'OPPO 중장기 전략: Reno 15 Pro(현재 발열 문제 중시) → Pro Plus(배터리 7000mAh + 카메라 개선) → Pro Mini(발열 개선 입증). SDC는 Pro Mini에서 발열 개선 사례 확보 후 Reno 16 Pro 수주 목표. 발열 해결 + ColorOS 최적화가 성공 조건. 5년 OS + 6년 보안 업데이트로 신뢰 회복 중 — 디스플레이 품질 강화로 추가 신뢰도 확보 기회.'
     ],
 
     formula: '<div class=\'fl\'><strong>DSI</strong> = Display긍(100%) − Display부(0%) → <strong style=\'color:#34d399\'>+100</strong></div><div class=\'fl\'><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + (충전긍100%×0.3) → <strong style=\'color:#34d399\'>+100</strong></div><div class=\'fl\'><strong>TRI</strong> = 발열부(75%) + (강불만75%×1.5) → <strong style=\'color:#f59e0b\'>187.5</strong></div><div style=\'margin-top:8px;color:#475569;font-size:10px;\'>* n=28 (글로벌) · 2026.01–03 단일시점</div>',

@@ -98,11 +98,11 @@ window.VOC_MODELS['s26plus'] = {
     ],
 
     productInsights: [
-      '디스플레이 공급사 현황: Samsung Display 자사 패널(6.7" LTPO AMOLED 2X, QHD+ 3120×1440). Vision Booster 2600nit 기술 탑재. SDC 독점.',
-      '진입 기회: 480Hz PWM → 2160Hz+ DC 디밍으로 전환 시 "눈 건강" 마케팅 주도권 확보 기회. OnePlus/Honor가 이미 2160Hz+ 주장 중 — 삼성이 S27+에서 TÜV 플리커프리 인증과 함께 "Hospital-Grade 보호" 브랜딩 하면 글로벌 프리미엘 재정의 가능.',
-      '대응 전략: (a) 45W 충전기 번들화 + 50W 이상 도입, (b) 2160Hz+ PWM 또는 DC 디밍 하이브리드 + TÜV 인증, (c) 카메라 HW 업그레이드(108MP) + Hasselblad 같은 협업 혁신 — "웰니스 플래그십"으로 재포지셔닝.',
-      '경쟁 위협: BOE 고주파 PWM 패널 공급 + OPPO/OnePlus의 "눈 건강" 마케팅 주도. Samsung은 기술 추격 + 마케팅 전환 필수.',
-      '차기 세대 로드맵: S27+(2026.09 예상) → 50W 충전기 번들화, 2160Hz+ PWM/DC 디밍, 108MP 카메라, QHD+ 유지 + 항반사·Privacy Display 추가 검토 — "프리미엘 완성도" 재획득.'
+      '패널 공급 현황: Samsung Display 자사 E6 AMOLED 탑재(6.7" Dynamic LTPO 2X, QHD+ 3120×1440, 120Hz, 480Hz PWM, Vision Booster 2600nit). SDC 프리미엘 대형 플래그십 핵심 제품. 밝기 성능(DSI 내 Display_Brightness 89% 긍정) 극찬 확인.',
+      '디스플레이 VOC 해석(SDC 시각): DSI 0.18(거의 중립) + 밝기 긍정 89%(18/20) vs PWM 부정 75%(9/12) = 2600nit Vision Booster는 성공적 기술이나 480Hz PWM이 긍정 전체를 상쇄. 중국시장 특히 불만 심화(PWM 강불만 7건). 기대갭(SEGI -2.1)이 "안전한 플래그십" 평가로 이어짐. SDC 디스플레이는 공급 우위를 유지하나 PWM 혁신 필수.',
+      '중국 패널 경쟁사 동향: BOE는 OPPO Find X9 Pro에 3600nit + 3840Hz PWM(莱茵금표) 공급 중. CSOT도 고주파 PWM으로 추격. Visionox는 저가 세그먼트 중심. 프리미엘 세그먼트(₩1,099)에서 "눈건강" 차별화가 가격 정당성의 핵심 이슈. SDC의 2600nit 기술은 우수하나 PWM 혁신 미비로 경쟁력 약화.',
+      'SDC 공급 기회 및 차별화 소구점: S27+에서 (a) 2160Hz+ PWM 또는 DC 디밍 하이브리드 탑재(TÜV 플리커프리 인증), (b) 항반사 코팅 개선(고릴라 아머), (c) 50W 충전기 번들화로 "웰니스 프리미엘" 재포지셔닝. 색감 정확도(HDR Pro, 10bit) 강조 — 영상 편집·사진 크리에이터 세그먼트 확대.',
+      'SDC 전략 제언: S26+ 밝기 강점(2600nit Vision Booster)을 유지하되 PWM 혁신으로 "Hospital-Grade 보호"를 글로벌 마케팅 키 메시지로 설정. BOE의 3600nit 주장에 대해 "밝기만이 아닌 눈건강 통합"으로 차별화. 충전 완벽화 + Privacy Display 검토 추가 → 차세대 프리미엘 포지셔닝 강화.'
     ],
 
     formula: {

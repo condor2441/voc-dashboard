@@ -98,11 +98,11 @@ window.VOC_MODELS['ip17pro'] = {
     ],
 
     productInsights: [
-      '디스플레이 공급사 현황: Samsung Display가 Apple에 OLED 주공급자. iPhone 17 Pro도 SDC 6.3" AMOLED 탑재. 점유율 95% 이상.',
-      '진입 기회: iOS 26 업데이트 후 카메라 앱 안정성 저하 = SDC가 이를 활용하여 디스플레이 안정성·색정확도 강조 가능. "Hollywood-Grade Color Accuracy" 인증 추진.',
-      '대응 전략: (a) iPhone 18 Pro를 위해 "Motion Smoothness" 향상(1~120Hz ProMotion 완성도), (b) 배터리 효율 3-5% 개선 권고, (c) "Pro Color Grading" 모드 추가 지원 — 콘텐츠 크리에이터 세그먼트 확대.',
-      '경쟁 위협: BOE가 iPhone 공급 검토(2025년 이후 목표). Samsung이 기술 선도성 유지 및 가격 경쟁력으로 점유율 방어 필수.',
-      '차기 세대 로드맵: iPhone 18 Pro(2026.09 예상) → 배터리 3800mAh, 액체냉각, 새로운 A20 Pro칩, 카메라 자동초점 개선, iOS 27 최적화 — "전 앱 안정성" 마케팅으로 신뢰도 회복.'
+      '패널 공급 현황: Samsung Display가 Apple iPhone 17 Pro OLED 주공급자(6.3" Super Retina XDR, 2622×1206, 1~120Hz ProMotion, 저주파 PWM). 점유율 95% 이상 확정. BOE의 소량 공급 시작(2025년)도 SDC 주공급자 지위 흔들리지 않음.',
+      '디스플레이 VOC 해석(SDC 시각): DSI 0.62(긍정) + 밝기 긍정 80%(10/10) + 야외 명도 긍정 77%(10/13) + PWM 긍정 80%(4/5) = SDC 공급 패널의 완성도 높음. 다만 성숙기(2026.02-04) iOS 26 업데이트 후 카메라 앱 안정성 저하(post_update_worsened) 건으로 전체 신뢰도 저하(부정 25%). 배터리 실측 편차(사용패턴) 지속 — SDC 디스플레이 자체는 문제 없으나 Apple 소프트웨어와의 동기화 중요.',
+      '중국 패널 경쟁사 동향: BOE는 2025년부터 iPhone 공급 소량 시작(약 5% 목표). CSOT와 Visionox는 iPhone 레벨의 품질 달성 미흡. SDC가 기술 우위(1~120Hz ProMotion + 저주파 PWM + 항반사 코팅 2세대) 유지하면 BOE 진입 정체 가능. 단 가격 경쟁 회피 필수.',
+      'SDC 공급 기회 및 차별화 소구점: iPhone 18 Pro에서 (a) "Motion Smoothness 2.0"(120Hz → 144Hz+ 검토) — 프로 영상작 세그먼트 강화, (b) "Pro Color Grading" 모드(DCI-P3 + Rec.2020 동시 지원), (c) 디스플레이 발열 1-2% 감소 설계로 배터리 효율 개선 협력, (d) 밝기 안정성(온도 편차 < 0.5%) 강화 — "Pro Grade Reliability" 인증.',
+      'SDC 전략 제언: Apple과의 장기 독점공급 계약 유지가 최우선. iPhone 18 Pro 공동개발 시 (1) 카메라 앱 최적화 협력(Apple과 사전 조율), (2) 배터리·열관리 통합 설계, (3) "Pro" 세그먼트 기술 차별화 강화(144Hz 주사율, 극저주파 PWM, 색감 정밀도). BOE 진입 가능성 대비 기술 선도성 유지 + 가격·공급 신뢰도 확보로 점유율 방어.'
     ],
 
     formula: {

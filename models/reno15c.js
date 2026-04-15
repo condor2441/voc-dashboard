@@ -106,11 +106,11 @@ window.VOC_MODELS['reno15c'] = {
     ],
 
     productInsights: [
-      '디스플레이 공급사 현황: 중국판 1.5K OLED(2760×1256, 3840Hz PWM) + 인도판 FHD+ AMOLED(1200nit HBM) — 제조사 미상, 추정 Tianma/CSOT. SDC 공급 가능 세그먼트.',
-      '진입 기회: 중국판의 성공(1.5K·3840Hz PWM·호평)을 바탕으로 SDC가 "지역별 동등 품질 보장" 약속과 함께 (a) 인도판도 1.5K OLED 상향, (b) 3840Hz PWM 통일화, (c) 1500nit+ 야외 밝기 적용 제안. 이를 통해 variant_difference 해결 + 지역별 신뢰도 강화.',
-      '대응 전략: OPPO Reno 라인에 대해 (a) "One Design, One Experience" 캠페인 — 지역판 상관없이 동등 사양 보장, (b) 중국판 1.5K 성공을 글로벌 확대하여 SDC 공급 물량 증대, (c) 인도판에 대해 2899위안 원가 구조 공유 및 함께 가격·사양 최적화.',
-      '경쟁 위협: Tianma/CSOT가 이미 중국 FHD+/1.5K OLED 양산 중. Samsung이 "동등 품질 지역별 통일" 메시지로 프리미엘 신뢰도 차별화 가능.',
-      '차기 세대 로드맵: OPPO Reno16C(2026.12 예상) → SDC 제안 1.5K OLED 양 시장 통일(중국 유지, 인도 상향) + 3840Hz PWM + 1500nit+ 밝기 + 5년 업데이트 → "진정한 글로벌 프리미엘" 포지셔닝으로 지역 신뢰도 통합.'
+      '패널 공급 현황: 중국판 1.5K OLED(6.59" 2760×1256, 120Hz, 3840Hz PWM, 1200nit 피크) vs 인도판 FHD+ AMOLED(1400nit 피크, 1200nit HBM) — 제조사 미상, 추정 Tianma/CSOT. 심각한 variant_difference 확인: 중국판 사양 우수, 인도판 사양 다운그레이드(FHD+만 해상도 저하). SDC 공급 기회 = 지역판 통일화 제안.',
+      '디스플레이 VOC 해석(SDC 시각): DSI +54(참고용, n<50) + BSI +130(극강, 배터리·충전) + 지역간 극심한 기대갭 = 중국판 1.5K·3840Hz PWM 호평(디스플레이 긍정) vs 인도판 1200nit HBM 야외 밝기 부족(부정 3건 강불만). 성능도 중국 SD7G4(쾌적) vs 인도 SD6G1(₹37,999 대비 심각 부족) — 디스플레이 품질 편차가 지역별 신뢰도 훼손. SDC는 "동등 품질 보장" 메시지로 차별화 기회 극대화 가능.',
+      '중국 패널 경쟁사 동향: Tianma/CSOT가 Reno15C 1.5K 공급 중. 지역별 사양 차별화는 중국 시장의 장점을 강조하면서 글로벌(인도) 신뢰도 훼손. SDC가 "One Design, One Experience" 약속으로 프리미엘 신뢰도 강화 가능. 인도 시장 성장이 OPPO의 전략적 목표이나 현재는 중국과 다른 사양으로 신뢰 저하.',
+      'SDC 공급 기회 및 차별화 소구점: Reno16C(2026.12 예상) 수주 제안: (a) 1.5K OLED 양 시장 통일(중국 유지, 인도 상향) → "One Design" 컨셉 강화, (b) 3840Hz PWM 글로벌 표준화(중국 호평 모멘텀 확대), (c) 1500nit+ 야외 밝기 양시장 동등(인도 야외 가시성 개선), (d) 색감 정밀도(10bit) + 저청색광 인증으로 프리미엘 포지셔닝. 5년 OS 업데이트 공약으로 글로벌 신뢰도 강화.',
+      'SDC 전략 제언: OPPO Reno는 "Design Flagship" 이미지로 글로벌 신뢰도 중요. SDC가 "지역별 동등 품질" 약속 + 1.5K OLED 글로벌 확대로 진입 기회 확보. 특히 인도 시장 성장(스마트폰 수요 급증)에서 중국과 동등한 사양 보장으로 신뢰도 차별화. 차세대 공급 성공 시 OPPO Find X 프리미엘 라인으로 확대 가능 — Reno를 "프리미엘 엔트리" 위치에서 강화.'
     ],
 
     formula: '<div class=\'fl\'><strong>DSI</strong> = 디스플레이긍(78.6%) − 부(21.4%) − (강불만7.1%×0.5) → <strong style=\'color:#34d399\'>+54</strong> <em>(참고용, n=14 display)</em></div><div class=\'fl\'><strong>BSI</strong> = 배터리긍(100%) − 부(0%) + (충전긍100%×0.3) → <strong style=\'color:#34d399\'>+130</strong></div><div class=\'fl\'><strong>CSI</strong> = 카메라긍(66.7%) − 부(33.3%) − (기대실망11.1%×0.5) → <strong style=\'color:#34d399\'>+28</strong> <em>(참고용)</em></div><div style=\'margin-top:8px;color:#475569;font-size:10px;\'>* 전체 n=32 / 지역편중 인도 62% / 출시 초기 단일시점 — LOW 품질 tier</div>',

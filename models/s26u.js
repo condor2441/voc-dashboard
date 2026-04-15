@@ -99,11 +99,11 @@ window.VOC_MODELS['s26u'] = {
     ],
 
     productInsights: [
-      '디스플레이 공급사 현황: Samsung Display 자사 패널(6.9" Dynamic AMOLED 2X + Privacy Display, QHD+ 3120×1440). Privacy Display는 SDC 독점 기술.',
-      '진입 기회: Privacy Display 텍스트 흐릿함·두통 불만(성숙기 강불만 47%) = SDC의 기술 최적화 긴급 필요. "Privacy Display 2.0"으로 (a) 밝기 보상 알고리즘, (b) 텍스트 선명도 향상, (c) 안경 호환성 개선 → 2027년 재상용화.',
-      '대응 전략: (a) Privacy Display 소프트웨어 최적화(밝기·텍스트 선명도), (b) S27U에서 기술 완성도 95% 이상 검증 후 출시, (c) "Privacy Display 3.0" 로드맵 공개 — 초기 사용자 신뢰 회복.',
-      '경쟁 위협: BOE/CSOT가 Privacy Display 모방 추격 시작(2027년 목표). Samsung이 기술 완성도로 먼저 확보 시 특허 강화 및 라이선스 기회 확대.',
-      '차기 세대 로드맵: S27 Ultra(2026.09 예상) → Privacy Display 2.0(밝기 보상·텍스트 선명), 70W 충전, 카메라 AI 최적화, TÜV 플리커프리 인증 추가 → "완성된 혁신"으로 재포지셔닝.'
+      '패널 공급 현황: Samsung Display 자사 E6 AMOLED 탑재(6.9" Dynamic AMOLED 2X + Privacy Display 하드웨어 방탈출, QHD+ 3120×1440, 120Hz LTPO, 2600nit). Privacy Display는 SDC 독점 기술. 초기 극찬(출시초기 긍정 57%) 후 성숙기 강불만 폭증(DSI -22, 부정 60%).',
+      '디스플레이 VOC 해석(SDC 시각): DSI -22(성숙기 급락) + 초기 극찬 → 성숙기 강불만 47% 폭증(텍스트 흐릿함·두통·눈피로) = Privacy Display 혁신 기술의 사용성 트레이드오프 극명. 60W 충전(BSI +80, 극강) 강점은 Privacy Display 불만을 상쇄 불능. SDC의 하드웨어 기술은 혁신적이나 소프트웨어 최적화 부재로 사용자 신뢰 급격히 훼손. 삼성 공식 인정(3/17 "일부 각도 밝기 변화")도 해결 미흡.',
+      '중국 패널 경쟁사 동향: BOE/CSOT가 Privacy Display 모방 추격 준비 중(특허 우회 기술 개발 중). vivo/OPPO가 이미 다양한 디스플레이 혁신(1nit 최저밝기, 3840Hz PWM, 색감 정밀도)으로 시장 주도. SDC Privacy Display가 불완전하면 경쟁사 기술로 빠르게 대체될 위험.',
+      'SDC 공급 기회 및 차별화 소구점: S27 Ultra에서 "Privacy Display 2.0"으로 (a) 밝기 보상 알고리즘(시야각별 적응형 밝기 조정), (b) 텍스트 선명도 향상(서브픽셀 렌더링 최적화), (c) 안경 호환성 개선, (d) 극저주파 PWM(2160Hz+) 병렬화. TÜV 플리커프리 + "Privacy & Clarity" 이중 인증. 70W 충전 → "프라이버시와 쾌적의 양립" 재브랜딩.',
+      'SDC 전략 제언: Privacy Display 초기 실패를 교훈으로 S27 Ultra 개발 시 (1) 기술 완성도 95% 검증 후 출시, (2) 사용자 피드백 기반 소프트웨어 최적화 장기 로드맵 공개로 신뢰 회복, (3) 특허 강화로 경쟁사 진입 저지. 차세대에서 Privacy Display 기술을 완성하면 라이선스 기회 확대 가능 — 글로벌 브랜드에 기술 공급으로 새로운 수익원 창출.'
     ],
 
     formula: '<div class="fl"><strong>DSI</strong> = Display긍(27%) − Display부(60%) − (강불만47%×0.5) → <strong style="color:#f87171">−56.5</strong> [초기+16 → 성숙기 급락. Privacy Display 불만 반영]</div>\n<div class="fl"><strong>SEGI</strong> = (공식소구3×20) + 카메라부정(50%) + (기대갭15%×1.2) → <strong style="color:#34d399">68</strong></div>\n<div class="fl"><strong>BSI</strong> = 배터리긍(67%) + (충전긍100%×0.3) → <strong style="color:#34d399">+80</strong></div>\n<div class="fl"><strong>CSI</strong> = 카메라긍(13%) − 카메라부(63%) − (기대갭20%×0.5) → <strong style="color:#f87171">−8</strong></div>\n<div class="fl"><strong>TRI</strong> = 발열부정(0%) − (발열강점50%×0.5) → <strong style="color:#34d399">−12</strong></div>\n<div style="margin-top:8px;color:#475569;font-size:10px;">* n=52 (CN 18 / 글로벌 34) · DSI 성숙기 재산출 — Privacy Display 텍스트 흐릿함·두통·눈피로 강불만 반영 · 삼성 공식 인정(3/17)</div>',

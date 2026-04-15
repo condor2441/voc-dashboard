@@ -111,11 +111,11 @@ window.VOC_MODELS['iqoo15'] = {
       'SoC: Snapdragon 8850 + Q3 e스포츠칩 · 원신 광추 144fps 안정 · 안투투 438만점 최고 기록 · 게이밍 성능 포지셔닝 확고.'
     ],
     productInsights: [
-      '배터리 강점: 7000mAh + BSI +49.5 · 무선첫도입 호평. 유선 100W 퇴보는 痛점. 차세대에서 ≥120W 복원 + 무선 100W 지속 권장.',
-      '게이밍 강점: GEI +52.1 · 4시간 내 40°C 안정 · 왕자영요 등 고정 고주사율 게임 역추 시 냉각 구조 우수. 게이밍폰 포지셔닝 확고.',
-      '카메라 개선 필수: 셀카 납작화 · 4K뭉개짐 · 무아레 현상이 "프리미엘" 마케팅 훼손. 전면 센서 업그레이드 + ISP 튜닝 개선으로 기대갭 해소.',
-      '성능 기대관리: 게이밍폰 타겟층에 마케팅 집중 추천. 온 디바이스 AI · OriginOS 6 안정성은 후기 호평. 소프트웨어 경쟁력 강점.',
-      '디스플레이 차별화: 2K LEAD OLED + 무편광 기술은 경쟁사 구분 → 업계 신차원 밝기·護眼 포지셔닝 성공. 다음 세대에서도 유지 필수.'
+      '패널 공급 현황: Samsung 2K LEAD OLED(珠峰屏) 탑재 확인. 6.85" QHD+·2600nit 전면·6000nit 국부·무편광층 제거 설계·2160Hz PWM·8T LTPO. SDC가 iQOO 게이밍 세그먼트 공급처(일부 모델). 현재 모델은 SDC 주공급 시 프리미엄 기술 입증 기회.',
+      '디스플레이 VOC 해석(SDC 시각): DSI +54.2 · 무편광 자연광 기술로 야외 시인성 극찬(n=3, 100% 긍정) · 2160Hz PWM + 1nit 최저로 눈피로 50% 감소 체감. 중국 VOC(n=42) 디스플레이 부정 0건 = SDC 아이케어 기술 경쟁사 대비 우위 명확. 고주파 PWM·무편광 기술이 차세대 경쟁 핵심.',
+      '중국 패널 경쟁사 동향: BOE의 gaming-centric 세그먼트 강점(iQOO 15 관계사·OPPO K series). CSOT의 고밝기 밀어붙이기(3000nit+). Visionox·Tianma는 중저가 세그먼트 집중. SDC의 무편광·저밝기 PWM 기술은 경쟁사 미개발 영역 = 차별화 가능성 높음.',
+      'SDC 공급 기회 및 차별화: 차세대 iQOO 게이밍폰에 SDC 제안 포인트: (1) 3000Hz+ PWM 무깜빡임 조합 강조, (2) 무편광+자연광 센싱으로 야외 3000nit+ 구현, (3) LTPO 저전력 + 고밝기 양립 기술. 게이밍폰 타겟층은 장시간 사용 → 아이케어 + 배터리 효율 강점 소구 필수.',
+      'SDC 전략 제언: iQOO 15는 vivo 산하 성공 케이스(GEI +52, DSI +54) → 2026년 차기 모델 수주 경합. BOE 대비 SDC의 "(1) 고주파 PWM 무깜빡임 기술 우위" + "(2) 저전력 LTPO 기술" 강조로 가격 프리미염 정당화. 중국 아이케어 마켓 확대(TÜV 5.0 인증) 추세 활용 → 게이밍폰도 "眼睛友好" 포지셔닝으로 차별화 기회.'
     ],
 
     formula: '<div class="fl"><strong>DSI</strong> = Display긍정비중 − Display부정비중 − (강불만×0.5) → <strong style="color:#34d399">+55.6</strong></div>\n<div class="fl"><strong>GEI</strong> = 성능긍정(80%) − 성능부정(0%) − (발열강불만×0.7) + 냉각평가(+10%) → <strong style="color:#34d399">+51.7</strong></div>\n<div class="fl"><strong>BSI</strong> = 배터리긍정(75%) − 배터리부정(25%) + (충전긍정×0.3) → <strong style="color:#34d399">+48.3</strong></div>\n<div class="fl"><strong>CSI</strong> = 카메라긍정(75%) − 카메라부정(25%) − (기대갭×0.5) → <strong style="color:#fbbf24">+40.0</strong></div>\n<div style="margin-top:8px;color:#475569;font-size:10px;">* n=58 (China 35 / Global 23) · 지역별 분리 집계 · 중국 비중 60%, 글로벌 비중 40%</div>',

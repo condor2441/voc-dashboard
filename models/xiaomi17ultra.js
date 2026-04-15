@@ -98,11 +98,11 @@ window.VOC_MODELS['xiaomi17ultra'] = {
     ],
 
     productInsights: [
-      'BOE M10 LTPO 탑재(추정). SDC 기술 도입 기회: 1-inch 센서와의 시너지로 "전문가급 카메라 디스플레이" 카테고리 확립. 2160Hz PWM + DC 조광 고도화 필수.',
-      '17 Ultra → 18 Ultra 파생 전략 명확: 17U는 "카메라·화질·냉각 최강" 포지셔닝, 18U는 글로벌 HyperOS 완전 지원 + 배터리 7000mAh + 무선충전 80W로 글로벌 이미징 플래그십 재정의.',
-      'Apple iPhone 16 Pro Max(3500nit) 경쟁 직접화. Xiaomi 17U는 카메라 강점으로 차별화. SDC는 고밝기·고주사율 디스플레이로 영상 감상 체험 극대화.',
-      '소프트웨어 문제 치명적(n=8, 100% 부정) | 셔터 랙·렌즈간 화이트밸런스 점프·렌즈 포깅 심각. 중국 HyperOS3 완성도 우수하나 글로벌 미지원. 차세대: 글로벌 AndroidOS 선택지 추가 또는 HyperOS 완전 번역.',
-      'CSI +72(하향 추세) | 카메라 HW 강점(1" 50MP + 200MP 연속줌)은 명확하나 SW 이슈로 신뢰도 저해. 차세대: 셔터 랙 해결(프로 모드 AI 최적화) + 렌즈 WB 점프 자동보정. 중국 집중 전략 수립 필수.'
+      'BOE M10 LTPO OLED 탑재(추정). 6.9" 1200P 2608×1200 / 1-120Hz LTPO / 2160Hz PWM + DC 조광 / 3500nits. DSI +70 극상 / CSI +72 극상 / BSI +95 극상 — BOE M10의 프리미엄 이미징 패널 강점 입증. SDC 미공급. 1-inch 센서와의 시너지로 업계 최강 카메라 디스플레이 확립.',
+      '디스플레이 VOC 해석(SDC 시각): 3500nit 야외 극상(18건 100% 긍정) / 2160Hz PWM 눈피로(7건 100% 긍정) / 배터리 효율(6800mAh, 15건 100% 긍정). 1200P 해상도 선택이 배터리 효율 우선이나 QHD+ 대비 미세함. DSI +70은 극상이지만 소프트웨어 문제(셔터 랙, 렌즈 WB 점프) + 성숙기 부정 급증으로 신뢰도 저해(n=62, 성숙기 부정 48%).',
+      '중국 경쟁사 현황: BOE M10(이미징 플래그십 주공급) / OPPO Find X9 Pro 경쟁(3500nit 동등). Xiaomi 17U는 카메라 HW로 Apple iPhone 16 Pro Max 직접 경쟁. 디스플레이는 BOE M10이 경쟁 우위 유지 중.',
+      'SDC 차별화 포인트: ① 1200P 유지 + QHD+(2560×1600) 옵션 제공 / ② 3500nits 유지 + 1nit 최저 밝기 추가 / ③ 2160Hz PWM 유지 + 3840Hz PWM 선택지 추가 / ④ 소프트웨어 이슈(셔터 랙, 렌즈 WB 자동보정) 패널 레벨 색감 보정 협력. 카메라 HW 강점 + 패널 신뢰도 결합으로 대체 공급 가능.',
+      'Xiaomi 이미징 전략: 17 Ultra(현재 카메라 HW 최강 + SW 문제) → 18 Ultra(글로벌 HyperOS 완전 지원 + 7000mAh + 무선충전 80W). SDC는 17U 글로벌 확대(HyperOS 개선 선행) 시 수주 기회. 18U는 QHD+ + 고색정확도 패널로 Apple Pro Max 대항마 구성. 카메라 SW 이슈 해결이 선결 조건(중국 HyperOS3 기준 완성도 우수 입증).'
     ],
 
     formula: '<div class="fl"><strong>CSI</strong> = 카메라긍(100%) − 카메라부(0%) + 0.5 → <strong style="color:#34d399">+85</strong></div><div class="fl"><strong>DSI</strong> = Display긍(100%) − Display부(0%) + 0.3 → <strong style="color:#34d399">+70</strong></div><div class="fl"><strong>BSI</strong> = 배터리긍(100%) − 배터리부(0%) + 0.5 → <strong style="color:#34d399">+95</strong></div><div class="fl"><strong>TRI</strong> = 발열부(0%) + 0 → <strong style="color:#4ade80">−15</strong></div><div style="margin-top:8px;color:#475569;font-size:10px;">* n=47 (중국 24 / 글로벌 23) · 지역 VOC 분리</div>',
