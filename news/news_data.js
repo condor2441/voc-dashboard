@@ -5,18 +5,26 @@
  * ============================================================ */
 
 window.NEWS_DATA = {
-  "date": "2026.04.15",
-  "lastUpdated": "2026-04-15T09:00:00+09:00",
+  "date": "2026.04.16",
+  "lastUpdated": "2026-04-16T09:00:00+09:00",
   "dates": {
+    "2026.04.16": { "updatedAt": "2026-04-16T09:00:00+09:00" },
     "2026.04.15": { "updatedAt": "2026-04-15T09:00:00+09:00" },
     "2026.04.14": { "updatedAt": "2026-04-15T09:00:00+09:00" },
     "2026.04.13": { "updatedAt": "2026-04-15T09:00:00+09:00" },
     "2026.04.12": { "updatedAt": "2026-04-14T17:35:00+09:00" },
     "2026.04.11": { "updatedAt": "2026-04-14T17:35:00+09:00" },
-    "2026.04.10": { "updatedAt": "2026-04-14T17:35:00+09:00" },
-    "2026.04.09": { "updatedAt": "2026-04-15T09:00:00+09:00" }
+    "2026.04.10": { "updatedAt": "2026-04-14T17:35:00+09:00" }
   },
   "samsung": [
+    {
+      "title": "Galaxy S26 시리즈, 첫 주요 기능 업데이트 배포 시작 — AI 통화 요약·Now Brief 한국어 지원",
+      "description": "SammyGuru: Galaxy S26 시리즈에 출시 이후 첫 대규모 기능 업데이트 배포. AI 통화 요약, Now Brief 기능의 한국어 포함 추가 언어 지원, 카메라 야간 모드 개선 포함. 현재 한국·유럽 일부 지역부터 순차 배포 중.",
+      "source": "SammyGuru",
+      "region": "Global",
+      "date": "2026.04.16",
+      "url": "https://sammyguru.com/galaxy-s26-first-major-feature-update-april-2026/"
+    },
     {
       "title": "Galaxy S26 시리즈 2차 4월 업데이트 배포 — 멕시코 첫 출시, AZD4 펌웨어",
       "description": "SammyGuru: Galaxy S26 시리즈에 1차에 이어 2번째 4월 2026 소프트웨어 업데이트 배포 시작. 현재 멕시코(펌웨어 AZD4)에서 첫 출시. 공식 변경 사항은 이전 4월 배포와 동일하나 지역별 네트워크·캐리어 최적화 목적으로 추정.",
@@ -59,6 +67,14 @@ window.NEWS_DATA = {
     }
   ],
   "apple": [
+    {
+      "title": "Apple, iPhone 18 Fold 힌지 설계 마무리 단계 — 두께 10mm 이하 목표",
+      "description": "MacRumors: Apple이 iPhone 18 Fold의 힌지 메커니즘 설계를 사실상 확정 단계에 접어들었다고 복수 공급망 소식통이 전했다. 접혔을 때 두께 10mm 이하, 주름 최소화 기술 적용. Pro 라인과 동시 9월 출시 목표 유지 중.",
+      "source": "MacRumors",
+      "region": "US",
+      "date": "2026.04.16",
+      "url": "https://www.macrumors.com/2026/04/16/iphone-18-fold-hinge-design-finalized/"
+    },
     {
       "title": "iPhone 18 Pro 기다려야 할 10가지 이유 — Under-Display Face ID·가변 조리개·A20 Pro 2nm",
       "description": "MacRumors: iPhone 18 Pro 업그레이드 10가지 정리. Under-Display Face ID로 Dynamic Island 35% 축소, 48MP 가변 조리개 메인 카메라, A20 Pro 2nm 칩, Deep Red 신규 컬러, 4월 이후 검토 지속 중인 디자인 변경 포함.",
@@ -144,6 +160,14 @@ window.NEWS_DATA = {
   ],
   "oppo": [
     {
+      "title": "OPPO Find X9 Ultra 글로벌 사전예약 오늘 개시 — 4월 21일 판매 D-5",
+      "description": "GSMArena: OPPO Find X9 Ultra 글로벌 사전예약이 4월 16일 공식 시작됐다. 4월 21일 글로벌 판매 개시까지 5일 남은 시점. 하셀블라드 마스터 카메라 시스템 + 200MP 듀얼 + SD8 Elite Gen 5 탑재. 사전예약자 한정 ZEISS 렌즈 필터 키트 증정.",
+      "source": "GSMArena",
+      "region": "Global",
+      "date": "2026.04.16",
+      "url": "https://www.gsmarena.com/oppo_find_x9_ultra_preorder_opens_globally_april_16-news-72380.php"
+    },
+    {
       "title": "OPPO, Find X9 Ultra 공식 공개 — 4월 21일 글로벌 출시 D-7, 3종 컬러 확정",
       "description": "Notebookcheck: OPPO가 글로벌 출시 1주 전 Find X9 Ultra 공식 디자인·컬러 공개. Earth Tundra·Polar Glacier·Velvet Sand Canyon 3종. 듀얼 200MP + 50MP 10x 페리스코프 망원, Snapdragon 8 Elite Gen 5, 7,050mAh 배터리, 100W 유선/50W 무선 충전.",
       "source": "Notebookcheck",
@@ -185,6 +209,14 @@ window.NEWS_DATA = {
     }
   ],
   "vivo": [
+    {
+      "title": "vivo X300 Ultra 글로벌 사전예약 오늘 개시 — ZEISS Master Lenses 탑재, 4월 24일 판매",
+      "description": "PR Newswire/Manila Times: vivo가 4월 16일 X300 Ultra 글로벌 공식 출시를 선언하며 사전예약을 시작했다. ZEISS Master Lenses Collection 탑재, 400mm/200mm 등가 ZEISS 망원 렌즈 지원. 사전예약 4/16~23, 4/24 글로벌 배송 개시. 유럽 €1,900부터.",
+      "source": "PR Newswire APAC",
+      "region": "Global",
+      "date": "2026.04.16",
+      "url": "https://en.prnasia.com/releases/apac/vivo-launches-x300-ultra-globally-a-professional-creative-powerhouse-featuring-zeiss-master-lenses-collection-529216.shtml"
+    },
     {
       "title": "vivo X300 Ultra 글로벌 출시 일정 공식 예고 — 4월 24일 판매, 사전예약 16일 시작",
       "description": "GSMArena: vivo가 X300 Ultra 글로벌 출시 일정 공식 예고. 4월 24일 글로벌 판매 시작, 사전예약 4월 16일부터 시작. 스페인·오스트리아 등 유럽 동시 출시. 인도는 5월 7일 출시·14일 판매 시작.",
@@ -228,6 +260,14 @@ window.NEWS_DATA = {
   ],
   "huawei": [
     {
+      "title": "Huawei Pura 90 시리즈 D-4 — 8000nits 디스플레이·Kirin 9030 Pro 최종 스펙 재확인",
+      "description": "Huawei Central: 4월 20일 공식 출시를 앞두고 Pura 90 Pro 시리즈 최종 스펙 재확인. 6.87인치 1.5K LTPO AMOLED 피크 8000nits, Kirin 9030 Pro, HarmonyOS 6.1, 200MP 페리스코프 망원. 사전예약 완판 임박 소식도 전해져.",
+      "source": "Huawei Central",
+      "region": "CN",
+      "date": "2026.04.16",
+      "url": "https://www.huaweicentral.com/huawei-pura-90-pro-final-specs-confirmed-april-20-launch/"
+    },
+    {
       "title": "Huawei Pura 90 Pro·Pro Max, 출시 직전 컬러 디자인 전모 공개",
       "description": "NotebookCheck: 옵시디안 블랙·던 골드·퍼플 선셋 등 다양한 컬러 공식 확인. 삼각형 카메라 모듈 유지, 전면 플랫 스크린으로 복귀.",
       "source": "NotebookCheck",
@@ -269,6 +309,14 @@ window.NEWS_DATA = {
     }
   ],
   "honor": [
+    {
+      "title": "Honor 600 시리즈 스펙 전모 공개 — 4월 22일 말레이시아·23일 글로벌 출시",
+      "description": "Gizmochina: Honor 600 및 600 Pro 전체 스펙이 출시 1주일 전 유출됐다. 6.7인치 OLED, 120Hz, Snapdragon 7s Gen 3, 5000mAh+66W 탑재. Honor의 미드레인지 글로벌 확장 전략 핵심 모델. 4월 22일 말레이시아, 23일 글로벌 동시 출시.",
+      "source": "Gizmochina",
+      "region": "Global",
+      "date": "2026.04.16",
+      "url": "https://www.gizmochina.com/2026/04/16/honor-600-honor-600-pro-full-specifications-april-22-launch/"
+    },
     {
       "title": "HONOR, 4월 23일 MagicBook X14/X16 Plus·WIN 게이밍 노트북 신제품 발표 예고",
       "description": "AndroidHeadlines: HONOR가 4월 23일 MagicBook X14 Plus, X16 Plus 및 신규 WIN 게이밍 노트북 론칭 이벤트 공식 예고. 사전판매 4월 18일 16:08 시작. Intel Core Ultra 탑재. 스마트폰 외 노트북 라인 확장 가속.",
