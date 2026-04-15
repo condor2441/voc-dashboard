@@ -1392,20 +1392,27 @@ function renderSpecsTable(brand) {
     return;
   }
 
-  // VOC 모델의 specs 배열에서 모든 고유 key 수집 (테이블 행 헤더용)
-  const allKeys = [];
-  const keySet = new Set();
-  modelList.forEach(m => {
-    if (!m.specs) return;
-    m.specs.forEach(s => {
-      if (!keySet.has(s.key)) { keySet.add(s.key); allKeys.push(s.key); }
-    });
-  });
-
-  if (allKeys.length === 0) {
-    sec.innerHTML = '<div class="specs-loading" style="color:#0f172a">스펙 데이터 미수집</div>';
-    return;
-  }
+  // 표준 키 순서 (VOC 스펙 테이블 기준)
+  const KEY_ORDER = [
+    '디스플레이', '디스플레이 (중국판)', '디스플레이 (인도판)',
+    '해상도',
+    '주사율 / LTPO', '주사율',
+    'PWM / 조광',
+    '피크 밝기', '밝기', '밝기 / 색감',
+    '혁신 기술',
+    'SoC', 'SoC (중국판)', 'SoC (인도판)',
+    'RAM / 저장', '메모리 / 저장',
+    '배터리', '배터리 (중국판)', '배터리 (인도판)',
+    '충전', '유선 충전', '무선 충전',
+    '카메라', '카메라 (중국판)', '카메라 (인도판)', '전면 카메라',
+    '영상',
+    '무게 / 두께', '무게',
+    '방수', '방수 / 방진',
+    'OS', 'OS / 시장',
+    '시장', '시장 / 가격',
+    // 모델 특화 항목 (하단)
+    '어깨트리거', 'SoC 냉각', '산열', '냉각', '열관리', '디자인', '보호', '프레임', '활용시간', '5G', '업데이트', '출시'
+  ];
 
   // 모델별 specs를 key→{val,note} 맵으로 변환
   const modelMaps = modelList.map(m => {
@@ -1413,6 +1420,19 @@ function renderSpecsTable(brand) {
     if (m.specs) m.specs.forEach(s => { map[s.key] = s; });
     return map;
   });
+
+  // 실제 사용된 키만 KEY_ORDER 순으로 정렬, 미등록 키는 뒤에 추가
+  const usedKeys = new Set();
+  modelList.forEach(m => { if (m.specs) m.specs.forEach(s => usedKeys.add(s.key)); });
+  const allKeys = [
+    ...KEY_ORDER.filter(k => usedKeys.has(k)),
+    ...[...usedKeys].filter(k => !KEY_ORDER.includes(k))
+  ];
+
+  if (allKeys.length === 0) {
+    sec.innerHTML = '<div class="specs-loading" style="color:#0f172a">스펙 데이터 미수집</div>';
+    return;
+  }
 
   // 테이블 헤더: 항목 | 모델1 | 모델2 | ...
   const thModels = modelList.map(m =>
@@ -1423,11 +1443,16 @@ function renderSpecsTable(brand) {
     </th>`
   ).join('');
 
-  // 디스플레이 관련 키 강조
-  const displayKeys = new Set(['디스플레이', '밝기 / 색감', '밝기/색감', '혁신 기술', 'PWM', 'HDR']);
+  // 디스플레이 관련 키 강조 (배경 + 좌측 보더)
+  const displayKeys = new Set([
+    '디스플레이', '디스플레이 (중국판)', '디스플레이 (인도판)',
+    '해상도', '주사율 / LTPO', '주사율',
+    'PWM / 조광', '피크 밝기', '밝기', '밝기 / 색감', '혁신 기술'
+  ]);
 
   const rows = allKeys.map(key => {
     const isDisplay = displayKeys.has(key);
+    const rowBg = isDisplay ? 'background:rgba(37,99,235,0.04);border-left:3px solid rgba(37,99,235,0.3)' : '';
     const keyStyle = isDisplay ? 'color:#2563eb;font-weight:800' : 'color:#111827;font-weight:700';
     const cells = modelMaps.map(map => {
       const s = map[key];
@@ -1435,7 +1460,7 @@ function renderSpecsTable(brand) {
       const note = s.note ? `<div style="font-size:9px;color:#4A5568;margin-top:2px">${s.note}</div>` : '';
       return `<td style="white-space:normal;min-width:180px"><div style="color:#111827;font-size:11px">${s.val}</div>${note}</td>`;
     }).join('');
-    return `<tr><td style="${keyStyle};white-space:nowrap;font-size:11px;padding-right:16px">${key}</td>${cells}</tr>`;
+    return `<tr style="${rowBg}"><td style="${keyStyle};white-space:nowrap;font-size:11px;padding-right:16px">${key}</td>${cells}</tr>`;
   }).join('');
 
   sec.innerHTML = `
