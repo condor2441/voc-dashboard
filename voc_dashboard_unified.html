@@ -1419,7 +1419,7 @@ function renderSpecsTable(brand) {
     `<th style="min-width:180px;white-space:normal;text-align:center">
       <div class="model-name-cell" style="font-size:11px">${m.name}</div>
       <div class="launch-cell">${m.launch || '—'}</div>
-      <div style="font-size:9px;color:#334155;margin-top:2px">${m.segment || ''}</div>
+      <div style="font-size:9px;color:#4A5568;margin-top:2px">${m.segment || ''}</div>
     </th>`
   ).join('');
 
@@ -1428,12 +1428,12 @@ function renderSpecsTable(brand) {
 
   const rows = allKeys.map(key => {
     const isDisplay = displayKeys.has(key);
-    const keyStyle = isDisplay ? 'color:#60a5fa;font-weight:800' : 'color:#cbd5e1;font-weight:700';
+    const keyStyle = isDisplay ? 'color:#2563eb;font-weight:800' : 'color:#111827;font-weight:700';
     const cells = modelMaps.map(map => {
       const s = map[key];
-      if (!s) return '<td style="color:#1e3a5f;text-align:center">—</td>';
-      const note = s.note ? `<div style="font-size:9px;color:#0f172a;margin-top:2px">${s.note}</div>` : '';
-      return `<td style="white-space:normal;min-width:180px"><div style="color:#e2e8f0;font-size:11px">${s.val}</div>${note}</td>`;
+      if (!s) return '<td style="color:#9CA3AF;text-align:center">—</td>';
+      const note = s.note ? `<div style="font-size:9px;color:#4A5568;margin-top:2px">${s.note}</div>` : '';
+      return `<td style="white-space:normal;min-width:180px"><div style="color:#111827;font-size:11px">${s.val}</div>${note}</td>`;
     }).join('');
     return `<tr><td style="${keyStyle};white-space:nowrap;font-size:11px;padding-right:16px">${key}</td>${cells}</tr>`;
   }).join('');
@@ -1450,8 +1450,8 @@ function renderSpecsTable(brand) {
         <tbody>${rows}</tbody>
       </table>
     </div>
-    <div style="margin-top:10px;font-size:10px;color:#1e3a5f;text-align:right">
-      ${modelList.length}개 모델 · VOC 제품 테이블과 자동 동기화 · 디스플레이 항목 <span style="color:#60a5fa">파란색</span> 강조
+    <div style="margin-top:10px;font-size:10px;color:#4A5568;text-align:right">
+      ${modelList.length}개 모델 · VOC 제품 테이블과 자동 동기화 · 디스플레이 항목 <span style="color:#2563eb">파란색</span> 강조
     </div>`;
 }
 
