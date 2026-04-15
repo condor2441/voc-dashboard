@@ -71,20 +71,19 @@ window.VOC_MODELS['vivoy500i'] = {
     ],
 
     specs: [
-      { key: '디스플레이', val: '6.75" LCD, 1520×720 HD+', note: '대화면' },
-      { key: '주사율', val: '120Hz 적응형', note: 'LCD 특화' },
-      { key: '밝기', val: '1200 nits (피크)', note: '충분' },
-      { key: 'PWM / 조광', val: '3840Hz PWM + DC', note: '무깜빡임' },
-      { key: 'SoC', val: 'Snapdragon 4 Gen 2', note: '' },
-      { key: '메모리 / 저장', val: '4GB / 6GB / 8GB + 128GB / 256GB eMMC', note: '' },
+      { key: '디스플레이', val: '6.75" a-Si LCD, 1520×720 HD+', note: '대화면 / Tianma 추정' },
+      { key: '주사율 / LTPO', val: '120Hz 적응형 (LTPS, 비LTPO)', note: 'LCD 특화' },
+      { key: 'PWM / 조광', val: '3840Hz PWM + DC 하이브리드', note: '무깜빡임' },
+      { key: '피크 밝기', val: '1200 nits (HBM)', note: '야외 가시성 충분' },
+      { key: 'SoC', val: 'Snapdragon 4 Gen 2 (4nm)', note: '' },
+      { key: 'RAM / 저장', val: '4GB / 6GB / 8GB + 128GB / 256GB eMMC', note: '' },
       { key: '배터리', val: '7200mAh', note: '초대용량' },
-      { key: '충전', val: '44W 유선', note: '' },
-      { key: '카메라', val: '50MP f/1.8 (메인) + 5MP (전면)', note: '' },
-      { key: '무게', val: '약 194g', note: '' },
+      { key: '충전', val: '44W 유선 SuperFlash', note: '약 65분 완충' },
+      { key: '카메라', val: '50MP f/1.8 메인 + 5MP 전면', note: '' },
+      { key: '무게 / 두께', val: '약 194g / 7.89mm', note: '' },
       { key: '방수', val: 'IP69 / IP68', note: 'SGS 5성 낙하' },
-      { key: '프레임', val: '알루미늄 합금', note: '' },
-      { key: '소프트웨어', val: 'Funtouch OS 14', note: '' },
-      { key: '출시', val: '2026년 1월 16일', note: '중국' }
+      { key: 'OS', val: 'Funtouch OS 14 (Android 14)', note: '' },
+      { key: '시장', val: '중국 (1499위안~)', note: '2026.01.12 출시' }
     ],
 
     displayInsights: [
