@@ -165,17 +165,21 @@ function extractSupplier(productInsights) {
 
 /* ── initDashboard: called by models/_index.js after all models loaded ── */
 window.initDashboard = function () {
-  MODELS = Object.entries(window.VOC_MODELS || {}).map(([key, m]) => ({
+  MODELS = Object.entries(window.VOC_MODELS || {}).map(([key, m]) => {
+    const rawBrand = m.brand || 'Unknown';
+    const brand = BRAND_GROUP[rawBrand] || rawBrand;
+    return {
     key,
     name:      m.name || key,
-    brand:     m.brand || 'Unknown',
+    brand,
+    brandOrig: rawBrand,   // 툴팁에서 원래 브랜드명 표시용
     segment:   m.segment || '—',
     launch:    parseLaunch(m.launch),
     priceUSD:  m.priceUSD || 500,
     panel:     parsePanel(m.specs),
     supplier:  extractSupplier(m.productInsights),
     sdcSupply: m.sdcSupply || false,
-  }));
+  };});
 
   // Sort by launch date
   MODELS.sort((a, b) => a.launch.localeCompare(b.launch));
@@ -185,15 +189,16 @@ window.initDashboard = function () {
   render();
 };
 
+// OPPO 그룹: realme·OnePlus → OPPO로 통합 표시
+const BRAND_GROUP = { realme: 'OPPO', OnePlus: 'OPPO' };
+
 const BRAND_COLORS = {
   Samsung: '#1428A0',
   Apple:   '#1D1D1F',
   Xiaomi:  '#FF6900',
   OPPO:    '#1A75C9',
-  OnePlus: '#F50514',
   vivo:    '#415FFF',
   iQOO:   '#BB0080',
-  realme:  '#D4850A',
 };
 
 // BRANDS is derived dynamically from MODELS inside buildPills/buildLegend
@@ -287,7 +292,7 @@ function render() {
     const initials = {
       Samsung:'S', Apple:'', Xiaomi:'Mi', OPPO:'O',
       OnePlus:'1+', vivo:'V', iQOO:'iQ', realme:'Re'
-    }[m.brand] || m.brand[0];
+    }[m.brandOrig || m.brand] || (m.brand||'?')[0];
 
     s += `<g class="bubble${faded?' faded':''}" data-key="${m.key}" style="opacity:${opacity};cursor:pointer;">`;
     s += `<circle cx="${x}" cy="${y}" r="${R}" fill="${col}" fill-opacity="0.82" stroke="${strokeCol}" stroke-width="${strokeW}"/>`;
@@ -317,9 +322,11 @@ function showTip(e, m) {
     ? '<span class="tt-sdc">● Samsung Display</span>'
     : `<span class="tt-nosdc">○ ${m.supplier}</span>`;
 
+  const brandLabel = m.brandOrig && m.brandOrig !== m.brand
+    ? `${m.brand} <span style="color:#64748b;font-weight:400">(${m.brandOrig})</span>` : m.brand;
   tip.innerHTML = `
     <div class="tt-name">${m.name}</div>
-    <div class="tt-seg">${m.segment}</div>
+    <div class="tt-seg">${brandLabel} · ${m.segment}</div>
     <div class="tt-row"><span class="tt-k">출시</span><span class="tt-v">${m.launch}</span></div>
     <div class="tt-row"><span class="tt-k">가격</span><span class="tt-v">~$${m.priceUSD}</span></div>
     <div class="tt-row"><span class="tt-k">패널</span><span class="tt-v">${m.panel.size}  ${m.panel.res}</span></div>
