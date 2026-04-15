@@ -2,6 +2,7 @@
  * VOC Models — Index & Auto-Loader
  * 새 모델 추가 시: MODEL_KEYS 배열에 파일명 추가만 하면 됨
  * voc_dashboard.html은 수정 불필요
+ * v20250415 — cache-bust: priceUSD/sdcSupply 필드 추가
  * ============================================================ */
 
 window.VOC_MODELS = window.VOC_MODELS || {};
@@ -40,10 +41,11 @@ const _scriptSrc = document.currentScript ? document.currentScript.src : null;
     ? _scriptSrc.replace('_index.js', '')
     : (location.href.includes('/') ? location.href.replace(/\/[^\/]*$/, '/') + 'models/' : 'models/');
 
+  const cv = 'v20250415b'; // 캐시 무효화 버전 — 모델 데이터 변경 시 갱신
   for (const key of MODEL_KEYS) {
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
-      s.src = `${base}${key}.js`;
+      s.src = `${base}${key}.js?${cv}`;
       s.onload  = resolve;
       s.onerror = () => { console.warn(`[VOC] 모델 로드 실패: ${key}.js`); resolve(); };
       document.head.appendChild(s);
