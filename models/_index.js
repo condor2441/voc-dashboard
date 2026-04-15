@@ -22,6 +22,7 @@ const MODEL_KEYS = [
   'vivox300ultra',
   'iqooz11turbo',
   'ip17pro',
+  'ip17promax',
   'xiaomi17',
   'oppok15pro',
   's26plus',
