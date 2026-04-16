@@ -6,15 +6,15 @@
 
 window.NEWS_DATA = {
   "date": "2026.04.16",
-  "lastUpdated": "2026-04-16T09:00:00+09:00",
+  "lastUpdated": "2026-04-16T14:30:00+09:00",
   "dates": {
-    "2026.04.16": { "updatedAt": "2026-04-16T09:00:00+09:00" },
-    "2026.04.15": { "updatedAt": "2026-04-15T09:00:00+09:00" },
+    "2026.04.16": { "updatedAt": "2026-04-16T14:30:00+09:00" },
+    "2026.04.15": { "updatedAt": "2026-04-16T14:30:00+09:00" },
     "2026.04.14": { "updatedAt": "2026-04-15T09:00:00+09:00" },
-    "2026.04.13": { "updatedAt": "2026-04-15T09:00:00+09:00" },
-    "2026.04.12": { "updatedAt": "2026-04-14T17:35:00+09:00" },
+    "2026.04.13": { "updatedAt": "2026-04-16T14:30:00+09:00" },
+    "2026.04.12": { "updatedAt": "2026-04-16T14:30:00+09:00" },
     "2026.04.11": { "updatedAt": "2026-04-14T17:35:00+09:00" },
-    "2026.04.10": { "updatedAt": "2026-04-14T17:35:00+09:00" }
+    "2026.04.10": { "updatedAt": "2026-04-16T14:30:00+09:00" }
   },
   "samsung": [
     {
@@ -24,6 +24,14 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.16",
       "url": "https://sammyguru.com/galaxy-s26-first-major-feature-update-april-2026/"
+    },
+    {
+      "title": "Galaxy S26 4월 업데이트 글로벌 배포 확대 — 3x 카메라 블러 수정 포함 가능성",
+      "description": "SamMobile: Galaxy S26 시리즈 4월 2026 보안 업데이트가 한국·인도·유럽 초기 배포에 이어 미국 등 글로벌 주요 시장으로 확대. 3x 망원 카메라 블러 문제 수정 포함 가능성 제기. 빌드 번호 S948BXXS2AZCL, 556MB 용량.",
+      "source": "SamMobile",
+      "region": "Global",
+      "date": "2026.04.15",
+      "url": "https://www.sammobile.com/news/galaxy-s26-april-2026-software-update-camera-improvements-released/"
     },
     {
       "title": "Galaxy S26 시리즈 2차 4월 업데이트 배포 — 멕시코 첫 출시, AZD4 펌웨어",
@@ -48,22 +56,6 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.13",
       "url": "https://www.digitimes.com/news/a20260413PD222/samsung-galaxy-smartphone-production-sales-2026.html"
-    },
-    {
-      "title": "Galaxy S26·S26 Ultra 흥행 돌풍, 삼성 생산량 긴급 확대",
-      "description": "갤럭시 S26 시리즈 초기 수요가 공급을 초과하며 삼성이 생산 확대에 돌입. 특히 S26 Ultra Privacy Display 수요 급증.",
-      "source": "Android Headlines",
-      "region": "US",
-      "date": "2026.04.13",
-      "url": "https://www.androidheadlines.com/2026/04/galaxy-s26-galaxy-s26-ultra-are-a-hit-samsung-scrambles-to-make-more.html"
-    },
-    {
-      "title": "Galaxy S27 Pro 모델 부활 소문 재점화 — S26에서 취소된 Pro 라인 다시 검토",
-      "description": "Sammy Fans: Galaxy S26에서 취소됐던 Pro 모델이 S27 라인업에서 부활할 가능성 제기. 삼성 내부 프리미엄 라인업 재편 논의 지속. 한편 중국 BOE·Visionox는 ICDT 2026에서 무주름 폴더블 모듈 공개하며 삼성디스플레이 M16 소재셋 대비 기술 격차 추격 중.",
-      "source": "Sammy Fans",
-      "region": "US",
-      "date": "2026.04.12",
-      "url": "https://www.sammyfans.com/2026/04/12/cancelled-with-galaxy-s26-pro-model-rumors-reignites-for-s27/"
     }
   ],
   "apple": [
@@ -106,24 +98,16 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.10",
       "url": "https://news.quantosei.com/2026/04/10/apple-apparently-still-undecided-on-iphone-18-pro-dynamic-island/"
-    },
-    {
-      "title": "iPhone 18 Pro, 삼성 M16 OLED 탑재 확정 — 최고 밝기·전력 효율 동시 개선",
-      "description": "삼성디스플레이 M16 소재셋 OLED가 iPhone 18 Pro·Pro Max·Fold에 독점 공급. 피크 밝기·HDR 선명도·소자 수명 모두 역대 최고 수준 예상.",
-      "source": "SamMobile",
-      "region": "US",
-      "date": "2026.04.09",
-      "url": "https://www.sammobile.com/news/samsung-make-most-advanced-oled-display-iphone-18-pro/"
     }
   ],
   "xiaomi": [
     {
-      "title": "Xiaomi 18 Pro Max, 최대 8,500mAh 초대형 배터리 탑재 유력 — 17 Pro Max 대비 13% 증가",
-      "description": "Gizmochina: Xiaomi 18 Pro Max 엔지니어링 프로토타입이 최대 8,500mAh 배터리 테스트 중. 전작 Xiaomi 17 Pro Max의 7,500mAh 대비 약 13% 증가. Snapdragon 8 Elite Gen 6 Pro 탑재 전망. 9월 출시 예상.",
-      "source": "Gizmochina",
-      "region": "CN",
-      "date": "2026.04.09",
-      "url": "https://www.gizmochina.com/2026/04/09/xiaomi-18-pro-max-battery-8500mah-leak/"
+      "title": "Xiaomi 18 Pro, 전용 AI 버튼·후면 디스플레이 탑재 렌더 공개",
+      "description": "GSMArena: Xiaomi 18 Pro 렌더 이미지 공개. 측면 전용 AI 버튼 및 후면 디스플레이 탑재 확인. 트리플 카메라 유지, AI 버튼으로 스마트홈 제어·Xiaomi EV 연동 가능. Xiaomi 17 Pro 디자인 계승, 약 5개월 후 출시 예상.",
+      "source": "GSMArena",
+      "region": "Global",
+      "date": "2026.04.16",
+      "url": "https://www.gsmarena.com/xiaomi_18_pro_appears_in_new_renders_with_a_dedicated_ai_button-news-72385.php"
     },
     {
       "title": "Xiaomi 18 Pro·18 Pro Max 강화 사양 상세 공개, 카메라·배터리 업그레이드",
@@ -142,20 +126,20 @@ window.NEWS_DATA = {
       "url": "https://www.gizmochina.com/2026/04/13/xiaomi-18-pro-battery-and-camera-details-leak/"
     },
     {
+      "title": "Xiaomi 18 Pro Max, 최대 8,500mAh 초대형 배터리 탑재 유력 — 17 Pro Max 대비 13% 증가",
+      "description": "Gizmochina: Xiaomi 18 Pro Max 엔지니어링 프로토타입이 최대 8,500mAh 배터리 테스트 중. 전작 Xiaomi 17 Pro Max의 7,500mAh 대비 약 13% 증가. Snapdragon 8 Elite Gen 6 Pro 탑재 전망. 9월 출시 예상.",
+      "source": "Gizmochina",
+      "region": "CN",
+      "date": "2026.04.09",
+      "url": "https://www.gizmochina.com/2026/04/09/xiaomi-18-pro-max-battery-8500mah-leak/"
+    },
+    {
       "title": "Xiaomi 18 Pro, OPPO·Vivo처럼 200MP 듀얼 망원 채택 예상",
       "description": "SmartSens 1/1.28인치 200MP 2개 탑재. LOFIC HDR 3세대, 라이카 협력 유지.",
       "source": "NotebookCheck",
       "region": "US",
       "date": "2026.04.08",
       "url": "https://www.notebookcheck.net/Xiaomi-18-Pro-Leica-camera-with-Oppo-Find-X9-Ultra-and-Vivo-X300-Ultra-features.1269333.0.html"
-    },
-    {
-      "title": "Xiaomi 18 Pro, 후면 AI 스마트 디스플레이 업그레이드 예정",
-      "description": "후면 디스플레이가 맥락 인식 AI 인터페이스로 진화. 실시간 번역·텔레프롬프터 기능 탑재 전망. 9월 출시 예상.",
-      "source": "Android Headlines",
-      "region": "US",
-      "date": "2026.04.03",
-      "url": "https://www.androidheadlines.com/2026/04/xiaomi-18-pro-to-bring-impressive-rear-display-upgrade-new-ai-features.html"
     }
   ],
   "oppo": [
@@ -166,6 +150,14 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.16",
       "url": "https://www.gsmarena.com/oppo_find_x9_ultra_preorder_opens_globally_april_16-news-72380.php"
+    },
+    {
+      "title": "OPPO Find X9s, X9 Ultra와 4월 21일 글로벌 동시 출시 확정",
+      "description": "GSMArena: OPPO Find X9s가 Find X9 Ultra와 함께 4월 21일 글로벌 동시 출시 확정. 7,025mAh 배터리, 균일 1.15mm 베젤, 피치·라일락·그레이 3종 컬러. 중국은 Find X9s Pro 별도 출시, 글로벌판은 기본형 제공.",
+      "source": "GSMArena",
+      "region": "Global",
+      "date": "2026.04.15",
+      "url": "https://www.gsmarena.com/oppo_find_x9s_to_launch_globally_alongside_find_x9_ultra-news-72367.php"
     },
     {
       "title": "OPPO, Find X9 Ultra 공식 공개 — 4월 21일 글로벌 출시 D-7, 3종 컬러 확정",
@@ -190,22 +182,6 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.13",
       "url": "https://9to5google.com/2026/04/13/oppo-find-x9-ultra-hands-on-hardware/"
-    },
-    {
-      "title": "OPPO Find X9 Ultra TechRadar 핸즈온: 하셀블라드 영감, 2026 최고 미형 스마트폰",
-      "description": "TechRadar: 하셀블라드 카메라에서 영감 받은 디자인으로 2026년 지금까지 가장 아름다운 스마트폰으로 평가. 144Hz LTPO AMOLED, IP69 방수.",
-      "source": "TechRadar",
-      "region": "Global",
-      "date": "2026.04.13",
-      "url": "https://www.techradar.com/phones/the-oppo-find-x9-ultra-is-inspired-by-my-favorite-hasselblad-camera-and-i-think-its-the-most-beautiful-phone-of-2026-so-far"
-    },
-    {
-      "title": "OPPO Find X9 Ultra 핸즈온: 144Hz LTPO·3600nits 디스플레이 실물 확인",
-      "description": "Android Central 체험기: 6.82인치 LTPO AMOLED 직접 확인. 1nit 최저 밝기·IP69 방수·Snapdragon 8 Elite Gen 5 실물 검증. 2026 최고 카메라폰 후보.",
-      "source": "Android Central",
-      "region": "Global",
-      "date": "2026.04.13",
-      "url": "https://www.androidcentral.com/phones/oppo-phones/oppo-find-x9-ultra-hands-on"
     }
   ],
   "vivo": [
@@ -218,12 +194,12 @@ window.NEWS_DATA = {
       "url": "https://en.prnasia.com/releases/apac/vivo-launches-x300-ultra-globally-a-professional-creative-powerhouse-featuring-zeiss-master-lenses-collection-529216.shtml"
     },
     {
-      "title": "vivo X300 Ultra 글로벌 출시 일정 공식 예고 — 4월 24일 판매, 사전예약 16일 시작",
-      "description": "GSMArena: vivo가 X300 Ultra 글로벌 출시 일정 공식 예고. 4월 24일 글로벌 판매 시작, 사전예약 4월 16일부터 시작. 스페인·오스트리아 등 유럽 동시 출시. 인도는 5월 7일 출시·14일 판매 시작.",
-      "source": "GSMArena",
+      "title": "Vivo X300 Ultra, 글로벌 공식 출시 전 일부 채널서 할인 판매 시작",
+      "description": "NotebookCheck: Vivo X300 Ultra가 글로벌 공식 출시(4월 24일) 전부터 일부 유통채널에서 할인 판매 시작. 정가 €1,999 대비 할인 제공. 사전예약 기간(4/16~23) 중 조기 구매 가능 채널 주목.",
+      "source": "NotebookCheck",
       "region": "Global",
-      "date": "2026.04.13",
-      "url": "https://www.gsmarena.com/heres_when_the_vivo_x300_ultra_is_launching_globally-news-72342.php"
+      "date": "2026.04.16",
+      "url": "https://www.notebookcheck.net/Vivo-X300-Ultra-already-available-at-a-discount-ahead-of-global-launch.1274455.0.html"
     },
     {
       "title": "Vivo X300 Ultra 글로벌 출시 4월 24일 확정 — €1,900부터, 사전예약 4/16 시작",
@@ -242,20 +218,12 @@ window.NEWS_DATA = {
       "url": "https://startupnews.fyi/2026/04/14/vivo-x-fold-6-to-use-a-200mp-camera-from-the-x300-series/"
     },
     {
-      "title": "GSMArena, vivo X300 Ultra 정식 리뷰 착수 — 2026 최강 카메라폰 평가",
-      "description": "GSMArena 리뷰 팀 X300 Ultra 수령 확인. 200MP 듀얼 센서·6600mAh 배터리 전면 검증 예정.",
+      "title": "vivo X300 Ultra 글로벌 출시 일정 공식 예고 — 4월 24일 판매, 사전예약 16일 시작",
+      "description": "GSMArena: vivo가 X300 Ultra 글로벌 출시 일정 공식 예고. 4월 24일 글로벌 판매 시작, 사전예약 4월 16일부터 시작. 스페인·오스트리아 등 유럽 동시 출시. 인도는 5월 7일 출시·14일 판매 시작.",
       "source": "GSMArena",
       "region": "Global",
-      "date": "2026.04.10",
-      "url": "https://www.gsmarena.com/vivo_x300_ultra_in_for_review-news-72268.php"
-    },
-    {
-      "title": "Vivo X300 Ultra 실사용 리뷰: 역대 최고의 카메라폰",
-      "description": "모든 조명 환경에서 탁월한 사진 품질. 영상 촬영 성능도 최고 수준 평가.",
-      "source": "Android Central",
-      "region": "US",
-      "date": "2026.04.10",
-      "url": "https://www.androidcentral.com/phones/vivo/vivo-x300-ultra-review"
+      "date": "2026.04.13",
+      "url": "https://www.gsmarena.com/heres_when_the_vivo_x300_ultra_is_launching_globally-news-72342.php"
     }
   ],
   "huawei": [
@@ -266,6 +234,22 @@ window.NEWS_DATA = {
       "region": "CN",
       "date": "2026.04.16",
       "url": "https://www.huaweicentral.com/huawei-pura-90-pro-final-specs-confirmed-april-20-launch/"
+    },
+    {
+      "title": "Huawei Pura X Max, AI 스타일러스 탑재 확인 — 4월 20일 출시",
+      "description": "GSMArena: Huawei Pura X Max에 AI 기능 지원 스타일러스 탑재 공식 확인. 와이드 폴더블(Oppo Find N 방식) 폼팩터로 Pura 90 Pro 시리즈와 동일한 4월 20일 중국 출시 예정. AI 스타일러스로 메모·번역 등 지원.",
+      "source": "GSMArena",
+      "region": "CN",
+      "date": "2026.04.16",
+      "url": "https://www.gsmarena.com/huawei_pura_x_max_will_have_a_stylus_that_supports_ai_features-news-72383.php"
+    },
+    {
+      "title": "Huawei Pura X Max, 4월 20일 데뷔 — 와이드 폴더블·5종 컬러 공식 공개",
+      "description": "GSMArena/9to5Google: 화웨이가 Pura X Max 와이드 폴더블 디자인·컬러 공식 공개. 인터스텔라 블루·올리브 골드·팬텀 나이트 블랙·바이브런트 오렌지·제로 화이트 5종. Oppo Find N·Google Pixel Fold식 가로 폴딩 방식, iPhone보다 먼저 와이드 폴더블 트렌드 개척.",
+      "source": "GSMArena",
+      "region": "CN",
+      "date": "2026.04.13",
+      "url": "https://www.gsmarena.com/huawei_pura_x_max_to_debut_on_april_20_design_and_colors_revealed-news-72341.php"
     },
     {
       "title": "Huawei Pura 90 Pro·Pro Max, 출시 직전 컬러 디자인 전모 공개",
@@ -282,30 +266,6 @@ window.NEWS_DATA = {
       "region": "CN",
       "date": "2026.04.13",
       "url": "https://www.huaweicentral.com/take-a-look-at-huawei-pura-90-pro-and-pro-max-in-different-colors/"
-    },
-    {
-      "title": "Huawei Pura 90 Pro 시리즈 4월 20일 출시 공식 확인 — 디자인·스펙 전모 공개",
-      "description": "Gizmochina: 8000nits LTPO AMOLED, Kirin 9030 Pro, HarmonyOS 6.1. 그라디언트 컬러 전 라인업 및 삼각형 카메라 모듈 공개. 4월 22일 판매 시작.",
-      "source": "Gizmochina",
-      "region": "CN",
-      "date": "2026.04.10",
-      "url": "https://www.gizmochina.com/2026/04/10/huawei-pura-90-pro-pro-max-launch-date-design-specs/"
-    },
-    {
-      "title": "Huawei Pura 90 Pro 디자인·스펙 공식 확인, 8000nits LTPO 패널 탑재",
-      "description": "6.87인치 1.5K LTPO AMOLED, 피크 밝기 8000nits. Kirin 9030 Pro, HarmonyOS 6.1. 4월 22일 판매 시작.",
-      "source": "GSMArena",
-      "region": "CN",
-      "date": "2026.04.10",
-      "url": "https://www.gsmarena.com/huawei_pura_90_pro_series_launch_date_and_design_revealed-news-72323.php"
-    },
-    {
-      "title": "Huawei Pura 90 Pro 시리즈, 4월 20일 중국 출시 확정",
-      "description": "200MP 페리스코프 망원 + XMAGE 이미징 엔진. Orange Sea 그라디언트 컬러 공개.",
-      "source": "nokiamob.net",
-      "region": "CN",
-      "date": "2026.04.10",
-      "url": "https://nokiamob.net/2026/04/10/huawei-pura-90-pro-and-pro-max-launch-date-design-specs-and-camera-details/"
     }
   ],
   "honor": [
@@ -316,6 +276,14 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.16",
       "url": "https://www.gizmochina.com/2026/04/16/honor-600-honor-600-pro-full-specifications-april-22-launch/"
+    },
+    {
+      "title": "Honor 600 Pro, Geekbench 등장 — Snapdragon 8 Elite·12GB RAM·Android 16 확인",
+      "description": "AndroidHeadlines: Honor 600 Pro가 출시 1주일 전 Geekbench 데이터베이스에 등록. Snapdragon 8 Elite 칩셋, 12GB RAM, Android 16 탑재 확인. 4월 22일 말레이시아·23일 글로벌 출시 예정. 9,000mAh 대용량 배터리 탑재 전망.",
+      "source": "AndroidHeadlines",
+      "region": "Global",
+      "date": "2026.04.15",
+      "url": "https://www.androidheadlines.com/2026/04/the-honor-600-pro-just-surfaced-on-geekbench-and-its-packing-serious-specs.html"
     },
     {
       "title": "HONOR, 4월 23일 MagicBook X14/X16 Plus·WIN 게이밍 노트북 신제품 발표 예고",
@@ -340,22 +308,6 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.11",
       "url": "https://www.androidcentral.com/phones/honor-phones/honor-magic-8-pro-review"
-    },
-    {
-      "title": "Honor Magic 7 Pro 리뷰: 5000nits OLED, AI Eye Care 호평",
-      "description": "AI Oasis 아이케어, 4320Hz PWM 디밍. TÜV Rheinland 플리커프리 인증 획득.",
-      "source": "9to5Google",
-      "region": "US",
-      "date": "2026.01.19",
-      "url": "https://9to5google.com/2025/01/19/review-honor-magic-7-pro/"
-    },
-    {
-      "title": "Honor Magic V6 MWC 2026 공개: 세계 최박형 폴더블",
-      "description": "6000nits 외부 디스플레이, 1-120Hz LTPO 2.0 듀얼 화면. 44% 주름 깊이 감소.",
-      "source": "Android Central",
-      "region": "Global",
-      "date": "2026.03.01",
-      "url": "https://www.androidcentral.com/phones/honor-phones/honor-magic-v6-mwc-2026"
     }
   ]
 };
