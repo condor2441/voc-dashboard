@@ -5,16 +5,25 @@
  * ============================================================ */
 
 window.NEWS_DATA = {
-  "date": "2026.04.16",
-  "lastUpdated": "2026-04-16T23:51:51+09:00",
+  "date": "2026.04.17",
+  "lastUpdated": "2026-04-17T07:41:33+09:00",
   "dates": {
+    "2026.04.17": { "updatedAt": "2026-04-17T07:41:33+09:00" },
     "2026.04.16": { "updatedAt": "2026-04-16T23:51:51+09:00" },
-    "2026.04.15": { "updatedAt": "2026-04-16T23:51:51+09:00" },
-    "2026.04.14": { "updatedAt": "2026-04-16T23:51:51+09:00" },
-    "2026.04.13": { "updatedAt": "2026-04-16T23:51:51+09:00" },
+    "2026.04.15": { "updatedAt": "2026-04-17T07:41:33+09:00" },
+    "2026.04.14": { "updatedAt": "2026-04-17T07:41:33+09:00" },
+    "2026.04.13": { "updatedAt": "2026-04-17T07:41:33+09:00" },
     "2026.04.11": { "updatedAt": "2026-04-16T23:51:51+09:00" }
   },
   "samsung": [
+    {
+      "title": "Galaxy S26 Ultra 3x 블러 공식 수정 확인 — 4월 업데이트 카메라 패치 검증",
+      "description": "Android Authority: Galaxy S26 Ultra 3x 망원 카메라 블러 문제가 4월 2026 보안 업데이트를 통해 공식 수정됐음을 확인. Samsung 커뮤니티 모더레이터가 해당 이슈가 4월 업데이트에서 해결됐다고 공식 응답. 설정 → 소프트웨어 업데이트를 통해 수동 설치 가능.",
+      "source": "Android Authority",
+      "region": "Global",
+      "date": "2026.04.15",
+      "url": "https://www.androidauthority.com/galaxy-s26-ultra-blurry-camera-fix-3654813/"
+    },
     {
       "title": "Galaxy S26 시리즈, 첫 주요 기능 업데이트 배포 시작 — AI 통화 요약·Now Brief 한국어 지원",
       "description": "SammyGuru: Galaxy S26 시리즈에 출시 이후 첫 대규모 기능 업데이트 배포. AI 통화 요약, Now Brief 기능의 한국어 포함 추가 언어 지원, 카메라 야간 모드 개선 포함. 현재 한국·유럽 일부 지역부터 순차 배포 중.",
@@ -46,14 +55,6 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.14",
       "url": "https://www.sammyfans.com/2026/04/14/samsung-phones-getting-march-2026-google-play-system-update/"
-    },
-    {
-      "title": "삼성, 4월 Galaxy S26 생산 60만 대 긴급 증설 — S26 Ultra 수요가 전체 판매 60-70% 견인",
-      "description": "Digitimes: 삼성전자가 4월 Galaxy S26 시리즈 생산 계획을 240만→300만 대로 상향. S26 Ultra가 판매의 60-70% 차지하며 생산을 130만→150만 대로 확대. S26+ 는 30만→20만 대로 축소 조정.",
-      "source": "Digitimes",
-      "region": "Global",
-      "date": "2026.04.13",
-      "url": "https://www.digitimes.com/news/a20260413PD222/samsung-galaxy-smartphone-production-sales-2026.html"
     }
   ],
   "apple": [
@@ -142,6 +143,14 @@ window.NEWS_DATA = {
   ],
   "oppo": [
     {
+      "title": "OPPO Find X9 Ultra Android Central 핸즈온 — '2026 최고 카메라폰 유력'",
+      "description": "Android Central: Find X9 Ultra 실물 핸즈온. 하셀블라드 카메라에서 영감받은 가죽 후면·오렌지 링 카메라 모듈 디자인 극찬. 평평한 측면과 베벨 처리로 파지감 우수. 완성형 리뷰는 4월 21일 글로벌 출시 이후 제공 예정. '역대 가장 아름다운 폰 중 하나'로 평가.",
+      "source": "Android Central",
+      "region": "Global",
+      "date": "2026.04.15",
+      "url": "https://www.androidcentral.com/phones/oppo-phones/oppo-find-x9-ultra-hands-on"
+    },
+    {
       "title": "OPPO Find X9 Ultra 글로벌 사전예약 오늘 개시 — 4월 21일 판매 D-5",
       "description": "GSMArena: OPPO Find X9 Ultra 글로벌 사전예약이 4월 16일 공식 시작됐다. 4월 21일 글로벌 판매 개시까지 5일 남은 시점. 하셀블라드 마스터 카메라 시스템 + 200MP 듀얼 + SD8 Elite Gen 5 탑재. 사전예약자 한정 ZEISS 렌즈 필터 키트 증정.",
       "source": "GSMArena",
@@ -172,17 +181,25 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.13",
       "url": "https://www.gsmarena.com/oppo_find_x9_ultra_design_and_color_options_officially_revealed-news-72344.php"
-    },
-    {
-      "title": "OPPO Find X9 Ultra 9to5Google 핸즈온: 글로벌 출시 환영, 2026 최고 카메라폰",
-      "description": "9to5Google: Find X9 Ultra는 하셀블라드 카메라에서 영감 받은 디자인으로 글로벌 동시 출시. 역대 가장 아름다운 스마트폰이라 극찬.",
-      "source": "9to5Google",
-      "region": "US",
-      "date": "2026.04.13",
-      "url": "https://9to5google.com/2026/04/13/oppo-find-x9-ultra-hands-on-hardware/"
     }
   ],
   "vivo": [
+    {
+      "title": "vivo X300 Ultra 유럽 최종 가격 확정 — 단품 €2,000·번들 최대 €3,166",
+      "description": "GSMArena: vivo X300 Ultra 유럽 최종 판매가 확정. 16GB/1TB 단품 €2,000(Amazon Germany 등재), 400mm 망원+케이스+그립 번들 €2,667(€268 쿠폰 적용), 영상 케이지 포함 풀 번들 €3,166(€767 쿠폰). 스페인은 사전예약 보너스로 포토그래피 키트·메신저백·영상 케이지 증정.",
+      "source": "GSMArena",
+      "region": "Global",
+      "date": "2026.04.17",
+      "url": "https://www.gsmarena.com/heres_how_much_the_vivo_x300_ultra_will_cost_in_europe-news-72395.php"
+    },
+    {
+      "title": "vivo X300 Ultra 인도 출시일 5월 7일 공식 확정",
+      "description": "GSMArena: vivo X300 Ultra 인도 출시일이 5월 7일로 공식 확정. 사전예약 5월 7일 시작, 5월 14일부터 정식 판매 개시. 글로벌 출시(4월 24일)보다 약 2주 늦은 출시로, 인도 전용 가격·색상 옵션은 추후 공개 예정.",
+      "source": "GSMArena",
+      "region": "Global",
+      "date": "2026.04.15",
+      "url": "https://www.gsmarena.com/vivo_x300_ultra_india_launch_date_tipped-news-72354.php"
+    },
     {
       "title": "vivo X300 Ultra 글로벌 사전예약 오늘 개시 — ZEISS Master Lenses 탑재, 4월 24일 판매",
       "description": "PR Newswire/Manila Times: vivo가 4월 16일 X300 Ultra 글로벌 공식 출시를 선언하며 사전예약을 시작했다. ZEISS Master Lenses Collection 탑재, 400mm/200mm 등가 ZEISS 망원 렌즈 지원. 사전예약 4/16~23, 4/24 글로벌 배송 개시. 유럽 €1,900부터.",
@@ -206,25 +223,25 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.15",
       "url": "https://9to5google.com/2026/04/15/vivo-x300-ultra-goes-global-with-insane-videography-capabilities/"
-    },
-    {
-      "title": "Vivo X300 Ultra 글로벌 출시 4월 24일 확정 — €1,900부터, 사전예약 4/16 시작",
-      "description": "AndroidHeadlines/TechAdvisor: X300 Ultra 글로벌 4/24 정식 출시, 사전예약 4/16 시작. 16GB+1TB €1,900(~$2,190), 줌 렌즈 키트 번들 €2,300. Green·Black 2종. 인도 5/7 출시·5/14 판매. 듀얼 200MP + ZEISS Telephoto Extender 2 Ultra 유지.",
-      "source": "AndroidHeadlines",
-      "region": "Global",
-      "date": "2026.04.14",
-      "url": "https://www.androidheadlines.com/2026/04/vivo-x300-ultra-leak-reveals-global-price-color-details.html"
-    },
-    {
-      "title": "Vivo X Fold 6, X300 시리즈 200MP 카메라 이식 — 폴더블 카메라 플래그십급 전환",
-      "description": "Startup News: X Fold 6가 X300 Ultra에서 검증된 200MP 페리스코프 망원 센서 이식. ZEISS 협력 유지. 폴더블 카메라 성능 격상하며 Huawei Mate X7/Honor Magic V6 견제 강화.",
-      "source": "Startup News",
-      "region": "Global",
-      "date": "2026.04.14",
-      "url": "https://startupnews.fyi/2026/04/14/vivo-x-fold-6-to-use-a-200mp-camera-from-the-x300-series/"
     }
   ],
   "huawei": [
+    {
+      "title": "Huawei Pura 90 Pro Max, 200MP 20x 영상 줌·AI 포즈 가이드 공식 영상 3편 공개",
+      "description": "GSMArena: Huawei가 출시 D-5 시점에 Pura 90 Pro Max 카메라 기능 공식 영상 3편 공개. 첫 번째는 200MP 페리스코프 망원 20x 영상 줌 화질 시연, 두 번째는 AI Photo Pose 기능(장면 인식 기반 실시간 포즈 제안) 소개, 세 번째는 1인치 50MP 광각 야간 촬영 데모.",
+      "source": "GSMArena",
+      "region": "CN",
+      "date": "2026.04.15",
+      "url": "https://www.gsmarena.com/huawei_pura_90_pro_max_photography_features_teaser_videos-news-72355.php"
+    },
+    {
+      "title": "Huawei Pura 90 Pro Max 20x 영상 줌·AI 포즈 제안 기능 공식 확인",
+      "description": "Gizmochina: Huawei가 Pura 90 Pro Max의 20x 망원 영상 줌 기능과 AI Photo Pose 기능을 공식 확인. AI Photo Pose는 장면 인식 기반으로 피사체에 실시간 포즈를 제안하는 기능으로 스마트폰 최초 탑재. 4월 20일 출시까지 D-6 시점 공식 티저로 공개.",
+      "source": "Gizmochina",
+      "region": "CN",
+      "date": "2026.04.14",
+      "url": "https://www.gizmochina.com/2026/04/14/huawei-pura-90-pro-max-gets-20x-telephoto-video-and-ai-pose-suggestions/"
+    },
     {
       "title": "Huawei Pura 90 시리즈 D-4 — 8000nits 디스플레이·Kirin 9030 Pro 최종 스펙 재확인",
       "description": "Huawei Central: 4월 20일 공식 출시를 앞두고 Pura 90 Pro 시리즈 최종 스펙 재확인. 6.87인치 1.5K LTPO AMOLED 피크 8000nits, Kirin 9030 Pro, HarmonyOS 6.1, 200MP 페리스코프 망원. 사전예약 완판 임박 소식도 전해져.",
@@ -248,22 +265,6 @@ window.NEWS_DATA = {
       "region": "CN",
       "date": "2026.04.13",
       "url": "https://www.gsmarena.com/huawei_pura_x_max_to_debut_on_april_20_design_and_colors_revealed-news-72341.php"
-    },
-    {
-      "title": "Huawei Pura 90 Pro·Pro Max, 출시 직전 컬러 디자인 전모 공개",
-      "description": "NotebookCheck: 옵시디안 블랙·던 골드·퍼플 선셋 등 다양한 컬러 공식 확인. 삼각형 카메라 모듈 유지, 전면 플랫 스크린으로 복귀.",
-      "source": "NotebookCheck",
-      "region": "CN",
-      "date": "2026.04.13",
-      "url": "https://www.notebookcheck.net/Huawei-Pura-90-Pro-Max-shows-off-its-brand-new-look-days-before-launch.1270612.0.html"
-    },
-    {
-      "title": "Huawei Pura 90 Pro·Pro Max 컬러 변형 라인업 첫 공개",
-      "description": "에메랄드 레이크·오렌지 오션·오렌지 씨 그라디언트 컬러 확인. 4월 20일 발표 앞두고 디자인 최종 공개.",
-      "source": "Huawei Central",
-      "region": "CN",
-      "date": "2026.04.13",
-      "url": "https://www.huaweicentral.com/take-a-look-at-huawei-pura-90-pro-and-pro-max-in-different-colors/"
     }
   ],
   "honor": [
