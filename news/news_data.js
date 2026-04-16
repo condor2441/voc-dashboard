@@ -6,15 +6,13 @@
 
 window.NEWS_DATA = {
   "date": "2026.04.16",
-  "lastUpdated": "2026-04-16T14:30:00+09:00",
+  "lastUpdated": "2026-04-16T23:51:51+09:00",
   "dates": {
-    "2026.04.16": { "updatedAt": "2026-04-16T14:30:00+09:00" },
-    "2026.04.15": { "updatedAt": "2026-04-16T14:30:00+09:00" },
-    "2026.04.14": { "updatedAt": "2026-04-15T09:00:00+09:00" },
-    "2026.04.13": { "updatedAt": "2026-04-16T14:30:00+09:00" },
-    "2026.04.12": { "updatedAt": "2026-04-16T14:30:00+09:00" },
-    "2026.04.11": { "updatedAt": "2026-04-14T17:35:00+09:00" },
-    "2026.04.10": { "updatedAt": "2026-04-16T14:30:00+09:00" }
+    "2026.04.16": { "updatedAt": "2026-04-16T23:51:51+09:00" },
+    "2026.04.15": { "updatedAt": "2026-04-16T23:51:51+09:00" },
+    "2026.04.14": { "updatedAt": "2026-04-16T23:51:51+09:00" },
+    "2026.04.13": { "updatedAt": "2026-04-16T23:51:51+09:00" },
+    "2026.04.11": { "updatedAt": "2026-04-16T23:51:51+09:00" }
   },
   "samsung": [
     {
@@ -60,12 +58,28 @@ window.NEWS_DATA = {
   ],
   "apple": [
     {
+      "title": "Apple, iPhone 18 가변 조리개 카메라 공급망 생산 공식 가속화 — 5월 부품 양산 착수",
+      "description": "GuruFocus: Apple이 iPhone 18 Pro·Pro Max용 가변 조리개(Variable Aperture) 카메라 모듈 양산을 공급망에 공식 지시. 9월 출시 일정에 맞춰 5월부터 핵심 부품 생산 시작 전망. TSMC 2nm A20 Pro와 연동해 스마트폰 최초 가변 조리개 탑재 예정.",
+      "source": "GuruFocus",
+      "region": "US",
+      "date": "2026.04.16",
+      "url": "https://www.gurufocus.com/news/8797719/apple-accelerates-iphone-18-camera-upgrade-with-variable-aperture-technology-aapl"
+    },
+    {
       "title": "Apple, iPhone 18 Fold 힌지 설계 마무리 단계 — 두께 10mm 이하 목표",
       "description": "MacRumors: Apple이 iPhone 18 Fold의 힌지 메커니즘 설계를 사실상 확정 단계에 접어들었다고 복수 공급망 소식통이 전했다. 접혔을 때 두께 10mm 이하, 주름 최소화 기술 적용. Pro 라인과 동시 9월 출시 목표 유지 중.",
       "source": "MacRumors",
       "region": "US",
       "date": "2026.04.16",
       "url": "https://www.macrumors.com/2026/04/16/iphone-18-fold-hinge-design-finalized/"
+    },
+    {
+      "title": "iPhone 18 가을 출시 라인업 '와일드카드' 변수 남아 — 기본 모델 포함 여부 미결",
+      "description": "9to5Mac: iPhone 18 시리즈 2026년 가을 라인업 구성에 미결 변수가 있다고 보도. Pro/Ultra/Fold 외 기본 모델 포함 여부 및 출시 시점 조정 가능성 제기. 공급망 발주 확정은 5~6월 예상.",
+      "source": "9to5Mac",
+      "region": "US",
+      "date": "2026.04.14",
+      "url": "https://9to5mac.com/2026/04/14/this-falls-iphone-18-launch-lineup-has-one-big-wildcard-remaining/"
     },
     {
       "title": "iPhone 18 Pro 기다려야 할 10가지 이유 — Under-Display Face ID·가변 조리개·A20 Pro 2nm",
@@ -82,22 +96,6 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.13",
       "url": "https://9to5mac.com/2026/04/13/leaker-adds-support-for-red-iphone-18-color-rumor-in-a-slightly-weird-way/"
-    },
-    {
-      "title": "Apple, iPhone 18 시리즈 출시 일정 분리 확정 — 일부 모델 2027년으로 연기",
-      "description": "iPhone 18 Pro·Ultra·Fold는 2026년 9월 예정대로 출시, 기본·Plus 모델은 2027년으로 연기. 프리미엄 라인 집중 전략 채택.",
-      "source": "National Today",
-      "region": "US",
-      "date": "2026.04.12",
-      "url": "https://nationaltoday.com/us/ca/cupertino/news/2026/04/12/apple-splits-iphone-18-launch-across-2026-and-2027/"
-    },
-    {
-      "title": "iPhone 18 Pro Dynamic Island 크기, 애플 내부 최종 결정 보류",
-      "description": "Dynamic Island 축소 vs 유지 여부 아직 결정 미완료. 화면 내 Face ID 이동과 연계한 설계 검토 중.",
-      "source": "MacRumors",
-      "region": "US",
-      "date": "2026.04.10",
-      "url": "https://news.quantosei.com/2026/04/10/apple-apparently-still-undecided-on-iphone-18-pro-dynamic-island/"
     }
   ],
   "xiaomi": [
@@ -202,6 +200,14 @@ window.NEWS_DATA = {
       "url": "https://www.notebookcheck.net/Vivo-X300-Ultra-already-available-at-a-discount-ahead-of-global-launch.1274455.0.html"
     },
     {
+      "title": "Vivo X300 Ultra 글로벌 출시 — '압도적 영상 촬영 능력' 9to5Google 핸즈온",
+      "description": "9to5Google: Vivo X300 Ultra 글로벌 공식 출시 핸즈온. ZEISS Master Lenses 탑재 400mm 등가 초망원 영상 촬영 능력이 독보적. 유럽 배송 4/24 시작, 인도 5/7 출시. 글로벌 주파수 지원 강화.",
+      "source": "9to5Google",
+      "region": "Global",
+      "date": "2026.04.15",
+      "url": "https://9to5google.com/2026/04/15/vivo-x300-ultra-goes-global-with-insane-videography-capabilities/"
+    },
+    {
       "title": "Vivo X300 Ultra 글로벌 출시 4월 24일 확정 — €1,900부터, 사전예약 4/16 시작",
       "description": "AndroidHeadlines/TechAdvisor: X300 Ultra 글로벌 4/24 정식 출시, 사전예약 4/16 시작. 16GB+1TB €1,900(~$2,190), 줌 렌즈 키트 번들 €2,300. Green·Black 2종. 인도 5/7 출시·5/14 판매. 듀얼 200MP + ZEISS Telephoto Extender 2 Ultra 유지.",
       "source": "AndroidHeadlines",
@@ -216,14 +222,6 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.14",
       "url": "https://startupnews.fyi/2026/04/14/vivo-x-fold-6-to-use-a-200mp-camera-from-the-x300-series/"
-    },
-    {
-      "title": "vivo X300 Ultra 글로벌 출시 일정 공식 예고 — 4월 24일 판매, 사전예약 16일 시작",
-      "description": "GSMArena: vivo가 X300 Ultra 글로벌 출시 일정 공식 예고. 4월 24일 글로벌 판매 시작, 사전예약 4월 16일부터 시작. 스페인·오스트리아 등 유럽 동시 출시. 인도는 5월 7일 출시·14일 판매 시작.",
-      "source": "GSMArena",
-      "region": "Global",
-      "date": "2026.04.13",
-      "url": "https://www.gsmarena.com/heres_when_the_vivo_x300_ultra_is_launching_globally-news-72342.php"
     }
   ],
   "huawei": [
@@ -270,6 +268,14 @@ window.NEWS_DATA = {
   ],
   "honor": [
     {
+      "title": "HONOR 600 시리즈, 기기 내 AI 이미지→영상 변환 세계 최초 탑재 공식 공개",
+      "description": "Gizmochina: HONOR 600 및 600 Pro가 스마트폰 최초로 통합 멀티모달 AI 이미지-투-비디오 2.0 모델을 온디바이스 구동함을 공식 공개. 외부 서버 없이 기기 자체에서 이미지→동영상 생성 가능. 4월 22일 말레이시아, 23일 글로벌 출시 예정.",
+      "source": "Gizmochina",
+      "region": "Global",
+      "date": "2026.04.16",
+      "url": "https://www.gizmochina.com/2026/04/16/honor-600-series-debuts-on-device-unified-ai-image-to-video-feature/"
+    },
+    {
       "title": "Honor 600 시리즈 스펙 전모 공개 — 4월 22일 말레이시아·23일 글로벌 출시",
       "description": "Gizmochina: Honor 600 및 600 Pro 전체 스펙이 출시 1주일 전 유출됐다. 6.7인치 OLED, 120Hz, Snapdragon 7s Gen 3, 5000mAh+66W 탑재. Honor의 미드레인지 글로벌 확장 전략 핵심 모델. 4월 22일 말레이시아, 23일 글로벌 동시 출시.",
       "source": "Gizmochina",
@@ -300,14 +306,6 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.11",
       "url": "https://www.techradar.com/phones/honor-phones/honor-magic-8-pro-review"
-    },
-    {
-      "title": "Honor Magic 8 Pro 리뷰: Galaxy S26 Ultra의 유력한 대안",
-      "description": "6.71인치 QHD OLED, AI Eye Comfort Display 탑재. 카메라·디스플레이 모두 플래그십 수준으로 평가.",
-      "source": "Android Central",
-      "region": "Global",
-      "date": "2026.04.11",
-      "url": "https://www.androidcentral.com/phones/honor-phones/honor-magic-8-pro-review"
     }
   ]
 };
