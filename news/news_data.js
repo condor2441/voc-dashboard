@@ -5,11 +5,11 @@
  * ============================================================ */
 
 window.NEWS_DATA = {
-  "date": "2026.04.17",
-  "lastUpdated": "2026-04-17T07:41:33+09:00",
+  "date": "2026.04.18",
+  "lastUpdated": "2026-04-18T16:47:07+09:00",
   "dates": {
-    "2026.04.17": { "updatedAt": "2026-04-17T07:41:33+09:00" },
-    "2026.04.16": { "updatedAt": "2026-04-16T23:51:51+09:00" },
+    "2026.04.17": { "updatedAt": "2026-04-18T16:47:07+09:00" },
+    "2026.04.16": { "updatedAt": "2026-04-18T16:47:07+09:00" },
     "2026.04.15": { "updatedAt": "2026-04-17T07:41:33+09:00" },
     "2026.04.14": { "updatedAt": "2026-04-17T07:41:33+09:00" },
     "2026.04.13": { "updatedAt": "2026-04-17T07:41:33+09:00" },
@@ -17,12 +17,12 @@ window.NEWS_DATA = {
   },
   "samsung": [
     {
-      "title": "Galaxy S26 Ultra 3x 블러 공식 수정 확인 — 4월 업데이트 카메라 패치 검증",
-      "description": "Android Authority: Galaxy S26 Ultra 3x 망원 카메라 블러 문제가 4월 2026 보안 업데이트를 통해 공식 수정됐음을 확인. Samsung 커뮤니티 모더레이터가 해당 이슈가 4월 업데이트에서 해결됐다고 공식 응답. 설정 → 소프트웨어 업데이트를 통해 수동 설치 가능.",
-      "source": "Android Authority",
+      "title": "Galaxy S26 FE 스펙 유출 — Exynos 2500·Android 17·6.7인치 120Hz OLED 탑재 확인",
+      "description": "SamMobile: Galaxy S26 FE가 Geekbench에 등록되며 핵심 스펙 유출. 삼성 자체 Exynos 2500 칩셋, Android 17(One UI 9), 6.7인치 OLED 120Hz 디스플레이, 8GB RAM, 4,900mAh+45W 충전 탑재 전망. 중국 CSOT 디스플레이 패널 채택 가능성 제기. 하반기 2026 출시 예상.",
+      "source": "SamMobile",
       "region": "Global",
-      "date": "2026.04.15",
-      "url": "https://www.androidauthority.com/galaxy-s26-ultra-blurry-camera-fix-3654813/"
+      "date": "2026.04.17",
+      "url": "https://www.sammobile.com/news/major-galaxy-s26-fe-leak-reveals-chip-performance/"
     },
     {
       "title": "Galaxy S26 시리즈, 첫 주요 기능 업데이트 배포 시작 — AI 통화 요약·Now Brief 한국어 지원",
@@ -31,6 +31,14 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.16",
       "url": "https://sammyguru.com/galaxy-s26-first-major-feature-update-april-2026/"
+    },
+    {
+      "title": "Galaxy S26 Ultra 3x 블러 공식 수정 확인 — 4월 업데이트 카메라 패치 검증",
+      "description": "Android Authority: Galaxy S26 Ultra 3x 망원 카메라 블러 문제가 4월 2026 보안 업데이트를 통해 공식 수정됐음을 확인. Samsung 커뮤니티 모더레이터가 해당 이슈가 4월 업데이트에서 해결됐다고 공식 응답. 설정 → 소프트웨어 업데이트를 통해 수동 설치 가능.",
+      "source": "Android Authority",
+      "region": "Global",
+      "date": "2026.04.15",
+      "url": "https://www.androidauthority.com/galaxy-s26-ultra-blurry-camera-fix-3654813/"
     },
     {
       "title": "Galaxy S26 4월 업데이트 글로벌 배포 확대 — 3x 카메라 블러 수정 포함 가능성",
@@ -47,17 +55,33 @@ window.NEWS_DATA = {
       "region": "Global",
       "date": "2026.04.15",
       "url": "https://sammyguru.com/galaxy-s26-series-second-april-2026-update/"
-    },
-    {
-      "title": "Galaxy S26 포함 삼성 스마트폰, 2026년 3월 Google Play 시스템 업데이트 배포",
-      "description": "Sammy Fans: Galaxy S26·S25·S24 등 삼성 스마트폰에 2026년 3월 Google Play 시스템 업데이트 순차 배포 중. 보안 강화 및 Google 서비스 최적화 포함. Galaxy S26 기준 4월 보안 패치와 병행 적용.",
-      "source": "Sammy Fans",
-      "region": "US",
-      "date": "2026.04.14",
-      "url": "https://www.sammyfans.com/2026/04/14/samsung-phones-getting-march-2026-google-play-system-update/"
     }
   ],
   "apple": [
+    {
+      "title": "iPhone 18 Pro 4가지 컬러 유출 — 'Dark Cherry' 신규 등장, Cosmic Orange 퇴장",
+      "description": "MacRumors: iPhone 18 Pro 컬러 유출자가 4가지 최종 컬러 라인업 공개. Dark Cherry(Pantone 6076, 진한 와인레드), Light Blue(Pantone 2121), Dark Gray, Silver. 전작 Cosmic Orange 제외, Black 2년 연속 미탑재 전망. iPhone 18 Pro Max 동일 컬러 공유 예상.",
+      "source": "MacRumors",
+      "region": "US",
+      "date": "2026.04.17",
+      "url": "https://www.macrumors.com/2026/04/17/four-iphone-18-pro-colors-revealed/"
+    },
+    {
+      "title": "iPhone 18 Pro 컬러 4종 복수 소식통 동시 확인 — Dark Cherry·Light Blue·Dark Gray·Silver",
+      "description": "9to5Mac: 복수 유출 소식통이 iPhone 18 Pro 컬러를 Dark Cherry·Light Blue·Dark Gray·Silver 4종으로 동시 확인. Dark Cherry는 퍼플 틴트가 가미된 딥 레드. 아직 최종 확정 전이지만 복수 소식통 일치로 신뢰도 높음. iPhone 17 Mist Blue와 유사한 Light Blue 등 전통 팔레트 계승.",
+      "source": "9to5Mac",
+      "region": "US",
+      "date": "2026.04.17",
+      "url": "https://9to5mac.com/2026/04/17/these-are-the-four-new-iphone-18-pro-colors-per-rumor/"
+    },
+    {
+      "title": "iPhone 18 Pro 가변 조리개 카메라 모듈, 공급망 양산 단계 공식 돌입",
+      "description": "MacRumors: Apple의 iPhone 18 Pro·Pro Max용 가변 조리개(Variable Aperture) 카메라 모듈이 공급망 내 양산 단계에 진입 확인. 설계 완료·공급망 지시 단계를 넘어 실제 부품 생산 시작. TSMC 2nm A20 Pro와 연동해 스마트폰 최초 가변 조리개 탑재 예정, 9월 출시 목표.",
+      "source": "MacRumors",
+      "region": "US",
+      "date": "2026.04.16",
+      "url": "https://www.macrumors.com/2026/04/16/iphone-18-pro-variable-aperture-camera-production/"
+    },
     {
       "title": "Apple, iPhone 18 가변 조리개 카메라 공급망 생산 공식 가속화 — 5월 부품 양산 착수",
       "description": "GuruFocus: Apple이 iPhone 18 Pro·Pro Max용 가변 조리개(Variable Aperture) 카메라 모듈 양산을 공급망에 공식 지시. 9월 출시 일정에 맞춰 5월부터 핵심 부품 생산 시작 전망. TSMC 2nm A20 Pro와 연동해 스마트폰 최초 가변 조리개 탑재 예정.",
@@ -73,30 +97,6 @@ window.NEWS_DATA = {
       "region": "US",
       "date": "2026.04.16",
       "url": "https://www.macrumors.com/2026/04/16/iphone-18-fold-hinge-design-finalized/"
-    },
-    {
-      "title": "iPhone 18 가을 출시 라인업 '와일드카드' 변수 남아 — 기본 모델 포함 여부 미결",
-      "description": "9to5Mac: iPhone 18 시리즈 2026년 가을 라인업 구성에 미결 변수가 있다고 보도. Pro/Ultra/Fold 외 기본 모델 포함 여부 및 출시 시점 조정 가능성 제기. 공급망 발주 확정은 5~6월 예상.",
-      "source": "9to5Mac",
-      "region": "US",
-      "date": "2026.04.14",
-      "url": "https://9to5mac.com/2026/04/14/this-falls-iphone-18-launch-lineup-has-one-big-wildcard-remaining/"
-    },
-    {
-      "title": "iPhone 18 Pro 기다려야 할 10가지 이유 — Under-Display Face ID·가변 조리개·A20 Pro 2nm",
-      "description": "MacRumors: iPhone 18 Pro 업그레이드 10가지 정리. Under-Display Face ID로 Dynamic Island 35% 축소, 48MP 가변 조리개 메인 카메라, A20 Pro 2nm 칩, Deep Red 신규 컬러, 4월 이후 검토 지속 중인 디자인 변경 포함.",
-      "source": "MacRumors",
-      "region": "US",
-      "date": "2026.04.14",
-      "url": "https://www.macrumors.com/2026/04/14/reasons-to-wait-iphone-18-pro-2/"
-    },
-    {
-      "title": "iPhone 18 Pro 레드 컬러 유출 신빙성 재확인 — 블랙 2년 연속 제외, Dynamic Island 35% 축소",
-      "description": "9to5Mac: 유출자가 iPhone 18 Pro 레드 컬러 가능성 추가 확인. 클래식 블랙은 2년 연속 Pro 라인업 제외 전망. Face ID 부품 화면 내 이전으로 Dynamic Island 약 35% 축소, 48MP 메인 카메라 가변 조리개 채택 유력. A20 Pro 칩은 TSMC 1세대 2nm 공정.",
-      "source": "9to5Mac",
-      "region": "US",
-      "date": "2026.04.13",
-      "url": "https://9to5mac.com/2026/04/13/leaker-adds-support-for-red-iphone-18-color-rumor-in-a-slightly-weird-way/"
     }
   ],
   "xiaomi": [
@@ -185,20 +185,20 @@ window.NEWS_DATA = {
   ],
   "vivo": [
     {
+      "title": "vivo X300 Ultra 풀 리뷰 — '2026 최고 카메라폰, 믿을 수 없는 카메라 성능'",
+      "description": "Android Central: vivo X300 Ultra 1주일 사용 풀 리뷰. 듀얼 200MP 센서로 역대 최고 카메라 성능 확인. 야간·야외·동영상 촬영 모든 상황에서 타 플래그십 압도. 6,600mAh 대용량 배터리·SD8 Elite Gen5 최신 성능과 결합해 '2026 최고 카메라 특화 플래그십' 평가.",
+      "source": "Android Central",
+      "region": "Global",
+      "date": "2026.04.17",
+      "url": "https://www.androidcentral.com/phones/vivo/vivo-x300-ultra-review"
+    },
+    {
       "title": "vivo X300 Ultra 유럽 최종 가격 확정 — 단품 €2,000·번들 최대 €3,166",
       "description": "GSMArena: vivo X300 Ultra 유럽 최종 판매가 확정. 16GB/1TB 단품 €2,000(Amazon Germany 등재), 400mm 망원+케이스+그립 번들 €2,667(€268 쿠폰 적용), 영상 케이지 포함 풀 번들 €3,166(€767 쿠폰). 스페인은 사전예약 보너스로 포토그래피 키트·메신저백·영상 케이지 증정.",
       "source": "GSMArena",
       "region": "Global",
       "date": "2026.04.17",
       "url": "https://www.gsmarena.com/heres_how_much_the_vivo_x300_ultra_will_cost_in_europe-news-72395.php"
-    },
-    {
-      "title": "vivo X300 Ultra 인도 출시일 5월 7일 공식 확정",
-      "description": "GSMArena: vivo X300 Ultra 인도 출시일이 5월 7일로 공식 확정. 사전예약 5월 7일 시작, 5월 14일부터 정식 판매 개시. 글로벌 출시(4월 24일)보다 약 2주 늦은 출시로, 인도 전용 가격·색상 옵션은 추후 공개 예정.",
-      "source": "GSMArena",
-      "region": "Global",
-      "date": "2026.04.15",
-      "url": "https://www.gsmarena.com/vivo_x300_ultra_india_launch_date_tipped-news-72354.php"
     },
     {
       "title": "vivo X300 Ultra 글로벌 사전예약 오늘 개시 — ZEISS Master Lenses 탑재, 4월 24일 판매",
@@ -217,12 +217,12 @@ window.NEWS_DATA = {
       "url": "https://www.notebookcheck.net/Vivo-X300-Ultra-already-available-at-a-discount-ahead-of-global-launch.1274455.0.html"
     },
     {
-      "title": "Vivo X300 Ultra 글로벌 출시 — '압도적 영상 촬영 능력' 9to5Google 핸즈온",
-      "description": "9to5Google: Vivo X300 Ultra 글로벌 공식 출시 핸즈온. ZEISS Master Lenses 탑재 400mm 등가 초망원 영상 촬영 능력이 독보적. 유럽 배송 4/24 시작, 인도 5/7 출시. 글로벌 주파수 지원 강화.",
-      "source": "9to5Google",
+      "title": "vivo X300 Ultra 인도 출시일 5월 7일 공식 확정",
+      "description": "GSMArena: vivo X300 Ultra 인도 출시일이 5월 7일로 공식 확정. 사전예약 5월 7일 시작, 5월 14일부터 정식 판매 개시. 글로벌 출시(4월 24일)보다 약 2주 늦은 출시로, 인도 전용 가격·색상 옵션은 추후 공개 예정.",
+      "source": "GSMArena",
       "region": "Global",
       "date": "2026.04.15",
-      "url": "https://9to5google.com/2026/04/15/vivo-x300-ultra-goes-global-with-insane-videography-capabilities/"
+      "url": "https://www.gsmarena.com/vivo_x300_ultra_india_launch_date_tipped-news-72354.php"
     }
   ],
   "huawei": [
@@ -269,6 +269,14 @@ window.NEWS_DATA = {
   ],
   "honor": [
     {
+      "title": "HONOR 600·600 Pro 공식 디자인 공개 — 슬림 베젤·전용 AI 버튼·200MP 카메라 모듈 확정",
+      "description": "AndroidHeadlines: HONOR가 4월 22~23일 글로벌 출시를 앞두고 600·600 Pro 공식 디자인 공개. 600은 듀얼 카메라, 600 Pro는 트리플 카메라 모듈 채택. 양 모델 모두 측면 전용 AI 버튼 탑재, 슬림 베젤·메탈 프레임·플랫 후면 디자인. 1.5K OLED 120Hz·200MP 메인·9,000mAh(중국판) 배터리 스펙 병행 확인.",
+      "source": "AndroidHeadlines",
+      "region": "Global",
+      "date": "2026.04.17",
+      "url": "https://www.androidheadlines.com/2026/04/honor-600-600-pro-designs-officially-revealed-ahead-of-launch.html"
+    },
+    {
       "title": "HONOR 600 시리즈, 기기 내 AI 이미지→영상 변환 세계 최초 탑재 공식 공개",
       "description": "Gizmochina: HONOR 600 및 600 Pro가 스마트폰 최초로 통합 멀티모달 AI 이미지-투-비디오 2.0 모델을 온디바이스 구동함을 공식 공개. 외부 서버 없이 기기 자체에서 이미지→동영상 생성 가능. 4월 22일 말레이시아, 23일 글로벌 출시 예정.",
       "source": "Gizmochina",
@@ -299,14 +307,6 @@ window.NEWS_DATA = {
       "region": "CN",
       "date": "2026.04.14",
       "url": "https://www.androidheadlines.com/2026/04/honor-new-laptop-launch-event-april-23.html"
-    },
-    {
-      "title": "Honor Magic 8 Pro TechRadar 리뷰: 전방위 완성도 호평, 디스플레이 최고 수준",
-      "description": "TechRadar: 6.71인치 LTPO OLED, 6000nits 피크 밝기, 4320Hz PWM 디밍 검증. AI Eye Care·Dolby Vision 호환 등 종합 평가 우수.",
-      "source": "TechRadar",
-      "region": "Global",
-      "date": "2026.04.11",
-      "url": "https://www.techradar.com/phones/honor-phones/honor-magic-8-pro-review"
     }
   ]
 };
