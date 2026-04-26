@@ -162,8 +162,6 @@
 </main>
 
 <script>
-  if (sessionStorage.getItem('lotto_auth') !== '1') window.location.href = 'auth.html';
-
   const API = window.location.hostname === 'localhost' ? 'http://localhost:8001' : 'https://api.koo-vis.com';
   let selectedLogic = 6;
 
