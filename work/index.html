@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KooVIS · 업무</title>
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -300,6 +302,37 @@
     .compare-table tr:last-child td { border-bottom: none; }
     .compare-table .cat-row td { background: #f9f9fb; font-weight: 700; font-size: 0.75rem; color: #999; text-transform: uppercase; }
 
+    /* 트렌드 분석 */
+    .trend-phones-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+    .trend-card { background:#fff; border:1px solid #e8e8ec; border-radius:12px; padding:16px; cursor:pointer; position:relative; transition:box-shadow 0.15s,border-color 0.15s; }
+    .trend-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+    .trend-card.selected { border-color:#6366f1; box-shadow:0 0 0 2px #6366f120; }
+    .trend-card-check { position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:#6366f1;color:#fff;font-size:0.65rem;display:none;align-items:center;justify-content:center; }
+    .trend-card.selected .trend-card-check { display:flex; }
+    .trend-card-name { font-size:0.82rem;font-weight:700;margin-bottom:4px; }
+    .trend-card-brand { font-size:0.72rem;color:#999;margin-bottom:8px; }
+    .segment-tag { display:inline-block;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;cursor:pointer;transition:opacity 0.15s; }
+    .segment-tag:hover { opacity:0.75; }
+    .seg-flagship  { background:#fef3c7;color:#92400e; }
+    .seg-midrange  { background:#e0e7ff;color:#3730a3; }
+    .seg-budget    { background:#dcfce7;color:#166534; }
+    .trend-action-bar { display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap; }
+    .trend-select-count { font-size:0.85rem;color:#999; }
+    .chart-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px; }
+    .chart-card { background:#fff;border:1px solid #e8e8ec;border-radius:12px;padding:20px; }
+    .chart-card-title { font-size:0.75rem;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px; }
+    .insights-card { background:#fff;border:1px solid #e8e8ec;border-radius:12px;padding:24px;margin-bottom:24px; }
+    .insights-card h2 { font-size:0.75rem;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px; }
+    .insights-body { font-size:0.85rem;line-height:1.8;color:#1a1a1a; }
+    .insights-body h2,.insights-body h3 { font-size:0.92rem;font-weight:700;margin:16px 0 8px; }
+    .insights-body strong { font-weight:700; }
+    .insights-body ul { padding-left:18px;margin:6px 0; }
+    .insights-body li { margin-bottom:4px; }
+    @media(max-width:640px){
+      .trend-phones-grid{grid-template-columns:repeat(2,1fr);}
+      .chart-grid{grid-template-columns:1fr;}
+    }
+
     @media (max-width: 640px) {
       .nav { padding: 0 16px; }
       .nav-tabs { gap: 2px; overflow-x: auto; }
@@ -327,6 +360,7 @@
   <div class="nav-tabs">
     <button class="tab active" onclick="switchTab('news')">기술 뉴스</button>
     <button class="tab" onclick="switchTab('dashboard')">스마트폰 DB</button>
+    <button class="tab" onclick="switchTab('trend')">트렌드 분석</button>
   </div>
 </nav>
 
@@ -375,12 +409,49 @@
     </div>
 
   </div>
+
+  <!-- 트렌드 분석 섹션 -->
+  <div id="section-trend" class="section">
+    <div class="section-header">
+      <div class="section-title">트렌드 분석</div>
+    </div>
+
+    <div class="trend-action-bar">
+      <span class="trend-select-count" id="trendSelectCount">0개 선택됨</span>
+      <button class="btn btn-dark" onclick="startTrendAnalysis()" id="trendAnalyzeBtn" disabled>분석 시작</button>
+      <button class="btn btn-outline" onclick="clearTrendSelection()">선택 초기화</button>
+    </div>
+
+    <div class="trend-phones-grid" id="trendPhonesGrid">
+      <div style="grid-column:span 3;text-align:center;padding:40px;color:#bbb">
+        <div class="spinner"></div>불러오는 중...
+      </div>
+    </div>
+
+    <div id="trendResult" style="display:none">
+      <div class="chart-grid">
+        <div class="chart-card"><div class="chart-card-title">디스플레이 크기 (인치)</div><canvas id="chartDisplaySize"></canvas></div>
+        <div class="chart-card"><div class="chart-card-title">패널 타입 분포</div><canvas id="chartPanelType"></canvas></div>
+        <div class="chart-card"><div class="chart-card-title">주사율 (Hz)</div><canvas id="chartRefreshRate"></canvas></div>
+        <div class="chart-card"><div class="chart-card-title">AP 브랜드 분포</div><canvas id="chartApBrand"></canvas></div>
+        <div class="chart-card"><div class="chart-card-title">공정 노드 (nm)</div><canvas id="chartProcessNode"></canvas></div>
+        <div class="chart-card"><div class="chart-card-title">RAM (GB)</div><canvas id="chartRam"></canvas></div>
+        <div class="chart-card"><div class="chart-card-title">메인 카메라 (MP)</div><canvas id="chartCameraMP"></canvas></div>
+        <div class="chart-card"><div class="chart-card-title">배터리 용량 (mAh)</div><canvas id="chartBattery"></canvas></div>
+      </div>
+      <div class="insights-card">
+        <h2>AI 인사이트</h2>
+        <div class="insights-body" id="trendInsightsBody"></div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <!-- 비교 선택 액션바 -->
 <div class="compare-bar" id="compareBar">
   <span id="compareCount">0개 선택됨</span>
   <button class="btn btn-mint" onclick="runCompare()">비교하기</button>
+  <button class="btn btn-outline" style="color:#fff;border-color:#555;background:transparent" onclick="exportExcel([...selectedIds])">📊 엑셀</button>
   <button class="btn btn-outline" style="color:#fff;border-color:#444" onclick="clearSelection()">취소</button>
 </div>
 
@@ -389,7 +460,10 @@
 <div class="detail-panel" id="detailPanel">
   <div class="detail-header">
     <h2 id="detailTitle">상세 정보</h2>
-    <button class="close-btn" onclick="closeDetail()">✕</button>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="btn btn-outline" style="font-size:0.75rem;padding:5px 12px" onclick="exportExcel([currentPhoneId])">📊 엑셀</button>
+      <button class="close-btn" onclick="closeDetail()">✕</button>
+    </div>
   </div>
   <div class="panel-tabs">
     <button class="panel-tab active" onclick="switchPanelTab('specs',this)">스펙</button>
@@ -415,6 +489,7 @@
     document.getElementById('section-' + tab).classList.add('active');
     event.target.classList.add('active');
     if (tab === 'dashboard') loadPhones();
+    if (tab === 'trend') loadTrendPhones();
   }
 
   // ── 뉴스 ──────────────────────────────────────────────
@@ -706,8 +781,10 @@
     const data = await res.json();
     document.getElementById('detailTitle').textContent = data.phone.name;
 
+    const HIDDEN_CATS = ['Network'];
     const grouped = {};
     data.specs.forEach(s => {
+      if (HIDDEN_CATS.includes(s.category)) return;
       grouped[s.category] = grouped[s.category] || [];
       grouped[s.category].push(s);
     });
@@ -871,6 +948,116 @@
   function closeCompare() {
     document.getElementById('compareView').classList.remove('active');
     clearSelection();
+  }
+
+  // ── 엑셀 내보내기 ─────────────────────────────────────
+  async function exportExcel(ids) {
+    if (!ids || ids.length === 0) return;
+    const HIDDEN_CATS = ['Network'];
+    const data = await Promise.all(ids.map(id => fetch(`${API}/phones/${id}`).then(r => r.json())));
+
+    const allCats = [...new Set(data.flatMap(d =>
+      d.specs.filter(s => !HIDDEN_CATS.includes(s.category)).map(s => s.category)
+    ))];
+    const allKeys = {};
+    allCats.forEach(cat => {
+      allKeys[cat] = [...new Set(data.flatMap(d =>
+        d.specs.filter(s => s.category === cat).map(s => s.key)
+      ))];
+    });
+
+    const phoneNames = data.map(d => d.phone.name);
+    const rows = [['카테고리', '항목', ...phoneNames]];
+    allCats.forEach(cat => {
+      allKeys[cat].forEach(key => {
+        const vals = data.map(d => {
+          const s = d.specs.find(s => s.category === cat && s.key === key);
+          return s ? s.value : '';
+        });
+        rows.push([cat, key, ...vals]);
+      });
+    });
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{ wch: 16 }, { wch: 22 }, ...phoneNames.map(() => ({ wch: 24 }))];
+    XLSX.utils.book_append_sheet(wb, ws, '스마트폰 스펙');
+
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const fname = ids.length === 1
+      ? `KooVIS_${data[0].phone.name.replace(/\s+/g, '-')}_${today}.xlsx`
+      : `KooVIS_비교_${today}.xlsx`;
+    XLSX.writeFile(wb, fname);
+  }
+
+  // ── 트렌드 분석 ──────────────────────────────────────────────
+  let trendSelected = new Set();
+  let trendAllPhones = [];
+  const SEGMENT_LABEL = { flagship: '플래그십', midrange: '미드레인지', budget: '보급형' };
+  const SEGMENT_CLS   = { flagship: 'seg-flagship', midrange: 'seg-midrange', budget: 'seg-budget' };
+
+  async function loadTrendPhones() {
+    const grid = document.getElementById('trendPhonesGrid');
+    try {
+      const res = await fetch(`${API}/phones`);
+      trendAllPhones = await res.json();
+      renderTrendCards();
+    } catch(e) {
+      grid.innerHTML = '<div style="color:#f87;padding:20px">서버 연결 실패</div>';
+    }
+  }
+
+  function renderTrendCards() {
+    const grid = document.getElementById('trendPhonesGrid');
+    if (!trendAllPhones.length) {
+      grid.innerHTML = '<div style="grid-column:span 3;text-align:center;padding:40px;color:#bbb">등록된 폰이 없어요</div>';
+      return;
+    }
+    grid.innerHTML = trendAllPhones.map(p => {
+      const seg = p.segment || 'midrange';
+      const label = SEGMENT_LABEL[seg] || seg;
+      const cls = SEGMENT_CLS[seg] || 'seg-midrange';
+      return `
+        <div class="trend-card ${trendSelected.has(p.id) ? 'selected' : ''}" onclick="toggleTrendCard(${p.id})">
+          <div class="trend-card-check">✓</div>
+          <div class="trend-card-name">${p.name}</div>
+          <div class="trend-card-brand">${p.brand || ''} · ${p.year || '연도 미상'}</div>
+          <span class="segment-tag ${cls}" onclick="event.stopPropagation();openSegmentEdit(${p.id},this)"
+            title="클릭해서 수정">${label} ✎</span>
+        </div>`;
+    }).join('');
+  }
+
+  function toggleTrendCard(id) {
+    if (trendSelected.has(id)) trendSelected.delete(id);
+    else trendSelected.add(id);
+    document.getElementById('trendSelectCount').textContent = `${trendSelected.size}개 선택됨`;
+    document.getElementById('trendAnalyzeBtn').disabled = trendSelected.size === 0;
+    renderTrendCards();
+  }
+
+  function clearTrendSelection() {
+    trendSelected.clear();
+    document.getElementById('trendSelectCount').textContent = '0개 선택됨';
+    document.getElementById('trendAnalyzeBtn').disabled = true;
+    document.getElementById('trendResult').style.display = 'none';
+    renderTrendCards();
+  }
+
+  function openSegmentEdit(id, tagEl) {
+    const current = tagEl.className.includes('flagship') ? 'flagship'
+                  : tagEl.className.includes('budget')   ? 'budget' : 'midrange';
+    const options = ['flagship', 'midrange', 'budget'];
+    const next = options[(options.indexOf(current) + 1) % 3];
+    fetch(`${API}/phones/${id}/segment`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ segment: next })
+    }).then(() => {
+      const phone = trendAllPhones.find(p => p.id === id);
+      if (phone) phone.segment = next;
+      renderTrendCards();
+    });
   }
 
   // ── 초기화 ────────────────────────────────────────────
