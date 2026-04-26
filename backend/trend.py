@@ -166,7 +166,7 @@ def generate_trend_insights(phones: list[dict]) -> str:
 
     response = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=1500,
+        max_tokens=3000,
         system="당신은 스마트폰 시장 전문 애널리스트입니다. 한국어로 답변하세요.",
         messages=[{"role": "user", "content": prompt}]
     )
