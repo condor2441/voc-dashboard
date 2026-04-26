@@ -991,6 +991,12 @@
   }
 
   // ── 트렌드 분석 ──────────────────────────────────────────────
+  let _trendCharts = {};
+  const BRAND_COLORS = ['#6366f1','#f59e0b','#10b981','#ef4444','#3b82f6','#8b5cf6','#ec4899','#14b8a6'];
+  function destroyCharts() {
+    Object.values(_trendCharts).forEach(c => c.destroy());
+    _trendCharts = {};
+  }
   let trendSelected = new Set();
   let trendAllPhones = [];
   const SEGMENT_LABEL = { flagship: '플래그십', midrange: '미드레인지', budget: '보급형' };
@@ -1042,6 +1048,156 @@
     document.getElementById('trendAnalyzeBtn').disabled = true;
     document.getElementById('trendResult').style.display = 'none';
     renderTrendCards();
+  }
+
+  function renderCharts(phones) {
+    destroyCharts();
+    const years = [...new Set(phones.map(p => p.year).filter(Boolean))].sort();
+    const brands = [...new Set(phones.map(p => p.brand))];
+
+    const brandColor = {};
+    brands.forEach((b, i) => brandColor[b] = BRAND_COLORS[i % BRAND_COLORS.length]);
+
+    // ① 디스플레이 크기
+    _trendCharts.displaySize = new Chart(document.getElementById('chartDisplaySize'), {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: brands.map(brand => ({
+          label: brand,
+          data: years.map(y => {
+            const pts = phones.filter(p => p.brand === brand && p.year === y && p.display_size);
+            return pts.length ? (pts.reduce((s,p) => s + p.display_size, 0) / pts.length).toFixed(1) : null;
+          }),
+          borderColor: brandColor[brand], backgroundColor: brandColor[brand] + '33',
+          tension: 0.3, spanGaps: true, pointRadius: 4
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: '인치' } } } }
+    });
+
+    // ② 패널 타입 분포
+    const panelTypes = [...new Set(phones.map(p => p.panel_type).filter(Boolean))];
+    const panelColors = { LTPO:'#6366f1', AMOLED:'#f59e0b', OLED:'#10b981', LCD:'#94a3b8', Other:'#e2e8f0' };
+    _trendCharts.panelType = new Chart(document.getElementById('chartPanelType'), {
+      type: 'bar',
+      data: {
+        labels: years,
+        datasets: panelTypes.map(pt => ({
+          label: pt,
+          data: years.map(y => phones.filter(p => p.year === y && p.panel_type === pt).length),
+          backgroundColor: panelColors[pt] || '#ccc'
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { stepSize: 1 } } } }
+    });
+
+    // ③ 주사율
+    _trendCharts.refreshRate = new Chart(document.getElementById('chartRefreshRate'), {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: brands.map(brand => ({
+          label: brand,
+          data: years.map(y => {
+            const pts = phones.filter(p => p.brand === brand && p.year === y && p.refresh_rate);
+            return pts.length ? Math.max(...pts.map(p => p.refresh_rate)) : null;
+          }),
+          borderColor: brandColor[brand], backgroundColor: brandColor[brand] + '33',
+          tension: 0.3, spanGaps: true, pointRadius: 4
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'Hz' } } } }
+    });
+
+    // ④ AP 브랜드 분포
+    const apBrands = [...new Set(phones.map(p => p.ap_brand).filter(Boolean))];
+    const apColors = { Snapdragon:'#ef4444', Exynos:'#3b82f6', Dimensity:'#f59e0b', Apple:'#6366f1', Kirin:'#10b981', MediaTek:'#8b5cf6', Other:'#94a3b8' };
+    _trendCharts.apBrand = new Chart(document.getElementById('chartApBrand'), {
+      type: 'bar',
+      data: {
+        labels: years,
+        datasets: apBrands.map(ab => ({
+          label: ab,
+          data: years.map(y => phones.filter(p => p.year === y && p.ap_brand === ab).length),
+          backgroundColor: apColors[ab] || '#ccc'
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { stepSize: 1 } } } }
+    });
+
+    // ⑤ 공정 노드 (y축 반전: 낮을수록 최신)
+    _trendCharts.processNode = new Chart(document.getElementById('chartProcessNode'), {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: brands.map(brand => ({
+          label: brand,
+          data: years.map(y => {
+            const pts = phones.filter(p => p.brand === brand && p.year === y && p.process_node);
+            return pts.length ? Math.min(...pts.map(p => p.process_node)) : null;
+          }),
+          borderColor: brandColor[brand], backgroundColor: brandColor[brand] + '33',
+          tension: 0.3, spanGaps: true, pointRadius: 4
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } },
+        scales: { y: { reverse: true, title: { display: true, text: 'nm (낮을수록 최신)' } } } }
+    });
+
+    // ⑥ RAM
+    _trendCharts.ram = new Chart(document.getElementById('chartRam'), {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: brands.map(brand => ({
+          label: brand,
+          data: years.map(y => {
+            const pts = phones.filter(p => p.brand === brand && p.year === y && p.ram);
+            return pts.length ? Math.max(...pts.map(p => p.ram)) : null;
+          }),
+          borderColor: brandColor[brand], backgroundColor: brandColor[brand] + '33',
+          tension: 0.3, spanGaps: true, pointRadius: 4
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'GB' } } } }
+    });
+
+    // ⑦ 카메라 MP
+    _trendCharts.cameraMP = new Chart(document.getElementById('chartCameraMP'), {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: brands.map(brand => ({
+          label: brand,
+          data: years.map(y => {
+            const pts = phones.filter(p => p.brand === brand && p.year === y && p.camera_mp);
+            return pts.length ? Math.max(...pts.map(p => p.camera_mp)) : null;
+          }),
+          borderColor: brandColor[brand], backgroundColor: brandColor[brand] + '33',
+          tension: 0.3, spanGaps: true, pointRadius: 4
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'MP' } } } }
+    });
+
+    // ⑧ 배터리
+    _trendCharts.battery = new Chart(document.getElementById('chartBattery'), {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: brands.map(brand => ({
+          label: brand,
+          data: years.map(y => {
+            const pts = phones.filter(p => p.brand === brand && p.year === y && p.battery);
+            return pts.length ? Math.round(pts.reduce((s,p) => s + p.battery, 0) / pts.length) : null;
+          }),
+          borderColor: brandColor[brand], backgroundColor: brandColor[brand] + '33',
+          tension: 0.3, spanGaps: true, pointRadius: 4
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'mAh' } } } }
+    });
   }
 
   function openSegmentEdit(id, tagEl) {
