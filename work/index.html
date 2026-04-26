@@ -328,6 +328,14 @@
     .insights-body strong { font-weight:700; }
     .insights-body ul { padding-left:18px;margin:6px 0; }
     .insights-body li { margin-bottom:4px; }
+    .history-item { background:#fff;border:1px solid #e8e8ec;border-radius:12px;margin-bottom:10px;overflow:hidden; }
+    .history-header { display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;transition:background 0.12s; }
+    .history-header:hover { background:#f9f9fb; }
+    .history-phones { font-size:0.82rem;font-weight:600;color:#1a1a1a;flex:1; }
+    .history-date { font-size:0.72rem;color:#bbb;margin-left:12px;white-space:nowrap; }
+    .history-toggle { font-size:0.8rem;color:#bbb;margin-left:12px; }
+    .history-body { display:none;padding:0 18px 18px;border-top:1px solid #f4f4f5; }
+    .history-body.open { display:block; }
     @media(max-width:640px){
       .trend-phones-grid{grid-template-columns:repeat(2,1fr);}
       .chart-grid{grid-template-columns:1fr;}
@@ -446,6 +454,9 @@
         <div class="insights-body" id="trendInsightsBody"></div>
       </div>
     </div>
+
+    <!-- 분석 기록 -->
+    <div id="trendHistory" style="margin-top:32px"></div>
   </div>
 </main>
 
@@ -1013,6 +1024,7 @@
       trendAllPhones = await res.json();
       renderTrendFilters();
       renderTrendCards();
+      loadTrendHistory();
     } catch(e) {
       grid.innerHTML = '<div style="color:#f87;padding:20px">서버 연결 실패</div>';
     }
@@ -1289,6 +1301,45 @@
 
     btn.disabled = false;
     btn.textContent = '분석 시작';
+    loadTrendHistory();
+  }
+
+  async function loadTrendHistory() {
+    const el = document.getElementById('trendHistory');
+    try {
+      const res = await fetch(`${API}/trend/analyses`);
+      const list = await res.json();
+      if (!list.length) { el.innerHTML = ''; return; }
+      el.innerHTML = `
+        <div style="font-size:0.75rem;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px">분석 기록</div>
+        ${list.map((a, i) => {
+          const names = a.phones.map(p => p.name).join(', ');
+          const date  = a.created_at.slice(0, 16).replace('T', ' ');
+          const html  = a.insights
+            .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+            .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/^- (.+)$/gm, '<li>$1</li>')
+            .replace(/(<li>.*<\/li>(\n|$))+/g, m => `<ul>${m}</ul>`)
+            .replace(/\n{2,}/g, '<br><br>');
+          return `
+            <div class="history-item">
+              <div class="history-header" onclick="toggleHistory(this)">
+                <span class="history-phones">${names}</span>
+                <span class="history-date">${date}</span>
+                <span class="history-toggle">▾</span>
+              </div>
+              <div class="history-body insights-body">${html}</div>
+            </div>`;
+        }).join('')}`;
+    } catch(e) { el.innerHTML = ''; }
+  }
+
+  function toggleHistory(header) {
+    const body = header.nextElementSibling;
+    const toggle = header.querySelector('.history-toggle');
+    const open = body.classList.toggle('open');
+    toggle.textContent = open ? '▴' : '▾';
   }
 
   // ── 초기화 ────────────────────────────────────────────

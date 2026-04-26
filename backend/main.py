@@ -627,4 +627,30 @@ def trend_analyze(req: TrendRequest):
     if not phones:
         raise HTTPException(404, "선택한 폰을 찾을 수 없음")
     insights = generate_trend_insights(phones)
+    import json
+    conn = get_conn()
+    conn.execute(
+        "INSERT INTO trend_analyses (phones_json, insights) VALUES (?, ?)",
+        (json.dumps(phones, ensure_ascii=False), insights)
+    )
+    conn.commit()
+    conn.close()
     return {"phones": phones, "insights": insights}
+
+@app.get("/trend/analyses")
+def list_trend_analyses():
+    import json
+    conn = get_conn()
+    rows = conn.execute(
+        "SELECT id, phones_json, insights, created_at FROM trend_analyses ORDER BY created_at DESC LIMIT 20"
+    ).fetchall()
+    conn.close()
+    return [
+        {
+            "id": r["id"],
+            "phones": json.loads(r["phones_json"]),
+            "insights": r["insights"],
+            "created_at": r["created_at"]
+        }
+        for r in rows
+    ]

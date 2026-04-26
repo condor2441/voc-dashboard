@@ -127,6 +127,19 @@ def init_db():
     except Exception:
         pass  # 이미 존재하면 무시
 
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS trend_analyses (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                phones_json TEXT NOT NULL,
+                insights   TEXT NOT NULL,
+                created_at TEXT DEFAULT (datetime('now', 'localtime'))
+            )
+        """)
+        conn.commit()
+    except Exception:
+        pass
+
     conn.commit()
     conn.close()
     print("DB 초기화 완료")
