@@ -211,6 +211,18 @@
     .mini-chart { margin-top: 20px; }
     .mini-chart-title { font-size: 0.78rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
 
+    /* 계좌 블러 */
+    .acc-blur-wrap { position: relative; }
+    .acc-blur-content { transition: filter 0.3s; }
+    .acc-blur-content.blurred { filter: blur(6px); user-select: none; pointer-events: none; }
+    .acc-blur-overlay {
+      position: absolute; inset: 0; display: flex;
+      align-items: center; justify-content: center; cursor: pointer; border-radius: 12px;
+    }
+    .acc-blur-overlay.hidden { display: none; }
+    .acc-reveal-hint { font-size: 0.72rem; color: #999; background: rgba(255,255,255,0.85);
+      padding: 4px 14px; border-radius: 20px; border: 1px solid #e8e8ec; backdrop-filter: blur(2px); }
+
     @media (max-width: 640px) {
       .nav { padding: 0 14px; }
       .nav-tabs { overflow-x: auto; gap: 2px; }
@@ -219,6 +231,10 @@
       .market-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
       .overview-stats { grid-template-columns: repeat(2, 1fr) !important; }
       .overview-accounts { grid-template-columns: 1fr; }
+      .chart-row { grid-template-columns: 1fr !important; }
+      .chart-card:last-child { padding: 16px; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; }
+      .chart-card:last-child .chart-card-title { margin-bottom: 0; }
+      #todayPnl { font-size: 1.4rem !important; }
       .news-grid { grid-template-columns: 1fr; }
       .briefing-box { padding: 18px 16px; }
       .port-table { display: block; overflow-x: auto; white-space: nowrap; }
@@ -239,16 +255,16 @@
     <span class="nav-title">투자</span>
   </div>
   <div class="nav-tabs">
-    <button class="tab active" onclick="switchTab('briefing', this)">시황 브리핑</button>
+    <button class="tab" onclick="switchTab('briefing', this)">시황 브리핑</button>
     <button class="tab" onclick="switchTab('news', this)">투자 뉴스</button>
-    <button class="tab" onclick="switchTab('portfolio', this)">포트폴리오</button>
+    <button class="tab active" onclick="switchTab('portfolio', this)">포트폴리오</button>
   </div>
 </nav>
 
 <main class="main">
 
   <!-- 시황 브리핑 탭 -->
-  <div id="tab-briefing">
+  <div id="tab-briefing" style="display:none">
     <div class="market-grid" id="marketGrid" style="margin-bottom:32px">
       <div class="market-card" style="color:#bbb;font-size:0.82rem;grid-column:span 3;text-align:center;padding:32px">불러오는 중...</div>
     </div>
@@ -280,7 +296,7 @@
   </div>
 
   <!-- 포트폴리오 탭 -->
-  <div id="tab-portfolio" style="display:none">
+  <div id="tab-portfolio">
 
     <!-- 종합 현황 -->
     <div id="overviewSection" style="margin-bottom:32px">
@@ -396,8 +412,9 @@
 </div>
 
 <script>
-  const API = 'https://koovis-backend.fly.dev';
-  let donutChart = null, barChart = null;
+  const API = window.location.hostname === 'localhost' ? 'http://localhost:8001' : 'https://api.koo-vis.com';
+  let donutChart = null, barChart = null, weeklyChartInst = null;
+  let briefingLoaded = false;
 
   // ── 진입 시 인증 확인 ──────────────────────────────────
   if (sessionStorage.getItem('invest_auth') !== '1') {
@@ -444,10 +461,22 @@
     }
   }
 
+  function promptPassword(title) {
+    return new Promise(resolve => {
+      openModal(title, `
+        <input id="pwInput" type="password" placeholder="비밀번호" autofocus
+          style="width:100%;padding:8px 12px;border:1px solid #e8e8ec;border-radius:8px;font-family:inherit;font-size:0.9rem;letter-spacing:0.2em"
+          onkeydown="if(event.key==='Enter')document.getElementById('modalConfirm').click()">
+      `, () => { const v = document.getElementById('pwInput')?.value || ''; closeModal(); resolve(v); });
+      document.querySelector('#modalOverlay .btn-outline').onclick = () => { closeModal(); resolve(null); };
+    });
+  }
+
   // ── AI 브리핑 ─────────────────────────────────────────
   async function loadBriefing() {
-    const pw = prompt('브리핑 생성 — 비밀번호 입력');
-    if (pw !== '2441') { if (pw !== null) alert('비밀번호가 틀렸어요'); return; }
+    const pw = await promptPassword('브리핑 생성 — 비밀번호 입력');
+    if (pw === null) return;
+    if (pw !== '2441') { alert('비밀번호가 틀렸어요'); return; }
     const box = document.getElementById('briefingBox');
     const btn = document.getElementById('briefingBtn');
     btn.disabled = true;
@@ -527,6 +556,7 @@
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + tab).style.display = 'block';
     btn.classList.add('active');
+    if (tab === 'briefing' && !briefingLoaded) { loadMarket(); loadHistory(); briefingLoaded = true; }
     if (tab === 'news') loadInvestNews();
     if (tab === 'portfolio') loadOverview();
   }
@@ -572,26 +602,38 @@
           <div class="overview-stat">
             <div class="overview-stat-label">총 수익률</div>
             <div class="overview-stat-value ${cls(totalReturn)}" id="stat-total">0</div>
+            <div style="font-size:0.72rem;margin-top:5px;color:${d.daily_pct >= 0 ? '#ef4444' : '#3b82f6'}">
+              오늘 ${d.daily_pct >= 0 ? '+' : ''}${d.daily_pct}%
+            </div>
           </div>
         </div>
 
-        <div class="overview-accounts fade-in">
+<div class="overview-accounts fade-in">
           ${d.accounts.map(a => `
-            <div class="overview-account-card" onclick="goToAccount(${a.id})" style="cursor:pointer">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <span style="font-weight:700;font-size:0.88rem">${a.name}</span>
-                <span class="${cls(a.profit_pct)}" style="font-size:0.82rem;font-weight:600">${fmt(a.profit_pct,'%')}</span>
+            <div class="overview-account-card acc-blur-wrap">
+              <div class="acc-blur-overlay" onclick="revealAccCard(this)">
+                <span class="acc-reveal-hint">탭하여 보기</span>
               </div>
-              <div style="font-size:0.82rem;color:#999;margin-top:6px;display:flex;justify-content:space-between">
-                <span>평가금 ₩${Number(a.cur).toLocaleString()}</span>
-                <span style="display:flex;align-items:center;gap:6px">
-                  예수금 ₩${Number(a.cash).toLocaleString()}
-                  <button onclick="event.stopPropagation();updateCash(${a.id})"
-                    style="font-size:0.65rem;padding:1px 5px;border:1px solid #e8e8ec;border-radius:4px;background:#fff;cursor:pointer;color:#999">수정</button>
-                </span>
-              </div>
-              <div class="overview-bar" style="margin-top:8px">
-                <div class="overview-bar-fill" style="width:${maxCur ? Math.round(a.cur/maxCur*100) : 0}%"></div>
+              <div class="acc-blur-content blurred">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-weight:700;font-size:0.88rem">${a.name}</span>
+                  <span class="${cls(a.profit_pct)}" style="font-size:0.82rem;font-weight:600">${fmt(a.profit_pct,'%')}</span>
+                </div>
+                <div style="font-size:0.82rem;color:#999;margin-top:6px;display:flex;justify-content:space-between">
+                  <span>평가금 ₩${Number(a.cur).toLocaleString()}</span>
+                  <span style="display:flex;align-items:center;gap:6px">
+                    예수금 ₩${Number(a.cash).toLocaleString()}
+                    <button onclick="updateCash(${a.id})"
+                      style="font-size:0.65rem;padding:1px 5px;border:1px solid #e8e8ec;border-radius:4px;background:#fff;cursor:pointer;color:#999">수정</button>
+                  </span>
+                </div>
+                <div class="overview-bar" style="margin-top:8px">
+                  <div class="overview-bar-fill" style="width:${maxCur ? Math.round(a.cur/maxCur*100) : 0}%"></div>
+                </div>
+                <button onclick="goToAccount(${a.id})"
+                  style="margin-top:10px;width:100%;padding:6px;background:#f4f4f5;border:none;border-radius:8px;font-family:inherit;font-size:0.78rem;font-weight:600;color:#666;cursor:pointer">
+                  이 계좌 보기 →
+                </button>
               </div>
             </div>`).join('')}
         </div>`;
@@ -609,6 +651,11 @@
     } catch(e) {
       el.innerHTML = '<div style="color:#f87;text-align:center;padding:32px;font-size:0.85rem">서버 연결 실패</div>';
     }
+  }
+
+  function revealAccCard(overlay) {
+    overlay.classList.add('hidden');
+    overlay.nextElementSibling.classList.remove('blurred');
   }
 
   async function goToAccount(accountId) {
@@ -928,6 +975,8 @@
     document.getElementById('stockSearch').value = '';
     document.getElementById('selectedStock').textContent = '없음';
     document.getElementById('selectedStock').style.color = '#bbb';
+    document.getElementById('holdQty').value = '';
+    document.getElementById('holdPrice').value = '';
     loadPortfolio();
   }
 
@@ -1160,9 +1209,8 @@
   }
 
   // 초기 로드
-  loadMarket();
-  loadHistory();
   loadAccounts();
+  loadOverview();
 </script>
 
 </body>

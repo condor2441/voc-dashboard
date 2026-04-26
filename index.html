@@ -106,9 +106,11 @@
       opacity: 0;
       transition: opacity 0.2s;
     }
-    .card.work::before   { background: linear-gradient(90deg, #3b82f6, #00c6a9); }
-    .card.invest::before { background: linear-gradient(90deg, #00c6a9, #10b981); }
-    .card.etc::before    { background: linear-gradient(90deg, #8b5cf6, #6366f1); }
+    .card.work::before    { background: linear-gradient(90deg, #3b82f6, #00c6a9); }
+    .card.invest::before  { background: linear-gradient(90deg, #00c6a9, #10b981); }
+    .card.estate::before  { background: linear-gradient(90deg, #f97316, #fb923c); }
+    .card.lotto::before   { background: linear-gradient(90deg, #eab308, #f59e0b); }
+    .card.etc::before     { background: linear-gradient(90deg, #8b5cf6, #6366f1); }
 
     .card:hover {
       box-shadow: 0 12px 36px rgba(0,0,0,0.09);
@@ -126,6 +128,8 @@
     }
     .card.work .card-icon   { background: #eff6ff; }
     .card.invest .card-icon { background: #f0fdf9; }
+    .card.estate .card-icon { background: #fff7ed; }
+    .card.lotto .card-icon  { background: #fefce8; }
     .card.etc .card-icon    { background: #f5f3ff; }
 
     .card-title {
@@ -211,6 +215,20 @@
       <div class="card-arrow">→</div>
     </a>
 
+    <a href="realestate/auth.html" class="card estate">
+      <div class="card-icon">🏠</div>
+      <div class="card-title">부동산</div>
+      <div class="card-desc">시세 · 청약<br>매물 분석</div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a href="lotto/auth.html" class="card lotto">
+      <div class="card-icon">🎱</div>
+      <div class="card-title">로또</div>
+      <div class="card-desc">당첨 번호<br>통계 분석</div>
+      <div class="card-arrow">→</div>
+    </a>
+
     <a href="#" class="card etc">
       <div class="card-icon">＋</div>
       <div>
@@ -225,26 +243,33 @@
   <footer class="footer">KooVIS · Private</footer>
 
 <script>
-  const API = 'https://koovis-backend.fly.dev';
+  const API = window.location.hostname === 'localhost' ? 'http://localhost:8001' : 'https://api.koo-vis.com';
 
   async function loadStats() {
-    try {
-      const res = await fetch(`${API}/phones`);
-      const phones = await res.json();
-      const el = document.getElementById('phoneCount');
-      if (el && phones.length) el.textContent = `· ${phones.length}개`;
-    } catch(e) {}
+    const [phonesRes, ovRes] = await Promise.allSettled([
+      fetch(`${API}/phones`),
+      fetch(`${API}/invest/overview`)
+    ]);
 
-    try {
-      const res = await fetch(`${API}/invest/overview`);
-      const ov  = await res.json();
-      const desc = document.getElementById('investDesc');
-      if (desc && ov.total_buy > 0) {
-        const pct   = ov.total_pct;
-        const color = pct >= 0 ? '#10b981' : '#ef4444';
-        desc.innerHTML = `포트폴리오 · 브리핑<br>수익률 <span style="color:${color};font-weight:700">${pct >= 0 ? '+' : ''}${pct}%</span>`;
-      }
-    } catch(e) {}
+    if (phonesRes.status === 'fulfilled') {
+      try {
+        const phones = await phonesRes.value.json();
+        const el = document.getElementById('phoneCount');
+        if (el && phones.length) el.textContent = `· ${phones.length}개`;
+      } catch(e) {}
+    }
+
+    if (ovRes.status === 'fulfilled') {
+      try {
+        const ov = await ovRes.value.json();
+        const desc = document.getElementById('investDesc');
+        if (desc && ov.total_buy > 0) {
+          const pct   = ov.total_pct;
+          const color = pct >= 0 ? '#10b981' : '#ef4444';
+          desc.innerHTML = `포트폴리오 · 브리핑<br>수익률 <span style="color:${color};font-weight:700">${pct >= 0 ? '+' : ''}${pct}%</span>`;
+        }
+      } catch(e) {}
+    }
   }
 
   loadStats();

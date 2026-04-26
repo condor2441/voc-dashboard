@@ -1,18 +1,28 @@
 import os
 import yfinance as yf
 import requests
+import time
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 import anthropic
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
 load_dotenv()
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
+# ── 시장 데이터 캐시 (3분 TTL) ───────────────────────────────
+_market_cache = {"data": None, "ts": 0}
+_MARKET_TTL = 180
+
 # ── 시장 데이터 수집 ─────────────────────────────────────────
 
 def get_market_data() -> dict:
+    now = time.time()
+    if _market_cache["data"] and now - _market_cache["ts"] < _MARKET_TTL:
+        return _market_cache["data"]
+
     tickers = {
         "KOSPI":   "^KS11",
         "KOSDAQ":  "^KQ11",
@@ -21,24 +31,31 @@ def get_market_data() -> dict:
         "USD/KRW": "USDKRW=X",
         "삼성전자": "005930.KS",
     }
-    result = {}
-    for name, ticker in tickers.items():
+
+    def fetch_one(item):
+        name, ticker = item
         try:
             t = yf.Ticker(ticker)
-            hist = t.history(period="2d")
+            hist = t.history(period="2d", timeout=8)
             if len(hist) >= 2:
                 prev  = hist["Close"].iloc[-2]
                 cur   = hist["Close"].iloc[-1]
                 chg   = round(cur - prev, 2)
                 chg_p = round((chg / prev) * 100, 2)
-                result[name] = {
-                    "price":  round(cur, 2),
-                    "change": chg,
-                    "pct":    chg_p,
-                    "arrow":  "▲" if chg >= 0 else "▼",
-                }
+                return name, {"price": round(cur,2), "change": chg, "pct": chg_p,
+                              "arrow": "▲" if chg >= 0 else "▼"}
         except Exception:
             pass
+        return name, None
+
+    result = {}
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        for name, data in ex.map(fetch_one, tickers.items()):
+            if data:
+                result[name] = data
+
+    _market_cache["data"] = result
+    _market_cache["ts"]   = now
     return result
 
 def get_finance_news() -> list[str]:

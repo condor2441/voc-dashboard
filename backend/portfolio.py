@@ -1,6 +1,33 @@
 import yfinance as yf
 import requests
+import time
 from concurrent.futures import ThreadPoolExecutor
+
+# ── 가격 캐시 (5분 TTL) ──────────────────────────────────
+_price_cache: dict = {}
+_CACHE_TTL = 300  # 5분
+
+def _cached_price(ticker: str, currency: str) -> dict:
+    now = time.time()
+    if ticker in _price_cache:
+        cached, ts = _price_cache[ticker]
+        if now - ts < _CACHE_TTL:
+            return cached
+    result = _fetch_price(ticker, currency)
+    _price_cache[ticker] = (result, now)
+    return result
+
+def _fetch_price(ticker: str, currency: str) -> dict:
+    try:
+        t = yf.Ticker(ticker)
+        hist = t.history(period="2d", timeout=8)
+        if hist.empty:
+            return {"price": None, "prev_price": None}
+        price = round(float(hist["Close"].iloc[-1]), 4)
+        prev  = round(float(hist["Close"].iloc[-2]), 4) if len(hist) >= 2 else price
+        return {"price": price, "prev_price": prev, "currency": currency}
+    except Exception:
+        return {"price": None, "prev_price": None}
 
 # 한국 + 미국 통합 검색 (Yahoo Finance)
 def search_kr_stock(query: str) -> list[dict]:
@@ -42,20 +69,11 @@ def search_us_stock(query: str) -> list[dict]:
         return []
 
 def get_current_price(ticker: str, currency: str) -> dict:
-    """yfinance로 현재가 + 전일가 조회"""
-    try:
-        t = yf.Ticker(ticker)
-        hist = t.history(period="2d")
-        if hist.empty:
-            return {"price": None, "prev_price": None, "error": "가격 조회 실패"}
-        price = round(float(hist["Close"].iloc[-1]), 4)
-        prev  = round(float(hist["Close"].iloc[-2]), 4) if len(hist) >= 2 else price
-        return {"price": price, "prev_price": prev, "currency": currency}
-    except Exception as e:
-        return {"price": None, "prev_price": None, "error": str(e)}
+    """캐시 적용 현재가 조회 (5분 TTL)"""
+    return _cached_price(ticker, currency)
 
 def get_valuation(holdings: list[dict]) -> list[dict]:
-    """보유 종목 현재가 + 수익률 + 일간변화 계산 (병렬)"""
+    """보유 종목 현재가 + 수익률 + 일간변화 계산 (병렬, 캐시)"""
     def fetch_one(h):
         price_data = get_current_price(h["ticker"], h["currency"])
         cur_price  = price_data.get("price")
@@ -80,7 +98,7 @@ def get_valuation(holdings: list[dict]) -> list[dict]:
             "daily_pct":  daily_pct,
         }
 
-    with ThreadPoolExecutor(max_workers=8) as ex:
+    with ThreadPoolExecutor(max_workers=4) as ex:
         return list(ex.map(fetch_one, holdings))
 
 def get_overview(accounts: list[dict], all_holdings: list[dict]) -> dict:
@@ -122,6 +140,57 @@ def get_overview(accounts: list[dict], all_holdings: list[dict]) -> dict:
         "accounts":     acct_summary,
         "holdings":     sorted_holdings,
     }
+
+_perf_cache: dict = {'data': None, 'ts': 0}
+_PERF_TTL = 300
+
+def get_portfolio_performance(all_raw: list[dict], accounts: list[dict]) -> list[dict]:
+    """전체 포트폴리오 주간 수익률 추이 (5거래일, 5분 캐시)"""
+    global _perf_cache
+    now = time.time()
+    if _perf_cache['data'] and now - _perf_cache['ts'] < _PERF_TTL:
+        return _perf_cache['data']
+
+    if not all_raw:
+        return []
+
+    total_cash = sum(a.get('cash', 0) for a in accounts)
+    base = sum(h['avg_price'] * h['quantity'] for h in all_raw) + total_cash
+    tickers = list(set(h['ticker'] for h in all_raw))
+
+    def fetch_hist(ticker):
+        try:
+            hist = yf.Ticker(ticker).history(period="7d", timeout=8)
+            return ticker, hist["Close"] if not hist.empty else None
+        except Exception:
+            return ticker, None
+
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        results = list(ex.map(fetch_hist, tickers))
+    hists = {t: h for t, h in results if h is not None}
+
+    if not hists:
+        return []
+
+    date_sets = [set(v.index.date) for v in hists.values()]
+    common = sorted(date_sets[0].intersection(*date_sets[1:]) if len(date_sets) > 1 else date_sets[0])[-5:]
+
+    out = []
+    for date in common:
+        total_val = total_cash
+        for h in all_raw:
+            tk = h['ticker']
+            if tk not in hists:
+                total_val += h['avg_price'] * h['quantity']
+                continue
+            matching = [float(v) for k, v in hists[tk].items() if k.date() == date]
+            price = matching[-1] if matching else h['avg_price']
+            total_val += h['quantity'] * price
+        pct = round((total_val - base) / base * 100, 2) if base else 0
+        out.append({'date': str(date), 'value': round(total_val), 'pct': pct})
+
+    _perf_cache = {'data': out, 'ts': now}
+    return out
 
 def get_holding_history(ticker: str, avg_price: float, quantity: float) -> dict:
     """일간/월간 주가 변화 + 보유 수익률 히스토리"""

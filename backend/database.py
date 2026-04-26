@@ -100,6 +100,18 @@ def init_db():
             currency    TEXT NOT NULL DEFAULT 'KRW',
             sold_at     TEXT DEFAULT (datetime('now', 'localtime'))
         );
+
+        CREATE TABLE IF NOT EXISTS lotto_draws (
+            id      INTEGER PRIMARY KEY AUTOINCREMENT,
+            round   INTEGER NOT NULL UNIQUE,
+            date    TEXT NOT NULL,
+            n1 INTEGER, n2 INTEGER, n3 INTEGER,
+            n4 INTEGER, n5 INTEGER, n6 INTEGER,
+            bonus   INTEGER,
+            winners INTEGER,
+            prize   INTEGER,
+            created_at TEXT DEFAULT (datetime('now', 'localtime'))
+        );
     """)
 
     # 기존 테이블 마이그레이션 (컬럼 없으면 추가)

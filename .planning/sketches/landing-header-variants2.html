@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KooVIS Header Variants 2</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #e8e8ec; font-family: 'Pretendard', system-ui, sans-serif; padding: 40px 20px; }
+
+    .label {
+      text-align: center; font-size: 0.72rem; font-weight: 700;
+      color: #888; letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .variant {
+      max-width: 560px;
+      margin: 0 auto 44px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid #ddd;
+    }
+
+    /* ── D안: 다크 헤더 ── */
+    .d-wrap {
+      background: #111;
+      padding: 52px 40px;
+      text-align: center;
+    }
+    .d-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #00c6a9;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .d-logo {
+      font-size: 3.6rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+    .d-logo span { color: #00c6a9; }
+    .d-sub {
+      font-size: 0.88rem;
+      color: #666;
+    }
+
+    /* ── E안: 좌우 분할 ── */
+    .e-wrap {
+      background: #f7f7f9;
+      padding: 48px 40px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .e-left { flex-shrink: 0; }
+    .e-logo {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #1a1a1a;
+      letter-spacing: -0.05em;
+      line-height: 0.9;
+    }
+    .e-logo span { color: #00c6a9; }
+    .e-divider {
+      width: 1px;
+      height: 60px;
+      background: #e0e0e0;
+      flex-shrink: 0;
+    }
+    .e-right {}
+    .e-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+    .e-desc {
+      font-size: 0.78rem;
+      color: #aaa;
+      line-height: 1.7;
+    }
+
+    /* ── F안: 한 줄 미니멀 + 언더라인 ── */
+    .f-wrap {
+      background: #fff;
+      padding: 60px 40px;
+      text-align: center;
+    }
+    .f-logo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #999;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .f-title {
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: #1a1a1a;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .f-accent {
+      display: inline-block;
+      color: #1a1a1a;
+      position: relative;
+    }
+    .f-accent::after {
+      content: '';
+      position: absolute;
+      bottom: 2px; left: 0; right: 0;
+      height: 6px;
+      background: #00c6a9;
+      opacity: 0.3;
+      border-radius: 3px;
+    }
+    .f-sub {
+      font-size: 0.85rem;
+      color: #bbb;
+      margin-top: 16px;
+    }
+
+    /* ── G안: 날짜+인사 ── */
+    .g-wrap {
+      background: #f7f7f9;
+      padding: 48px 40px;
+      text-align: left;
+    }
+    .g-date {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #bbb;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .g-greeting {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #1a1a1a;
+      letter-spacing: -0.04em;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .g-greeting em {
+      font-style: normal;
+      color: #00c6a9;
+    }
+    .g-sub {
+      font-size: 0.82rem;
+      color: #aaa;
+    }
+    .g-logo {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #ccc;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- D안 -->
+  <div class="label">D안 — 다크 임팩트</div>
+  <div class="variant">
+    <div class="d-wrap">
+      <div class="d-eyebrow">Private · Personal</div>
+      <div class="d-logo">Koo<span>VIS</span></div>
+      <div class="d-sub">나만의 커맨드 센터</div>
+    </div>
+  </div>
+
+  <!-- E안 -->
+  <div class="label">E안 — 좌우 분할 레이아웃</div>
+  <div class="variant">
+    <div class="e-wrap">
+      <div class="e-left">
+        <div class="e-logo">Koo<span>VIS</span></div>
+      </div>
+      <div class="e-divider"></div>
+      <div class="e-right">
+        <div class="e-title">나만의 커맨드 센터</div>
+        <div class="e-desc">업무 · 투자 · 스마트폰 DB<br>모든 정보를 한 곳에서</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F안 -->
+  <div class="label">F안 — 임팩트 타이포 + 형광 언더라인</div>
+  <div class="variant">
+    <div class="f-wrap">
+      <div class="f-logo">KooVIS</div>
+      <div class="f-title"><span class="f-accent">나만의</span><br>커맨드 센터</div>
+      <div class="f-sub">업무 · 투자 · 데이터를 하나로</div>
+    </div>
+  </div>
+
+  <!-- G안 -->
+  <div class="label">G안 — 날짜 + 개인 인사말</div>
+  <div class="variant">
+    <div class="g-wrap">
+      <div class="g-date" id="gDate">—</div>
+      <div class="g-greeting">안녕하세요,<br><em>구용우</em> 님</div>
+      <div class="g-sub">오늘도 KooVIS와 함께 시작해요</div>
+      <div class="g-logo">KooVIS</div>
+    </div>
+  </div>
+
+<script>
+  const days = ['일','월','화','수','목','금','토'];
+  const now = new Date();
+  document.getElementById('gDate').textContent =
+    `${now.getMonth()+1}월 ${now.getDate()}일 ${days[now.getDay()]}요일`;
+</script>
+</body>
+</html>

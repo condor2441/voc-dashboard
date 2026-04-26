@@ -4,7 +4,16 @@ from pydantic import BaseModel
 from typing import Optional
 from database import init_db, get_conn
 from briefing import generate_briefing, get_market_data
-from portfolio import search_kr_stock, search_us_stock, get_valuation, get_holding_history, get_overview
+from portfolio import search_kr_stock, search_us_stock, get_valuation, get_holding_history, get_overview, get_portfolio_performance
+from lotto_recommender import LottoRecommender
+
+def _lotto_history_from_db() -> list[list[int]]:
+    conn = get_conn()
+    rows = conn.execute(
+        "SELECT n1,n2,n3,n4,n5,n6 FROM lotto_draws ORDER BY round DESC LIMIT 200"
+    ).fetchall()
+    conn.close()
+    return [sorted([r['n1'],r['n2'],r['n3'],r['n4'],r['n5'],r['n6']]) for r in rows]
 from scraper import (
     gsmarena_search, gsmarena_specs,
     gsmarena_opinions, reddit_opinions, translate_opinions,
@@ -245,6 +254,17 @@ def get_briefing(bid: int):
 
 # ─── 포트폴리오 ────────────────────────────────────────────────
 
+@app.get("/invest/overview/chart")
+def portfolio_chart():
+    """전체 포트폴리오 주간 수익률 추이"""
+    conn = get_conn()
+    accounts = [dict(r) for r in conn.execute("SELECT * FROM accounts").fetchall()]
+    all_raw  = [dict(r) for r in conn.execute("SELECT * FROM portfolio").fetchall()]
+    conn.close()
+    if not all_raw:
+        return []
+    return get_portfolio_performance(all_raw, accounts)
+
 @app.get("/invest/stock/search")
 def stock_search(q: str, market: str = "all"):
     kr = search_kr_stock(q) if market in ("all", "kr") else []
@@ -460,6 +480,96 @@ def get_sell_history(account_id: int):
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+class LottoDrawRequest(BaseModel):
+    round:   int
+    date:    str
+    n1: int; n2: int; n3: int; n4: int; n5: int; n6: int
+    bonus:   int
+    winners: Optional[int] = None
+    prize:   Optional[int] = None
+
+@app.get("/lotto/draws")
+def lotto_draws(limit: int = 20):
+    conn = get_conn()
+    rows = conn.execute(
+        "SELECT * FROM lotto_draws ORDER BY round DESC LIMIT ?", (limit,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+@app.post("/lotto/draws")
+def lotto_add_draw(req: LottoDrawRequest):
+    conn = get_conn()
+    try:
+        conn.execute(
+            "INSERT OR REPLACE INTO lotto_draws (round,date,n1,n2,n3,n4,n5,n6,bonus,winners,prize) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (req.round,req.date,req.n1,req.n2,req.n3,req.n4,req.n5,req.n6,req.bonus,req.winners,req.prize)
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return {"ok": True}
+
+@app.delete("/lotto/draws/{round_no}")
+def lotto_delete_draw(round_no: int):
+    conn = get_conn()
+    conn.execute("DELETE FROM lotto_draws WHERE round=?", (round_no,))
+    conn.commit()
+    conn.close()
+    return {"ok": True}
+
+@app.get("/lotto/recommend")
+def lotto_recommend(logic_id: int = 6, num_sets: int = 5):
+    history = _lotto_history_from_db()
+    recommender = LottoRecommender(historical_draws=history)
+    result = recommender.recommend(logic_id=logic_id, num_sets=num_sets)
+    return result.to_dict()
+
+@app.get("/lotto/import-history")
+def lotto_import_history():
+    """GitHub CSV에서 과거 전체 이력 import (중복 무시)"""
+    import requests as _req, io, csv
+    from datetime import date as _date, timedelta
+
+    url = "https://raw.githubusercontent.com/ioahKwon/Korean-Lottery-games-Analysis/master/data/lotto.csv"
+    try:
+        r = _req.get(url, timeout=15)
+        r.raise_for_status()
+    except Exception as e:
+        raise HTTPException(500, f"CSV 다운로드 실패: {e}")
+
+    origin = _date(2002, 12, 7)
+    rows = [line.strip() for line in r.text.strip().splitlines() if line.strip()]
+
+    conn = get_conn()
+    imported = 0
+    skipped = 0
+    for i, row in enumerate(rows):
+        nums = [int(x) for x in row.lstrip('﻿').split(',')]
+        if len(nums) != 7:
+            continue
+        n1,n2,n3,n4,n5,n6,bonus = nums
+        round_no = i + 1
+        draw_date = str(origin + timedelta(weeks=i))
+        try:
+            conn.execute(
+                "INSERT OR IGNORE INTO lotto_draws (round,date,n1,n2,n3,n4,n5,n6,bonus) VALUES (?,?,?,?,?,?,?,?,?)",
+                (round_no, draw_date, n1, n2, n3, n4, n5, n6, bonus)
+            )
+            if conn.execute("SELECT changes()").fetchone()[0]:
+                imported += 1
+            else:
+                skipped += 1
+        except Exception:
+            skipped += 1
+    conn.commit()
+    conn.close()
+    return {"imported": imported, "skipped": skipped, "total": len(rows)}
+
+@app.get("/lotto/logics")
+def lotto_logics():
+    return LottoRecommender.list_logics()
 
 @app.get("/rss")
 def rss_proxy(url: str):

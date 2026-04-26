@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로또 분석기 — KooVIS</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f4f4f5; color: #1a1a1a; font-family: 'Pretendard', system-ui, sans-serif; min-height: 100vh; }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fade-in { animation: fadeIn 0.3s ease forwards; }
+    .spinner { width: 18px; height: 18px; border: 2px solid #e8e8ec; border-top-color: #1a1a1a; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
+
+    .nav { background: #fff; border-bottom: 1px solid #e8e8ec; padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+    .nav-left { display: flex; align-items: center; gap: 20px; }
+    .nav-back { text-decoration: none; color: #999; font-size: 0.85rem; transition: color 0.15s; }
+    .nav-back:hover { color: #1a1a1a; }
+    .nav-title { font-size: 1rem; font-weight: 700; }
+
+    .main { max-width: 860px; margin: 0 auto; padding: 28px 24px; }
+    .card { background: #fff; border: 1px solid #e8e8ec; border-radius: 14px; padding: 22px; margin-bottom: 16px; }
+    .card-title { font-size: 0.75rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+
+    .btn { padding: 8px 18px; border-radius: 10px; font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+    .btn-dark { background: #1a1a1a; color: #fff; }
+    .btn-dark:hover { background: #333; }
+    .btn-dark:disabled { background: #ccc; cursor: not-allowed; }
+    .btn-outline { background: #fff; color: #666; border: 1px solid #e8e8ec; }
+    .btn-outline:hover { border-color: #1a1a1a; color: #1a1a1a; }
+    .btn-red { background: #fff; color: #ef4444; border: 1px solid #fca5a5; }
+    .btn-red:hover { background: #fef2f2; }
+
+    /* 번호 볼 */
+    .ball { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.88rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .ball-sm { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: #fff; }
+    .ball.b1,.ball-sm.b1   { background: #f59e0b; }
+    .ball.b10,.ball-sm.b10 { background: #3b82f6; }
+    .ball.b20,.ball-sm.b20 { background: #ef4444; }
+    .ball.b30,.ball-sm.b30 { background: #6366f1; }
+    .ball.b40,.ball-sm.b40 { background: #10b981; }
+    .ball.bonus,.ball-sm.bonus { background: #fff; border: 2px solid #d1d5db; color: #6b7280; }
+    .ball-plus { font-size: 1rem; color: #d1d5db; }
+
+    /* 입력 폼 */
+    .num-inputs { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+    .num-input {
+      width: 52px; height: 52px; border-radius: 50%; border: 2px solid #e8e8ec;
+      text-align: center; font-family: inherit; font-size: 1rem; font-weight: 700;
+      outline: none; transition: border-color 0.15s;
+    }
+    .num-input:focus { border-color: #6366f1; }
+    .meta-inputs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .meta-input { padding: 7px 12px; border: 1px solid #e8e8ec; border-radius: 8px; font-family: inherit; font-size: 0.82rem; }
+
+    /* 이력 테이블 */
+    .draws-table { width: 100%; border-collapse: collapse; }
+    .draws-table th { padding: 10px 12px; background: #f9f9fb; font-size: 0.72rem; font-weight: 700; color: #999; border-bottom: 1px solid #e8e8ec; text-align: left; white-space: nowrap; }
+    .draws-table td { padding: 10px 12px; font-size: 0.8rem; border-bottom: 1px solid #f4f4f5; }
+    .draws-table tr:last-child td { border-bottom: none; }
+    .draws-table .balls-row { display: flex; gap: 5px; align-items: center; }
+
+    /* 로직 선택 */
+    .logic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .logic-card { border: 2px solid #e8e8ec; border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: all 0.15s; background: #fff; }
+    .logic-card:hover { border-color: #c7c7d4; }
+    .logic-card.selected { border-color: #6366f1; background: #f5f3ff; }
+    .logic-id { font-size: 0.65rem; font-weight: 700; color: #bbb; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .logic-name { font-size: 0.82rem; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .logic-desc { font-size: 0.7rem; color: #999; line-height: 1.5; }
+    .logic-card.selected .logic-id { color: #6366f1; }
+
+    /* 추천 결과 */
+    .result-set { background: #fff; border: 1px solid #e8e8ec; border-radius: 14px; padding: 16px 20px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 16px; animation: fadeIn 0.3s ease forwards; }
+    .result-balls { display: flex; gap: 6px; flex-wrap: wrap; }
+    .result-meta { text-align: right; flex-shrink: 0; }
+    .result-score { font-size: 0.78rem; font-weight: 700; color: #6366f1; }
+    .result-info { font-size: 0.7rem; color: #bbb; margin-top: 3px; }
+
+    .generate-btn { width: 100%; padding: 14px; border-radius: 12px; font-family: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; border: none; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; transition: opacity 0.15s; margin-bottom: 16px; }
+    .generate-btn:hover { opacity: 0.88; }
+    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .disclaimer { font-size: 0.72rem; color: #bbb; line-height: 1.7; border-left: 3px solid #e8e8ec; padding-left: 12px; margin-top: 20px; }
+
+    @media (max-width: 640px) {
+      .nav { padding: 0 14px; }
+      .main { padding: 16px 14px; }
+      .logic-grid { grid-template-columns: 1fr 1fr; }
+      .result-set { flex-direction: column; align-items: flex-start; }
+      .result-meta { text-align: left; }
+      .draws-table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a href="../" class="nav-back">← KooVIS</a>
+    <span class="nav-title">🎱 로또 분석기</span>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- 번호 추천 -->
+  <div class="card fade-in">
+    <div class="card-title">번호 추천 — 학술 기반 6개 로직</div>
+    <div class="logic-grid" id="logicGrid">
+      <div style="color:#bbb;font-size:0.82rem;grid-column:span 3;text-align:center;padding:16px"><span class="spinner"></span>로직 목록 불러오는 중...</div>
+    </div>
+    <button class="generate-btn" id="generateBtn" onclick="generate()">🎱 번호 5세트 생성</button>
+    <div id="resultArea"></div>
+    <div class="disclaimer">
+      ※ 로또는 완전 무작위 추첨이며 어떤 조합이든 당첨 확률(1/8,145,060)은 동일합니다.<br>
+      본 로직들은 <strong>당첨 시 분배 인원을 최소화하여 기대 수령액을 높이는 것</strong>을 목표로 합니다.<br>
+      비인기 점수: 이 조합을 동시에 선택한 다른 사람이 적을수록 높음 → 당첨 시 혼자 받을 가능성↑<br>
+      근거: Cox et al. (1998), Wang et al. (2016), Polin et al. (2021), Baker &amp; McHale (2012)
+    </div>
+  </div>
+
+  <!-- 당첨 번호 입력 -->
+  <div class="card fade-in">
+    <div class="card-title">당첨 번호 등록</div>
+    <div class="num-inputs">
+      <input class="num-input" id="n1" type="number" min="1" max="45" placeholder="1">
+      <input class="num-input" id="n2" type="number" min="1" max="45" placeholder="2">
+      <input class="num-input" id="n3" type="number" min="1" max="45" placeholder="3">
+      <input class="num-input" id="n4" type="number" min="1" max="45" placeholder="4">
+      <input class="num-input" id="n5" type="number" min="1" max="45" placeholder="5">
+      <input class="num-input" id="n6" type="number" min="1" max="45" placeholder="6">
+      <div class="ball-plus" style="margin: 0 4px">+</div>
+      <input class="num-input" id="nb" type="number" min="1" max="45" placeholder="보">
+    </div>
+    <div class="meta-inputs">
+      <input class="meta-input" id="mRound" type="number" placeholder="회차 (예: 1179)" style="width:160px">
+      <input class="meta-input" id="mDate" type="date" style="width:150px">
+      <input class="meta-input" id="mWinners" type="number" placeholder="1등 당첨자 수" style="width:140px">
+      <input class="meta-input" id="mPrize" type="number" placeholder="1등 당첨금 (원)" style="width:160px">
+    </div>
+    <button class="btn btn-dark" onclick="saveDraw()">저장</button>
+    <span id="saveMsg" style="font-size:0.8rem;color:#10b981;margin-left:10px;display:none">저장됐습니다</span>
+  </div>
+
+  <!-- 이력 -->
+  <div class="card fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div class="card-title" style="margin-bottom:0">당첨 이력</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span id="drawCount" style="font-size:0.78rem;color:#bbb"></span>
+        <button class="btn btn-outline" style="font-size:0.75rem;padding:5px 12px" onclick="importHistory()" id="importBtn">과거 이력 일괄 import</button>
+      </div>
+    </div>
+    <div id="drawsArea" style="color:#bbb;text-align:center;padding:24px;font-size:0.85rem">
+      <span class="spinner"></span>불러오는 중...
+    </div>
+  </div>
+
+</main>
+
+<script>
+  if (sessionStorage.getItem('lotto_auth') !== '1') window.location.href = 'auth.html';
+
+  const API = window.location.hostname === 'localhost' ? 'http://localhost:8001' : 'https://api.koo-vis.com';
+  let selectedLogic = 6;
+
+  function ballClass(n) {
+    if (n <= 9)  return 'b1';
+    if (n <= 19) return 'b10';
+    if (n <= 29) return 'b20';
+    if (n <= 39) return 'b30';
+    return 'b40';
+  }
+
+  function renderBalls(nums, size='') {
+    const cls = size === 'sm' ? 'ball-sm' : 'ball';
+    return nums.map(n => `<div class="${cls} ${ballClass(n)}">${n}</div>`).join('');
+  }
+
+  // ── 숫자 입력 시 볼 색상 미리보기 ─────────────────────────
+  ['n1','n2','n3','n4','n5','n6','nb'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => {
+      const v = parseInt(el.value);
+      if (v >= 1 && v <= 45) {
+        const cls = id === 'nb' ? 'bonus' : ballClass(v);
+        const colors = {b1:'#f59e0b',b10:'#3b82f6',b20:'#ef4444',b30:'#6366f1',b40:'#10b981',bonus:'#f9f9fb'};
+        el.style.borderColor = colors[cls] || '#e8e8ec';
+        el.style.color = id === 'nb' ? '#6b7280' : '#fff';
+        el.style.background = id === 'nb' ? '#f9f9fb' : (colors[cls] || '#fff');
+      } else {
+        el.style.borderColor = '#e8e8ec';
+        el.style.background = '#fff';
+        el.style.color = '#1a1a1a';
+      }
+    });
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === 'Tab') {
+        const ids = ['n1','n2','n3','n4','n5','n6','nb'];
+        const next = ids[ids.indexOf(id) + 1];
+        if (next) { e.preventDefault(); document.getElementById(next).focus(); }
+      }
+    });
+  });
+
+  // ── 당첨 번호 저장 ─────────────────────────────────────────
+  async function saveDraw() {
+    const vals = ['n1','n2','n3','n4','n5','n6'].map(id => parseInt(document.getElementById(id).value));
+    const bonus = parseInt(document.getElementById('nb').value);
+    const round = parseInt(document.getElementById('mRound').value);
+    const date  = document.getElementById('mDate').value;
+    if (vals.some(isNaN) || isNaN(bonus) || isNaN(round) || !date) {
+      alert('모든 번호·회차·날짜를 입력해주세요'); return;
+    }
+    const [n1,n2,n3,n4,n5,n6] = vals;
+    const body = { round, date, n1, n2, n3, n4, n5, n6, bonus,
+      winners: parseInt(document.getElementById('mWinners').value) || null,
+      prize:   parseInt(document.getElementById('mPrize').value)   || null };
+    try {
+      await fetch(`${API}/lotto/draws`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      const msg = document.getElementById('saveMsg');
+      msg.style.display = 'inline';
+      setTimeout(() => msg.style.display='none', 2000);
+      // 입력 초기화
+      ['n1','n2','n3','n4','n5','n6','nb'].forEach(id => {
+        const el = document.getElementById(id);
+        el.value = ''; el.style.borderColor='#e8e8ec'; el.style.background='#fff'; el.style.color='#1a1a1a';
+      });
+      document.getElementById('mRound').value = '';
+      loadDraws();
+    } catch(e) { alert('저장 실패'); }
+  }
+
+  // ── 이력 불러오기 ──────────────────────────────────────────
+  async function loadDraws() {
+    const area = document.getElementById('drawsArea');
+    try {
+      const res = await fetch(`${API}/lotto/draws?limit=30`);
+      const list = await res.json();
+      document.getElementById('drawCount').textContent = `${list.length}개 저장됨`;
+      if (!list.length) {
+        area.innerHTML = '<div style="color:#bbb;text-align:center;padding:24px">아직 등록된 회차가 없어요<br><small>위 폼에서 당첨 번호를 입력해주세요</small></div>';
+        return;
+      }
+      area.innerHTML = `
+        <table class="draws-table">
+          <thead><tr>
+            <th>회차</th><th>날짜</th><th>당첨 번호</th><th>1등</th><th></th>
+          </tr></thead>
+          <tbody>${list.map(d => {
+            const nums = [d.n1,d.n2,d.n3,d.n4,d.n5,d.n6];
+            const prize = d.prize ? `₩${Math.round(d.prize/100000000)}억` : '—';
+            return `<tr>
+              <td style="font-weight:700">제${d.round}회</td>
+              <td style="color:#999">${d.date}</td>
+              <td>
+                <div class="balls-row">
+                  ${renderBalls(nums, 'sm')}
+                  <span class="ball-plus" style="font-size:0.8rem;margin:0 2px">+</span>
+                  <div class="ball-sm bonus">${d.bonus}</div>
+                </div>
+              </td>
+              <td style="color:#999;font-size:0.78rem">${d.winners ? d.winners+'명 · '+prize : '—'}</td>
+              <td><button class="btn-red" style="font-size:0.7rem;padding:3px 8px;border:1px solid #fca5a5;border-radius:6px;background:#fff;color:#ef4444;cursor:pointer" onclick="deleteDraw(${d.round})">삭제</button></td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>`;
+    } catch(e) {
+      area.innerHTML = '<div style="color:#f87;text-align:center;padding:24px">불러오기 실패</div>';
+    }
+  }
+
+  async function deleteDraw(round) {
+    if (!confirm(`제${round}회를 삭제할까요?`)) return;
+    await fetch(`${API}/lotto/draws/${round}`, { method: 'DELETE' });
+    loadDraws();
+  }
+
+  // ── 로직 목록 ──────────────────────────────────────────────
+  async function loadLogics() {
+    try {
+      const res = await fetch(`${API}/lotto/logics`);
+      const list = await res.json();
+      document.getElementById('logicGrid').innerHTML = list.map(l => `
+        <div class="logic-card ${l.id === 6 ? 'selected' : ''}" onclick="selectLogic(${l.id}, this)">
+          <div class="logic-id">LOGIC ${l.id}</div>
+          <div class="logic-name">${l.name}</div>
+          <div class="logic-desc">${l.description}</div>
+        </div>`).join('');
+    } catch(e) {
+      document.getElementById('logicGrid').innerHTML =
+        '<div style="color:#f87;font-size:0.82rem;grid-column:span 3">로직 목록 불러오기 실패</div>';
+    }
+  }
+
+  function selectLogic(id, el) {
+    selectedLogic = id;
+    document.querySelectorAll('.logic-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ── 번호 생성 ──────────────────────────────────────────────
+  async function generate() {
+    const btn = document.getElementById('generateBtn');
+    const area = document.getElementById('resultArea');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>분석 중... (5~10초)';
+    area.innerHTML = '';
+    try {
+      const res = await fetch(`${API}/lotto/recommend?logic_id=${selectedLogic}&num_sets=5`);
+      const d = await res.json();
+      area.innerHTML = d.sets.map((nums, i) => {
+        const stats = d.metadata.set_stats[i];
+        const score = d.scores[i];
+        return `
+          <div class="result-set" style="animation-delay:${i*0.07}s">
+            <div>
+              <div style="font-size:0.7rem;color:#bbb;margin-bottom:8px">세트 ${i+1}</div>
+              <div class="result-balls">${renderBalls(nums, 'sm')}</div>
+            </div>
+            <div class="result-meta">
+              <div class="result-score">비인기 점수 ${score.toFixed(2)}</div>
+              <div class="result-info">합계 ${stats.sum} · 홀${stats.odd_count}짝${6-stats.odd_count} · 32+ ${stats.high_count}개</div>
+            </div>
+          </div>`;
+      }).join('');
+    } catch(e) {
+      area.innerHTML = '<div style="color:#f87;font-size:0.82rem;padding:12px">생성 실패. 서버를 확인해주세요.</div>';
+    }
+    btn.disabled = false;
+    btn.innerHTML = '🎱 번호 5세트 재생성';
+  }
+
+  async function importHistory() {
+    const btn = document.getElementById('importBtn');
+    btn.disabled = true;
+    btn.textContent = '가져오는 중...';
+    try {
+      const res = await fetch(`${API}/lotto/import-history`);
+      const d = await res.json();
+      alert(`완료! 신규 ${d.imported}회차 import, ${d.skipped}개 중복 건너뜀`);
+      loadDraws();
+    } catch(e) {
+      alert('import 실패. 서버를 확인해주세요.');
+    }
+    btn.disabled = false;
+    btn.textContent = '과거 이력 일괄 import';
+  }
+
+  loadDraws();
+  loadLogics();
+</script>
+</body>
+</html>
