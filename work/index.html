@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KooVIS · 업무</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f4f4f5;
+      color: #1a1a1a;
+      font-family: 'Pretendard', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── 네비 ── */
+    .nav {
+      background: #fff;
+      border-bottom: 1px solid #e8e8ec;
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 24px; }
+    .nav-back { text-decoration: none; color: #999; font-size: 0.85rem; transition: color 0.15s; }
+    .nav-back:hover { color: #1a1a1a; }
+    .nav-title { font-size: 1rem; font-weight: 700; }
+    .nav-tabs { display: flex; gap: 4px; }
+    .tab { padding: 6px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; color: #999; text-decoration: none; transition: all 0.15s; cursor: pointer; background: none; border: none; }
+    .tab:hover { background: #f4f4f5; color: #1a1a1a; }
+    .tab.active { background: #1a1a1a; color: #fff; }
+
+    /* ── 공통 ── */
+    .main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-title { font-size: 1.1rem; font-weight: 700; }
+
+    /* ── 뉴스 ── */
+    .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .news-card { background: #fff; border: 1px solid #e8e8ec; border-radius: 12px; padding: 20px; text-decoration: none; color: inherit; transition: box-shadow 0.18s, transform 0.18s; display: flex; flex-direction: column; gap: 8px; min-height: 130px; }
+    .news-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.1); transform: translateY(-3px); border-color: #c7c7d4; }
+    .news-tag { display: inline-block; font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; width: fit-content; }
+    .news-tag.phone { background: #e8f4ff; color: #3b82f6; }
+    .news-tag.it { background: #edfaf6; color: #00c6a9; }
+    .news-headline { font-size: 0.86rem; font-weight: 600; line-height: 1.5; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .news-meta { display: flex; justify-content: space-between; margin-top: auto; }
+    .news-source { font-size: 0.72rem; font-weight: 600; color: #bbb; }
+    .news-date { font-size: 0.72rem; color: #ccc; }
+    .loading { grid-column: span 3; text-align: center; padding: 40px; color: #bbb; font-size: 0.85rem; }
+    .spinner { width: 24px; height: 24px; border: 2px solid #e8e8ec; border-top-color: #00c6a9; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .refresh-btn { font-size: 0.8rem; color: #999; background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.15s; }
+    .refresh-btn:hover { background: #e8e8ec; color: #1a1a1a; }
+
+    /* ── 대시보드 ── */
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 10px 16px;
+      border: 1px solid #e8e8ec;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s;
+      background: #fff;
+    }
+    .search-bar input:focus { border-color: #1a1a1a; }
+    .btn {
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-dark { background: #1a1a1a; color: #fff; }
+    .btn-dark:hover { background: #333; }
+    .btn-outline { background: #fff; color: #1a1a1a; border: 1px solid #e8e8ec; }
+    .btn-outline:hover { border-color: #1a1a1a; }
+    .btn-mint { background: #00c6a9; color: #fff; }
+    .btn-mint:hover { background: #00b09a; }
+
+    /* 검색 결과 드롭다운 */
+    .search-results {
+      background: #fff;
+      border: 1px solid #e8e8ec;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      display: none;
+    }
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f4f4f5;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: #f9f9fb; }
+    .search-result-img { width: 40px; height: 40px; object-fit: contain; border-radius: 6px; background: #f4f4f5; }
+    .search-result-name { font-size: 0.82rem; font-weight: 500; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .btn-add { padding: 5px 12px; font-size: 0.75rem; border-radius: 6px; }
+
+    /* 저장된 폰 그리드 */
+    .phones-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .phone-card {
+      background: #fff;
+      border: 1px solid #e8e8ec;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: box-shadow 0.18s, transform 0.18s;
+      position: relative;
+    }
+    .phone-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.1); transform: translateY(-3px); border-color: #c7c7d4; }
+    .phone-card.selected { border-color: #00c6a9; box-shadow: 0 0 0 2px #00c6a920; }
+    .phone-card img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 12px; }
+    .phone-card-name { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; }
+    .phone-card-sub { font-size: 0.75rem; color: #999; }
+    .phone-card-check {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #00c6a9;
+      color: #fff;
+      font-size: 0.7rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .phone-card.selected .phone-card-check { display: flex; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: #bbb; font-size: 0.85rem; }
+    .empty-state p { margin-top: 8px; }
+
+    /* 연도별 섹션 */
+    .year-section { margin-bottom: 32px; }
+    .year-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .year-divider span {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #bbb;
+      white-space: nowrap;
+    }
+    .year-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e8e8ec;
+    }
+    .year-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    /* 브랜드 필터 */
+    .brand-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .brand-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #e8e8ec;
+      background: #fff;
+      color: #666;
+      transition: all 0.15s;
+    }
+    .brand-pill:hover { border-color: #1a1a1a; color: #1a1a1a; }
+    .brand-pill.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+    /* 비교 액션바 */
+    .compare-bar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1a;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 50px;
+      display: none;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.85rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      z-index: 200;
+    }
+    .compare-bar.visible { display: flex; }
+
+    /* 상세 패널 */
+    .detail-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 300;
+      display: none;
+    }
+    .detail-overlay.visible { display: block; }
+    .detail-panel {
+      position: fixed;
+      top: 0;
+      right: -520px;
+      width: 500px;
+      height: 100vh;
+      background: #fff;
+      overflow-y: auto;
+      z-index: 301;
+      transition: right 0.25s ease;
+      padding: 0;
+    }
+    .detail-panel.open { right: 0; }
+    .detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid #e8e8ec;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1;
+    }
+    .detail-header h2 { font-size: 1rem; font-weight: 700; }
+    .close-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #999; padding: 4px; }
+    /* 상세 패널 탭 */
+    .panel-tabs { display: flex; gap: 4px; padding: 0 24px 16px; border-bottom: 1px solid #e8e8ec; }
+    .panel-tab { padding: 6px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 500; color: #999; border: none; background: none; cursor: pointer; transition: all 0.15s; }
+    .panel-tab:hover { background: #f4f4f5; color: #1a1a1a; }
+    .panel-tab.active { background: #1a1a1a; color: #fff; }
+    .panel-section { display: none; }
+    .panel-section.active { display: block; }
+
+    .detail-body { padding: 24px; }
+    .detail-img { width: 100%; height: 160px; object-fit: contain; margin-bottom: 20px; background: #f9f9fb; border-radius: 10px; padding: 12px; }
+    .spec-category { margin-bottom: 20px; }
+    .spec-category-title { font-size: 0.78rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .spec-row { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f4f4f5; font-size: 0.82rem; }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-key { color: #999; min-width: 110px; flex-shrink: 0; }
+    .spec-val { color: #1a1a1a; font-weight: 500; }
+
+    /* 커뮤니티 의견 */
+    .opinion-source-title { font-size: 0.75rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin: 20px 0 10px; }
+    .opinion-card { padding: 14px; background: #f9f9fb; border-radius: 10px; margin-bottom: 10px; }
+    .opinion-text { font-size: 0.82rem; color: #1a1a1a; line-height: 1.6; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    .opinion-original { font-size: 0.78rem; color: #aaa; line-height: 1.5; margin-bottom: 6px; display: none; font-style: italic; }
+    .opinion-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: #bbb; margin-top: 6px; }
+    .opinion-link { color: #00c6a9; text-decoration: none; font-size: 0.72rem; font-weight: 600; }
+    .opinion-link:hover { text-decoration: underline; }
+    .opinion-score { background: #edfaf6; color: #00c6a9; padding: 1px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+    .toggle-lang { font-size: 0.7rem; color: #bbb; background: none; border: 1px solid #e8e8ec; border-radius: 4px; padding: 1px 6px; cursor: pointer; transition: all 0.15s; }
+    .toggle-lang:hover { border-color: #1a1a1a; color: #1a1a1a; }
+
+    /* 비교 뷰 */
+    .compare-view { display: none; }
+    .compare-view.active { display: block; }
+    .compare-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e8e8ec; }
+    .compare-table th { padding: 14px 16px; background: #f9f9fb; font-size: 0.82rem; font-weight: 700; border-bottom: 1px solid #e8e8ec; text-align: left; }
+    .compare-table td { padding: 10px 16px; font-size: 0.82rem; border-bottom: 1px solid #f4f4f5; vertical-align: top; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table .cat-row td { background: #f9f9fb; font-weight: 700; font-size: 0.75rem; color: #999; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a href="../index.html" class="nav-back">← KooVIS</a>
+    <span class="nav-title">업무</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="tab active" onclick="switchTab('news')">기술 뉴스</button>
+    <button class="tab" onclick="switchTab('dashboard')">스마트폰 DB</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- 뉴스 섹션 -->
+  <div id="section-news" class="section active">
+    <div class="section-header">
+      <div class="section-title">기술 뉴스</div>
+      <button class="refresh-btn" onclick="loadNews()">↻ 새로고침</button>
+    </div>
+    <div id="newsGrid">
+      <div class="loading"><div class="spinner"></div>뉴스 불러오는 중...</div>
+    </div>
+  </div>
+
+  <!-- 대시보드 섹션 -->
+  <div id="section-dashboard" class="section">
+
+    <!-- 검색 -->
+    <div class="section-header">
+      <div class="section-title">스마트폰 DB</div>
+      <button class="btn btn-outline" id="compareToggleBtn" onclick="toggleCompareMode()" style="display:none">비교 모드</button>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="모델명 검색 (예: Galaxy S25, iPhone 17)" onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="btn btn-dark" onclick="doSearch()">검색</button>
+    </div>
+
+    <div class="search-results" id="searchResults"></div>
+
+    <!-- 저장된 폰 브랜드 필터 -->
+    <div class="brand-pills" id="savedBrandFilter" style="margin-bottom:16px"></div>
+
+    <!-- 저장된 폰 목록 (연도별 섹션 포함) -->
+    <div id="phonesGrid"></div>
+
+    <!-- 비교 뷰 -->
+    <div class="compare-view" id="compareView">
+      <div class="section-header" style="margin-bottom:16px">
+        <div class="section-title">비교 결과</div>
+        <button class="btn btn-outline" onclick="closeCompare()">닫기</button>
+      </div>
+      <div id="compareTable"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- 비교 선택 액션바 -->
+<div class="compare-bar" id="compareBar">
+  <span id="compareCount">0개 선택됨</span>
+  <button class="btn btn-mint" onclick="runCompare()">비교하기</button>
+  <button class="btn btn-outline" style="color:#fff;border-color:#444" onclick="clearSelection()">취소</button>
+</div>
+
+<!-- 상세 패널 -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-header">
+    <h2 id="detailTitle">상세 정보</h2>
+    <button class="close-btn" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="panel-tabs">
+    <button class="panel-tab active" onclick="switchPanelTab('specs',this)">스펙</button>
+    <button class="panel-tab" onclick="switchPanelTab('opinions',this)">커뮤니티 의견</button>
+    <button class="panel-tab" onclick="switchPanelTab('prices',this)">가격 비교</button>
+  </div>
+  <div class="detail-body">
+    <div id="panelSpecs" class="panel-section active"></div>
+    <div id="panelOpinions" class="panel-section"></div>
+    <div id="panelPrices" class="panel-section"></div>
+  </div>
+</div>
+
+<script>
+  const API = 'https://koovis-backend.fly.dev';
+  let compareMode = false;
+  let selectedIds = new Set();
+
+  // ── 탭 전환 ──────────────────────────────────────────
+  function switchTab(tab) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('section-' + tab).classList.add('active');
+    event.target.classList.add('active');
+    if (tab === 'dashboard') loadPhones();
+  }
+
+  // ── 뉴스 ──────────────────────────────────────────────
+  const SOURCES = [
+    { name: 'The Verge',    tag: 'phone', region: 'global', rss: 'https://www.theverge.com/rss/phones/index.xml' },
+    { name: 'GSMArena',     tag: 'phone', region: 'global', rss: 'https://www.gsmarena.com/rss-news-reviews.php3' },
+    { name: '9to5Google',   tag: 'phone', region: 'global', rss: 'https://9to5google.com/feed/' },
+    { name: 'MacRumors',    tag: 'phone', region: 'global', rss: 'https://feeds.macrumors.com/MacRumors-All' },
+    { name: 'TechCrunch',   tag: 'it',    region: 'global', rss: 'https://techcrunch.com/feed/' },
+    { name: 'IT동아',       tag: 'it',    region: 'kr',     rss: 'https://it.donga.com/rss/' },
+    { name: '디지털데일리', tag: 'it',    region: 'kr',     rss: 'https://www.ddaily.co.kr/rss/rss.xml' },
+    { name: '전자신문',     tag: 'it',    region: 'kr',     rss: 'https://rss.etnews.com/Section901.xml' },
+  ];
+  let newsRegion = 'all';
+
+  function timeAgo(dateStr) {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const h = Math.floor(diff / 3600000);
+    const d = Math.floor(diff / 86400000);
+    if (h < 1) return '방금 전';
+    if (h < 24) return `${h}시간 전`;
+    return `${d}일 전`;
+  }
+
+  async function fetchFeed(source) {
+    const proxy = `${API}/rss?url=${encodeURIComponent(source.rss)}`;
+    const res = await fetch(proxy);
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, 'text/xml');
+    return [...xml.querySelectorAll('item')].slice(0, 2).map(item => ({
+      title:  item.querySelector('title')?.textContent?.trim() || '',
+      link:   item.querySelector('link')?.textContent?.trim() || '',
+      date:   item.querySelector('pubDate')?.textContent || '',
+      source: source.name,
+      tag:    source.tag,
+      region: source.region,
+    })).filter(a => a.title && a.link);
+  }
+
+  async function translateText(text) {
+    try {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ko&dt=t&q=${encodeURIComponent(text)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return data[0].map(p => p[0]).join('');
+    } catch { return null; }
+  }
+
+  function toggleNewsLang(btn, cardId) {
+    const card = document.getElementById(cardId);
+    const headline = card.querySelector('.news-headline');
+    const showing = card.dataset.showing;
+    headline.textContent = showing === 'ko' ? card.dataset.original : card.dataset.translated;
+    card.dataset.showing = showing === 'ko' ? 'orig' : 'ko';
+    btn.textContent = showing === 'ko' ? '번역' : '원문';
+  }
+
+  async function loadNews() {
+    const grid = document.getElementById('newsGrid');
+    grid.innerHTML = '<div class="loading"><div class="spinner"></div>뉴스 불러오는 중...</div>';
+    const results = await Promise.allSettled(SOURCES.map(fetchFeed));
+    const all = results.filter(r => r.status === 'fulfilled').flatMap(r => r.value)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    if (!all.length) {
+      grid.innerHTML = '<div class="loading">뉴스를 불러오지 못했어요.</div>';
+      return;
+    }
+
+    const global = all.filter(a => a.region === 'global');
+    const kr     = all.filter(a => a.region === 'kr');
+
+    const renderSection = (label, articles, offset) => `
+      <div class="year-section">
+        <div class="year-divider"><span>${label}</span></div>
+        <div class="news-grid">
+          ${articles.map((a, i) => {
+            const idx = offset + i;
+            return `
+            <a href="${a.link}" target="_blank" class="news-card" id="news-${idx}"
+               data-original="${a.title.replace(/"/g,'&quot;')}" data-showing="orig">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span class="news-tag ${a.tag}">${a.tag === 'phone' ? '스마트폰' : 'IT'}</span>
+                <button class="toggle-lang" onclick="event.preventDefault();toggleNewsLang(this,'news-${idx}')" style="opacity:0.4">번역</button>
+              </div>
+              <div class="news-headline">${a.title}</div>
+              <div class="news-meta">
+                <span class="news-source">${a.source}</span>
+                <span class="news-date">${timeAgo(a.date)}</span>
+              </div>
+            </a>`;
+          }).join('')}
+        </div>
+      </div>`;
+
+    grid.innerHTML = renderSection('국외', global, 0) + renderSection('국내', kr, global.length);
+
+    // 번역 병렬 실행
+    const koTitles = await Promise.all(all.map(a => translateText(a.title)));
+    all.forEach((a, i) => {
+      const card = document.getElementById(`news-${i}`);
+      if (!card || !koTitles[i]) return;
+      card.dataset.translated = koTitles[i];
+      card.dataset.showing = 'ko';
+      card.querySelector('.news-headline').textContent = koTitles[i];
+      card.querySelector('.toggle-lang').style.opacity = '1';
+      card.querySelector('.toggle-lang').textContent = '원문';
+    });
+  }
+
+
+
+  // ── 폰 검색 ──────────────────────────────────────────
+  async function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) return;
+    const box = document.getElementById('searchResults');
+    box.style.display = 'block';
+    box.innerHTML = '<div style="padding:16px;color:#bbb;font-size:0.85rem">검색 중...</div>';
+    try {
+      const res = await fetch(`${API}/search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      const items = data.gsmarena || [];
+      if (!items.length) { box.innerHTML = '<div style="padding:16px;color:#bbb;font-size:0.85rem">결과 없음</div>'; return; }
+      const registeredUrls = new Set(allPhones.map(p => p.gsmarena_url));
+      box.innerHTML = items.map(item => {
+        const alreadyAdded = registeredUrls.has(item.url);
+        return `
+        <div class="search-result-item">
+          <img class="search-result-img" src="${item.image}" onerror="this.src=''">
+          <div class="search-result-name">${item.name.split('.')[0]}</div>
+          ${alreadyAdded
+            ? `<span style="font-size:0.75rem;color:#00c6a9;font-weight:600">등록됨 ✓</span>`
+            : `<button class="btn btn-dark btn-add" onclick="addPhone('${encodeURIComponent(item.name.split('.')[0])}','${encodeURIComponent(item.url)}',this)">+ 등록</button>`
+          }
+        </div>`;
+      }).join('');
+    } catch(e) {
+      box.innerHTML = '<div style="padding:16px;color:#f87;font-size:0.85rem">백엔드 서버에 연결할 수 없어요 (포트 8001)</div>';
+    }
+  }
+
+  async function addPhone(encodedName, encodedUrl, btn) {
+    btn.textContent = '저장 중...';
+    btn.disabled = true;
+    const name = decodeURIComponent(encodedName);
+    const url  = decodeURIComponent(encodedUrl);
+    try {
+      const res = await fetch(`${API}/phones`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, gsmarena_url: url, phonearena_url: '' })
+      });
+      const data = await res.json();
+      btn.textContent = '완료 ✓';
+      btn.style.background = '#00c6a9';
+      document.getElementById('searchResults').style.display = 'none';
+      document.getElementById('searchInput').value = '';
+      loadPhones();
+    } catch(e) {
+      btn.textContent = '실패';
+      btn.disabled = false;
+    }
+  }
+
+  // ── 폰 목록 ──────────────────────────────────────────
+  let allPhones = [];
+  let activeBrandFilter = null;
+
+  async function loadPhones() {
+    const grid = document.getElementById('phonesGrid');
+    grid.innerHTML = '<div style="color:#bbb;font-size:0.85rem;padding:20px">불러오는 중...</div>';
+    try {
+      const res = await fetch(`${API}/phones`);
+      allPhones = await res.json();
+      document.getElementById('compareToggleBtn').style.display = allPhones.length > 1 ? '' : 'none';
+      renderBrandFilter();
+      renderPhones();
+    } catch(e) {
+      grid.innerHTML = '<div style="color:#f87;font-size:0.85rem;padding:20px">서버 연결 실패 — 백엔드 서버가 실행 중인지 확인해주세요</div>';
+    }
+  }
+
+  // 브랜드 정규화 (대소문자 통일)
+  const BRAND_NORMALIZE = { 'oppo': 'OPPO', 'vivo': 'Vivo', 'iqoo': 'Vivo' };
+  function normBrand(b) { return b ? (BRAND_NORMALIZE[b.toLowerCase()] || b) : b; }
+
+  function renderBrandFilter() {
+    const brandSet = new Map();
+    allPhones.forEach(p => {
+      if (!p.brand) return;
+      const nb = normBrand(p.brand);
+      brandSet.set(nb, nb);
+    });
+    const brands = [...brandSet.keys()].sort();
+    const container = document.getElementById('savedBrandFilter');
+    if (brands.length < 2) { container.innerHTML = ''; return; }
+    container.innerHTML =
+      `<button class="brand-pill ${!activeBrandFilter ? 'active' : ''}" onclick="filterBrand(null)">전체</button>` +
+      brands.map(b => `<button class="brand-pill ${activeBrandFilter === b ? 'active' : ''}" onclick="filterBrand('${b}')">${b}</button>`).join('');
+  }
+
+  function filterBrand(brand) {
+    activeBrandFilter = brand;
+    renderBrandFilter();
+    renderPhones();
+  }
+
+  function renderPhones() {
+    const grid = document.getElementById('phonesGrid');
+    const phones = activeBrandFilter
+      ? allPhones.filter(p => normBrand(p.brand) === activeBrandFilter)
+      : allPhones;
+
+    if (!phones.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:span 3"><div style="font-size:2rem">📱</div><p>위에서 모델명을 검색해서 등록해보세요</p></div>`;
+      return;
+    }
+
+    // 연도별 그룹핑
+    const byYear = {};
+    phones.forEach(p => {
+      const y = p.year || '연도 미상';
+      (byYear[y] = byYear[y] || []).push(p);
+    });
+    const years = Object.keys(byYear).sort((a, b) => b - a);
+
+    grid.innerHTML = years.map(year => `
+      <div class="year-section">
+        <div class="year-divider"><span>${year}</span></div>
+        <div class="year-grid">
+          ${byYear[year].map(p => `
+            <div class="phone-card ${selectedIds.has(p.id) ? 'selected' : ''}" onclick="handleCardClick(${p.id})">
+              <div class="phone-card-check">✓</div>
+              <button onclick="event.stopPropagation();deletePhone(${p.id},'${p.name}')"
+                style="position:absolute;top:10px;right:10px;background:none;border:none;color:#ddd;cursor:pointer;font-size:0.8rem;padding:2px 6px;border-radius:4px"
+                onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#ddd'">✕</button>
+              <img src="${p.image_url || ''}" onerror="this.style.display='none'">
+              <div class="phone-card-name">${p.name}</div>
+              <div class="phone-card-sub">${p.brand || ''}</div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  function handleCardClick(id) {
+    if (compareMode) {
+      toggleSelect(id);
+    } else {
+      openDetail(id);
+    }
+  }
+
+  async function deletePhone(id, name) {
+    const pw = prompt(`'${name}' 를 삭제하려면 비밀번호를 입력하세요`);
+    if (pw !== '2441') { if (pw !== null) alert('비밀번호가 틀렸어요'); return; }
+    await fetch(`${API}/phones/${id}`, {method: 'DELETE'});
+    loadPhones();
+  }
+
+  // ── 상세 패널 ─────────────────────────────────────────
+  let currentPhoneId = null;
+
+  function switchPanelTab(tab, btn) {
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+    if (tab === 'opinions' && currentPhoneId) loadOpinions(currentPhoneId);
+    if (tab === 'prices'   && currentPhoneId) loadPrices(currentPhoneId);
+  }
+
+  async function openDetail(id) {
+    currentPhoneId = id;
+    document.getElementById('detailOverlay').classList.add('visible');
+    document.getElementById('detailPanel').classList.add('open');
+    // 스펙 탭 초기화
+    document.querySelectorAll('.panel-tab')[0].click();
+    document.getElementById('panelSpecs').innerHTML = '<div style="text-align:center;padding:40px;color:#bbb">불러오는 중...</div>';
+    document.getElementById('panelOpinions').innerHTML = '';
+
+    const res = await fetch(`${API}/phones/${id}`);
+    const data = await res.json();
+    document.getElementById('detailTitle').textContent = data.phone.name;
+
+    const grouped = {};
+    data.specs.forEach(s => {
+      grouped[s.category] = grouped[s.category] || [];
+      grouped[s.category].push(s);
+    });
+
+    document.getElementById('panelSpecs').innerHTML = `
+      ${data.phone.image_url ? `<img class="detail-img" src="${data.phone.image_url}">` : ''}
+      ${Object.entries(grouped).map(([cat, specs]) => `
+        <div class="spec-category">
+          <div class="spec-category-title">${cat}</div>
+          ${specs.map(s => `
+            <div class="spec-row">
+              <span class="spec-key">${s.key}</span>
+              <span class="spec-val">${s.value}</span>
+            </div>`).join('')}
+        </div>`).join('')}`;
+  }
+
+  async function loadOpinions(id) {
+    const el = document.getElementById('panelOpinions');
+    if (el.dataset.loaded === String(id)) return;
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:#bbb">의견 불러오는 중...</div>';
+    const res = await fetch(`${API}/phones/${id}/opinions`);
+    const data = await res.json();
+    const gsm = data.gsmarena || [];
+    const reddit = data.reddit || [];
+
+    const opinionCard = (o, isReddit = false) => `
+      <div class="opinion-card">
+        ${isReddit
+          ? `<a href="${o.url}" target="_blank" class="opinion-link" style="font-size:0.84rem;font-weight:600;color:#1a1a1a;display:block;margin-bottom:6px;text-decoration:none">${o.text_ko || o.text}</a>`
+          : `<div class="opinion-text">${o.text_ko || o.text}</div>`}
+        ${o.text_ko && o.text_ko !== o.text ? `<div class="opinion-original">${o.text}</div>` : ''}
+        <div class="opinion-meta">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span>${o.reviewer}</span>
+            ${isReddit ? `<span class="opinion-score">▲ ${o.score}</span>` : `<span>${o.date}</span>`}
+          </div>
+          ${o.text_ko && o.text_ko !== o.text ? `<button class="toggle-lang" onclick="toggleOriginal(this)">원문</button>` : ''}
+        </div>
+      </div>`;
+
+    el.innerHTML = `
+      ${gsm.length ? `
+        <div class="opinion-source-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>GSMArena 유저 의견</span>
+          ${gsm[0]?.url ? `<a href="${gsm[0].url}" target="_blank" class="opinion-link">전체 보기 →</a>` : ''}
+        </div>
+        ${gsm.map(o => opinionCard(o)).join('')}` : ''}
+      ${reddit.length ? `
+        <div class="opinion-source-title">Reddit</div>
+        ${reddit.map(o => opinionCard(o, true)).join('')}` : ''}
+      ${!gsm.length && !reddit.length ? '<div style="text-align:center;padding:40px;color:#bbb">의견이 없어요</div>' : ''}`;
+    el.dataset.loaded = id;
+  }
+
+  function toggleOriginal(btn) {
+    const card = btn.closest('.opinion-card');
+    const original = card.querySelector('.opinion-original');
+    const translated = card.querySelector('.opinion-text');
+    const showing = original.style.display === 'block';
+    original.style.display = showing ? 'none' : 'block';
+    translated.style.display = showing ? '' : 'none';
+    btn.textContent = showing ? '원문' : '번역';
+  }
+
+  async function loadPrices(id) {
+    const el = document.getElementById('panelPrices');
+    if (el.dataset.loaded === String(id)) return;
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:#bbb">가격 불러오는 중...</div>';
+    try {
+      const res = await fetch(`${API}/phones/${id}/prices`);
+      const data = await res.json();
+      if (data.error || !data.prices?.length) {
+        el.innerHTML = '<div style="text-align:center;padding:40px;color:#bbb">가격 정보를 찾을 수 없어요</div>';
+        return;
+      }
+      el.innerHTML = `
+        <div style="margin-bottom:12px;font-size:0.75rem;color:#bbb">GSMArena 기준 현지 출시가</div>
+        <table style="width:100%;border-collapse:collapse">
+          ${data.prices.map(p => `
+            <tr style="border-bottom:1px solid #f4f4f5">
+              <td style="padding:12px 0;font-size:0.85rem;font-weight:600;color:#1a1a1a;width:50px">${p.region}</td>
+              <td style="padding:12px 8px;font-size:0.9rem;font-weight:700;color:#1a1a1a">
+                ${p.price_str}
+                ${p.usd_str ? `<span style="font-size:0.78rem;color:#bbb;font-weight:400">(${p.usd_str})</span>` : ''}
+              </td>
+            </tr>`).join('')}
+        </table>`;
+      el.dataset.loaded = id;
+    } catch(e) {
+      el.innerHTML = '<div style="text-align:center;padding:40px;color:#f87">서버 연결 실패</div>';
+    }
+  }
+
+  function closeDetail() {
+    document.getElementById('detailOverlay').classList.remove('visible');
+    document.getElementById('detailPanel').classList.remove('open');
+  }
+
+  // ── 비교 ─────────────────────────────────────────────
+  function toggleCompareMode() {
+    compareMode = !compareMode;
+    selectedIds.clear();
+    document.getElementById('compareToggleBtn').textContent = compareMode ? '취소' : '비교 모드';
+    document.getElementById('compareBar').classList.toggle('visible', false);
+    document.getElementById('compareView').classList.remove('active');
+    loadPhones();
+  }
+
+  function toggleSelect(id) {
+    if (selectedIds.has(id)) selectedIds.delete(id);
+    else selectedIds.add(id);
+    document.getElementById('compareCount').textContent = `${selectedIds.size}개 선택됨`;
+    document.getElementById('compareBar').classList.toggle('visible', selectedIds.size > 0);
+    loadPhones();
+  }
+
+  function clearSelection() {
+    selectedIds.clear();
+    compareMode = false;
+    document.getElementById('compareToggleBtn').textContent = '비교 모드';
+    document.getElementById('compareBar').classList.remove('visible');
+    loadPhones();
+  }
+
+  async function runCompare() {
+    const ids = [...selectedIds].join(',');
+    const res = await fetch(`${API}/compare?ids=${ids}`);
+    const data = await res.json();
+
+    const allCats = [...new Set(data.flatMap(d => d.specs.map(s => s.category)))];
+    const allKeys = {};
+    allCats.forEach(cat => {
+      allKeys[cat] = [...new Set(data.flatMap(d => d.specs.filter(s => s.category === cat).map(s => s.key)))];
+    });
+
+    const headers = data.map(d => `<th>${d.phone.name}</th>`).join('');
+    const rows = allCats.flatMap(cat => {
+      const catRow = `<tr class="cat-row"><td colspan="${data.length + 1}">${cat}</td></tr>`;
+      const specRows = allKeys[cat].map(key => {
+        const cells = data.map(d => {
+          const spec = d.specs.find(s => s.category === cat && s.key === key);
+          return `<td>${spec ? spec.value : '—'}</td>`;
+        }).join('');
+        return `<tr><td style="color:#999;font-size:0.78rem">${key}</td>${cells}</tr>`;
+      }).join('');
+      return catRow + specRows;
+    }).join('');
+
+    document.getElementById('compareTable').innerHTML = `
+      <table class="compare-table">
+        <thead><tr><th>항목</th>${headers}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+
+    document.getElementById('compareView').classList.add('active');
+    document.getElementById('compareBar').classList.remove('visible');
+    document.getElementById('phonesGrid').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function closeCompare() {
+    document.getElementById('compareView').classList.remove('active');
+    clearSelection();
+  }
+
+  // ── 초기화 ────────────────────────────────────────────
+  loadNews();
+</script>
+</body>
+</html>

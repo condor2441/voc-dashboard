@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KooVIS</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f4f4f5;
+      color: #1a1a1a;
+      font-family: 'Pretendard', 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 상단 헤더 */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      letter-spacing: -0.03em;
+    }
+
+    .logo span {
+      color: #00c6a9;
+    }
+
+    .tagline {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+
+    /* 카드 그리드 */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 560px;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e8e8ec;
+      border-radius: 16px;
+      padding: 32px 28px;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.18s ease, transform 0.18s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+      transform: translateY(-3px);
+      border-color: #c7c7d4;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+
+    .card.work .card-icon   { background: #e8f4ff; }
+    .card.invest .card-icon { background: #edfaf6; }
+    .card.etc .card-icon    { background: #f3f0ff; }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: #999;
+      line-height: 1.7;
+    }
+
+    /* 기타 카드 — 가로 전체 */
+    .card.etc {
+      grid-column: span 2;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 22px 28px;
+    }
+
+    .card.etc .card-icon {
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+
+    .card.etc .card-title { margin-bottom: 2px; }
+
+    /* 하단 */
+    .footer {
+      margin-top: 48px;
+      font-size: 0.72rem;
+      color: #ccc;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo">Koo<span>VIS</span></div>
+    <div class="tagline">나만의 커맨드 센터</div>
+  </header>
+
+  <div class="grid">
+
+    <a href="work/index.html" class="card work">
+      <div class="card-icon">💼</div>
+      <div class="card-title">업무</div>
+      <div class="card-desc">기술 뉴스<br>스마트폰 DB <span id="phoneCount" style="color:#bbb"></span></div>
+    </a>
+
+    <a href="invest/index.html" class="card invest">
+      <div class="card-icon">📈</div>
+      <div class="card-title">투자</div>
+      <div class="card-desc" id="investDesc">포트폴리오 분석<br>시황 브리핑 · 뉴스</div>
+    </a>
+
+    <a href="#" class="card etc">
+      <div class="card-icon">＋</div>
+      <div>
+        <div class="card-title">기타</div>
+        <div class="card-desc">필요할 때 추가</div>
+      </div>
+    </a>
+
+  </div>
+
+  <footer class="footer">KooVIS · PRIVATE</footer>
+
+<script>
+  const API = 'https://koovis-backend.fly.dev';
+
+  async function loadStats() {
+    try {
+      // 스마트폰 등록 수
+      const phonesRes = await fetch(`${API}/phones`);
+      const phones = await phonesRes.json();
+      const el = document.getElementById('phoneCount');
+      if (el) el.textContent = `· ${phones.length}개 등록`;
+    } catch(e) {}
+
+    try {
+      // 투자 종합 현황 (총 수익률)
+      const ovRes = await fetch(`${API}/invest/overview`);
+      const ov    = await ovRes.json();
+      const desc  = document.getElementById('investDesc');
+      if (desc && ov.total_buy > 0) {
+        const pct  = ov.total_pct;
+        const sign = pct >= 0 ? '+' : '';
+        const color = pct >= 0 ? '#ef4444' : '#3b82f6';
+        desc.innerHTML = `포트폴리오 · 시황 브리핑<br>수익률 <span style="color:${color};font-weight:700">${sign}${pct}%</span>`;
+      }
+    } catch(e) {}
+  }
+
+  loadStats();
+</script>
+
+</body>
+</html>
