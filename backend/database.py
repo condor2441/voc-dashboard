@@ -121,6 +121,12 @@ def init_db():
     except Exception:
         pass  # 이미 존재하면 무시
 
+    try:
+        conn.execute("ALTER TABLE phones ADD COLUMN segment TEXT DEFAULT NULL")
+        conn.commit()
+    except Exception:
+        pass  # 이미 존재하면 무시
+
     conn.commit()
     conn.close()
     print("DB 초기화 완료")
