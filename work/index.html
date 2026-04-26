@@ -336,6 +336,10 @@
     .history-toggle { font-size:0.8rem;color:#bbb;margin-left:12px; }
     .history-body { display:none;padding:0 18px 18px;border-top:1px solid #f4f4f5; }
     .history-body.open { display:block; }
+    .md-table { width:100%;border-collapse:collapse;margin:12px 0;font-size:0.8rem; }
+    .md-table th { background:#f9f9fb;font-weight:700;color:#555;padding:8px 12px;border:1px solid #e8e8ec;text-align:left; }
+    .md-table td { padding:8px 12px;border:1px solid #e8e8ec;vertical-align:top; }
+    .md-table tr:nth-child(even) td { background:#fafafa; }
     @media(max-width:640px){
       .trend-phones-grid{grid-template-columns:repeat(2,1fr);}
       .chart-grid{grid-template-columns:1fr;}
@@ -1283,14 +1287,7 @@
 
       renderCharts(data.phones);
 
-      // 인사이트 마크다운 → HTML (간단 변환)
-      const html = data.insights
-        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/^- (.+)$/gm, '<li>$1</li>')
-        .replace(/(<li>.*<\/li>(\n|$))+/g, m => `<ul>${m}</ul>`)
-        .replace(/\n{2,}/g, '<br><br>');
+      const html = mdToHtml(data.insights);
       document.getElementById('trendInsightsBody').innerHTML = html;
 
       document.getElementById('trendResult').style.display = 'block';
@@ -1315,13 +1312,7 @@
         ${list.map((a, i) => {
           const names = a.phones.map(p => p.name).join(', ');
           const date  = a.created_at.slice(0, 16).replace('T', ' ');
-          const html  = a.insights
-            .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-            .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-            .replace(/^- (.+)$/gm, '<li>$1</li>')
-            .replace(/(<li>.*<\/li>(\n|$))+/g, m => `<ul>${m}</ul>`)
-            .replace(/\n{2,}/g, '<br><br>');
+          const html  = mdToHtml(a.insights);
           return `
             <div class="history-item">
               <div class="history-header" onclick="toggleHistory(this)">
@@ -1333,6 +1324,42 @@
             </div>`;
         }).join('')}`;
     } catch(e) { el.innerHTML = ''; }
+  }
+
+  function mdToHtml(text) {
+    const lines = text.split('\n');
+    const out = [];
+    let i = 0;
+    while (i < lines.length) {
+      if (lines[i].trim().startsWith('|')) {
+        const tableLines = [];
+        while (i < lines.length && lines[i].trim().startsWith('|')) {
+          tableLines.push(lines[i]);
+          i++;
+        }
+        const isSep = l => l.replace(/[|\-:\s]/g, '').length === 0;
+        const rows = tableLines.filter(l => !isSep(l));
+        if (rows.length) {
+          out.push('<table class="md-table">' +
+            rows.map((row, ri) => {
+              const cells = row.split('|').slice(1, -1).map(c => c.trim());
+              const tag = ri === 0 ? 'th' : 'td';
+              return `<tr>${cells.map(c => `<${tag}>${c}</${tag}>`).join('')}</tr>`;
+            }).join('') +
+          '</table>');
+        }
+      } else {
+        out.push(lines[i]);
+        i++;
+      }
+    }
+    return out.join('\n')
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>(\n|$))+/g, m => `<ul>${m}</ul>`)
+      .replace(/\n{2,}/g, '<br><br>');
   }
 
   function toggleHistory(header) {
