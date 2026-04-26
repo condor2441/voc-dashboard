@@ -7,140 +7,212 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #f4f4f5;
+      background: #f7f7f9;
       color: #1a1a1a;
-      font-family: 'Pretendard', 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Pretendard', system-ui, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 40px 20px;
     }
 
-    /* 상단 헤더 */
+    /* 배경 장식 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px;
+      right: -200px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0,198,169,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* 헤더 */
     .header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 52px;
+    }
+
+    .logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: #1a1a1a;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: #00c6a9;
     }
 
     .logo {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 800;
       color: #1a1a1a;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.04em;
     }
 
-    .logo span {
-      color: #00c6a9;
-    }
+    .logo span { color: #00c6a9; }
 
     .tagline {
-      margin-top: 8px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      color: #aaa;
+      letter-spacing: 0.04em;
       font-weight: 400;
-      color: #999;
-      letter-spacing: 0.02em;
+    }
+
+    /* 배지 */
+    .badge {
+      display: inline-block;
+      background: #f0fdf9;
+      color: #00c6a9;
+      border: 1px solid #d0f5ec;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
     }
 
     /* 카드 그리드 */
     .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: 14px;
       width: 100%;
-      max-width: 560px;
-      padding: 0 20px;
+      max-width: 540px;
     }
 
     .card {
-      background: #ffffff;
-      border: 1px solid #e8e8ec;
-      border-radius: 16px;
-      padding: 32px 28px;
+      background: #fff;
+      border: 1px solid #ebebef;
+      border-radius: 20px;
+      padding: 28px 24px;
       text-decoration: none;
       color: inherit;
-      transition: box-shadow 0.18s ease, transform 0.18s ease;
-      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
     }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .card.work::before   { background: linear-gradient(90deg, #3b82f6, #00c6a9); }
+    .card.invest::before { background: linear-gradient(90deg, #00c6a9, #10b981); }
+    .card.etc::before    { background: linear-gradient(90deg, #8b5cf6, #6366f1); }
 
     .card:hover {
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
-      transform: translateY(-3px);
-      border-color: #c7c7d4;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.09);
+      transform: translateY(-4px);
+      border-color: #d8d8e0;
     }
+    .card:hover::before { opacity: 1; }
 
     .card-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.3rem;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
-
-    .card.work .card-icon   { background: #e8f4ff; }
-    .card.invest .card-icon { background: #edfaf6; }
-    .card.etc .card-icon    { background: #f3f0ff; }
+    .card.work .card-icon   { background: #eff6ff; }
+    .card.invest .card-icon { background: #f0fdf9; }
+    .card.etc .card-icon    { background: #f5f3ff; }
 
     .card-title {
       font-size: 1rem;
-      font-weight: 700;
+      font-weight: 800;
       color: #1a1a1a;
       margin-bottom: 6px;
+      letter-spacing: -0.02em;
     }
 
     .card-desc {
-      font-size: 0.8rem;
-      color: #999;
-      line-height: 1.7;
+      font-size: 0.78rem;
+      color: #aaa;
+      line-height: 1.8;
     }
 
-    /* 기타 카드 — 가로 전체 */
+    .card-arrow {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      font-size: 1rem;
+      color: #ddd;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .card:hover .card-arrow { color: #00c6a9; transform: translateX(3px); }
+
+    /* 기타 카드 */
     .card.etc {
       grid-column: span 2;
       display: flex;
       align-items: center;
-      gap: 20px;
-      padding: 22px 28px;
+      gap: 18px;
+      padding: 20px 24px;
     }
-
-    .card.etc .card-icon {
-      margin-bottom: 0;
-      flex-shrink: 0;
-    }
-
-    .card.etc .card-title { margin-bottom: 2px; }
+    .card.etc .card-icon { margin-bottom: 0; flex-shrink: 0; }
+    .card.etc .card-title { margin-bottom: 2px; font-size: 0.92rem; }
+    .card.etc .card-arrow { bottom: 50%; transform: translateY(50%); }
+    .card.etc:hover .card-arrow { transform: translateY(50%) translateX(3px); }
 
     /* 하단 */
     .footer {
-      margin-top: 48px;
-      font-size: 0.72rem;
+      margin-top: 40px;
+      font-size: 0.7rem;
       color: #ccc;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     @media (max-width: 640px) {
-      .grid { grid-template-columns: repeat(2, 1fr); padding: 0 12px; gap: 12px; max-width: 100%; }
-      .card { padding: 22px 18px; }
-      .card.etc { grid-column: span 2; }
-      .logo { font-size: 1.6rem; }
-      .card-icon { width: 36px; height: 36px; font-size: 1.1rem; margin-bottom: 14px; }
+      .grid { gap: 10px; }
+      .card { padding: 22px 18px; border-radius: 16px; }
+      .card.etc { padding: 16px 18px; }
+      .logo { font-size: 1.8rem; }
+      .card-icon { width: 38px; height: 38px; font-size: 1.1rem; margin-bottom: 14px; }
+      .card-arrow { display: none; }
     }
   </style>
 </head>
 <body>
 
   <header class="header">
-    <div class="logo">Koo<span>VIS</span></div>
+    <div class="badge">Private Dashboard</div>
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+      </div>
+      <div class="logo">Koo<span>VIS</span></div>
+    </div>
     <div class="tagline">나만의 커맨드 센터</div>
   </header>
 
@@ -150,12 +222,14 @@
       <div class="card-icon">💼</div>
       <div class="card-title">업무</div>
       <div class="card-desc">기술 뉴스<br>스마트폰 DB <span id="phoneCount" style="color:#bbb"></span></div>
+      <div class="card-arrow">→</div>
     </a>
 
     <a href="invest/index.html" class="card invest">
       <div class="card-icon">📈</div>
       <div class="card-title">투자</div>
-      <div class="card-desc" id="investDesc">포트폴리오 분석<br>시황 브리핑 · 뉴스</div>
+      <div class="card-desc" id="investDesc">포트폴리오 · 브리핑<br>시황 뉴스</div>
+      <div class="card-arrow">→</div>
     </a>
 
     <a href="#" class="card etc">
@@ -164,34 +238,32 @@
         <div class="card-title">기타</div>
         <div class="card-desc">필요할 때 추가</div>
       </div>
+      <div class="card-arrow">→</div>
     </a>
 
   </div>
 
-  <footer class="footer">KooVIS · PRIVATE</footer>
+  <footer class="footer">KooVIS · Private</footer>
 
 <script>
   const API = 'https://koovis-backend.fly.dev';
 
   async function loadStats() {
     try {
-      // 스마트폰 등록 수
-      const phonesRes = await fetch(`${API}/phones`);
-      const phones = await phonesRes.json();
+      const res   = await fetch(`${API}/phones`);
+      const phones = await res.json();
       const el = document.getElementById('phoneCount');
-      if (el) el.textContent = `· ${phones.length}개 등록`;
+      if (el && phones.length) el.textContent = `· ${phones.length}개`;
     } catch(e) {}
 
     try {
-      // 투자 종합 현황 (총 수익률)
       const ovRes = await fetch(`${API}/invest/overview`);
       const ov    = await ovRes.json();
       const desc  = document.getElementById('investDesc');
       if (desc && ov.total_buy > 0) {
-        const pct  = ov.total_pct;
-        const sign = pct >= 0 ? '+' : '';
-        const color = pct >= 0 ? '#ef4444' : '#3b82f6';
-        desc.innerHTML = `포트폴리오 · 시황 브리핑<br>수익률 <span style="color:${color};font-weight:700">${sign}${pct}%</span>`;
+        const pct   = ov.total_pct;
+        const color = pct >= 0 ? '#10b981' : '#ef4444';
+        desc.innerHTML = `포트폴리오 · 브리핑<br>수익률 <span style="color:${color};font-weight:700">${pct >= 0 ? '+' : ''}${pct}%</span>`;
       }
     } catch(e) {}
   }
