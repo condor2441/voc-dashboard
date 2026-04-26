@@ -416,6 +416,8 @@
       <div class="section-title">트렌드 분석</div>
     </div>
 
+    <div id="trendFilters" style="margin-bottom:16px"></div>
+
     <div class="trend-action-bar">
       <span class="trend-select-count" id="trendSelectCount">0개 선택됨</span>
       <button class="btn btn-dark" onclick="startTrendAnalysis()" id="trendAnalyzeBtn" disabled>분석 시작</button>
@@ -999,6 +1001,8 @@
   }
   let trendSelected = new Set();
   let trendAllPhones = [];
+  let trendBrandFilter = null;
+  let trendYearFilter  = null;
   const SEGMENT_LABEL = { flagship: '플래그십', midrange: '미드레인지', budget: '보급형' };
   const SEGMENT_CLS   = { flagship: 'seg-flagship', midrange: 'seg-midrange', budget: 'seg-budget' };
 
@@ -1007,19 +1011,49 @@
     try {
       const res = await fetch(`${API}/phones`);
       trendAllPhones = await res.json();
+      renderTrendFilters();
       renderTrendCards();
     } catch(e) {
       grid.innerHTML = '<div style="color:#f87;padding:20px">서버 연결 실패</div>';
     }
   }
 
+  function renderTrendFilters() {
+    const brands = [...new Set(trendAllPhones.map(p => p.brand).filter(Boolean))].sort();
+    const years  = [...new Set(trendAllPhones.map(p => p.year).filter(Boolean))].sort((a,b) => b - a);
+    const el = document.getElementById('trendFilters');
+    if (!brands.length) { el.innerHTML = ''; return; }
+    el.innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;align-items:center">
+        <span style="font-size:0.72rem;font-weight:700;color:#bbb;margin-right:4px">브랜드</span>
+        <button class="brand-pill ${!trendBrandFilter ? 'active' : ''}" onclick="setTrendFilter('brand',null)">전체</button>
+        ${brands.map(b => `<button class="brand-pill ${trendBrandFilter===b?'active':''}" onclick="setTrendFilter('brand','${b}')">${b}</button>`).join('')}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+        <span style="font-size:0.72rem;font-weight:700;color:#bbb;margin-right:4px">출시년도</span>
+        <button class="brand-pill ${!trendYearFilter ? 'active' : ''}" onclick="setTrendFilter('year',null)">전체</button>
+        ${years.map(y => `<button class="brand-pill ${trendYearFilter===y?'active':''}" onclick="setTrendFilter('year',${y})">${y}</button>`).join('')}
+      </div>`;
+  }
+
+  function setTrendFilter(type, value) {
+    if (type === 'brand') trendBrandFilter = value;
+    else trendYearFilter = value;
+    renderTrendFilters();
+    renderTrendCards();
+  }
+
   function renderTrendCards() {
     const grid = document.getElementById('trendPhonesGrid');
-    if (!trendAllPhones.length) {
-      grid.innerHTML = '<div style="grid-column:span 3;text-align:center;padding:40px;color:#bbb">등록된 폰이 없어요</div>';
+    const phones = trendAllPhones.filter(p =>
+      (!trendBrandFilter || p.brand === trendBrandFilter) &&
+      (!trendYearFilter  || p.year  === trendYearFilter)
+    );
+    if (!phones.length) {
+      grid.innerHTML = '<div style="grid-column:span 3;text-align:center;padding:40px;color:#bbb">해당하는 모델이 없어요</div>';
       return;
     }
-    grid.innerHTML = trendAllPhones.map(p => {
+    grid.innerHTML = phones.map(p => {
       const seg = p.segment || 'midrange';
       const label = SEGMENT_LABEL[seg] || seg;
       const cls = SEGMENT_CLS[seg] || 'seg-midrange';
