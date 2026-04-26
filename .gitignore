@@ -1,7 +1,8 @@
-backend/
+backend/.env
+backend/koovis.db
+backend/__pycache__/
+backend/*.pyc
 .vercel/
-__pycache__/
-*.pyc
 .DS_Store
 node_modules/
 redirect.html
