@@ -210,6 +210,25 @@
     /* 미니 차트 */
     .mini-chart { margin-top: 20px; }
     .mini-chart-title { font-size: 0.78rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+
+    @media (max-width: 640px) {
+      .nav { padding: 0 14px; }
+      .nav-tabs { overflow-x: auto; gap: 2px; }
+      .tab { padding: 5px 10px; font-size: 0.78rem; white-space: nowrap; }
+      .main { padding: 20px 14px; }
+      .market-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .overview-stats { grid-template-columns: repeat(2, 1fr) !important; }
+      .overview-accounts { grid-template-columns: 1fr; }
+      .news-grid { grid-template-columns: 1fr; }
+      .briefing-box { padding: 18px 16px; }
+      .port-table { display: block; overflow-x: auto; white-space: nowrap; }
+      .port-summary { grid-template-columns: 1fr; }
+      .hold-panel { width: 100%; right: -100%; }
+      .hold-stat-grid { grid-template-columns: repeat(2, 1fr); }
+      #addHoldingForm { padding: 14px; }
+      #addHoldingForm > div[style*="grid"] { grid-template-columns: 1fr !important; }
+      .modal-inner { width: 95vw !important; }
+    }
   </style>
 </head>
 <body>
