@@ -1,22 +1,14 @@
-name: Deploy KooVIS
+name: Deploy Backend
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'backend/**'
 
 jobs:
-  deploy-frontend:
-    name: Vercel (프론트)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npx vercel --prod --yes --token ${{ secrets.VERCEL_TOKEN }}
-
   deploy-backend:
-    name: Fly.io (백엔드)
+    name: Fly.io 배포
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
