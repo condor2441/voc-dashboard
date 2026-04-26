@@ -1216,6 +1216,47 @@
     });
   }
 
+  async function startTrendAnalysis() {
+    const pw = prompt('분석을 시작하려면 비밀번호를 입력하세요');
+    if (pw !== '2441') { if (pw !== null) alert('비밀번호가 틀렸어요'); return; }
+    if (trendSelected.size === 0) return;
+
+    const btn = document.getElementById('trendAnalyzeBtn');
+    btn.disabled = true;
+    btn.textContent = '분석 중...';
+    document.getElementById('trendResult').style.display = 'none';
+
+    try {
+      const res = await fetch(`${API}/trend/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: [...trendSelected] })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+
+      renderCharts(data.phones);
+
+      // 인사이트 마크다운 → HTML (간단 변환)
+      const html = data.insights
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>(\n|$))+/g, m => `<ul>${m}</ul>`)
+        .replace(/\n{2,}/g, '<br><br>');
+      document.getElementById('trendInsightsBody').innerHTML = html;
+
+      document.getElementById('trendResult').style.display = 'block';
+      document.getElementById('trendResult').scrollIntoView({ behavior: 'smooth' });
+    } catch(e) {
+      alert('분석 실패: ' + e.message);
+    }
+
+    btn.disabled = false;
+    btn.textContent = '분석 시작';
+  }
+
   // ── 초기화 ────────────────────────────────────────────
   loadNews();
 </script>
