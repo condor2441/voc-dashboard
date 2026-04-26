@@ -90,3 +90,49 @@ def parse_battery(value: str) -> int | None:
 def parse_year(announced: str) -> int | None:
     m = re.search(r'(\d{4})', announced or "")
     return int(m.group(1)) if m else None
+
+
+def aggregate_phones(ids: list[int]) -> list[dict]:
+    conn = get_conn()
+    result = []
+    for pid in ids:
+        phone = conn.execute("SELECT * FROM phones WHERE id=?", (pid,)).fetchone()
+        if not phone:
+            continue
+        specs = conn.execute("SELECT category, key, value FROM specs WHERE phone_id=?", (pid,)).fetchall()
+        spec_map: dict[tuple, str] = {(s["category"], s["key"]): s["value"] for s in specs}
+
+        def sv(cat, key): return spec_map.get((cat, key), "") or ""
+
+        announced   = sv("Launch", "Announced")
+        display_raw = sv("Display", "Size")
+        type_raw    = sv("Display", "Type")
+        chip_raw    = sv("Platform", "Chipset")
+        ram_raw     = sv("Memory", "RAM")
+        # 메인 카메라는 "Main Camera" 또는 "Camera" 카테고리의 첫 번째 값에서 MP 추출
+        cam_raw = ""
+        for (cat, key), val in spec_map.items():
+            if "camera" in cat.lower() and "mp" in val.lower():
+                cam_raw = val
+                break
+        bat_raw = sv("Battery", "Type")
+
+        segment = phone["segment"] or infer_segment(phone["name"])
+
+        result.append({
+            "id":           phone["id"],
+            "name":         phone["name"],
+            "brand":        phone["brand"] or "Unknown",
+            "segment":      segment,
+            "year":         parse_year(announced),
+            "display_size": parse_display_size(display_raw),
+            "panel_type":   parse_panel_type(type_raw) if type_raw else None,
+            "refresh_rate": parse_refresh_rate(type_raw) if type_raw else None,
+            "ap_brand":     parse_ap_brand(chip_raw) if chip_raw else None,
+            "process_node": parse_process_node(chip_raw) if chip_raw else None,
+            "ram":          parse_ram(ram_raw) if ram_raw else None,
+            "camera_mp":    parse_camera_mp(cam_raw) if cam_raw else None,
+            "battery":      parse_battery(bat_raw) if bat_raw else None,
+        })
+    conn.close()
+    return result
