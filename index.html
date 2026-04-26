@@ -21,83 +21,67 @@
       padding: 40px 20px;
     }
 
-    /* 배경 장식 */
     body::before {
       content: '';
       position: fixed;
-      top: -200px;
-      right: -200px;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(0,198,169,0.07) 0%, transparent 70%);
+      top: -200px; right: -200px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(0,198,169,0.06) 0%, transparent 70%);
       pointer-events: none;
     }
 
-    /* 헤더 */
+    /* ── 헤더: 좌우 분할 ── */
     .header {
-      text-align: center;
-      margin-bottom: 52px;
-    }
-
-    .logo-wrap {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .logo-icon {
-      width: 40px;
-      height: 40px;
-      background: #1a1a1a;
-      border-radius: 10px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 28px;
+      max-width: 540px;
+      width: 100%;
+      margin-bottom: 36px;
+      padding: 28px 32px;
+      background: #fff;
+      border: 1px solid #ebebef;
+      border-radius: 20px;
     }
 
-    .logo-icon svg {
-      width: 22px;
-      height: 22px;
-      fill: #00c6a9;
+    .header-logo {
+      flex-shrink: 0;
     }
 
     .logo {
-      font-size: 2.2rem;
-      font-weight: 800;
+      font-size: 2.6rem;
+      font-weight: 900;
       color: #1a1a1a;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.05em;
+      line-height: 1;
     }
-
     .logo span { color: #00c6a9; }
 
-    .tagline {
-      font-size: 0.9rem;
-      color: #aaa;
-      letter-spacing: 0.04em;
-      font-weight: 400;
+    .divider {
+      width: 1px;
+      height: 52px;
+      background: #ebebef;
+      flex-shrink: 0;
     }
 
-    /* 배지 */
-    .badge {
-      display: inline-block;
-      background: #f0fdf9;
-      color: #00c6a9;
-      border: 1px solid #d0f5ec;
-      border-radius: 20px;
-      font-size: 0.72rem;
+    .header-text {}
+    .header-title {
+      font-size: 0.95rem;
       font-weight: 700;
-      padding: 3px 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
+      color: #1a1a1a;
+      margin-bottom: 5px;
+    }
+    .header-desc {
+      font-size: 0.78rem;
+      color: #bbb;
+      line-height: 1.7;
     }
 
-    /* 카드 그리드 */
+    /* ── 카드 ── */
     .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
+      gap: 12px;
       width: 100%;
       max-width: 540px;
     }
@@ -105,8 +89,8 @@
     .card {
       background: #fff;
       border: 1px solid #ebebef;
-      border-radius: 20px;
-      padding: 28px 24px;
+      border-radius: 18px;
+      padding: 26px 22px;
       text-decoration: none;
       color: inherit;
       transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
@@ -134,71 +118,66 @@
     .card:hover::before { opacity: 1; }
 
     .card-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: 18px;
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 16px;
     }
     .card.work .card-icon   { background: #eff6ff; }
     .card.invest .card-icon { background: #f0fdf9; }
     .card.etc .card-icon    { background: #f5f3ff; }
 
     .card-title {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 800;
       color: #1a1a1a;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       letter-spacing: -0.02em;
     }
 
     .card-desc {
-      font-size: 0.78rem;
-      color: #aaa;
+      font-size: 0.76rem;
+      color: #bbb;
       line-height: 1.8;
     }
 
     .card-arrow {
       position: absolute;
-      bottom: 20px;
-      right: 20px;
-      font-size: 1rem;
-      color: #ddd;
+      bottom: 18px; right: 18px;
+      font-size: 0.9rem;
+      color: #e0e0e0;
       transition: color 0.2s, transform 0.2s;
     }
     .card:hover .card-arrow { color: #00c6a9; transform: translateX(3px); }
 
-    /* 기타 카드 */
     .card.etc {
       grid-column: span 2;
       display: flex;
       align-items: center;
-      gap: 18px;
-      padding: 20px 24px;
+      gap: 16px;
+      padding: 18px 22px;
     }
     .card.etc .card-icon { margin-bottom: 0; flex-shrink: 0; }
-    .card.etc .card-title { margin-bottom: 2px; font-size: 0.92rem; }
+    .card.etc .card-title { font-size: 0.88rem; margin-bottom: 2px; }
     .card.etc .card-arrow { bottom: 50%; transform: translateY(50%); }
     .card.etc:hover .card-arrow { transform: translateY(50%) translateX(3px); }
 
-    /* 하단 */
     .footer {
-      margin-top: 40px;
-      font-size: 0.7rem;
+      margin-top: 28px;
+      font-size: 0.68rem;
       color: #ccc;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }
 
     @media (max-width: 640px) {
+      .header { gap: 16px; padding: 20px; }
+      .logo { font-size: 2rem; }
+      .divider { height: 40px; }
       .grid { gap: 10px; }
-      .card { padding: 22px 18px; border-radius: 16px; }
-      .card.etc { padding: 16px 18px; }
-      .logo { font-size: 1.8rem; }
-      .card-icon { width: 38px; height: 38px; font-size: 1.1rem; margin-bottom: 14px; }
+      .card { padding: 20px 16px; border-radius: 14px; }
+      .card.etc { padding: 14px 16px; }
       .card-arrow { display: none; }
     }
   </style>
@@ -206,14 +185,14 @@
 <body>
 
   <header class="header">
-    <div class="badge">Private Dashboard</div>
-    <div class="logo-wrap">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
-      </div>
+    <div class="header-logo">
       <div class="logo">Koo<span>VIS</span></div>
     </div>
-    <div class="tagline">나만의 커맨드 센터</div>
+    <div class="divider"></div>
+    <div class="header-text">
+      <div class="header-title">나만의 커맨드 센터</div>
+      <div class="header-desc">업무 · 투자 · 스마트폰 DB<br>모든 정보를 한 곳에서</div>
+    </div>
   </header>
 
   <div class="grid">
@@ -221,7 +200,7 @@
     <a href="work/index.html" class="card work">
       <div class="card-icon">💼</div>
       <div class="card-title">업무</div>
-      <div class="card-desc">기술 뉴스<br>스마트폰 DB <span id="phoneCount" style="color:#bbb"></span></div>
+      <div class="card-desc">기술 뉴스<br>스마트폰 DB <span id="phoneCount" style="color:#ddd"></span></div>
       <div class="card-arrow">→</div>
     </a>
 
@@ -250,16 +229,16 @@
 
   async function loadStats() {
     try {
-      const res   = await fetch(`${API}/phones`);
+      const res = await fetch(`${API}/phones`);
       const phones = await res.json();
       const el = document.getElementById('phoneCount');
       if (el && phones.length) el.textContent = `· ${phones.length}개`;
     } catch(e) {}
 
     try {
-      const ovRes = await fetch(`${API}/invest/overview`);
-      const ov    = await ovRes.json();
-      const desc  = document.getElementById('investDesc');
+      const res = await fetch(`${API}/invest/overview`);
+      const ov  = await res.json();
+      const desc = document.getElementById('investDesc');
       if (desc && ov.total_buy > 0) {
         const pct   = ov.total_pct;
         const color = pct >= 0 ? '#10b981' : '#ef4444';
