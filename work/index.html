@@ -1032,7 +1032,7 @@
       <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
         <span style="font-size:0.72rem;font-weight:700;color:#bbb;margin-right:4px">출시년도</span>
         <button class="brand-pill ${!trendYearFilter ? 'active' : ''}" onclick="setTrendFilter('year',null)">전체</button>
-        ${years.map(y => `<button class="brand-pill ${trendYearFilter===y?'active':''}" onclick="setTrendFilter('year',${y})">${y}</button>`).join('')}
+        ${years.map(y => `<button class="brand-pill ${trendYearFilter===y?'active':''}" onclick="setTrendFilter('year','${y}')">${y}</button>`).join('')}
       </div>`;
   }
 
