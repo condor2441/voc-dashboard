@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 from database import init_db, get_conn
 from briefing import generate_briefing, get_market_data
+from trend import infer_segment, aggregate_phones, generate_trend_insights
 from portfolio import search_kr_stock, search_us_stock, get_valuation, get_holding_history, get_overview, get_portfolio_performance
 from lotto_recommender import LottoRecommender
 
@@ -597,3 +598,33 @@ def compare(ids: str):
         result.append({"phone": dict(phone), "specs": [dict(s) for s in specs]})
     conn.close()
     return result
+
+# ─── 세그먼트 ───────────────────────────────────────────────────
+
+class SegmentRequest(BaseModel):
+    segment: str  # "flagship" | "midrange" | "budget"
+
+@app.patch("/phones/{phone_id}/segment")
+def update_segment(phone_id: int, req: SegmentRequest):
+    if req.segment not in ("flagship", "midrange", "budget"):
+        raise HTTPException(400, "segment는 flagship/midrange/budget 중 하나")
+    conn = get_conn()
+    conn.execute("UPDATE phones SET segment=? WHERE id=?", (req.segment, phone_id))
+    conn.commit()
+    conn.close()
+    return {"ok": True}
+
+# ─── 트렌드 분석 ────────────────────────────────────────────────
+
+class TrendRequest(BaseModel):
+    ids: list[int]
+
+@app.post("/trend/analyze")
+def trend_analyze(req: TrendRequest):
+    if not req.ids:
+        raise HTTPException(400, "ids가 비어 있음")
+    phones = aggregate_phones(req.ids)
+    if not phones:
+        raise HTTPException(404, "선택한 폰을 찾을 수 없음")
+    insights = generate_trend_insights(phones)
+    return {"phones": phones, "insights": insights}

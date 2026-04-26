@@ -136,3 +136,38 @@ def aggregate_phones(ids: list[int]) -> list[dict]:
         })
     conn.close()
     return result
+
+
+def generate_trend_insights(phones: list[dict]) -> str:
+    lines = []
+    for p in phones:
+        lines.append(
+            f"- {p['name']} ({p['brand']}, {p['year']}년, {p['segment']}): "
+            f"디스플레이 {p.get('display_size') or '?'}인치 "
+            f"{p.get('panel_type') or '?'} {p.get('refresh_rate') or '?'}Hz, "
+            f"AP {p.get('ap_brand') or '?'} {p.get('process_node') or '?'}nm, "
+            f"RAM {p.get('ram') or '?'}GB, "
+            f"카메라 {p.get('camera_mp') or '?'}MP, "
+            f"배터리 {p.get('battery') or '?'}mAh"
+        )
+    summary = "\n".join(lines)
+
+    prompt = f"""다음 스마트폰 {len(phones)}개 모델의 데이터를 분석하여 트렌드 인사이트를 제공하세요.
+
+## 분석 대상
+{summary}
+
+## 요청 분석 항목
+1. **브랜드별 트렌드** - 각 브랜드의 스펙 진화 방향과 특징 (브랜드당 2-3문장)
+2. **세그먼트별 패턴** - 플래그십/미드레인지/보급형 간 스펙 격차와 변화
+3. **주목할 이상치/특이점** - 급격한 스펙 점프, 이례적인 선택, 눈에 띄는 패턴
+
+간결하고 실용적으로 마크다운 형식으로 작성하세요."""
+
+    response = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=1500,
+        system="당신은 스마트폰 시장 전문 애널리스트입니다. 한국어로 답변하세요.",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.content[0].text
