@@ -565,7 +565,7 @@
     navigator.clipboard.writeText(url).then(() => {
       btn.textContent = '✓';
       btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = '🔗'; btn.classList.remove('copied'); }, 1500);
+      setTimeout(() => { btn.textContent = 'URL'; btn.classList.remove('copied'); }, 1500);
     });
   }
 
@@ -605,7 +605,7 @@
               <div style="display:flex;justify-content:space-between;align-items:center">
                 <span class="news-tag ${a.tag}">${a.tag === 'phone' ? '스마트폰' : 'IT'}</span>
                 <div style="display:flex;align-items:center;gap:4px">
-                  <button class="copy-url-btn" onclick="event.preventDefault();copyNewsUrl(this,'${a.link.replace(/'/g,'%27')}')">🔗</button>
+                  <button class="copy-url-btn" onclick="event.preventDefault();copyNewsUrl(this,'${a.link.replace(/'/g,'%27')}')">URL</button>
                   <button class="toggle-lang" onclick="event.preventDefault();toggleNewsLang(this,'news-${idx}')" style="opacity:0.4">번역</button>
                 </div>
               </div>
