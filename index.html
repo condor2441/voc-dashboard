@@ -285,6 +285,11 @@
   }
 
   loadStats();
+
+  // 뒤로가기 bfcache 무효화
+  window.addEventListener('pageshow', e => {
+    if (e.persisted) location.reload();
+  });
 </script>
 
 </body>
