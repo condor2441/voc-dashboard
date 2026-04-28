@@ -10,7 +10,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #f7f7f9;
+      background: #f0f4f8;
       color: #1a1a1a;
       font-family: 'Pretendard', system-ui, sans-serif;
       min-height: 100vh;
@@ -19,19 +19,50 @@
       align-items: center;
       justify-content: center;
       padding: 40px 20px;
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0%   { background: radial-gradient(ellipse at 20% 20%, #e8f8f5 0%, #f0f4f8 50%, #f0f0f8 100%); }
+      33%  { background: radial-gradient(ellipse at 80% 20%, #f0f8ff 0%, #f0f4f8 50%, #f5f0f8 100%); }
+      66%  { background: radial-gradient(ellipse at 50% 80%, #f0fdf9 0%, #f0f4f8 50%, #fafaf0 100%); }
+      100% { background: radial-gradient(ellipse at 20% 20%, #e8f8f5 0%, #f0f4f8 50%, #f0f0f8 100%); }
     }
 
     body::before {
       content: '';
       position: fixed;
       top: -200px; right: -200px;
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(0,198,169,0.06) 0%, transparent 70%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(0,198,169,0.08) 0%, transparent 70%);
       pointer-events: none;
+      animation: floatOrb 8s ease-in-out infinite;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -150px; left: -150px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      animation: floatOrb 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translate(0, 0); }
+      50%       { transform: translate(30px, 30px); }
     }
 
     /* ── 헤더: 좌우 분할 ── */
+    @keyframes headerIn {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
     .header {
+      animation: headerIn 0.5s ease forwards;
       display: flex;
       align-items: center;
       gap: 28px;
@@ -54,8 +85,23 @@
       color: #1a1a1a;
       letter-spacing: -0.05em;
       line-height: 1;
+      position: relative;
+      overflow: hidden;
     }
     .logo span { color: #00c6a9; }
+    .logo::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+      animation: shimmer 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes shimmer {
+      0%   { left: -100%; }
+      40%, 100% { left: 150%; }
+    }
 
     .divider {
       width: 1px;
@@ -86,6 +132,11 @@
       max-width: 540px;
     }
 
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
     .card {
       background: #fff;
       border: 1px solid #ebebef;
@@ -93,10 +144,16 @@
       padding: 26px 22px;
       text-decoration: none;
       color: inherit;
-      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
       position: relative;
       overflow: hidden;
+      opacity: 0;
+      animation: cardIn 0.5s ease forwards;
     }
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.15s; }
+    .card:nth-child(3) { animation-delay: 0.25s; }
+    .card:nth-child(4) { animation-delay: 0.35s; }
 
     .card::before {
       content: '';
@@ -113,10 +170,13 @@
     .card.etc::before     { background: linear-gradient(90deg, #8b5cf6, #6366f1); }
 
     .card:hover {
-      box-shadow: 0 12px 36px rgba(0,0,0,0.09);
-      transform: translateY(-4px);
+      transform: translateY(-5px);
       border-color: #d8d8e0;
     }
+    .card.work:hover   { box-shadow: 0 12px 36px rgba(59,130,246,0.15); }
+    .card.invest:hover { box-shadow: 0 12px 36px rgba(0,198,169,0.15); }
+    .card.estate:hover { box-shadow: 0 12px 36px rgba(249,115,22,0.15); }
+    .card.lotto:hover  { box-shadow: 0 12px 36px rgba(234,179,8,0.15); }
     .card:hover::before { opacity: 1; }
 
     .card-icon {
