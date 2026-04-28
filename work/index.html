@@ -752,12 +752,20 @@
       return;
     }
 
-    // 연도별 그룹핑
+    // 연도별 그룹핑 (연도 내 출시일 내림차순)
+    const parseAnnounced = s => {
+      if (!s) return 0;
+      // "2025, January 22" → Date
+      const m = s.match(/(\d{4}),\s*(\w+)\s*(\d+)?/);
+      if (!m) return 0;
+      return new Date(`${m[2]} ${m[3] || 1} ${m[1]}`).getTime() || 0;
+    };
     const byYear = {};
     phones.forEach(p => {
       const y = p.year || '연도 미상';
       (byYear[y] = byYear[y] || []).push(p);
     });
+    Object.values(byYear).forEach(arr => arr.sort((a, b) => parseAnnounced(b.announced) - parseAnnounced(a.announced)));
     const years = Object.keys(byYear).sort((a, b) => b - a);
 
     grid.innerHTML = years.map(year => `

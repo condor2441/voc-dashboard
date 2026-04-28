@@ -138,7 +138,9 @@ def list_phones():
             "SELECT value FROM specs WHERE phone_id=? AND category='Launch' AND key='Announced'",
             (p["id"],)
         ).fetchone()
-        row["year"] = announced["value"][:4] if announced and announced["value"][:4].isdigit() else None
+        val = announced["value"] if announced else None
+        row["year"]      = val[:4] if val and val[:4].isdigit() else None
+        row["announced"] = val
         result.append(row)
     conn.close()
     return result
