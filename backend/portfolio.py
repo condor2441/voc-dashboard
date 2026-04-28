@@ -27,11 +27,14 @@ def _cached_price(ticker: str, currency: str) -> dict:
 def _fetch_price(ticker: str, currency: str) -> dict:
     try:
         t = yf.Ticker(ticker)
-        hist = t.history(period="2d", timeout=8)
+        hist = t.history(period="5d", timeout=8)
         if hist.empty:
             return {"price": None, "prev_price": None}
-        price = _clean(round(float(hist["Close"].iloc[-1]), 4))
-        prev  = _clean(round(float(hist["Close"].iloc[-2]), 4)) if len(hist) >= 2 else price
+        closes = hist["Close"].dropna()
+        if closes.empty:
+            return {"price": None, "prev_price": None}
+        price = _clean(round(float(closes.iloc[-1]), 4))
+        prev  = _clean(round(float(closes.iloc[-2]), 4)) if len(closes) >= 2 else price
         return {"price": price, "prev_price": prev, "currency": currency}
     except Exception:
         return {"price": None, "prev_price": None}
@@ -85,16 +88,16 @@ def get_valuation(holdings: list[dict]) -> list[dict]:
         price_data = get_current_price(h["ticker"], h["currency"])
         cur_price  = price_data.get("price")
         prev_price = price_data.get("prev_price")
+        avg       = h["avg_price"] or 0
+        buy_value = round(avg * h["quantity"], 2)  # 현재가 무관하게 항상 계산
         if cur_price:
-            avg = h["avg_price"] or 0
             profit     = (cur_price - avg) * h["quantity"]
             profit_pct = _clean(round((cur_price - avg) / avg * 100, 2)) if avg else 0
             cur_value  = round(cur_price * h["quantity"], 2)
-            buy_value  = round(avg * h["quantity"], 2)
             daily_chg  = _clean(round((cur_price - prev_price) * h["quantity"], 2)) if prev_price else 0
             daily_pct  = _clean(round((cur_price - prev_price) / prev_price * 100, 2)) if prev_price else 0
         else:
-            profit = profit_pct = cur_value = buy_value = daily_chg = daily_pct = None
+            profit = profit_pct = cur_value = daily_chg = daily_pct = None
         return {
             **h,
             "cur_price":  cur_price,
