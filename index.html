@@ -10,9 +10,12 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background-color: #f7f7f9;
-      background-image: radial-gradient(circle, #c8c8d4 1px, transparent 1px);
-      background-size: 28px 28px;
+      background-color: #f0f7f5;
+      background-image:
+        radial-gradient(ellipse at 0% 0%,   rgba(0,198,169,0.18) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 0%,  rgba(59,130,246,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 100%,rgba(99,102,241,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 0% 100%,  rgba(16,185,129,0.12) 0%, transparent 50%);
       color: #1a1a1a;
       font-family: 'Pretendard', system-ui, sans-serif;
       min-height: 100vh;
@@ -48,7 +51,7 @@
       50%       { transform: translate(30px, 30px); }
     }
 
-    /* ── 헤더: 좌우 분할 ── */
+    /* ── 헤더 ── */
     @keyframes headerIn {
       from { opacity: 0; transform: translateY(-16px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -56,29 +59,20 @@
 
     .header {
       animation: headerIn 0.5s ease forwards;
-      display: flex;
-      align-items: center;
-      gap: 28px;
+      text-align: center;
       max-width: 540px;
       width: 100%;
-      margin-bottom: 36px;
-      padding: 28px 32px;
-      background: #fff;
-      border: 1px solid #ebebef;
-      border-radius: 20px;
-    }
-
-    .header-logo {
-      flex-shrink: 0;
+      margin-bottom: 32px;
     }
 
     .logo {
-      font-size: 2.6rem;
+      font-size: 3rem;
       font-weight: 900;
       color: #1a1a1a;
       letter-spacing: -0.05em;
       line-height: 1;
       position: relative;
+      display: inline-block;
       overflow: hidden;
     }
     .logo span { color: #00c6a9; }
@@ -96,24 +90,11 @@
       40%, 100% { left: 150%; }
     }
 
-    .divider {
-      width: 1px;
-      height: 52px;
-      background: #ebebef;
-      flex-shrink: 0;
-    }
-
-    .header-text {}
-    .header-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 5px;
-    }
     .header-desc {
-      font-size: 0.78rem;
-      color: #bbb;
-      line-height: 1.7;
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-top: 8px;
+      letter-spacing: 0.02em;
     }
 
     /* ── 카드 ── */
@@ -229,12 +210,9 @@
     }
 
     @media (max-width: 640px) {
-      .header { gap: 16px; padding: 20px; }
-      .logo { font-size: 2rem; }
-      .divider { height: 40px; }
+      .logo { font-size: 2.4rem; }
       .grid { gap: 10px; }
       .card { padding: 20px 16px; border-radius: 14px; }
-      .card.etc { padding: 14px 16px; }
       .card-arrow { display: none; }
     }
   </style>
@@ -242,14 +220,8 @@
 <body>
 
   <header class="header">
-    <div class="header-logo">
-      <div class="logo">Koo<span>VIS</span></div>
-    </div>
-    <div class="divider"></div>
-    <div class="header-text">
-      <div class="header-title">나만의 커맨드 센터</div>
-      <div class="header-desc">업무 · 투자 · 스마트폰 DB<br>모든 정보를 한 곳에서</div>
-    </div>
+    <div class="logo">Koo<span>VIS</span></div>
+    <div class="header-desc">업무 · 투자 · 스마트폰 DB · 로또</div>
   </header>
 
   <div class="grid">
