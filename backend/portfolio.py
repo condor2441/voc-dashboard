@@ -1,7 +1,14 @@
 import yfinance as yf
 import requests
 import time
+import math
 from concurrent.futures import ThreadPoolExecutor
+
+def _clean(v):
+    """NaN/inf → None (JSON 직렬화 안전)"""
+    if isinstance(v, float) and (math.isnan(v) or math.isinf(v)):
+        return None
+    return v
 
 # ── 가격 캐시 (5분 TTL) ──────────────────────────────────
 _price_cache: dict = {}
@@ -23,8 +30,8 @@ def _fetch_price(ticker: str, currency: str) -> dict:
         hist = t.history(period="2d", timeout=8)
         if hist.empty:
             return {"price": None, "prev_price": None}
-        price = round(float(hist["Close"].iloc[-1]), 4)
-        prev  = round(float(hist["Close"].iloc[-2]), 4) if len(hist) >= 2 else price
+        price = _clean(round(float(hist["Close"].iloc[-1]), 4))
+        prev  = _clean(round(float(hist["Close"].iloc[-2]), 4)) if len(hist) >= 2 else price
         return {"price": price, "prev_price": prev, "currency": currency}
     except Exception:
         return {"price": None, "prev_price": None}
@@ -79,12 +86,13 @@ def get_valuation(holdings: list[dict]) -> list[dict]:
         cur_price  = price_data.get("price")
         prev_price = price_data.get("prev_price")
         if cur_price:
-            profit     = (cur_price - h["avg_price"]) * h["quantity"]
-            profit_pct = round((cur_price - h["avg_price"]) / h["avg_price"] * 100, 2)
+            avg = h["avg_price"] or 0
+            profit     = (cur_price - avg) * h["quantity"]
+            profit_pct = _clean(round((cur_price - avg) / avg * 100, 2)) if avg else 0
             cur_value  = round(cur_price * h["quantity"], 2)
-            buy_value  = round(h["avg_price"] * h["quantity"], 2)
-            daily_chg  = round((cur_price - prev_price) * h["quantity"], 2) if prev_price else 0
-            daily_pct  = round((cur_price - prev_price) / prev_price * 100, 2) if prev_price else 0
+            buy_value  = round(avg * h["quantity"], 2)
+            daily_chg  = _clean(round((cur_price - prev_price) * h["quantity"], 2)) if prev_price else 0
+            daily_pct  = _clean(round((cur_price - prev_price) / prev_price * 100, 2)) if prev_price else 0
         else:
             profit = profit_pct = cur_value = buy_value = daily_chg = daily_pct = None
         return {
@@ -92,7 +100,7 @@ def get_valuation(holdings: list[dict]) -> list[dict]:
             "cur_price":  cur_price,
             "cur_value":  cur_value,
             "buy_value":  buy_value,
-            "profit":     round(profit, 2) if profit is not None else None,
+            "profit":     _clean(round(profit, 2)) if profit is not None else None,
             "profit_pct": profit_pct,
             "daily_chg":  daily_chg,
             "daily_pct":  daily_pct,
@@ -220,8 +228,8 @@ def get_holding_history(ticker: str, avg_price: float, quantity: float) -> dict:
             "monthly": {"price_chg": round(cur-prev20,2), "price_pct": pct(cur,prev20), "return_pct": val_pct(cur)},
             "chart": {
                 "dates":  dates,
-                "prices": [float(p) for p in prices],
-                "values": [round(float(p) * quantity, 0) for p in prices],
+                "prices": [_clean(float(p)) for p in prices],
+                "values": [_clean(round(float(p) * quantity, 0)) for p in prices],
             },
             "avg_price": avg_price,
             "quantity":  quantity,
