@@ -112,17 +112,18 @@ def get_overview(accounts: list[dict], all_holdings: list[dict]) -> dict:
     daily_pct   = round(total_daily / (total_cur - total_daily) * 100, 2) if (total_cur - total_daily) else 0
 
     # 계좌별 요약 (예수금 포함)
-    acct_map = {a["id"]: {"id": a["id"], "name": a["name"], "cash": a.get("cash", 0), "buy": 0, "cur": 0} for a in accounts}
+    acct_map = {a["id"]: {"id": a["id"], "name": a["name"], "cash": a.get("cash", 0), "buy": 0, "cur": 0, "daily": 0} for a in accounts}
     for h in all_holdings:
         aid = h.get("account_id")
         if aid in acct_map:
             acct_map[aid]["buy"] += h["buy_value"] or 0
             acct_map[aid]["cur"] += h["cur_value"] or 0
+            acct_map[aid]["daily"] += h["daily_chg"] or 0
     acct_summary = []
     for a in acct_map.values():
         pct = round((a["cur"] - a["buy"]) / a["buy"] * 100, 2) if a["buy"] else 0
         total_assets = a["cur"] + a["cash"]
-        acct_summary.append({**a, "profit_pct": pct, "profit": round(a["cur"] - a["buy"], 2), "total_assets": round(total_assets, 2)})
+        acct_summary.append({**a, "profit_pct": pct, "profit": round(a["cur"] - a["buy"], 2), "total_assets": round(total_assets, 2), "daily_chg": round(a["daily"], 2)})
 
     # 수익률 순 정렬
     sorted_holdings = sorted(

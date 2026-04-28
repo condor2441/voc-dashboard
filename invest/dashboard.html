@@ -244,6 +244,13 @@
       #addHoldingForm { padding: 14px; }
       #addHoldingForm > div[style*="grid"] { grid-template-columns: 1fr !important; }
       .modal-inner { width: 95vw !important; }
+      /* 계좌 선택/추가 영역 */
+      div:has(> #accountSelect) { flex-wrap: wrap; }
+      #accountSelect { width: 100%; }
+      #addAccountInline { flex-wrap: wrap !important; width: 100%; }
+      #newAccountName, #newAccountCash { flex: 1 1 100px !important; width: auto !important; min-width: 80px !important; }
+      #tab-portfolio .section-header { flex-wrap: wrap; gap: 10px; }
+      #tab-portfolio .section-header > div:last-child { width: 100%; }
     }
   </style>
 </head>
@@ -417,7 +424,7 @@
   let briefingLoaded = false;
 
   // ── 진입 시 인증 확인 ──────────────────────────────────
-  if (sessionStorage.getItem('invest_auth') !== '1') {
+  if (!sessionStorage.getItem('_iv_tok')) {
     window.location.href = 'index.html';
   }
 
@@ -564,7 +571,7 @@
   // ── 종합 현황 ──────────────────────────────────────────
   async function loadOverview() {
     const el = document.getElementById('overviewContent');
-    el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px">${skeletonCards(5,5)}</div>`;
+    el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">${skeletonCards(6,3)}</div>`;
     try {
       const res  = await fetch(`${API}/invest/overview`);
       const d    = await res.json();
@@ -580,9 +587,10 @@
       const totalDividends = d.total_dividends || 0;
       const totalReturn    = d.total_profit + totalDividends;
       const totalReturnPct = d.total_buy ? ((totalReturn / d.total_buy) * 100).toFixed(2) : 0;
+      const dailyAmt = d.daily_profit !== undefined ? d.daily_profit : Math.round(d.total_cur * d.daily_pct / 100);
 
       el.innerHTML = `
-        <div class="overview-stats fade-in" style="grid-template-columns:repeat(5,1fr)">
+        <div class="overview-stats fade-in" style="grid-template-columns:repeat(3,1fr)">
           <div class="overview-stat">
             <div class="overview-stat-label">총 투자금</div>
             <div class="overview-stat-value" id="stat-buy">₩0</div>
@@ -602,9 +610,11 @@
           <div class="overview-stat">
             <div class="overview-stat-label">총 수익률</div>
             <div class="overview-stat-value ${cls(totalReturn)}" id="stat-total">0</div>
-            <div style="font-size:0.72rem;margin-top:5px;color:${d.daily_pct >= 0 ? '#ef4444' : '#3b82f6'}">
-              오늘 ${d.daily_pct >= 0 ? '+' : ''}${d.daily_pct}%
-            </div>
+          </div>
+          <div class="overview-stat">
+            <div class="overview-stat-label">오늘 수익률</div>
+            <div class="overview-stat-value ${cls(d.daily_pct)}">${d.daily_pct >= 0 ? '+' : ''}${d.daily_pct}%</div>
+            <div style="font-size:0.72rem;margin-top:5px;color:${dailyAmt >= 0 ? '#ef4444' : '#3b82f6'}" id="stat-daily-amt">₩0</div>
           </div>
         </div>
 
@@ -617,7 +627,10 @@
               <div class="acc-blur-content blurred">
                 <div style="display:flex;justify-content:space-between;align-items:center">
                   <span style="font-weight:700;font-size:0.88rem">${a.name}</span>
-                  <span class="${cls(a.profit_pct)}" style="font-size:0.82rem;font-weight:600">${fmt(a.profit_pct,'%')}</span>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+                    <span class="${cls(a.profit_pct)}" style="font-size:0.82rem;font-weight:600">누적 ${fmt(a.profit_pct,'%')}</span>
+                    <span class="${(a.daily_chg||0) >= 0 ? 'pos' : 'neg'}" style="font-size:0.82rem;font-weight:700">오늘 ${(a.daily_chg||0) >= 0 ? '+' : ''}${Number(a.daily_chg||0).toLocaleString()}원</span>
+                  </div>
                 </div>
                 <div style="font-size:0.82rem;color:#999;margin-top:6px;display:flex;justify-content:space-between">
                   <span>평가금 ₩${Number(a.cur).toLocaleString()}</span>
@@ -646,6 +659,8 @@
       countUp(document.getElementById('stat-div'),  totalDividends, 900, '+₩');
       countUp(document.getElementById('stat-total'), Math.abs(totalReturn), 900,
         totalReturn >= 0 ? '+₩' : '-₩');
+      countUp(document.getElementById('stat-daily-amt'), Math.abs(dailyAmt), 900,
+        dailyAmt >= 0 ? '+₩' : '-₩');
 
 
     } catch(e) {

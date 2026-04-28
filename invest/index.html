@@ -152,8 +152,56 @@
 </div>
 
 <script>
-  const PW = '2441';
+  const PW_HASH = 'ad1e075215267a284972c5a764c35f9a38d52d89a9dd6706bd10b4a9860d56c0';
+  const MAX_ATTEMPTS = 5;
+  const LOCKOUT_MS = 30_000;
+
   let entered = '';
+  let lockoutTimer = null;
+
+  function getAttemptState() {
+    try {
+      return JSON.parse(localStorage.getItem('_iv_state') || '{}');
+    } catch { return {}; }
+  }
+
+  function saveAttemptState(state) {
+    localStorage.setItem('_iv_state', JSON.stringify(state));
+  }
+
+  function isLocked() {
+    const { lockedUntil } = getAttemptState();
+    return lockedUntil && Date.now() < lockedUntil;
+  }
+
+  function startLockoutUI(remaining) {
+    const errorMsg = document.getElementById('errorMsg');
+    const numpad = document.querySelector('.numpad');
+    numpad.style.pointerEvents = 'none';
+    numpad.style.opacity = '0.4';
+
+    function tick() {
+      const left = Math.ceil((getAttemptState().lockedUntil - Date.now()) / 1000);
+      if (left <= 0) {
+        errorMsg.textContent = '비밀번호가 틀렸어요';
+        errorMsg.classList.remove('show');
+        numpad.style.pointerEvents = '';
+        numpad.style.opacity = '';
+        clearInterval(lockoutTimer);
+        lockoutTimer = null;
+        return;
+      }
+      errorMsg.textContent = `${left}초 후 다시 시도하세요`;
+      errorMsg.classList.add('show');
+    }
+    tick();
+    lockoutTimer = setInterval(tick, 500);
+  }
+
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
 
   function updateDots() {
     for (let i = 0; i < 4; i++) {
@@ -163,33 +211,56 @@
   }
 
   function input(n) {
-    if (entered.length >= 4) return;
+    if (isLocked() || entered.length >= 4) return;
     entered += n;
     updateDots();
     if (entered.length === 4) check();
   }
 
   function del() {
+    if (isLocked()) return;
     entered = entered.slice(0, -1);
     updateDots();
     document.getElementById('errorMsg').classList.remove('show');
   }
 
-  function check() {
-    if (entered === PW) {
-      sessionStorage.setItem('invest_auth', '1');
+  async function check() {
+    const hash = await sha256(entered);
+    if (hash === PW_HASH) {
+      saveAttemptState({});
+      const token = crypto.randomUUID();
+      sessionStorage.setItem('_iv_tok', token);
       window.location.href = 'dashboard.html';
     } else {
+      const state = getAttemptState();
+      const attempts = (state.attempts || 0) + 1;
+      const newState = attempts >= MAX_ATTEMPTS
+        ? { attempts: 0, lockedUntil: Date.now() + LOCKOUT_MS }
+        : { attempts };
+      saveAttemptState(newState);
+
       for (let i = 0; i < 4; i++)
         document.getElementById('d' + i).className = 'pin-dot error';
-      document.getElementById('errorMsg').classList.add('show');
-      setTimeout(() => {
-        entered = '';
-        updateDots();
-        document.getElementById('errorMsg').classList.remove('show');
-      }, 800);
+
+      if (newState.lockedUntil) {
+        startLockoutUI();
+      } else {
+        const errorMsg = document.getElementById('errorMsg');
+        errorMsg.textContent = `비밀번호가 틀렸어요 (${attempts}/${MAX_ATTEMPTS})`;
+        errorMsg.classList.add('show');
+        setTimeout(() => {
+          entered = '';
+          updateDots();
+          errorMsg.classList.remove('show');
+        }, 800);
+      }
+      entered = '';
+      updateDots();
     }
   }
+
+  // 페이지 로드 시 잠금 상태 복원
+  if (isLocked()) startLockoutUI();
 
   // 키보드 지원
   document.addEventListener('keydown', e => {
