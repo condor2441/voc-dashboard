@@ -63,6 +63,9 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .refresh-btn { font-size: 0.8rem; color: #999; background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.15s; }
     .refresh-btn:hover { background: #e8e8ec; color: #1a1a1a; }
+    .copy-url-btn { font-size: 0.72rem; color: #bbb; background: none; border: none; cursor: pointer; padding: 3px 6px; border-radius: 6px; transition: all 0.15s; line-height: 1; }
+    .copy-url-btn:hover { background: #e8e8ec; color: #1a1a1a; }
+    .copy-url-btn.copied { color: #00c6a9; }
 
     /* ── 대시보드 ── */
     .search-bar {
@@ -558,6 +561,14 @@
     } catch { return null; }
   }
 
+  function copyNewsUrl(btn, url) {
+    navigator.clipboard.writeText(url).then(() => {
+      btn.textContent = '✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '🔗'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
   function toggleNewsLang(btn, cardId) {
     const card = document.getElementById(cardId);
     const headline = card.querySelector('.news-headline');
@@ -593,7 +604,10 @@
                data-original="${a.title.replace(/"/g,'&quot;')}" data-showing="orig">
               <div style="display:flex;justify-content:space-between;align-items:center">
                 <span class="news-tag ${a.tag}">${a.tag === 'phone' ? '스마트폰' : 'IT'}</span>
-                <button class="toggle-lang" onclick="event.preventDefault();toggleNewsLang(this,'news-${idx}')" style="opacity:0.4">번역</button>
+                <div style="display:flex;align-items:center;gap:4px">
+                  <button class="copy-url-btn" onclick="event.preventDefault();copyNewsUrl(this,'${a.link.replace(/'/g,'%27')}')">🔗</button>
+                  <button class="toggle-lang" onclick="event.preventDefault();toggleNewsLang(this,'news-${idx}')" style="opacity:0.4">번역</button>
+                </div>
               </div>
               <div class="news-headline">${a.title}</div>
               <div class="news-meta">
