@@ -825,19 +825,20 @@
     el.innerHTML = '<div style="text-align:center;padding:40px;color:#bbb">의견 불러오는 중...</div>';
     const res = await fetch(`${API}/phones/${id}/opinions`);
     const data = await res.json();
-    const gsm = data.gsmarena || [];
-    const reddit = data.reddit || [];
+    const gsm    = data.gsmarena || [];
+    const ithome = data.ithome   || [];
+    const reddit = data.reddit   || [];
 
-    const opinionCard = (o, isReddit = false) => `
+    const opinionCard = (o, isLink = false) => `
       <div class="opinion-card">
-        ${isReddit
+        ${isLink
           ? `<a href="${o.url}" target="_blank" class="opinion-link" style="font-size:0.84rem;font-weight:600;color:#1a1a1a;display:block;margin-bottom:6px;text-decoration:none">${o.text_ko || o.text}</a>`
           : `<div class="opinion-text">${o.text_ko || o.text}</div>`}
         ${o.text_ko && o.text_ko !== o.text ? `<div class="opinion-original">${o.text}</div>` : ''}
         <div class="opinion-meta">
           <div style="display:flex;align-items:center;gap:6px">
             <span>${o.reviewer}</span>
-            ${isReddit ? `<span class="opinion-score">▲ ${o.score}</span>` : `<span>${o.date}</span>`}
+            ${o.score != null ? `<span class="opinion-score">▲ ${o.score}</span>` : `<span>${o.date}</span>`}
           </div>
           ${o.text_ko && o.text_ko !== o.text ? `<button class="toggle-lang" onclick="toggleOriginal(this)">원문</button>` : ''}
         </div>
@@ -850,10 +851,16 @@
           ${gsm[0]?.url ? `<a href="${gsm[0].url}" target="_blank" class="opinion-link">전체 보기 →</a>` : ''}
         </div>
         ${gsm.map(o => opinionCard(o)).join('')}` : ''}
+      ${ithome.length ? `
+        <div class="opinion-source-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>IT之家</span>
+          <a href="https://so.ithome.com/?q=${encodeURIComponent(document.getElementById('detailTitle').textContent)}" target="_blank" class="opinion-link">전체 보기 →</a>
+        </div>
+        ${ithome.map(o => opinionCard(o, true)).join('')}` : ''}
       ${reddit.length ? `
         <div class="opinion-source-title">Reddit</div>
         ${reddit.map(o => opinionCard(o, true)).join('')}` : ''}
-      ${!gsm.length && !reddit.length ? '<div style="text-align:center;padding:40px;color:#bbb">의견이 없어요</div>' : ''}`;
+      ${!gsm.length && !ithome.length && !reddit.length ? '<div style="text-align:center;padding:40px;color:#bbb">의견이 없어요</div>' : ''}`;
     el.dataset.loaded = id;
   }
 

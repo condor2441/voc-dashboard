@@ -71,7 +71,15 @@ BRAND_DISPLAY = {
     "iqoo": "iQOO", "realme": "Realme", "honor": "Honor",
 }
 
-def _parse_items(items, keywords, brand_key=None):
+def _normalize(text: str) -> str:
+    """검색어 정규화: 특수문자를 텍스트로 변환"""
+    return (text.lower()
+            .replace("+", " plus ")
+            .replace("ultra", " ultra ")
+            .replace("  ", " ")
+            .strip())
+
+def _parse_items(items, keywords, brand_key=None, limit=10):
     """makers li 목록에서 키워드 일치 항목 파싱"""
     results = []
     for item in items:
@@ -85,7 +93,7 @@ def _parse_items(items, keywords, brand_key=None):
         href_slug = href.rsplit("-", 1)[0].replace("_", " ")
         span_text = span.get_text(strip=True) if span else ""
         img_title = (img.get("title", "") if img else "").split(".")[0]
-        match_text = (href_slug + " " + span_text + " " + img_title).lower()
+        match_text = _normalize(href_slug + " " + span_text + " " + img_title)
         if not all(kw in match_text for kw in keywords):
             continue
         # 이름 조립: 브랜드 + span 텍스트
@@ -98,22 +106,53 @@ def _parse_items(items, keywords, brand_key=None):
             "url":   "https://www.gsmarena.com/" + href,
             "image": img["src"] if img else "",
         })
-        if len(results) >= 10:
+        if len(results) >= limit:
             break
     return results
 
 def gsmarena_search(query: str) -> list[dict]:
     """모델명 검색 — 브랜드 감지 시 해당 브랜드 페이지에서 필터링"""
-    keywords = [w.lower() for w in query.split() if len(w) >= 1]
+    keywords = [kw for kw in _normalize(query).split() if kw]
 
-    # 브랜드 감지 → 브랜드 페이지에서 전체 키워드로 필터링 (JavaScript 우회)
+    # 브랜드 감지
     for brand_key, brand_path in BRANDS.items():
-        if brand_key in keywords:
-            display_key = BRAND_ALIAS.get(brand_key, brand_key)
-            soup = get(f"https://www.gsmarena.com/{brand_path}")
-            results = _parse_items(soup.select(".makers li"), keywords, display_key)
-            if results:
-                return results
+        if brand_key not in keywords:
+            continue
+
+        display_key = BRAND_ALIAS.get(brand_key, brand_key)
+        base = brand_path.replace(".php", "")
+        brand_id = base.split("-")[-1]
+        brand_slug = "-".join(base.split("-")[:-1])
+
+        brand_only = (len(keywords) == 1)  # 브랜드명만 입력 vs 모델명 포함
+
+        if brand_only:
+            # 브랜드 전체 탐색 → 최대 30개 수집
+            results = []
+            for page in range(1, 5):
+                page_url = f"https://www.gsmarena.com/{brand_path}" if page == 1 \
+                           else f"https://www.gsmarena.com/{brand_slug}-f-{brand_id}-0-p{page}.php"
+                soup = get(page_url)
+                items = soup.select(".makers li")
+                if not items:
+                    break
+                results += _parse_items(items, keywords, display_key, limit=30)
+                if len(results) >= 30:
+                    break
+            return results[:30]
+        else:
+            # 특정 모델 검색 → 일치하는 페이지에서 즉시 반환
+            for page in range(1, 5):
+                page_url = f"https://www.gsmarena.com/{brand_path}" if page == 1 \
+                           else f"https://www.gsmarena.com/{brand_slug}-f-{brand_id}-0-p{page}.php"
+                soup = get(page_url)
+                items = soup.select(".makers li")
+                if not items:
+                    break
+                results = _parse_items(items, keywords, display_key, limit=10)
+                if results:
+                    return results
+        break
 
     # 브랜드 미감지 → 일반 검색 페이지
     soup = get(f"https://www.gsmarena.com/results.php3?sQuickSearch={requests.utils.quote(query)}")
@@ -244,6 +283,31 @@ def gsmarena_opinions(phone_url: str) -> list[dict]:
             "reviewer": user_el.get_text(strip=True) if user_el else "익명",
             "date":     date_el.get_text(strip=True) if date_el else "",
             "url":      opinion_url,
+        })
+    return opinions
+
+def ithome_opinions(phone_name: str) -> list[dict]:
+    """IT之家 기사 검색 결과 수집"""
+    q = requests.utils.quote(phone_name)
+    url = f"https://so.ithome.com/?q={q}"
+    soup = get(url)
+    opinions = []
+    for item in soup.select(".so-list-item, .list-item, article")[:8]:
+        title_el = item.select_one("h3 a, h2 a, .title a, a[href*='ithome.com']")
+        date_el  = item.select_one("time, .date, .time, .info-time")
+        if not title_el:
+            continue
+        href = title_el.get("href", "")
+        if not href.startswith("http"):
+            href = "https://www.ithome.com" + href
+        opinions.append({
+            "source":   "ithome",
+            "type":     "community",
+            "rating":   None,
+            "text":     title_el.get_text(strip=True),
+            "reviewer": "IT之家",
+            "date":     date_el.get_text(strip=True) if date_el else "",
+            "url":      href,
         })
     return opinions
 
