@@ -10,7 +10,9 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #f0f4f8;
+      background-color: #f7f7f9;
+      background-image: radial-gradient(circle, #c8c8d4 1px, transparent 1px);
+      background-size: 28px 28px;
       color: #1a1a1a;
       font-family: 'Pretendard', system-ui, sans-serif;
       min-height: 100vh;
@@ -19,15 +21,6 @@
       align-items: center;
       justify-content: center;
       padding: 40px 20px;
-      background-size: 400% 400%;
-      animation: gradientShift 12s ease infinite;
-    }
-
-    @keyframes gradientShift {
-      0%   { background: radial-gradient(ellipse at 20% 20%, #e8f8f5 0%, #f0f4f8 50%, #f0f0f8 100%); }
-      33%  { background: radial-gradient(ellipse at 80% 20%, #f0f8ff 0%, #f0f4f8 50%, #f5f0f8 100%); }
-      66%  { background: radial-gradient(ellipse at 50% 80%, #f0fdf9 0%, #f0f4f8 50%, #fafaf0 100%); }
-      100% { background: radial-gradient(ellipse at 20% 20%, #e8f8f5 0%, #f0f4f8 50%, #f0f0f8 100%); }
     }
 
     body::before {
