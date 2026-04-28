@@ -286,31 +286,6 @@ def gsmarena_opinions(phone_url: str) -> list[dict]:
         })
     return opinions
 
-def ithome_opinions(phone_name: str) -> list[dict]:
-    """IT之家 기사 검색 결과 수집"""
-    q = requests.utils.quote(phone_name)
-    url = f"https://so.ithome.com/?q={q}"
-    soup = get(url)
-    opinions = []
-    for item in soup.select(".so-list-item, .list-item, article")[:8]:
-        title_el = item.select_one("h3 a, h2 a, .title a, a[href*='ithome.com']")
-        date_el  = item.select_one("time, .date, .time, .info-time")
-        if not title_el:
-            continue
-        href = title_el.get("href", "")
-        if not href.startswith("http"):
-            href = "https://www.ithome.com" + href
-        opinions.append({
-            "source":   "ithome",
-            "type":     "community",
-            "rating":   None,
-            "text":     title_el.get_text(strip=True),
-            "reviewer": "IT之家",
-            "date":     date_el.get_text(strip=True) if date_el else "",
-            "url":      href,
-        })
-    return opinions
-
 def reddit_opinions(phone_name: str) -> list[dict]:
     """Reddit 커뮤니티 의견 수집 (공개 JSON 엔드포인트)"""
     import json

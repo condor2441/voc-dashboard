@@ -17,7 +17,7 @@ def _lotto_history_from_db() -> list[list[int]]:
     return [sorted([r['n1'],r['n2'],r['n3'],r['n4'],r['n5'],r['n6']]) for r in rows]
 from scraper import (
     gsmarena_search, gsmarena_specs,
-    gsmarena_opinions, reddit_opinions, ithome_opinions, translate_opinions,
+    gsmarena_opinions, reddit_opinions, translate_opinions,
     gsmarena_global_prices,
     gsmarena_by_brand, BRANDS,
     phonearena_search, phonearena_review,
@@ -183,20 +183,16 @@ def delete_phone(phone_id: int):
 
 @app.get("/phones/{phone_id}/opinions")
 def get_opinions(phone_id: int):
-    """GSMArena + IT之家 + Reddit 커뮤니티 의견 실시간 수집"""
+    """GSMArena + Reddit 커뮤니티 의견 실시간 수집"""
     conn = get_conn()
     phone = conn.execute("SELECT * FROM phones WHERE id=?", (phone_id,)).fetchone()
     conn.close()
     if not phone:
         raise HTTPException(404, "기기를 찾을 수 없어요")
 
-    gsm, ithome, reddit = [], [], []
+    gsm, reddit = [], []
     try:
         gsm = gsmarena_opinions(phone["gsmarena_url"])
-    except Exception:
-        pass
-    try:
-        ithome = ithome_opinions(phone["name"])
     except Exception:
         pass
     try:
@@ -206,10 +202,9 @@ def get_opinions(phone_id: int):
 
     # 병렬 번역
     gsm    = translate_opinions(gsm)
-    ithome = translate_opinions(ithome)
     reddit = translate_opinions(reddit)
 
-    return {"gsmarena": gsm, "ithome": ithome, "reddit": reddit}
+    return {"gsmarena": gsm, "reddit": reddit}
 
 # ─── 비교 ─────────────────────────────────────────────────────
 
