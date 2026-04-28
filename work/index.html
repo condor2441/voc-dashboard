@@ -515,6 +515,8 @@
     { name: 'GSMArena',     tag: 'phone', region: 'global', rss: 'https://www.gsmarena.com/rss-news-reviews.php3' },
     { name: '9to5Google',   tag: 'phone', region: 'global', rss: 'https://9to5google.com/feed/' },
     { name: 'MacRumors',    tag: 'phone', region: 'global', rss: 'https://feeds.macrumors.com/MacRumors-All' },
+    { name: 'Gizmochina',   tag: 'phone', region: 'cn',     rss: 'https://www.gizmochina.com/feed/' },
+    { name: 'IT之家',       tag: 'phone', region: 'cn',     rss: 'https://www.ithome.com/rss/' },
     { name: 'TechCrunch',   tag: 'it',    region: 'global', rss: 'https://techcrunch.com/feed/' },
     { name: 'IT동아',       tag: 'it',    region: 'kr',     rss: 'https://it.donga.com/rss/' },
     { name: '디지털데일리', tag: 'it',    region: 'kr',     rss: 'https://www.ddaily.co.kr/rss/rss.xml' },
@@ -577,6 +579,7 @@
     }
 
     const global = all.filter(a => a.region === 'global');
+    const cn     = all.filter(a => a.region === 'cn');
     const kr     = all.filter(a => a.region === 'kr');
 
     const renderSection = (label, articles, offset) => `
@@ -602,22 +605,25 @@
         </div>
       </div>`;
 
-    grid.innerHTML = renderSection('국외', global, 0) + renderSection('국내', kr, global.length);
+    grid.innerHTML = renderSection('국외', global, 0)
+      + (cn.length ? renderSection('중국', cn, global.length) : '')
+      + renderSection('국내', kr, global.length + cn.length);
 
-    // 국외만 번역 (국내는 이미 한국어)
-    const globalTitles = await Promise.all(global.map(a => translateText(a.title)));
-    global.forEach((a, i) => {
+    // 국외 + 중국 번역 (국내는 이미 한국어)
+    const translatables = [...global, ...cn];
+    const translatedTitles = await Promise.all(translatables.map(a => translateText(a.title)));
+    translatables.forEach((a, i) => {
       const card = document.getElementById(`news-${i}`);
-      if (!card || !globalTitles[i]) return;
-      card.dataset.translated = globalTitles[i];
+      if (!card || !translatedTitles[i]) return;
+      card.dataset.translated = translatedTitles[i];
       card.dataset.showing = 'ko';
-      card.querySelector('.news-headline').textContent = globalTitles[i];
+      card.querySelector('.news-headline').textContent = translatedTitles[i];
       card.querySelector('.toggle-lang').style.opacity = '1';
       card.querySelector('.toggle-lang').textContent = '원문';
     });
     // 국내 카드 번역 버튼 숨김
     kr.forEach((a, i) => {
-      const card = document.getElementById(`news-${global.length + i}`);
+      const card = document.getElementById(`news-${translatables.length + i}`);
       if (!card) return;
       card.querySelector('.toggle-lang').style.display = 'none';
     });
