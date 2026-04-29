@@ -186,6 +186,7 @@ def delete_phone(phone_id: int):
 class SpecUpdateRequest(BaseModel):
     key: str
     value: str
+    category: str | None = None
 
 @app.patch("/phones/{phone_id}/specs")
 def update_spec(phone_id: int, req: SpecUpdateRequest):
@@ -194,10 +195,16 @@ def update_spec(phone_id: int, req: SpecUpdateRequest):
     if not phone:
         conn.close()
         raise HTTPException(404, "기기를 찾을 수 없어요")
-    result = conn.execute(
-        "UPDATE specs SET value=? WHERE phone_id=? AND key=?",
-        (req.value, phone_id, req.key)
-    )
+    if req.category:
+        result = conn.execute(
+            "UPDATE specs SET value=? WHERE phone_id=? AND category=? AND key=?",
+            (req.value, phone_id, req.category, req.key)
+        )
+    else:
+        result = conn.execute(
+            "UPDATE specs SET value=? WHERE phone_id=? AND key=?",
+            (req.value, phone_id, req.key)
+        )
     conn.commit()
     conn.close()
     if result.rowcount == 0:
