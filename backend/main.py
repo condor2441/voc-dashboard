@@ -205,10 +205,11 @@ def update_spec(phone_id: int, req: SpecUpdateRequest):
             "UPDATE specs SET value=? WHERE phone_id=? AND key=?",
             (req.value, phone_id, req.key)
         )
+    if result.rowcount == 0:
+        conn.close()
+        raise HTTPException(404, f"스펙 항목 '{req.key}'을 찾을 수 없어요")
     conn.commit()
     conn.close()
-    if result.rowcount == 0:
-        raise HTTPException(404, f"스펙 항목 '{req.key}'을 찾을 수 없어요")
     return {"ok": True, "updated": req.key, "value": req.value}
 
 @app.get("/phones/{phone_id}/opinions")
