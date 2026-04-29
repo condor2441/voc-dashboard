@@ -183,6 +183,27 @@ def delete_phone(phone_id: int):
     conn.close()
     return {"ok": True}
 
+class SpecUpdateRequest(BaseModel):
+    key: str
+    value: str
+
+@app.patch("/phones/{phone_id}/specs")
+def update_spec(phone_id: int, req: SpecUpdateRequest):
+    conn = get_conn()
+    phone = conn.execute("SELECT id FROM phones WHERE id=?", (phone_id,)).fetchone()
+    if not phone:
+        conn.close()
+        raise HTTPException(404, "기기를 찾을 수 없어요")
+    result = conn.execute(
+        "UPDATE specs SET value=? WHERE phone_id=? AND key=?",
+        (req.value, phone_id, req.key)
+    )
+    conn.commit()
+    conn.close()
+    if result.rowcount == 0:
+        raise HTTPException(404, f"스펙 항목 '{req.key}'을 찾을 수 없어요")
+    return {"ok": True, "updated": req.key, "value": req.value}
+
 @app.get("/phones/{phone_id}/opinions")
 def get_opinions(phone_id: int):
     """GSMArena + Reddit 커뮤니티 의견 실시간 수집"""
