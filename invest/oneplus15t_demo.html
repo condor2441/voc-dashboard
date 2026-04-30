@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OnePlus 15T Review — NotebookCheck Demo</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f4f4f5; color: #1a1a1a; font-family: 'Pretendard', system-ui, sans-serif; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    .fade { animation: fadeUp 0.4s ease forwards; }
+    .fade-d1 { animation-delay: 0.05s; opacity: 0; }
+    .fade-d2 { animation-delay: 0.12s; opacity: 0; }
+    .fade-d3 { animation-delay: 0.20s; opacity: 0; }
+    .fade-d4 { animation-delay: 0.28s; opacity: 0; }
+
+    /* ── NAV ── */
+    .nav {
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e8e8ec; padding: 0 32px; height: 54px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-brand { font-size: 0.78rem; font-weight: 700; color: #999; letter-spacing: 0.05em; text-transform: uppercase; }
+    .nav-score { display: flex; align-items: center; gap: 8px; }
+    .nav-score-num { font-size: 1.1rem; font-weight: 800; color: #1a1a1a; }
+    .nav-score-label { font-size: 0.72rem; color: #999; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(160deg, #1a1a1a 0%, #2d2d3a 60%, #1a1a1a 100%);
+      color: #fff; padding: 56px 32px 48px;
+    }
+    .hero-inner { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: 1fr 400px; gap: 48px; align-items: center; }
+    .hero-tag { display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #a78bfa; margin-bottom: 12px; }
+    .hero-title { font-size: 2rem; font-weight: 800; line-height: 1.25; margin-bottom: 16px; }
+    .hero-sub { font-size: 0.9rem; color: #a0a0b8; line-height: 1.7; margin-bottom: 24px; max-width: 520px; }
+    .hero-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-meta-item { font-size: 0.75rem; color: #666; }
+    .hero-meta-item span { color: #ccc; font-weight: 600; }
+
+    .hero-img-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
+    .hero-img { width: 100%; max-width: 380px; border-radius: 16px; box-shadow: 0 32px 80px rgba(0,0,0,0.6); object-fit: cover; }
+
+    .score-badge {
+      position: absolute; top: -12px; right: -12px;
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(124,58,237,0.5);
+    }
+    .score-badge-num { font-size: 1.4rem; font-weight: 800; color: #fff; line-height: 1; }
+    .score-badge-pct { font-size: 0.65rem; color: rgba(255,255,255,0.7); }
+
+    /* ── MAIN ── */
+    .main { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+
+    /* ── VERDICT STRIP ── */
+    .verdict-strip {
+      background: #fff; border: 1px solid #e8e8ec; border-radius: 16px;
+      padding: 24px 28px; margin-bottom: 32px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    .verdict-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+    .verdict-title.pros { color: #059669; }
+    .verdict-title.cons { color: #dc2626; }
+    .verdict-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .verdict-item { display: flex; align-items: flex-start; gap: 8px; font-size: 0.84rem; color: #333; }
+    .verdict-dot { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; }
+    .dot-pro { background: #d1fae5; color: #059669; }
+    .dot-con { background: #fee2e2; color: #dc2626; }
+
+    /* ── SECTION TITLE ── */
+    .section-header { margin-bottom: 16px; }
+    .section-title { font-size: 1rem; font-weight: 700; }
+    .section-sub { font-size: 0.78rem; color: #999; margin-top: 3px; }
+
+    /* ── RATING BARS ── */
+    .rating-section { margin-bottom: 40px; }
+    .rating-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 32px; }
+    .rating-row { display: flex; align-items: center; gap: 10px; }
+    .rating-label { font-size: 0.78rem; color: #555; width: 150px; flex-shrink: 0; }
+    .rating-bar-wrap { flex: 1; height: 6px; background: #e8e8ec; border-radius: 4px; overflow: hidden; }
+    .rating-bar-fill { height: 6px; border-radius: 4px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+    .rating-value { font-size: 0.78rem; font-weight: 700; width: 36px; text-align: right; flex-shrink: 0; }
+    .bar-high   { background: linear-gradient(90deg, #059669, #34d399); }
+    .bar-mid    { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .bar-low    { background: linear-gradient(90deg, #dc2626, #f87171); }
+    .bar-accent { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+
+    /* ── SPEC GRID ── */
+    .spec-section { margin-bottom: 40px; }
+    .spec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .spec-card { background: #fff; border: 1px solid #e8e8ec; border-radius: 12px; padding: 16px 18px; }
+    .spec-icon { font-size: 1.3rem; margin-bottom: 8px; }
+    .spec-name { font-size: 0.7rem; color: #999; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .spec-val  { font-size: 0.9rem; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
+    .spec-note { font-size: 0.7rem; color: #bbb; margin-top: 3px; }
+
+    /* ── BENCHMARK BARS ── */
+    .bench-section { margin-bottom: 40px; }
+    .bench-card { background: #fff; border: 1px solid #e8e8ec; border-radius: 12px; padding: 20px 24px; }
+    .bench-title { font-size: 0.78rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+    .bench-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .bench-label { font-size: 0.75rem; color: #555; width: 200px; flex-shrink: 0; }
+    .bench-bar-wrap { flex: 1; height: 8px; background: #e8e8ec; border-radius: 4px; overflow: hidden; }
+    .bench-bar-fill { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #1a1a1a, #555); transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+    .bench-val { font-size: 0.75rem; font-weight: 700; color: #1a1a1a; width: 80px; text-align: right; flex-shrink: 0; }
+
+    /* ── DISPLAY METRICS ── */
+    .display-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .display-metric { background: #fff; border: 1px solid #e8e8ec; border-radius: 12px; padding: 16px; text-align: center; }
+    .display-metric-val { font-size: 1.3rem; font-weight: 800; color: #1a1a1a; }
+    .display-metric-unit { font-size: 0.68rem; color: #999; font-weight: 600; }
+    .display-metric-label { font-size: 0.7rem; color: #bbb; margin-top: 4px; }
+    .good { color: #059669; }
+    .warn { color: #d97706; }
+
+    /* ── REVIEW TEXT ── */
+    .review-section { margin-bottom: 40px; }
+    .review-text-card { background: #fff; border: 1px solid #e8e8ec; border-radius: 12px; padding: 24px 28px; }
+    .review-text-card p { font-size: 0.88rem; line-height: 1.8; color: #333; margin-bottom: 14px; }
+    .review-text-card p:last-child { margin-bottom: 0; }
+
+    /* ── BATTERY ── */
+    .battery-row { display: flex; align-items: center; gap: 16px; background: #fff; border: 1px solid #e8e8ec; border-radius: 12px; padding: 20px 24px; }
+    .battery-icon { font-size: 2.5rem; }
+    .battery-label { font-size: 0.78rem; color: #999; margin-bottom: 4px; }
+    .battery-val { font-size: 1.6rem; font-weight: 800; color: #059669; }
+    .battery-note { font-size: 0.72rem; color: #bbb; }
+
+    /* ── THERMAL MAP ── */
+    .thermal-section { margin-bottom: 40px; }
+    .thermal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .thermal-card { background: #fff; border: 1px solid #e8e8ec; border-radius: 12px; padding: 20px 24px; }
+    .thermal-card-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .thermal-badge { padding: 2px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; }
+    .badge-idle { background: #d1fae5; color: #065f46; }
+    .badge-load { background: #fee2e2; color: #991b1b; }
+
+    /* 3×3 온도 그리드 */
+    .temp-map { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 12px; }
+    .temp-cell {
+      border-radius: 8px; padding: 10px 4px; text-align: center;
+      font-size: 0.85rem; font-weight: 700; color: #fff;
+      transition: transform 0.15s;
+    }
+    .temp-cell:hover { transform: scale(1.05); }
+    .temp-stat-row { display: flex; justify-content: space-between; font-size: 0.75rem; padding-top: 10px; border-top: 1px solid #f4f4f5; }
+    .temp-stat { text-align: center; }
+    .temp-stat-label { color: #bbb; margin-bottom: 2px; }
+    .temp-stat-val { font-weight: 700; }
+
+    /* ── FOOTER VERDICT ── */
+    .final-verdict {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d3a 100%);
+      color: #fff; border-radius: 16px; padding: 32px;
+      display: flex; align-items: center; gap: 32px; margin-bottom: 8px;
+    }
+    .final-score-circle {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      flex-shrink: 0; box-shadow: 0 8px 32px rgba(124,58,237,0.5);
+    }
+    .final-score-num { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .final-score-label { font-size: 0.65rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+    .final-verdict-text h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .final-verdict-text p { font-size: 0.84rem; color: #a0a0b8; line-height: 1.7; }
+
+    .source-note { text-align: right; font-size: 0.72rem; color: #bbb; margin-top: 8px; }
+    .source-note a { color: #999; }
+
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-img-wrap { display: none; }
+      .hero-title { font-size: 1.4rem; }
+      .verdict-strip { grid-template-columns: 1fr; }
+      .rating-grid { grid-template-columns: 1fr; }
+      .spec-grid { grid-template-columns: repeat(2, 1fr); }
+      .display-grid { grid-template-columns: repeat(2, 1fr); }
+      .final-verdict { flex-direction: column; text-align: center; }
+      .nav { padding: 0 16px; }
+      .main { padding: 24px 16px; }
+      .hero { padding: 32px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">NotebookCheck · Review Demo</div>
+  <div class="nav-score">
+    <div class="nav-score-num">86%</div>
+    <div class="nav-score-label">Overall Score</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner fade fade-d1">
+    <div>
+      <div class="hero-tag">Smartphone Review · 2026.04.29</div>
+      <h1 class="hero-title">OnePlus 15T</h1>
+      <p class="hero-sub">Incredible battery life makes the compact smartphone competition pale in comparison. The Snapdragon 8 Elite Gen 5 chip, XXL battery, and extra-bright 165Hz OLED — all in a handy form factor.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">가격 <span>¥4,300 (~€550)</span></div>
+        <div class="hero-meta-item">출시 <span>중국 시장 한정</span></div>
+        <div class="hero-meta-item">작성자 <span>Florian Schmitt</span></div>
+        <div class="hero-meta-item">검수 <span>Vaidyanathan Subramaniam</span></div>
+      </div>
+    </div>
+    <div class="hero-img-wrap fade fade-d2">
+      <img class="hero-img"
+           src="https://www.notebookcheck.net/fileadmin/Notebooks/OnePlus/15T/OnePlus_15t_Test-Smartphone_2.jpg"
+           alt="OnePlus 15T"
+           onerror="this.src='';this.style.background='#2d2d3a';this.style.minHeight='300px'">
+      <div class="score-badge">
+        <div class="score-badge-num">86</div>
+        <div class="score-badge-pct">/ 100</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+
+  <!-- VERDICT: PROS / CONS -->
+  <div class="verdict-strip fade fade-d2">
+    <div>
+      <div class="verdict-title pros">장점 Pros</div>
+      <ul class="verdict-list">
+        <li class="verdict-item"><span class="verdict-dot dot-pro">+</span>밝은 165 Hz OLED 패널</li>
+        <li class="verdict-item"><span class="verdict-dot dot-pro">+</span>강력한 Snapdragon 8 Elite Gen 5 칩셋</li>
+        <li class="verdict-item"><span class="verdict-dot dot-pro">+</span>비교 불가 수준의 배터리 지속 시간</li>
+        <li class="verdict-item"><span class="verdict-dot dot-pro">+</span>IP69 등급 고품질 케이싱</li>
+      </ul>
+    </div>
+    <div>
+      <div class="verdict-title cons">단점 Cons</div>
+      <ul class="verdict-list">
+        <li class="verdict-item"><span class="verdict-dot dot-con">−</span>SoC 스로틀링 문제</li>
+        <li class="verdict-item"><span class="verdict-dot dot-con">−</span>스피커 음질 부족 (저음 없음)</li>
+        <li class="verdict-item"><span class="verdict-dot dot-con">−</span>업데이트 불확실성</li>
+        <li class="verdict-item"><span class="verdict-dot dot-con">−</span>중국 이외 판매 제한</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RATING BREAKDOWN -->
+  <div class="rating-section fade fade-d3">
+    <div class="section-header">
+      <div class="section-title">항목별 평점</div>
+      <div class="section-sub">NotebookCheck 세부 평가 항목 · 실제 스크래핑 데이터</div>
+    </div>
+    <div style="background:#fff;border:1px solid #e8e8ec;border-radius:12px;padding:24px 28px">
+      <div class="rating-grid" id="ratingGrid"></div>
+    </div>
+  </div>
+
+  <!-- SPEC CARDS -->
+  <div class="spec-section fade fade-d3">
+    <div class="section-header">
+      <div class="section-title">주요 스펙</div>
+    </div>
+    <div class="spec-grid">
+      <div class="spec-card">
+        <div class="spec-icon">⚡</div>
+        <div class="spec-name">프로세서</div>
+        <div class="spec-val">Snapdragon 8 Elite Gen 5</div>
+        <div class="spec-note">Qualcomm · 최상위 플래그십 칩</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-icon">🖥️</div>
+        <div class="spec-name">디스플레이</div>
+        <div class="spec-val">6.3" OLED 165 Hz</div>
+        <div class="spec-note">1119 nit 최대 밝기</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-icon">🔋</div>
+        <div class="spec-name">배터리</div>
+        <div class="spec-val">6,000+ mAh</div>
+        <div class="spec-note">WiFi 사용 34.3시간</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-icon">📶</div>
+        <div class="spec-name">WiFi</div>
+        <div class="spec-val">Wi-Fi 7</div>
+        <div class="spec-note">최대 1,951 Mbit/s</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-icon">💾</div>
+        <div class="spec-name">스토리지 읽기</div>
+        <div class="spec-val">4,116 MB/s</div>
+        <div class="spec-note">Sequential Read 256KB</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-icon">🛡️</div>
+        <div class="spec-name">방수 등급</div>
+        <div class="spec-val">IP69</div>
+        <div class="spec-note">고압 수세 방수</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISPLAY METRICS -->
+  <div class="bench-section fade fade-d3">
+    <div class="section-header">
+      <div class="section-title">디스플레이 측정치</div>
+      <div class="section-sub">6.3" OLED 165Hz · 실제 스크래핑 데이터</div>
+    </div>
+
+    <!-- 핵심 지표 4개 -->
+    <div class="display-grid" style="margin-bottom:12px">
+      <div class="display-metric">
+        <div class="display-metric-val">1,119</div>
+        <div class="display-metric-unit">cd/m²</div>
+        <div class="display-metric-label">일반 최대 밝기</div>
+      </div>
+      <div class="display-metric">
+        <div class="display-metric-val" style="color:#7c3aed">3,125</div>
+        <div class="display-metric-unit">cd/m²</div>
+        <div class="display-metric-label">피크 밝기 (HDR)</div>
+      </div>
+      <div class="display-metric">
+        <div class="display-metric-val good">96%</div>
+        <div class="display-metric-unit"></div>
+        <div class="display-metric-label">밝기 균일도</div>
+      </div>
+      <div class="display-metric">
+        <div class="display-metric-val warn">120.7 Hz</div>
+        <div class="display-metric-unit">Amplitude 18%</div>
+        <div class="display-metric-label">PWM 깜빡임</div>
+      </div>
+    </div>
+
+    <!-- 밝기 균일도 3×3 + 색상 정확도 2열 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+
+      <!-- 밝기 균일도 맵 -->
+      <div style="background:#fff;border:1px solid #e8e8ec;border-radius:12px;padding:18px 20px">
+        <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:12px">밝기 균일도 맵 (cd/m²)</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px" id="brightnessMap"></div>
+        <div style="font-size:0.72rem;color:#bbb;text-align:center">중앙 최고점 1,119 · 최저 1,078 · 균일도 96%</div>
+      </div>
+
+      <!-- 색상 정확도 -->
+      <div style="background:#fff;border:1px solid #e8e8ec;border-radius:12px;padding:18px 20px">
+        <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:12px">색상 정확도 (낮을수록 우수)</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px">
+              <span style="color:#555">Colorchecker dE 2000</span>
+              <span style="font-weight:700;color:#d97706">2.22</span>
+            </div>
+            <div style="height:6px;background:#e8e8ec;border-radius:4px"><div style="height:6px;width:37%;background:#d97706;border-radius:4px"></div></div>
+            <div style="font-size:0.68rem;color:#bbb;margin-top:2px">경쟁사 평균 1.26 · 목표 &lt;2.0</div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px">
+              <span style="color:#555">Greyscale dE 2000</span>
+              <span style="font-weight:700;color:#d97706">3.2</span>
+            </div>
+            <div style="height:6px;background:#e8e8ec;border-radius:4px"><div style="height:6px;width:53%;background:#d97706;border-radius:4px"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px">
+              <span style="color:#555">Gamma</span>
+              <span style="font-weight:700;color:#059669">2.243 <span style="font-size:0.68rem;color:#bbb">(목표 2.2)</span></span>
+            </div>
+            <div style="height:6px;background:#e8e8ec;border-radius:4px"><div style="height:6px;width:98%;background:#059669;border-radius:4px"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px">
+              <span style="color:#555">CCT 색온도</span>
+              <span style="font-weight:700;color:#3b82f6">7,147K <span style="font-size:0.68rem;color:#bbb">(목표 6,500K)</span></span>
+            </div>
+            <div style="font-size:0.68rem;color:#bbb">약간 차가운 화이트 · 91% 정확도</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 피크 밝기 경쟁사 비교 -->
+    <div style="background:#fff;border:1px solid #e8e8ec;border-radius:12px;padding:18px 20px">
+      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:14px">피크 밝기 경쟁 비교 (cd/m²)</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:4px">
+            <span style="color:#555">Vivo X300 <span style="color:#bbb;font-size:0.68rem">Dimensity 9500</span></span>
+            <span style="font-weight:700;color:#059669">4,072 <span style="font-size:0.68rem">+30%</span></span>
+          </div>
+          <div style="height:7px;background:#e8e8ec;border-radius:4px"><div style="height:7px;width:100%;background:#d1fae5;border-radius:4px"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:4px">
+            <span style="color:#555">Honor Magic8 Pro Air <span style="color:#bbb;font-size:0.68rem">Dimensity 9500</span></span>
+            <span style="font-weight:700;color:#059669">3,254 <span style="font-size:0.68rem">+4%</span></span>
+          </div>
+          <div style="height:7px;background:#e8e8ec;border-radius:4px"><div style="height:7px;width:80%;background:#d1fae5;border-radius:4px"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:4px">
+            <span style="font-weight:700">OnePlus 15T <span style="color:#bbb;font-size:0.68rem">Snapdragon 8 Elite Gen 5</span></span>
+            <span style="font-weight:800;color:#7c3aed">3,125</span>
+          </div>
+          <div style="height:7px;background:#e8e8ec;border-radius:4px"><div style="height:7px;width:77%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:4px"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THERMAL -->
+  <div class="thermal-section fade fade-d3">
+    <div class="section-header">
+      <div class="section-title">발열 측정치</div>
+      <div class="section-sub">표면 온도 3×3 그리드 · 실제 스크래핑 데이터</div>
+    </div>
+    <div class="thermal-grid">
+      <div class="thermal-card">
+        <div class="thermal-card-title">전면 (Front)<span class="thermal-badge badge-idle">유휴 Idle</span></div>
+        <div class="temp-map" id="tempIdleFront"></div>
+        <div class="temp-stat-row">
+          <div class="temp-stat"><div class="temp-stat-label">최고</div><div class="temp-stat-val" style="color:#059669">25.1°C</div></div>
+          <div class="temp-stat"><div class="temp-stat-label">평균</div><div class="temp-stat-val">24.5°C</div></div>
+          <div class="temp-stat"><div class="temp-stat-label">평점</div><div class="temp-stat-val" style="color:#059669">86%</div></div>
+        </div>
+      </div>
+      <div class="thermal-card">
+        <div class="thermal-card-title">후면 (Back)<span class="thermal-badge badge-idle">유휴 Idle</span></div>
+        <div class="temp-map" id="tempIdleBack"></div>
+        <div class="temp-stat-row">
+          <div class="temp-stat"><div class="temp-stat-label">최고</div><div class="temp-stat-val" style="color:#059669">25.1°C</div></div>
+          <div class="temp-stat"><div class="temp-stat-label">평균</div><div class="temp-stat-val">24.5°C</div></div>
+          <div class="temp-stat"><div class="temp-stat-label">환경온도</div><div class="temp-stat-val">실내 기준</div></div>
+        </div>
+      </div>
+      <div class="thermal-card">
+        <div class="thermal-card-title">전면 (Front)<span class="thermal-badge badge-load">풀 부하 Load</span></div>
+        <div class="temp-map" id="tempLoadFront"></div>
+        <div class="temp-stat-row">
+          <div class="temp-stat"><div class="temp-stat-label">최고</div><div class="temp-stat-val" style="color:#d97706">46.5°C</div></div>
+          <div class="temp-stat"><div class="temp-stat-label">평균</div><div class="temp-stat-val">40.1°C</div></div>
+          <div class="temp-stat"><div class="temp-stat-label">핫스팟</div><div class="temp-stat-val" style="color:#d97706">하단 좌</div></div>
+        </div>
+      </div>
+      <div class="thermal-card">
+        <div class="thermal-card-title">후면 (Back)<span class="thermal-badge badge-load">풀 부하 Load</span></div>
+        <div class="temp-map" id="tempLoadBack"></div>
+        <div class="temp-stat-row">
+          <div class="temp-stat"><div class="temp-stat-label">최고</div><div class="temp-stat-val" style="color:#dc2626">50.8°C</div></div>
+          <div class="temp-stat"><div class="temp-stat-label">평균</div><div class="temp-stat-val">41.4°C</div></div>
+          <div class="temp-stat"><div class="temp-stat-label">핫스팟</div><div class="temp-stat-val" style="color:#dc2626">하단 우 (SoC)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORAGE BENCHMARK -->
+  <div class="bench-section fade fade-d4">
+    <div class="section-header">
+      <div class="section-title">스토리지 벤치마크</div>
+    </div>
+    <div class="bench-card">
+      <div class="bench-title">Storage Speed (MB/s)</div>
+      <div id="benchRows"></div>
+    </div>
+  </div>
+
+  <!-- BATTERY -->
+  <div style="margin-bottom:40px" class="fade fade-d4">
+    <div class="section-header">
+      <div class="section-title">배터리 지속 시간</div>
+    </div>
+    <div class="battery-row">
+      <div class="battery-icon">🔋</div>
+      <div style="flex:1">
+        <div class="battery-label">WiFi 웹서핑 (v1.3)</div>
+        <div class="battery-val">34.3시간</div>
+        <div class="battery-note">실측값 · Apple iPhone 17 대비 2배 이상</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:0.72rem;color:#999;margin-bottom:4px">배터리 평점</div>
+        <div style="font-size:2rem;font-weight:800;color:#059669">97%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEW TEXT -->
+  <div class="review-section fade fade-d4">
+    <div class="section-header">
+      <div class="section-title">리뷰 본문 발췌</div>
+      <div class="section-sub">실제 스크래핑된 텍스트</div>
+    </div>
+    <div class="review-text-card">
+      <p>The OnePlus 15T smartphone looks stylish, feels high-quality, and leaves a strong impression in everyday use. Thanks to a great ultrasonic sensor, a high-end chipset that is beyond reproach and a really beautiful OLED panel, the mini flagship from OnePlus makes the hearts of fans of compact smartphones beat faster.</p>
+      <p>The battery run times are also phenomenally good for this handy form factor.</p>
+      <p>Are there possible deal breakers with the OnePlus 15T? Unfortunately, yes. Due to lack of availability outside of China, certain limitations have to be accepted with the software — such as eSIM or WearOS support — although ColorOS with its multi-language package and Google integration is also quite easy to use in Europe unlike Xiaomi phones from the Far East.</p>
+      <p>However, the disadvantages of importing the OnePlus 15T are sweetened by the low price. For less than €600, the overall package makes it a genuine deal.</p>
+    </div>
+  </div>
+
+  <!-- FINAL VERDICT -->
+  <div class="final-verdict fade fade-d4">
+    <div class="final-score-circle">
+      <div class="final-score-num">86</div>
+      <div class="final-score-label">/ 100 good</div>
+    </div>
+    <div class="final-verdict-text">
+      <h3>Verdict: 강력 추천 — 컴팩트 플래그십의 최강자</h3>
+      <p>The new OnePlus 15T impresses with the Snapdragon 8 Elite Gen 5 chip, XXL battery, fast charging, and an extra-bright OLED screen in a handy and small form factor compared to the OnePlus 15. For less than €600, the overall package makes it a genuine deal — if you can live with China-only availability and software limitations.</p>
+    </div>
+  </div>
+  <div class="source-note">데이터 출처: <a href="https://www.notebookcheck.net/OnePlus-15T-Review-Incredible-battery-life-makes-the-compact-smartphone-competition-pale-in-comparison.1282926.0.html" target="_blank">NotebookCheck</a> · Playwright + playwright-stealth 스크래핑</div>
+
+</main>
+
+<script>
+  // ── 항목별 평점 바 ──────────────────────────────────────
+  const ratings = [
+    { label: 'Chassis',              val: 90,  type: 'high'   },
+    { label: 'Display',              val: 90,  type: 'high'   },
+    { label: 'Battery',              val: 97,  type: 'accent' },
+    { label: 'Application Perf.',    val: 100, type: 'accent' },
+    { label: 'Pointing Device',      val: 96,  type: 'high'   },
+    { label: 'Weight',               val: 89,  type: 'high'   },
+    { label: 'Temperature',          val: 86,  type: 'high'   },
+    { label: 'Noise',                val: 100, type: 'accent' },
+    { label: 'Connectivity',         val: 82,  type: 'high'   },
+    { label: 'Camera',               val: 80,  type: 'mid'    },
+    { label: 'Audio',                val: 70,  type: 'mid'    },
+    { label: 'Games Performance',    val: 69,  type: 'mid'    },
+    { label: 'Keyboard / Software',  val: 87,  type: 'high'   },
+    { label: 'AI Performance',       val: 37,  type: 'low'    },
+  ];
+
+  const grid = document.getElementById('ratingGrid');
+  ratings.forEach((r, i) => {
+    const color = r.type === 'accent' ? '#7c3aed' : r.type === 'high' ? '#059669' : r.type === 'mid' ? '#d97706' : '#dc2626';
+    const textCls = r.type === 'accent' ? 'color:#7c3aed' : r.type === 'high' ? 'color:#059669' : r.type === 'mid' ? 'color:#d97706' : 'color:#dc2626';
+    grid.innerHTML += `
+      <div class="rating-row">
+        <div class="rating-label">${r.label}</div>
+        <div class="rating-bar-wrap">
+          <div class="rating-bar-fill bar-${r.type}" style="width:0%" data-val="${r.val}"></div>
+        </div>
+        <div class="rating-value" style="${textCls}">${r.val}%</div>
+      </div>`;
+  });
+
+  // ── 밝기 균일도 맵 ──────────────────────────────────────
+  const brightVals = [1109, 1101, 1097, 1110, 1119, 1108, 1103, 1078, 1085];
+  const bMin = Math.min(...brightVals), bMax = Math.max(...brightVals);
+  const brightMap = document.getElementById('brightnessMap');
+  if (brightMap) {
+    brightVals.forEach(v => {
+      const t = (v - bMin) / (bMax - bMin);
+      const bg = `hsl(${220 - t * 180}, 70%, ${40 + t * 25}%)`;
+      const isCenter = v === bMax;
+      brightMap.innerHTML += `
+        <div style="background:${bg};border-radius:8px;padding:10px 4px;text-align:center;
+          font-size:0.75rem;font-weight:700;color:#fff;
+          ${isCenter ? 'box-shadow:0 0 0 2px #7c3aed;' : ''}">
+          ${v}
+        </div>`;
+    });
+  }
+
+  // 벤치마크
+  const benches = [
+    { label: 'Seq. Read 256KB',  val: 4116, max: 5000, unit: 'MB/s' },
+    { label: 'Seq. Write 256KB', val: 4076, max: 5000, unit: 'MB/s' },
+    { label: 'Rand. Read 4KB',   val: 579,  max: 800,  unit: 'MB/s' },
+    { label: 'Rand. Write 4KB',  val: 721,  max: 800,  unit: 'MB/s' },
+  ];
+  const benchRows = document.getElementById('benchRows');
+  benches.forEach(b => {
+    benchRows.innerHTML += `
+      <div class="bench-row">
+        <div class="bench-label">${b.label}</div>
+        <div class="bench-bar-wrap">
+          <div class="bench-bar-fill" style="width:0%" data-val="${Math.round(b.val/b.max*100)}"></div>
+        </div>
+        <div class="bench-val">${b.val.toLocaleString()} ${b.unit}</div>
+      </div>`;
+  });
+
+  // 애니메이션: IntersectionObserver로 보이면 바 채우기
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.querySelectorAll('[data-val]').forEach(bar => {
+        setTimeout(() => { bar.style.width = bar.dataset.val + '%'; }, 100);
+      });
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.rating-section, .bench-section, .thermal-section').forEach(el => io.observe(el));
+
+  // ── 발열 히트맵 ──────────────────────────────────────────
+  function tempColor(val, min, max) {
+    const t = (val - min) / (max - min);
+    // 파랑(cool) → 초록 → 노랑 → 빨강(hot)
+    if (t < 0.33) {
+      const r = Math.round(t / 0.33 * 80);
+      const g = Math.round(150 + t / 0.33 * 80);
+      const b = Math.round(200 - t / 0.33 * 80);
+      return `rgb(${r},${g},${b})`;
+    } else if (t < 0.66) {
+      const tt = (t - 0.33) / 0.33;
+      return `rgb(${Math.round(80 + tt * 175)},${Math.round(200 - tt * 50)},${Math.round(120 - tt * 80)})`;
+    } else {
+      const tt = (t - 0.66) / 0.34;
+      return `rgb(${Math.round(220 + tt * 35)},${Math.round(150 - tt * 110)},${Math.round(40 - tt * 30)})`;
+    }
+  }
+
+  function renderTempMap(id, vals, minV, maxV) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    vals.forEach(v => {
+      const bg = tempColor(v, minV, maxV);
+      el.innerHTML += `<div class="temp-cell" style="background:${bg}">${v}°C</div>`;
+    });
+  }
+
+  // 유휴 전면: max 25.1, avg 24.5
+  renderTempMap('tempIdleFront',
+    [24.1, 24.3, 24.5, 24.6, 24.1, 25.1, 24.6, 24.7, 24.8], 23.5, 26);
+  // 유휴 후면
+  renderTempMap('tempIdleBack',
+    [25.1, 24.8, 24.3, 24.5, 24.4, 24.6, 24.1, 24.5, 24.3], 23.5, 26);
+  // 부하 전면: max 46.5, avg 40.1
+  renderTempMap('tempLoadFront',
+    [41.7, 38.9, 35.5, 43.4, 40.3, 37.3, 46.5, 40.1, 37.0], 34, 52);
+  // 부하 후면: max 50.8, avg 41.4
+  renderTempMap('tempLoadBack',
+    [37.1, 37.4, 41.0, 37.9, 43.3, 46.4, 38.4, 40.5, 50.8], 34, 52);
+</script>
+
+</body>
+</html>

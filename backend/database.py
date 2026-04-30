@@ -140,6 +140,27 @@ def init_db():
     except Exception:
         pass
 
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS nbc_reviews (
+                id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                title        TEXT NOT NULL,
+                url          TEXT NOT NULL UNIQUE,
+                pub_date     TEXT,
+                thumbnail    TEXT,
+                score        INTEGER,
+                pros         TEXT,
+                cons         TEXT,
+                detail_json  TEXT,
+                phone_id     INTEGER REFERENCES phones(id),
+                collected_at TEXT DEFAULT (datetime('now', 'localtime')),
+                scraped_at   TEXT
+            )
+        """)
+        conn.commit()
+    except Exception:
+        pass
+
     conn.commit()
     conn.close()
     print("DB 초기화 완료")

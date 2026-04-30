@@ -900,26 +900,41 @@
       <table class="port-table">
         <thead>
           <tr>
-            <th>종목</th><th>티커</th><th>수량</th>
-            <th>평균매수가</th><th>현재가</th><th>평가금액</th>
-            <th>손익</th><th>수익률</th><th></th>
+            <th>종목</th>
+            <th>오늘 손익</th>
+            <th>손익 (수익률)</th>
+            <th>평가금액</th>
+            <th>수량</th>
+            <th>평균매수가</th>
+            <th>현재가</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           ${data.map(h => `
             <tr style="cursor:pointer" onclick="openHoldPanel(${h.id},'${h.name}')">
-              <td style="font-weight:600">${h.name}</td>
-              <td style="color:#999">${h.ticker}</td>
+              <td>
+                <div style="font-weight:600">${h.name}</div>
+                <div style="font-size:0.72rem;color:#bbb;margin-top:2px">(${h.ticker})</div>
+              </td>
+              <td class="${(h.daily_chg || 0) >= 0 ? 'profit-pos' : 'profit-neg'}">
+                ${h.daily_chg !== null && h.daily_chg !== undefined
+                  ? (h.daily_chg >= 0 ? '+' : '') + h.daily_chg.toLocaleString()
+                  : '—'}
+              </td>
+              <td>
+                ${h.profit !== null ? `
+                  <span class="${h.profit >= 0 ? 'profit-pos' : 'profit-neg'}" style="font-weight:600">
+                    ${(h.profit >= 0 ? '+' : '') + h.profit.toLocaleString()}
+                  </span>
+                  <span style="font-size:0.78rem;color:${h.profit_pct >= 0 ? '#ef4444' : '#3b82f6'}">
+                    (${h.profit_pct >= 0 ? '+' : ''}${h.profit_pct}%)
+                  </span>` : '—'}
+              </td>
+              <td>${h.cur_value ? h.cur_value.toLocaleString() : '—'}</td>
               <td>${h.quantity.toLocaleString()}</td>
               <td>${h.avg_price.toLocaleString()} ${h.currency}</td>
               <td>${h.cur_price ? h.cur_price.toLocaleString() : '—'}</td>
-              <td>${h.cur_value ? h.cur_value.toLocaleString() : '—'}</td>
-              <td class="${h.profit >= 0 ? 'profit-pos' : 'profit-neg'}">
-                ${h.profit !== null ? (h.profit >= 0 ? '+' : '') + h.profit.toLocaleString() : '—'}
-              </td>
-              <td class="${h.profit_pct >= 0 ? 'profit-pos' : 'profit-neg'}">
-                ${h.profit_pct !== null ? (h.profit_pct >= 0 ? '+' : '') + h.profit_pct + '%' : '—'}
-              </td>
               <td style="display:flex;gap:4px">
                 <button class="btn btn-outline" style="padding:4px 10px;font-size:0.72rem;color:#3b82f6;border-color:#bfdbfe" onclick="event.stopPropagation();showSellForm(${h.id},'${h.name}',${h.quantity},${h.cur_price||h.avg_price})">매도</button>
                 <button class="btn btn-red" style="padding:4px 10px;font-size:0.72rem" onclick="event.stopPropagation();deleteHolding(${h.id})">삭제</button>

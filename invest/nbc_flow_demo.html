@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NBC 리뷰 수집 플로우 데모</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f4f4f5; color: #1a1a1a; font-family: 'Pretendard', system-ui, sans-serif; }
+
+    .nav {
+      background: #fff; border-bottom: 1px solid #e8e8ec;
+      padding: 0 32px; height: 54px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-title { font-size: 1rem; font-weight: 700; }
+    .nav-sub   { font-size: 0.78rem; color: #999; }
+
+    .main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+
+    /* 플로우 설명 */
+    .flow-banner {
+      background: #fff; border: 1px solid #e8e8ec; border-radius: 12px;
+      padding: 16px 20px; margin-bottom: 28px;
+      display: flex; gap: 0; align-items: stretch;
+    }
+    .flow-step {
+      flex: 1; text-align: center; padding: 8px 12px; position: relative;
+    }
+    .flow-step::after {
+      content: '→'; position: absolute; right: -8px; top: 50%;
+      transform: translateY(-50%); color: #bbb; font-size: 1rem;
+    }
+    .flow-step:last-child::after { display: none; }
+    .flow-icon  { font-size: 1.4rem; margin-bottom: 6px; }
+    .flow-label { font-size: 0.72rem; font-weight: 700; color: #555; }
+    .flow-desc  { font-size: 0.65rem; color: #bbb; margin-top: 2px; }
+
+    /* 섹션 헤더 */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-title  { font-size: 1rem; font-weight: 700; }
+    .section-sub    { font-size: 0.78rem; color: #999; margin-top: 2px; }
+    .badge-new { background: #ef4444; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: 8px; }
+
+    /* 리뷰 카드 그리드 */
+    .review-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+    .review-row {
+      background: #fff; border: 1px solid #e8e8ec; border-radius: 12px;
+      padding: 14px 18px; display: flex; align-items: center; gap: 16px;
+      cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .review-row:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: #c7c7d4; }
+    .review-row.detail-loaded { border-left: 3px solid #7c3aed; }
+
+    .review-thumb {
+      width: 64px; height: 64px; object-fit: cover;
+      border-radius: 8px; background: #f4f4f5; flex-shrink: 0;
+    }
+    .review-info { flex: 1; min-width: 0; }
+    .review-title { font-size: 0.88rem; font-weight: 700; line-height: 1.4;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .review-meta  { display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+    .review-date  { font-size: 0.72rem; color: #bbb; }
+    .tag { font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+    .tag-new      { background: #fef3c7; color: #92400e; }
+    .tag-registered { background: #d1fae5; color: #065f46; }
+    .tag-scraped  { background: #ede9fe; color: #5b21b6; }
+
+    .review-score {
+      font-size: 1.3rem; font-weight: 800; color: #7c3aed;
+      flex-shrink: 0; width: 52px; text-align: center;
+    }
+    .review-score-none { font-size: 0.75rem; color: #bbb; width: 52px; text-align: center; }
+    .review-action {
+      flex-shrink: 0;
+      padding: 6px 14px; border-radius: 8px; font-family: inherit;
+      font-size: 0.75rem; font-weight: 600; cursor: pointer; border: none;
+      transition: all 0.15s;
+    }
+    .btn-fetch  { background: #f4f4f5; color: #555; }
+    .btn-fetch:hover { background: #1a1a1a; color: #fff; }
+    .btn-done   { background: #ede9fe; color: #7c3aed; cursor: default; }
+    .btn-loading { background: #f4f4f5; color: #bbb; cursor: not-allowed; }
+
+    /* 세부 패널 (슬라이드인) */
+    .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 300; display: none; }
+    .panel-overlay.open { display: block; }
+    .detail-panel {
+      position: fixed; top: 0; right: -520px; width: 500px; height: 100vh;
+      background: #fff; overflow-y: auto; z-index: 301;
+      transition: right 0.25s ease; box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+    }
+    .detail-panel.open { right: 0; }
+
+    .panel-header {
+      padding: 20px 24px; border-bottom: 1px solid #e8e8ec;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; background: #fff; z-index: 1;
+    }
+    .panel-header h2 { font-size: 0.95rem; font-weight: 700; line-height: 1.4; }
+    .panel-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #999; }
+    .panel-body { padding: 24px; }
+
+    /* 패널 내 컨텐츠 */
+    .score-hero { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .score-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .score-num   { font-size: 1.4rem; font-weight: 800; color: #fff; line-height: 1; }
+    .score-label { font-size: 0.6rem; color: rgba(255,255,255,0.7); }
+    .score-desc  { font-size: 0.82rem; color: #555; line-height: 1.6; }
+
+    .pc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .pc-box  { background: #f9f9fb; border-radius: 10px; padding: 12px 14px; }
+    .pc-title { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+    .pc-title.pro { color: #059669; }
+    .pc-title.con { color: #dc2626; }
+    .pc-item { font-size: 0.78rem; color: #444; line-height: 1.6; display: flex; gap: 6px; }
+    .pc-dot  { flex-shrink: 0; margin-top: 2px; }
+
+    .sub-section-title {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; color: #999; margin: 16px 0 10px;
+    }
+    .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .rating-label { font-size: 0.75rem; color: #555; width: 130px; flex-shrink: 0; }
+    .rating-bar-wrap { flex: 1; height: 5px; background: #e8e8ec; border-radius: 4px; }
+    .rating-bar-fill { height: 5px; border-radius: 4px; transition: width 1s ease; }
+    .rating-val { font-size: 0.75rem; font-weight: 700; width: 32px; text-align: right; }
+
+    /* 로딩 상태 */
+    .panel-loading { text-align: center; padding: 60px 20px; color: #bbb; font-size: 0.85rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 24px; height: 24px; border: 2px solid #e8e8ec; border-top-color: #7c3aed;
+      border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+
+    /* DB 현황 */
+    .db-status {
+      background: #fff; border: 1px solid #e8e8ec; border-radius: 12px;
+      padding: 16px 20px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    .db-stat { text-align: center; }
+    .db-stat-val   { font-size: 1.4rem; font-weight: 800; }
+    .db-stat-label { font-size: 0.7rem; color: #999; margin-top: 2px; }
+
+    @media (max-width: 640px) {
+      .detail-panel { width: 100%; right: -100%; }
+      .flow-banner  { flex-direction: column; gap: 8px; }
+      .flow-step::after { display: none; }
+      .db-status { grid-template-columns: repeat(2, 1fr); }
+      .pc-grid   { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div>
+    <div class="nav-title">NBC 리뷰 수집 · 플로우 데모</div>
+    <div class="nav-sub">매일 목록 수집 + 세부 on-demand 방식</div>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- 플로우 설명 -->
+  <div class="flow-banner">
+    <div class="flow-step">
+      <div class="flow-icon">📋</div>
+      <div class="flow-label">매일 목록 수집</div>
+      <div class="flow-desc">리뷰 목록 1~2p<br>제목·URL·날짜만</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon">💾</div>
+      <div class="flow-label">DB 저장</div>
+      <div class="flow-desc">신규만 추가<br>중복 스킵</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon">🔗</div>
+      <div class="flow-label">폰 DB 매칭</div>
+      <div class="flow-desc">등록된 폰과<br>자동 태그</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon">👆</div>
+      <div class="flow-label">클릭 시 세부</div>
+      <div class="flow-desc">평점·발열·스펙<br>그때 스크래핑</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon">✅</div>
+      <div class="flow-label">캐시 저장</div>
+      <div class="flow-desc">두 번째 열람은<br>DB에서 즉시</div>
+    </div>
+  </div>
+
+  <!-- DB 현황 -->
+  <div class="db-status">
+    <div class="db-stat"><div class="db-stat-val">42</div><div class="db-stat-label">수집된 리뷰</div></div>
+    <div class="db-stat"><div class="db-stat-val" style="color:#7c3aed">3</div><div class="db-stat-label">세부 캐시됨</div></div>
+    <div class="db-stat"><div class="db-stat-val" style="color:#059669">6</div><div class="db-stat-label">등록 폰 매칭</div></div>
+    <div class="db-stat"><div class="db-stat-val" style="color:#ef4444">5</div><div class="db-stat-label">오늘 신규</div></div>
+  </div>
+
+  <!-- 리뷰 목록 -->
+  <div class="section-header">
+    <div>
+      <div class="section-title">수집된 리뷰 <span class="badge-new">5 NEW</span></div>
+      <div class="section-sub">오늘 04:00 자동 수집 · 스마트폰 필터</div>
+    </div>
+    <div style="font-size:0.78rem;color:#bbb">마지막 수집 6시간 전</div>
+  </div>
+
+  <div class="review-list">
+
+    <!-- 1. 세부 이미 캐시된 것 (OnePlus 15T - 실제 데이터) -->
+    <div class="review-row detail-loaded" onclick="window.open('oneplus15t_demo.html','_blank')">
+      <img class="review-thumb"
+           src="https://www.notebookcheck.net/fileadmin/Notebooks/OnePlus/15T/OnePlus_15t_Test-Smartphone_2.jpg"
+           onerror="this.style.background='#f4f4f5'">
+      <div class="review-info">
+        <div class="review-title">OnePlus 15T Review: Incredible battery life makes the compact smartphone competition pale in comparison</div>
+        <div class="review-meta">
+          <span class="review-date">2026-04-29</span>
+          <span class="tag tag-registered">✓ KooVIS 등록됨</span>
+          <span class="tag tag-scraped">세부 캐시</span>
+        </div>
+      </div>
+      <div class="review-score">86%</div>
+      <button class="review-action btn-done">캐시됨</button>
+    </div>
+
+    <!-- 2. 등록된 폰, 세부 미수집 -->
+    <div class="review-row" onclick="openPanel('xiaomi')">
+      <img class="review-thumb"
+           src="https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x8-pro.jpg"
+           onerror="this.style.background='#f4f4f5'">
+      <div class="review-info">
+        <div class="review-title">Xiaomi Poco X8 Pro Smartphone Review: Price-performance cracker for under €400</div>
+        <div class="review-meta">
+          <span class="review-date">2026-04-22</span>
+          <span class="tag tag-registered">✓ KooVIS 등록됨</span>
+          <span class="tag tag-new">NEW</span>
+        </div>
+      </div>
+      <div class="review-score-none">미수집</div>
+      <button class="review-action btn-fetch" onclick="event.stopPropagation();fetchDetail(this,'xiaomi')">세부 가져오기</button>
+    </div>
+
+    <!-- 3. 미등록, 세부 미수집 -->
+    <div class="review-row" onclick="openPanel('samsung')">
+      <img class="review-thumb" style="background:#f4f4f5">
+      <div class="review-info">
+        <div class="review-title">Samsung Galaxy S26 Ultra Smartphone Review</div>
+        <div class="review-meta">
+          <span class="review-date">2026-04-22</span>
+          <span class="tag tag-new">NEW</span>
+        </div>
+      </div>
+      <div class="review-score-none">미수집</div>
+      <button class="review-action btn-fetch" onclick="event.stopPropagation();fetchDetail(this,'samsung')">세부 가져오기</button>
+    </div>
+
+    <!-- 4. 미등록 -->
+    <div class="review-row">
+      <img class="review-thumb" style="background:#f4f4f5">
+      <div class="review-info">
+        <div class="review-title">Google Pixel 10 Smartphone Review: The AI phone everyone wanted</div>
+        <div class="review-meta">
+          <span class="review-date">2026-04-18</span>
+        </div>
+      </div>
+      <div class="review-score-none">미수집</div>
+      <button class="review-action btn-fetch">세부 가져오기</button>
+    </div>
+
+    <!-- 5. 미등록 -->
+    <div class="review-row">
+      <img class="review-thumb" style="background:#f4f4f5">
+      <div class="review-info">
+        <div class="review-title">vivo iQOO 15 Ultra Review: A unique feature no smartphone needs</div>
+        <div class="review-meta">
+          <span class="review-date">2026-04-15</span>
+        </div>
+      </div>
+      <div class="review-score-none">미수집</div>
+      <button class="review-action btn-fetch">세부 가져오기</button>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- 오버레이 -->
+<div class="panel-overlay" id="overlay" onclick="closePanel()"></div>
+
+<!-- 세부 패널 -->
+<div class="detail-panel" id="detailPanel">
+  <div class="panel-header">
+    <h2 id="panelTitle">리뷰 상세</h2>
+    <button class="panel-close" onclick="closePanel()">✕</button>
+  </div>
+  <div class="panel-body" id="panelBody">
+    <div class="panel-loading">
+      <div class="spinner"></div>
+      NotebookCheck에서 데이터 가져오는 중...<br>
+      <span style="font-size:0.72rem;color:#bbb;margin-top:8px;display:block">약 10~15초 소요</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── 실제 스크래핑된 OnePlus 15T 데이터 ──────────────────
+  const CACHED = {
+    oneplus: {
+      title: 'OnePlus 15T Review',
+      score: 86,
+      desc: 'The new OnePlus 15T impresses with the Snapdragon 8 Elite Gen 5 chip, XXL battery, fast charging, and an extra-bright OLED screen in a handy and small form factor.',
+      pros: ['밝은 165Hz OLED 패널', '강력한 Snapdragon 8 Elite Gen 5', '비교 불가 배터리 지속 시간', 'IP69 고품질 케이싱'],
+      cons: ['SoC 스로틀링 문제', '스피커 저음 없음', '업데이트 불확실성', '중국 외 판매 제한'],
+      ratings: [
+        {label:'Battery',     val:97, color:'#7c3aed'},
+        {label:'Display',     val:90, color:'#059669'},
+        {label:'Chassis',     val:90, color:'#059669'},
+        {label:'Noise',       val:100,color:'#7c3aed'},
+        {label:'Camera',      val:80, color:'#d97706'},
+        {label:'Audio',       val:70, color:'#d97706'},
+        {label:'AI Perf.',    val:37, color:'#dc2626'},
+      ],
+      source: 'https://www.notebookcheck.net/OnePlus-15T-Review-Incredible-battery-life-makes-the-compact-smartphone-competition-pale-in-comparison.1282926.0.html',
+      cached: true
+    },
+    xiaomi: null,
+    samsung: null,
+  };
+
+  function openPanel(key) {
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('detailPanel').classList.add('open');
+    const data = CACHED[key];
+    if (data) {
+      renderDetail(data);
+    } else {
+      document.getElementById('panelTitle').textContent = '리뷰 상세';
+      document.getElementById('panelBody').innerHTML = `
+        <div class="panel-loading">
+          <div class="spinner"></div>
+          NotebookCheck에서 데이터 가져오는 중...<br>
+          <span style="font-size:0.72rem;color:#bbb;margin-top:8px;display:block">약 10~15초 소요 (실제 구현 시)</span>
+        </div>`;
+      // 실제 구현에서는 여기서 API 호출
+      setTimeout(() => {
+        document.getElementById('panelBody').innerHTML = `
+          <div style="text-align:center;padding:40px;color:#bbb;font-size:0.85rem">
+            <div style="font-size:2rem;margin-bottom:12px">📋</div>
+            실제 구현 시 이 시점에<br>백엔드가 NBC를 스크래핑해서 반환해요<br>
+            <div style="margin-top:16px;font-size:0.75rem;color:#bbb">
+              POST /nbc/scrape?url=...
+            </div>
+          </div>`;
+      }, 2000);
+    }
+  }
+
+  function renderDetail(data) {
+    document.getElementById('panelTitle').textContent = data.title;
+    const ratingHtml = data.ratings.map(r => `
+      <div class="rating-row">
+        <div class="rating-label">${r.label}</div>
+        <div class="rating-bar-wrap">
+          <div class="rating-bar-fill" style="width:${r.val}%;background:${r.color}"></div>
+        </div>
+        <div class="rating-val" style="color:${r.color}">${r.val}%</div>
+      </div>`).join('');
+
+    document.getElementById('panelBody').innerHTML = `
+      <div class="score-hero">
+        <div class="score-circle">
+          <div class="score-num">${data.score}</div>
+          <div class="score-label">/ 100</div>
+        </div>
+        <div class="score-desc">${data.desc}</div>
+      </div>
+      <div class="pc-grid">
+        <div class="pc-box">
+          <div class="pc-title pro">장점 Pros</div>
+          ${data.pros.map(p=>`<div class="pc-item"><span class="pc-dot" style="color:#059669">+</span>${p}</div>`).join('')}
+        </div>
+        <div class="pc-box">
+          <div class="pc-title con">단점 Cons</div>
+          ${data.cons.map(c=>`<div class="pc-item"><span class="pc-dot" style="color:#dc2626">−</span>${c}</div>`).join('')}
+        </div>
+      </div>
+      <div class="sub-section-title">항목별 평점</div>
+      ${ratingHtml}
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f4f4f5">
+        ${data.cached ? '<span style="font-size:0.72rem;color:#7c3aed;font-weight:700">● DB 캐시</span>' : ''}
+        <a href="${data.source}" target="_blank"
+           style="float:right;font-size:0.75rem;color:#999;text-decoration:none">
+          원문 보기 →
+        </a>
+      </div>`;
+  }
+
+  function closePanel() {
+    document.getElementById('overlay').classList.remove('open');
+    document.getElementById('detailPanel').classList.remove('open');
+  }
+
+  function fetchDetail(btn, key) {
+    btn.textContent = '가져오는 중...';
+    btn.className = 'review-action btn-loading';
+    btn.disabled = true;
+    // 실제 구현 시 API 호출 후 캐시 저장
+    setTimeout(() => {
+      btn.textContent = '캐시됨';
+      btn.className = 'review-action btn-done';
+      btn.closest('.review-row').classList.add('detail-loaded');
+    }, 2500);
+  }
+</script>
+</body>
+</html>

@@ -172,6 +172,49 @@ def get_prices(phone_id: int):
         raise HTTPException(404, "기기를 찾을 수 없어요")
     return gsmarena_global_prices(phone["gsmarena_url"])
 
+@app.post("/phones/{phone_id}/refresh")
+def refresh_phone(phone_id: int):
+    """GSMArena 재스크래핑 후 specs/reviews 업데이트"""
+    conn = get_conn()
+    phone = conn.execute("SELECT * FROM phones WHERE id=?", (phone_id,)).fetchone()
+    conn.close()
+    if not phone:
+        raise HTTPException(404, "기기를 찾을 수 없어요")
+
+    gsm_data = gsmarena_specs(phone["gsmarena_url"])
+
+    reviews = []
+    try:
+        reviews = gsmarena_opinions(phone["gsmarena_url"])
+    except Exception:
+        pass
+
+    conn = get_conn()
+    conn.execute("PRAGMA journal_mode=WAL")
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM specs   WHERE phone_id=?", (phone_id,))
+    cur.execute("DELETE FROM reviews WHERE phone_id=?", (phone_id,))
+
+    if gsm_data.get("image"):
+        cur.execute("UPDATE phones SET image_url=? WHERE id=?",
+                    (gsm_data["image"], phone_id))
+
+    for category, items in gsm_data["specs"].items():
+        for key, value in items.items():
+            cur.execute(
+                "INSERT INTO specs (phone_id, category, key, value) VALUES (?,?,?,?)",
+                (phone_id, category, key, value)
+            )
+    for r in reviews:
+        cur.execute(
+            "INSERT INTO reviews (phone_id, source, type, rating, text, reviewer, date) VALUES (?,?,?,?,?,?,?)",
+            (phone_id, r["source"], r["type"], r["rating"], r["text"], r["reviewer"], r["date"])
+        )
+    conn.commit()
+    conn.close()
+    return {"id": phone_id, "message": f"{phone['name']} 업데이트 완료"}
+
 @app.delete("/phones/{phone_id}")
 def delete_phone(phone_id: int):
     conn = get_conn()
@@ -685,3 +728,92 @@ def list_trend_analyses():
         }
         for r in rows
     ]
+
+
+# ─── NotebookCheck 리뷰 ────────────────────────────────────────
+
+@app.post("/nbc/collect")
+async def nbc_collect():
+    """NBC 목록 수집 → 신규만 DB 저장, 폰 DB 매칭"""
+    import json
+    from nbc_scraper import collect_review_list, match_phone
+
+    items = await collect_review_list(pages=2)
+
+    conn = get_conn()
+    phones = [dict(p) for p in conn.execute("SELECT id, name FROM phones").fetchall()]
+
+    added = 0
+    for item in items:
+        existing = conn.execute("SELECT id FROM nbc_reviews WHERE url=?", (item['url'],)).fetchone()
+        if existing:
+            continue
+        phone_id = match_phone(item['title'], phones)
+        conn.execute(
+            "INSERT INTO nbc_reviews (title, url, pub_date, thumbnail, phone_id) VALUES (?,?,?,?,?)",
+            (item['title'], item['url'], item.get('pub_date'), item.get('thumbnail'), phone_id)
+        )
+        added += 1
+
+    conn.commit()
+    conn.close()
+    return {"collected": len(items), "added": added}
+
+
+@app.get("/nbc/reviews")
+def nbc_list():
+    """수집된 NBC 리뷰 목록 반환"""
+    conn = get_conn()
+    rows = conn.execute("""
+        SELECT n.*, p.name AS phone_name, p.image_url AS phone_image_url
+        FROM nbc_reviews n
+        LEFT JOIN phones p ON n.phone_id = p.id
+        ORDER BY n.pub_date DESC, n.collected_at DESC
+        LIMIT 100
+    """).fetchall()
+    conn.close()
+    result = []
+    for r in rows:
+        row = dict(r)
+        # 매칭된 폰 이미지가 있으면 썸네일로 우선 사용
+        if row.get('phone_image_url'):
+            row['thumbnail'] = row['phone_image_url']
+        result.append(row)
+    return result
+
+
+@app.post("/nbc/reviews/{nbc_id}/scrape")
+async def nbc_scrape_detail(nbc_id: int):
+    """개별 리뷰 세부 스크래핑 후 DB 캐시"""
+    import json
+    from nbc_scraper import scrape_review_detail
+
+    conn = get_conn()
+    row = conn.execute("SELECT * FROM nbc_reviews WHERE id=?", (nbc_id,)).fetchone()
+    conn.close()
+    if not row:
+        raise HTTPException(404, "리뷰를 찾을 수 없어요")
+
+    # 이미 캐시된 경우 바로 반환
+    if row["detail_json"]:
+        return {"cached": True, "data": json.loads(row["detail_json"])}
+
+    data = await scrape_review_detail(row["url"])
+
+    conn = get_conn()
+    conn.execute("""
+        UPDATE nbc_reviews
+        SET score=?, pros=?, cons=?, detail_json=?, thumbnail=?, scraped_at=datetime('now','localtime')
+        WHERE id=?
+    """, (
+        data.get("score"),
+        json.dumps(data.get("pros", []), ensure_ascii=False),
+        json.dumps(data.get("cons", []), ensure_ascii=False),
+        json.dumps(data, ensure_ascii=False),
+        data.get("thumbnail") or row["thumbnail"],
+        nbc_id,
+    ))
+    conn.commit()
+    conn.close()
+
+    return {"cached": False, "data": data}
