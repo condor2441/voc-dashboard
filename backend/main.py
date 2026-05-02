@@ -646,6 +646,128 @@ def lotto_import_history():
 def lotto_logics():
     return LottoRecommender.list_logics()
 
+# ─── 부동산 ────────────────────────────────────────────────────────
+
+@app.get("/realestate/search")
+def realestate_search(q: str, api_key: str = ""):
+    """아파트 이름으로 검색 — 주요 시군구에서 최근 2개월 병렬 조회"""
+    import os, xml.etree.ElementTree as ET
+    import requests as req_lib
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from datetime import datetime
+
+    key = os.environ.get("REAL_ESTATE_API_KEY", "") or api_key
+    if not key:
+        raise HTTPException(503, "API 키 미설정")
+    if len(q.strip()) < 2:
+        raise HTTPException(400, "검색어를 2글자 이상 입력하세요")
+
+    q_clean = q.strip().replace(" ", "")
+    now = datetime.now()
+    months = []
+    for i in range(2):
+        m, y = now.month - i, now.year
+        if m <= 0: m += 12; y -= 1
+        months.append(f"{y}{m:02d}")
+
+    TOP_CODES = [
+        # 서울
+        "11680","11650","11710","11440","11170","11200","11350","11500","11740","11470",
+        "11110","11140","11215","11230","11260","11290","11305","11320","11380","11410",
+        "11530","11545","11560","11590","11620",
+        # 경기
+        "41135","41117","41465","41463","41590","41285","41360","41390",
+        "41171","41173","41210","41220","41250","41270","41273","41281","41410","41430","41450",
+        "41461","41480","41500","41550","41570",
+        # 인천·부산·대구·광주·대전
+        "28185","28200","28237","28245","28260","28710",
+        "26350","26470","26530","26710",
+        "27200","27260","27290","27710",
+        "29155","29170","29200",
+        "30200","30230","30710",
+    ]
+    URL = "https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade"
+    found = {}
+
+    def search_one(lawd_cd, ym):
+        try:
+            r = req_lib.get(URL, params={
+                "serviceKey": key, "LAWD_CD": lawd_cd, "DEAL_YMD": ym,
+                "numOfRows": 200, "pageNo": 1,
+            }, timeout=8)
+            root = ET.fromstring(r.content)
+            items = []
+            for item in root.findall(".//item"):
+                row = {c.tag: (c.text or "").strip() for c in item}
+                apt = row.get("aptNm", "")
+                if q_clean in apt.replace(" ", ""):
+                    items.append({
+                        "aptNm": apt,
+                        "lawdCd": lawd_cd,
+                        "umdNm": row.get("umdNm", ""),
+                        "sggNm": row.get("estateAgentSggNm", lawd_cd),
+                    })
+            return items
+        except Exception:
+            return []
+
+    tasks = [(c, ym) for c in TOP_CODES for ym in months]
+    with ThreadPoolExecutor(max_workers=14) as ex:
+        futs = {ex.submit(search_one, c, ym): (c, ym) for c, ym in tasks}
+        for fut in as_completed(futs, timeout=20):
+            for item in (fut.result() or []):
+                k = f"{item['aptNm']}|{item['lawdCd']}"
+                if k not in found:
+                    found[k] = item
+
+    results = sorted(found.values(), key=lambda x: x["aptNm"])
+    return {"results": results[:30], "query": q}
+
+
+# ─── 부동산 실거래가 ────────────────────────────────────────────────
+
+@app.get("/realestate/trade")
+def realestate_trade(lawd_cd: str, deal_ymd: str, api_key: str = ""):
+    """국토부 아파트 매매 실거래가 조회 (공공데이터포털 프록시)"""
+    import os, xml.etree.ElementTree as ET
+    import requests as req_lib
+
+    key = os.environ.get("REAL_ESTATE_API_KEY", "") or api_key
+    if not key:
+        raise HTTPException(503, "API 키 미설정 — data.go.kr에서 '아파트매매 실거래자료' API 키를 발급 후 설정하세요")
+
+    url = "https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade"
+    try:
+        r = req_lib.get(url, params={
+            "serviceKey": key,
+            "LAWD_CD": lawd_cd,
+            "DEAL_YMD": deal_ymd,
+            "numOfRows": 200,
+            "pageNo": 1,
+        }, timeout=15)
+        if not r.content:
+            raise HTTPException(400, f"API 응답이 비어있습니다 (HTTP {r.status_code})")
+        try:
+            root = ET.fromstring(r.content)
+        except ET.ParseError:
+            preview = r.text[:300].strip()
+            raise HTTPException(400, f"API 응답 파싱 실패 (HTTP {r.status_code}): {preview}")
+        result_code = root.findtext(".//resultCode", "00")
+        if result_code not in ("00", "000", "0000", ""):
+            msg = root.findtext(".//resultMsg", "API 오류")
+            raise HTTPException(400, f"API 오류 ({result_code}): {msg}")
+        items = []
+        for item in root.findall(".//item"):
+            row = {child.tag: (child.text or "").strip() for child in item}
+            items.append(row)
+        total = root.findtext(".//totalCount", str(len(items)))
+        return {"items": items, "total": int(total), "lawd_cd": lawd_cd, "deal_ymd": deal_ymd}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"조회 실패: {str(e)}")
+
+
 @app.get("/rss")
 def rss_proxy(url: str):
     """RSS 피드 서버사이드 프록시 (CORS 우회)"""
