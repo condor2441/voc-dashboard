@@ -301,8 +301,12 @@ async function loadRentData() {
   const pyeong = home.pyeongs?.[curPyeong||0] || {area:84.9};
   const months = prevMonths(Math.max(curPeriod, 6));
   const results = await Promise.all(months.map(m => fetchRent(home.lawdCd, m)));
+  const nameKey2 = home.name.replace(/\s/g,'').slice(0,4);
   rentCache.allTrades = results.flatMap((items,mi) =>
-    items.filter(t => matchArea(parseFloat(t.excluUseAr||0), pyeong.area))
+    items.filter(t =>
+      (t.aptNm||'').replace(/\s/g,'').includes(nameKey2) &&
+      matchArea(parseFloat(t.excluUseAr||0), pyeong.area)
+    ))
          .map(t => ({...t, ym: months[mi],
            dealAmount: t.deposit, // 전세 보증금을 가격으로 사용
            dealYear: t.dealYear, dealMonth: t.dealMonth, dealDay: t.dealDay
@@ -324,9 +328,12 @@ async function loadHomeData() {
   const months = prevMonths(Math.max(curPeriod, 6));
   const results = await Promise.all(months.map(ym => fetchTrades(home.lawdCd, ym)));
 
+  const nameKey = home.name.replace(/\s/g,'').slice(0,4);
   const allTrades = results.flatMap((items, mi) =>
-    items.filter(t => matchArea(parseFloat(t.excluUseAr||0), pyeong.area))
-         .map(t => ({...t, ym: months[mi]}))
+    items.filter(t =>
+      (t.aptNm||'').replace(/\s/g,'').includes(nameKey) &&
+      matchArea(parseFloat(t.excluUseAr||0), pyeong.area)
+    ).map(t => ({...t, ym: months[mi]}))
   ).sort((a,b)=>{
     const da=`${a.dealYear}${String(a.dealMonth).padStart(2,'0')}${String(a.dealDay).padStart(2,'0')}`;
     const db=`${b.dealYear}${String(b.dealMonth).padStart(2,'0')}${String(b.dealDay).padStart(2,'0')}`;
