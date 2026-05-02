@@ -71,11 +71,43 @@ async def collect_review_list(pages: int = 2) -> list[dict]:
                 return results.filter((v, i, arr) => arr.findIndex(x => x.url === v.url) === i);
             }""")
 
-            # 스마트폰 리뷰만 필터 (제목 패턴)
+            # 스마트폰 리뷰만 필터
+            # 폰 전용 브랜드 (노트북/PC 라인 없음)
+            PHONE_ONLY = {
+                'iphone', 'pixel', 'xiaomi', 'redmi', 'poco',
+                'oneplus', 'oppo', 'vivo', 'iqoo', 'realme', 'honor',
+                'huawei', 'nothing', 'tecno', 'infinix', 'itel',
+                'meizu', 'nubia', 'blackview', 'ulefone', 'doogee',
+                'cubot', 'oukitel', 'fairphone', 'zte',
+            }
+            # 복합 브랜드 — "smartphone" or "phone" 키워드 필수
+            MIXED_BRANDS = {
+                'samsung', 'apple', 'google', 'motorola', 'sony',
+                'asus', 'lenovo', 'nokia', 'lg',
+            }
+            # 비스마트폰 키워드 — 하나라도 있으면 제외
+            EXCLUDE_KW = [
+                'laptop', 'notebook', 'macbook', 'thinkpad', 'ideapad',
+                'legion ', 'yoga ', 'zenbook', 'vivobook', 'expertbook',
+                'tablet', 'ipad', 'earbuds', 'earphone', 'headphone',
+                'speaker', 'printer', 'camera ', 'drone', 'router',
+                'glasses', ' watch', 'monitor', 'lawnmow', 'robot',
+                'mini pc', 'chromebook', 'ultrabook', 'workstation',
+                'power bank', 'dock ', 'stream deck', 'elgato',
+                'gamer ', 'gaming laptop', 'slim ', 'aura edition',
+                'g11 ', 'g9 ', 'g10 ', '14 g', '15 g', '16 g',
+            ]
             for item in items:
                 title_l = item['title'].lower()
-                if any(kw in title_l for kw in ['smartphone', 'phone review', 'mobile review',
-                                                  'review:', 'hands-on']):
+                # 제외 키워드 체크
+                if any(kw in title_l for kw in EXCLUDE_KW):
+                    continue
+                # 스마트폰 판별
+                has_phone_only_brand = any(b in title_l for b in PHONE_ONLY)
+                has_mixed_brand = any(b in title_l for b in MIXED_BRANDS)
+                has_phone_kw = 'smartphone' in title_l or ' phone' in title_l or 'mobile' in title_l
+                is_phone = has_phone_only_brand or (has_mixed_brand and has_phone_kw)
+                if is_phone:
                     results.append(item)
 
             print(f"  페이지 {pg}: {len(items)}개 파싱, 스마트폰 {len(results)}개 누적")
@@ -94,27 +126,22 @@ async def collect_review_list(pages: int = 2) -> list[dict]:
 
 
 async def _apply_filters(page):
-    """Tests + Smartphone 체크박스 활성화"""
+    """Smartphone 태그 체크박스 활성화 (ID 패턴: introa_outer_cbox_tag_smartphone_*)"""
     try:
-        # 필터 토글 버튼이 있으면 열기
-        toggle = await page.query_selector('[class*="filter"][class*="toggle"], [class*="einst"]')
-        if toggle:
-            await toggle.click()
-            await page.wait_for_timeout(500)
-
-        # 체크박스 라벨 텍스트로 찾기
-        labels = await page.query_selector_all('label')
-        for label in labels:
-            text = (await label.inner_text()).strip().lower()
-            if text in ('tests', 'smartphone', 'smartphones'):
-                is_checked = await page.evaluate(
-                    """(el) => {
-                        const inp = document.getElementById(el.getAttribute('for'));
-                        return inp ? inp.checked : false;
-                    }""", label)
-                if not is_checked:
-                    await label.click()
-                    await page.wait_for_timeout(300)
+        # Smartphone 체크박스 — ID 패턴 매칭
+        checked = await page.evaluate("""() => {
+            const el = Array.from(document.querySelectorAll('input[type=checkbox]'))
+                .find(i => i.id.includes('tag_smartphone'));
+            if (!el) return 'not_found';
+            if (el.checked) return 'already_checked';
+            el.click();
+            // change 이벤트 발생
+            el.dispatchEvent(new Event('change', {bubbles: true}));
+            return 'clicked';
+        }""")
+        print(f"  Smartphone 필터: {checked}")
+        if checked == 'clicked':
+            await page.wait_for_timeout(1500)
     except Exception as e:
         print(f"  필터 적용 실패 (무시): {e}")
 
