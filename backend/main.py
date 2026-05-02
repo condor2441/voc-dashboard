@@ -768,6 +768,48 @@ def realestate_trade(lawd_cd: str, deal_ymd: str, api_key: str = ""):
         raise HTTPException(500, f"조회 실패: {str(e)}")
 
 
+@app.get("/realestate/rent")
+def realestate_rent(lawd_cd: str, deal_ymd: str, api_key: str = ""):
+    """국토부 아파트 전월세 실거래가 조회"""
+    import os, xml.etree.ElementTree as ET
+    import requests as req_lib
+
+    key = os.environ.get("REAL_ESTATE_API_KEY", "") or api_key
+    if not key:
+        raise HTTPException(503, "API 키 미설정")
+
+    url = "https://apis.data.go.kr/1613000/RTMSDataSvcAptRent/getRTMSDataSvcAptRent"
+    try:
+        r = req_lib.get(url, params={
+            "serviceKey": key,
+            "LAWD_CD": lawd_cd,
+            "DEAL_YMD": deal_ymd,
+            "numOfRows": 200,
+            "pageNo": 1,
+        }, timeout=15)
+        if not r.content:
+            raise HTTPException(400, f"API 응답이 비어있습니다")
+        try:
+            root = ET.fromstring(r.content)
+        except ET.ParseError:
+            raise HTTPException(400, f"API 응답 파싱 실패")
+        result_code = root.findtext(".//resultCode", "00")
+        if result_code not in ("00", "000", "0000", ""):
+            msg = root.findtext(".//resultMsg", "API 오류")
+            raise HTTPException(400, f"API 오류 ({result_code}): {msg}")
+        items = []
+        for item in root.findall(".//item"):
+            row = {child.tag: (child.text or "").strip() for child in item}
+            # 전세만 필터 (월세금 0)
+            if row.get("monthlyRent", "0").strip() in ("0", ""):
+                items.append(row)
+        return {"items": items, "lawd_cd": lawd_cd, "deal_ymd": deal_ymd}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"조회 실패: {str(e)}")
+
+
 @app.get("/rss")
 def rss_proxy(url: str):
     """RSS 피드 서버사이드 프록시 (CORS 우회)"""

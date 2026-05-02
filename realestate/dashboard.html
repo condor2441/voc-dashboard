@@ -56,7 +56,11 @@
     .chart-sec { padding:18px 22px; }
     .chart-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
     .chart-lbl { font-size:0.82rem; font-weight:700; color:var(--muted); }
-    .period-row { display:flex; gap:4px; }
+    .chart-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:8px; }
+    .type-tabs { display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+    .type-btn { padding:4px 14px; font-size:0.78rem; font-weight:700; border:none; background:none; color:var(--muted); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .type-btn.active { background:var(--text); color:#fff; }
+    .period-row { display:flex; gap:4px; margin-left:auto; }
     .period-btn { padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; border:1px solid var(--border); background:none; color:var(--muted); cursor:pointer; font-family:inherit; transition:all 0.15s; }
     .period-btn.active { background:var(--text); border-color:var(--text); color:#fff; }
     .chart-area { height:180px; }
@@ -200,7 +204,9 @@ let watchlist = LS.get('re_watchlist', []);
 let chartInst = null;
 let curPeriod = 12;
 let curPyeong = null;
+let curChartType = 'trade'; // 'trade' | 'rent'
 let tradeCache = {};
+let rentCache = {};
 
 function fmt(m) { const n=parseInt(String(m).replace(/,/g,''),10); const e=Math.floor(n/10000),r=n%10000; return e===0?`${r.toLocaleString()}만`:(r===0?`${e}억`:`${e}억 ${r.toLocaleString()}만`); }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -235,14 +241,17 @@ function renderHome() {
       </div>
       <div class="chart-sec">
         <div class="chart-hd">
-          <span class="chart-lbl">실거래가 추이</span>
+          <div class="type-tabs">
+            <button class="type-btn active" onclick="switchChartType('trade',this)">매매</button>
+            <button class="type-btn" onclick="switchChartType('rent',this)">전세</button>
+          </div>
           <div class="period-row">
             <button class="period-btn active" onclick="switchPeriod(12,this)">1년</button>
             <button class="period-btn" onclick="switchPeriod(36,this)">3년</button>
           </div>
         </div>
         <div class="chart-area"><canvas id="priceChart"></canvas></div>
-        <div class="chart-leg">
+        <div class="chart-leg" id="chartLeg">
           <span>● 실거래가</span>
           <span style="opacity:.6">- - 전고점</span>
           <span style="opacity:.6">- - 내 매수가</span>
@@ -263,13 +272,47 @@ function renderPyeongTabs() {
 function switchPyeong(i, btn) {
   curPyeong = i;
   document.querySelectorAll('.ptab').forEach(b=>b.classList.toggle('active',b===btn));
-  tradeCache = {};
+  tradeCache = {}; rentCache = {};
   loadHomeData();
 }
 
 function switchPeriod(p, btn) {
   curPeriod = p;
   document.querySelectorAll('.period-btn').forEach(b=>b.classList.toggle('active',b===btn));
+  buildChartFromCache();
+}
+
+async function switchChartType(type, btn) {
+  curChartType = type;
+  document.querySelectorAll('.type-btn').forEach(b=>b.classList.toggle('active',b===btn));
+  const leg = document.getElementById('chartLeg');
+  if (type === 'rent') {
+    if (leg) leg.innerHTML = '<span>● 전세가</span><span style="opacity:.6">- - 전고점</span>';
+    if (!rentCache.allTrades) await loadRentData();
+    else buildChartFromCache();
+  } else {
+    if (leg) leg.innerHTML = '<span>● 실거래가</span><span style="opacity:.6">- - 전고점</span><span style="opacity:.6">- - 내 매수가</span>';
+    buildChartFromCache();
+  }
+}
+
+async function loadRentData() {
+  if (!home) return;
+  const pyeong = home.pyeongs?.[curPyeong||0] || {area:84.9};
+  const months = prevMonths(Math.max(curPeriod, 6));
+  const results = await Promise.all(months.map(m => fetchRent(home.lawdCd, m)));
+  rentCache.allTrades = results.flatMap((items,mi) =>
+    items.filter(t => matchArea(parseFloat(t.excluUseAr||0), pyeong.area))
+         .map(t => ({...t, ym: months[mi],
+           dealAmount: t.deposit, // 전세 보증금을 가격으로 사용
+           dealYear: t.dealYear, dealMonth: t.dealMonth, dealDay: t.dealDay
+         }))
+  ).sort((a,b)=>{
+    const da=`${a.dealYear}${String(a.dealMonth).padStart(2,'0')}${String(a.dealDay||'01').padStart(2,'0')}`;
+    const db=`${b.dealYear}${String(b.dealMonth).padStart(2,'0')}${String(b.dealDay||'01').padStart(2,'0')}`;
+    return db>da?1:-1;
+  });
+  rentCache.months = months;
   buildChartFromCache();
 }
 
@@ -357,12 +400,13 @@ function calcStats(trades, latestPrice, targetArea) {
 }
 
 function buildChartFromCache() {
-  if (!tradeCache.allTrades) return;
+  const cache = curChartType === 'rent' ? rentCache : tradeCache;
+  if (!cache.allTrades) return;
   const canvas = document.getElementById('priceChart');
   if (!canvas) return;
   const months = prevMonths(curPeriod);
   const byMonth = {};
-  tradeCache.allTrades.forEach(t => {
+  cache.allTrades.forEach(t => {
     const key = `${t.dealYear}${String(t.dealMonth).padStart(2,'0')}`;
     if (!byMonth[key]) byMonth[key] = [];
     byMonth[key].push(parseInt((t.dealAmount||'0').replace(/,/g,''),10));
@@ -376,7 +420,11 @@ function buildChartFromCache() {
   // 개별 거래 산점도 데이터
   const JITTER = [0,-0.12,0.12,-0.22,0.22,-0.08,0.08,-0.18,0.18,-0.05,0.05,-0.28,0.28];
   let jitterIdx = 0;
-  const scatterData = tradeCache.allTrades.map(t => {
+  const isRent = curChartType === 'rent';
+  const dotColor = isRent ? 'rgba(139,92,246,0.28)' : 'rgba(249,115,22,0.28)';
+  const lineColor = isRent ? '#8b5cf6' : '#f97316';
+  const gradStart = isRent ? 'rgba(139,92,246,0.12)' : 'rgba(249,115,22,0.12)';
+  const scatterData = cache.allTrades.map(t => {
     const key = `${t.dealYear}${String(t.dealMonth).padStart(2,'0')}`;
     const xi = months.indexOf(key);
     if (xi < 0) return null;
@@ -388,13 +436,12 @@ function buildChartFromCache() {
   if (chartInst) chartInst.destroy();
   chartInst = new Chart(canvas.getContext('2d'), {
     data:{ datasets:[
-      { type:'scatter', data:scatterData, backgroundColor:'rgba(249,115,22,0.28)', pointRadius:4, pointHoverRadius:6, order:1,
-        tooltip:{ callbacks:{ title:ctx=>ctx[0]?.raw?.label||'', label:ctx=>` ${ctx.parsed.y}억` } } },
-      { type:'line', data:avgPrices.map((y,x)=>y!=null?{x,y}:null).filter(Boolean), borderColor:'#f97316',
-        backgroundColor:ctx=>{ const {ctx:c,chartArea}=ctx.chart; if(!chartArea)return'transparent'; const g=c.createLinearGradient(0,chartArea.top,0,chartArea.bottom); g.addColorStop(0,'rgba(249,115,22,0.12)'); g.addColorStop(1,'rgba(249,115,22,0)'); return g; },
-        fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointBackgroundColor:'#f97316', pointBorderColor:'#fff', pointBorderWidth:2, spanGaps:true, order:2 },
+      { type:'scatter', data:scatterData, backgroundColor:dotColor, pointRadius:4, pointHoverRadius:6, order:1 },
+      { type:'line', data:avgPrices.map((y,x)=>y!=null?{x,y}:null).filter(Boolean), borderColor:lineColor,
+        backgroundColor:ctx=>{ const {ctx:c,chartArea}=ctx.chart; if(!chartArea)return'transparent'; const g=c.createLinearGradient(0,chartArea.top,0,chartArea.bottom); g.addColorStop(0,gradStart); g.addColorStop(1,'rgba(0,0,0,0)'); return g; },
+        fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointBackgroundColor:lineColor, pointBorderColor:'#fff', pointBorderWidth:2, spanGaps:true, order:2 },
       ...(peak?[{ type:'line', data:labels.map((_,x)=>({x,y:peak})), borderColor:'rgba(251,191,36,0.55)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false, order:3 }]:[]),
-      ...(myP?[{ type:'line', data:labels.map((_,x)=>({x,y:myP})), borderColor:'rgba(59,130,246,0.55)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false, order:4 }]:[]),
+      ...(!isRent&&myP?[{ type:'line', data:labels.map((_,x)=>({x,y:myP})), borderColor:'rgba(59,130,246,0.55)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false, order:4 }]:[]),
     ]},
     options:{ responsive:true, maintainAspectRatio:false,
       plugins:{ legend:{display:false}, tooltip:{
@@ -463,6 +510,18 @@ async function fetchTrades(lawdCd, ym) {
     const data = await res.json();
     tradeCache[key] = data.items||[];
     return tradeCache[key];
+  } catch { return []; }
+}
+
+async function fetchRent(lawdCd, ym) {
+  const key = `rent_${lawdCd}_${ym}`;
+  if (rentCache[key]) return rentCache[key];
+  try {
+    const res = await fetch(`${API}/realestate/rent?lawd_cd=${lawdCd}&deal_ymd=${ym}`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    rentCache[key] = data.items||[];
+    return rentCache[key];
   } catch { return []; }
 }
 
