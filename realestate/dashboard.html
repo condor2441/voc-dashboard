@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KooVIS · 부동산</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --accent:#f97316; --text:#1a1a1a; --muted:#999; --border:#e8e8ec; --bg:#f4f4f5; --white:#fff; --radius:12px; --up:#10b981; --down:#ef4444; }
+    body { background:var(--bg); font-family:'Pretendard',system-ui,sans-serif; color:var(--text); min-height:100vh; padding-bottom:60px; }
+
+    .nav { background:var(--white); border-bottom:1px solid var(--border); height:56px; display:flex; align-items:center; padding:0 24px; gap:20px; position:sticky; top:0; z-index:20; }
+    .nav-back { text-decoration:none; color:var(--muted); font-size:0.85rem; transition:color 0.15s; }
+    .nav-back:hover { color:var(--text); }
+    .nav-title { font-size:1rem; font-weight:700; flex:1; }
+    .nav-tabs { display:flex; gap:4px; }
+    .tab { padding:6px 14px; border-radius:8px; font-size:0.85rem; font-weight:500; color:var(--muted); background:none; border:none; cursor:pointer; font-family:inherit; transition:all 0.15s; text-decoration:none; display:inline-block; }
+    .tab:hover { background:var(--bg); color:var(--text); }
+    .tab.active { background:var(--text); color:var(--white); }
+    .nav-actions { display:flex; gap:8px; }
+    .nav-btn { font-size:0.82rem; color:var(--muted); background:none; border:1px solid var(--border); border-radius:8px; padding:5px 12px; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .nav-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    .main { max-width:840px; margin:0 auto; padding:28px 24px; }
+
+    /* 우리집 카드 */
+    .home-card { background:var(--white); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:20px; position:relative; }
+    .home-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#f97316,#fb923c); }
+    .home-top { display:flex; align-items:flex-start; gap:16px; padding:20px 22px 18px; border-bottom:1px solid #f0f0f4; }
+    .home-info { flex:1; }
+    .home-badge { display:inline-flex; align-items:center; gap:4px; font-size:0.68rem; font-weight:700; color:var(--accent); background:#fff7ed; padding:3px 9px; border-radius:6px; margin-bottom:10px; }
+    .home-name { font-size:1.1rem; font-weight:900; margin-bottom:3px; }
+    .home-meta { font-size:0.74rem; color:var(--muted); margin-bottom:14px; }
+    .home-price { font-size:1.9rem; font-weight:900; letter-spacing:-0.04em; }
+    .home-price-sub { font-size:0.72rem; color:var(--muted); margin-top:2px; }
+    .home-change { font-size:0.8rem; font-weight:700; margin-top:5px; }
+    .ptab-row { display:flex; gap:4px; margin-top:12px; }
+    .ptab { padding:4px 12px; border-radius:7px; font-size:0.78rem; font-weight:600; border:1px solid var(--border); background:none; color:var(--muted); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .ptab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .loading-spin { display:inline-block; width:14px; height:14px; border:2px solid #e8e8ec; border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* 통계 */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid #f0f0f4; }
+    .stat-box { padding:14px 16px; border-right:1px solid #f0f0f4; }
+    .stat-box:last-child { border-right:none; }
+    .stat-lbl { font-size:0.63rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+    .stat-val { font-size:0.92rem; font-weight:900; margin-bottom:3px; }
+    .stat-sub { font-size:0.66rem; color:#bbb; }
+    .gauge { height:4px; background:#ebebef; border-radius:2px; margin-top:5px; overflow:hidden; }
+    .gauge-fill { height:100%; border-radius:2px; transition:width 0.5s; }
+
+    /* 차트 */
+    .chart-sec { padding:18px 22px; }
+    .chart-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .chart-lbl { font-size:0.82rem; font-weight:700; color:var(--muted); }
+    .period-row { display:flex; gap:4px; }
+    .period-btn { padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; border:1px solid var(--border); background:none; color:var(--muted); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .period-btn.active { background:var(--text); border-color:var(--text); color:#fff; }
+    .chart-area { height:180px; }
+    .chart-leg { display:flex; gap:14px; margin-top:10px; font-size:0.69rem; color:#bbb; }
+
+    /* 수익률 */
+    .profit-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; gap:0; }
+    .profit-item { flex:1; text-align:center; padding:0 10px; border-right:1px solid #f0f0f4; }
+    .profit-item:last-of-type { border-right:none; }
+    .profit-lbl { font-size:0.63rem; font-weight:700; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:.03em; }
+    .profit-val { font-size:0.95rem; font-weight:900; }
+    .profit-edit { margin-left:12px; font-size:0.75rem; color:var(--muted); background:none; border:1px solid var(--border); border-radius:7px; padding:5px 12px; cursor:pointer; font-family:inherit; flex-shrink:0; transition:all 0.15s; }
+    .profit-edit:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* 관심단지 */
+    .sec-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .sec-title { font-size:1rem; font-weight:700; }
+    .add-btn { font-size:0.8rem; color:var(--accent); background:none; border:1px solid var(--accent); border-radius:8px; padding:5px 12px; cursor:pointer; font-family:inherit; transition:all 0.2s; text-decoration:none; display:inline-block; }
+    .add-btn:hover { background:var(--accent); color:#fff; }
+    .watch-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .watch-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px; cursor:pointer; transition:box-shadow 0.2s,transform 0.2s; position:relative; overflow:hidden; }
+    .watch-card:hover { box-shadow:0 6px 20px rgba(0,0,0,0.08); transform:translateY(-2px); border-color:#d0d0da; }
+    .watch-bar { position:absolute; top:0; left:0; right:0; height:2px; }
+    .watch-name { font-size:0.85rem; font-weight:800; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .watch-loc { font-size:0.68rem; color:var(--muted); margin-bottom:6px; }
+    .watch-pyeong { font-size:0.68rem; font-weight:600; background:var(--bg); padding:2px 7px; border-radius:5px; color:var(--muted); display:inline-block; margin-bottom:8px; }
+    .sparkline-wrap { height:38px; margin-bottom:8px; }
+    svg.sparkline { width:100%; height:100%; }
+    .watch-price { font-size:0.92rem; font-weight:900; }
+    .watch-chg { font-size:0.72rem; font-weight:600; margin-top:2px; }
+    .watch-date { font-size:0.65rem; color:#ccc; margin-top:2px; }
+    .watch-del { position:absolute; top:8px; right:8px; background:none; border:none; color:#ddd; font-size:0.8rem; cursor:pointer; transition:color 0.15s; }
+    .watch-del:hover { color:var(--down); }
+
+    /* 빈 상태 */
+    .empty-home { padding:48px 24px; text-align:center; }
+    .empty-icon { font-size:2.5rem; margin-bottom:14px; }
+    .empty-title { font-size:0.95rem; font-weight:700; margin-bottom:6px; }
+    .empty-sub { font-size:0.82rem; color:var(--muted); margin-bottom:20px; }
+    .setup-btn { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:11px 24px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; }
+
+    /* 모달 */
+    .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:100; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+    .modal-bg.open { opacity:1; pointer-events:all; }
+    .modal { background:var(--white); border-radius:20px 20px 0 0; padding:24px 22px 40px; width:100%; max-width:480px; transform:translateY(40px); transition:transform 0.25s; }
+    .modal-bg.open .modal { transform:translateY(0); }
+    .modal-handle { width:36px; height:4px; background:#e0e0e0; border-radius:2px; margin:0 auto 18px; }
+    .modal-title { font-size:1rem; font-weight:800; margin-bottom:18px; }
+    .form-lbl { font-size:0.75rem; font-weight:700; color:var(--muted); margin-bottom:6px; display:block; }
+    .form-input { width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:10px; font-size:0.88rem; font-family:inherit; outline:none; transition:border-color 0.2s; margin-bottom:14px; }
+    .form-input:focus { border-color:var(--accent); }
+    .search-results-modal { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:14px; display:none; max-height:180px; overflow-y:auto; }
+    .sr-item { padding:10px 14px; cursor:pointer; border-bottom:1px solid #f4f4f5; font-size:0.85rem; }
+    .sr-item:last-child { border-bottom:none; }
+    .sr-item:hover { background:#fff7ed; }
+    .sr-name { font-weight:700; }
+    .sr-addr { font-size:0.72rem; color:var(--muted); margin-top:1px; }
+    .sr-selected { font-size:0.75rem; color:var(--accent); font-weight:600; margin-bottom:14px; display:none; }
+    .pyeong-select { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+    .py-chip { padding:6px 14px; border-radius:8px; border:1px solid var(--border); background:none; font-size:0.82rem; font-weight:600; color:var(--muted); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .py-chip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .modal-btns { display:flex; gap:8px; margin-top:4px; }
+    .btn-save { flex:1; background:var(--text); color:#fff; border:none; border-radius:10px; padding:12px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .btn-cancel { background:none; border:1px solid var(--border); color:var(--muted); border-radius:10px; padding:12px 18px; font-size:0.88rem; cursor:pointer; font-family:inherit; }
+
+    @media(max-width:680px) {
+      .stats-row { grid-template-columns:1fr 1fr; }
+      .stats-row .stat-box:nth-child(2) { border-right:none; }
+      .stats-row .stat-box:nth-child(3),
+      .stats-row .stat-box:nth-child(4) { border-top:1px solid #f0f0f4; }
+      .watch-grid { grid-template-columns:1fr 1fr; }
+      .profit-card { flex-wrap:wrap; gap:10px; }
+    }
+    @media(max-width:420px) { .watch-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<script>if(!sessionStorage.getItem('_re_tok'))location.replace('index.html');</script>
+
+<nav class="nav">
+  <a href="../index.html" onclick="event.preventDefault();location.href='../index.html?_='+Date.now()" class="nav-back">← KooVIS</a>
+  <span class="nav-title">🏠 부동산</span>
+  <div class="nav-tabs">
+    <span class="tab active">대시보드</span>
+    <a href="trade.html" class="tab">실거래가</a>
+    <a href="map.html" class="tab">지도</a>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn" onclick="openSetup()">⚙ 설정</button>
+  </div>
+</nav>
+
+<main class="main">
+  <div id="homeSection"></div>
+  <div id="profitSection" style="display:none">
+    <div class="profit-card">
+      <div class="profit-item"><div class="profit-lbl">취득원가</div><div class="profit-val" id="prCost">—</div></div>
+      <div class="profit-item"><div class="profit-lbl">평가 수익</div><div class="profit-val" id="prGain">—</div></div>
+      <div class="profit-item"><div class="profit-lbl">수익률</div><div class="profit-val" id="prPct">—</div></div>
+      <button class="profit-edit" onclick="openSetup()">수정</button>
+    </div>
+  </div>
+  <div class="sec-hd">
+    <span class="sec-title">관심단지 <span id="watchCount" style="color:#ccc;font-size:.82rem;font-weight:400"></span></span>
+    <a href="map.html" class="add-btn">+ 지도에서 추가</a>
+  </div>
+  <div id="watchGrid" class="watch-grid"></div>
+</main>
+
+<!-- 설정 모달 -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeSetup()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitle">우리집 설정</div>
+    <label class="form-lbl">아파트 검색</label>
+    <input class="form-input" id="aptSearch" placeholder="아파트 이름 입력 (예: 힐스테이트 기흥)" oninput="onAptInput()" onkeydown="if(event.key==='Enter')searchApt()">
+    <div class="search-results-modal" id="srModal"></div>
+    <div class="sr-selected" id="srSelected"></div>
+    <label class="form-lbl">평형 선택</label>
+    <div class="pyeong-select" id="pyeongSel">
+      <button class="py-chip" onclick="setPy(25,this)">25평</button>
+      <button class="py-chip" onclick="setPy(34,this)">34평</button>
+      <button class="py-chip" onclick="setPy(40,this)">40평</button>
+      <button class="py-chip" onclick="setPy(45,this)">45평</button>
+    </div>
+    <label class="form-lbl">취득가 (만원)</label>
+    <input class="form-input" id="acqPrice" type="number" placeholder="예: 153000">
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeSetup()">취소</button>
+      <button class="btn-save" onclick="saveSetup()">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = location.hostname==='localhost'?'http://localhost:8001':'https://api.koo-vis.com';
+const LS = { get:(k,d)=>{ try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;} }, set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)) };
+
+let home = LS.get('re_home', null);
+let watchlist = LS.get('re_watchlist', []);
+let chartInst = null;
+let curPeriod = 12;
+let curPyeong = null;
+let tradeCache = {};
+
+function fmt(m) { const n=parseInt(String(m).replace(/,/g,''),10); const e=Math.floor(n/10000),r=n%10000; return e===0?`${r.toLocaleString()}만`:(r===0?`${e}억`:`${e}억 ${r.toLocaleString()}만`); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── 대시보드 렌더 ──────────────────────────────────────
+function renderHome() {
+  const el = document.getElementById('homeSection');
+  if (!home) {
+    el.innerHTML = `<div class="home-card"><div class="empty-home"><div class="empty-icon">🏠</div><div class="empty-title">우리집을 설정해보세요</div><div class="empty-sub">아파트 단지와 평형을 설정하면<br>실거래가와 수익률을 바로 확인할 수 있어요</div><button class="setup-btn" onclick="openSetup()">우리집 설정하기</button></div></div>`;
+    document.getElementById('profitSection').style.display='none';
+    return;
+  }
+  const pyeong = home.pyeongs?.[curPyeong||0] || home.pyeongs?.[0] || {label:'25평',area:84.9};
+  el.innerHTML = `
+    <div class="home-card">
+      <div class="home-top">
+        <div class="home-info">
+          <div class="home-badge">🏠 우리집</div>
+          <div class="home-name">${esc(home.name)}</div>
+          <div class="home-meta">${esc(home.loc)} · ${esc(pyeong.label)} (${pyeong.area}㎡)</div>
+          <div class="home-price" id="hp"><span class="loading-spin"></span></div>
+          <div class="home-price-sub" id="hpDate"></div>
+          <div class="home-change" id="hpChg"></div>
+          <div class="ptab-row" id="ptabRow"></div>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-lbl">매매 강도</div><div class="stat-val" id="siTrade">—</div><div class="gauge"><div class="gauge-fill" id="giTrade" style="width:0;background:#10b981"></div></div><div class="stat-sub" id="siTradeSub"></div></div>
+        <div class="stat-box"><div class="stat-lbl">전세 강도</div><div class="stat-val" id="siJeonse">—</div><div class="gauge"><div class="gauge-fill" id="giJeonse" style="width:0;background:#f59e0b"></div></div><div class="stat-sub" id="siJeonseSub"></div></div>
+        <div class="stat-box"><div class="stat-lbl">전세가율</div><div class="stat-val" id="siRatio">—</div><div class="stat-sub" id="siRatioSub"></div></div>
+        <div class="stat-box"><div class="stat-lbl">전고점 대비</div><div class="stat-val" id="siPeak">—</div><div class="stat-sub" id="siPeakSub"></div></div>
+      </div>
+      <div class="chart-sec">
+        <div class="chart-hd">
+          <span class="chart-lbl">실거래가 추이</span>
+          <div class="period-row">
+            <button class="period-btn active" onclick="switchPeriod(12,this)">1년</button>
+            <button class="period-btn" onclick="switchPeriod(36,this)">3년</button>
+          </div>
+        </div>
+        <div class="chart-area"><canvas id="priceChart"></canvas></div>
+        <div class="chart-leg">
+          <span>● 실거래가</span>
+          <span style="opacity:.6">- - 전고점</span>
+          <span style="opacity:.6">- - 내 매수가</span>
+        </div>
+      </div>
+    </div>`;
+  renderPyeongTabs();
+  loadHomeData();
+}
+
+function renderPyeongTabs() {
+  if (!home?.pyeongs) return;
+  const el = document.getElementById('ptabRow');
+  if (!el) return;
+  el.innerHTML = home.pyeongs.map((p,i)=>`<button class="ptab ${i===(curPyeong||0)?'active':''}" onclick="switchPyeong(${i},this)">${p.label}</button>`).join('');
+}
+
+function switchPyeong(i, btn) {
+  curPyeong = i;
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.toggle('active',b===btn));
+  tradeCache = {};
+  loadHomeData();
+}
+
+function switchPeriod(p, btn) {
+  curPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.toggle('active',b===btn));
+  buildChartFromCache();
+}
+
+async function loadHomeData() {
+  if (!home) return;
+  const pyeong = home.pyeongs?.[curPyeong||0] || {label:'25평',area:84.9};
+
+  // 최근 3개월 + 차트용 데이터 병렬 조회
+  const months = prevMonths(Math.max(curPeriod, 6));
+  const results = await Promise.all(months.map(ym => fetchTrades(home.lawdCd, ym)));
+
+  const allTrades = results.flatMap((items, mi) =>
+    items.filter(t => matchArea(parseFloat(t.excluUseAr||0), pyeong.area))
+         .map(t => ({...t, ym: months[mi]}))
+  ).sort((a,b)=>{
+    const da=`${a.dealYear}${String(a.dealMonth).padStart(2,'0')}${String(a.dealDay).padStart(2,'0')}`;
+    const db=`${b.dealYear}${String(b.dealMonth).padStart(2,'0')}${String(b.dealDay).padStart(2,'0')}`;
+    return db>da?1:-1;
+  });
+
+  tradeCache.allTrades = allTrades;
+  tradeCache.months = months;
+
+  if (!allTrades.length) {
+    setEl('hp', '거래 없음'); setEl('hpDate', '최근 6개월'); return;
+  }
+
+  const latest = allTrades[0];
+  const latestPrice = parseInt((latest.dealAmount||'0').replace(/,/g,''),10);
+  const prev = allTrades[1];
+  const prevPrice = prev ? parseInt((prev.dealAmount||'0').replace(/,/g,''),10) : null;
+  const diff = prevPrice ? latestPrice - prevPrice : 0;
+  const pct = prevPrice ? ((diff/prevPrice)*100).toFixed(1) : 0;
+
+  setEl('hp', fmt(latestPrice));
+  setEl('hpDate', `${latest.dealYear}.${String(latest.dealMonth).padStart(2,'0')} 최근 거래`);
+  if (prevPrice) {
+    const chgEl = document.getElementById('hpChg');
+    if (chgEl) { chgEl.textContent = diff>=0?`▲ ${fmt(Math.abs(diff))} (+${pct}%)`:`▼ ${fmt(Math.abs(diff))} (${pct}%)`; chgEl.style.color = diff>=0?'var(--down)':'var(--up)'; }
+  }
+
+  // 통계
+  calcStats(allTrades, latestPrice, pyeong.area);
+  buildChartFromCache();
+
+  // 수익률
+  if (home.acqPrice) {
+    document.getElementById('profitSection').style.display='block';
+    const cost = Math.round(parseInt(home.acqPrice,10) * 1.015);
+    const gain = latestPrice - cost;
+    const p = ((gain/cost)*100).toFixed(1);
+    setEl('prCost', fmt(cost));
+    const gainEl=document.getElementById('prGain'); gainEl.textContent=(gain>=0?'+':'')+fmt(gain); gainEl.style.color=gain>=0?'var(--up)':'var(--down)';
+    const pctEl=document.getElementById('prPct'); pctEl.textContent=(gain>=0?'+':'')+p+'%'; pctEl.style.color=gain>=0?'var(--up)':'var(--down)';
+  }
+}
+
+function matchArea(area, target) { return Math.abs(area - target) < 12; }
+
+function calcStats(trades, latestPrice, targetArea) {
+  const now = new Date();
+  const thisQtr = trades.filter(t=>{ const d=new Date(t.dealYear,t.dealMonth-1); return (now-d)/86400000<=90; });
+  const prevQtr = trades.filter(t=>{ const d=new Date(t.dealYear,t.dealMonth-1); const days=(now-d)/86400000; return days>90&&days<=180; });
+  const volRatio = prevQtr.length>0 ? Math.round((thisQtr.length-prevQtr.length)/prevQtr.length*100) : 0;
+  const prices = trades.map(t=>parseInt((t.dealAmount||'0').replace(/,/g,''),10)).filter(Boolean);
+  const peak = Math.max(...prices);
+  const peakDiff = ((latestPrice-peak)/peak*100).toFixed(1);
+
+  const tradeIntensity = Math.min(100,Math.max(10, 50 + (volRatio>0?20:volRatio<0?-20:0) + (latestPrice>(prices[prices.length-1]||latestPrice)?15:-15)));
+  const jeonseIntensity = 48; // 전세 API 추후
+
+  const tiColor = tradeIntensity>=60?'#10b981':tradeIntensity>=35?'#f59e0b':'#bbb';
+  const tiLabel = tradeIntensity>=60?'강함 🔥':tradeIntensity>=35?'보통 ⚡':'약함';
+  setEl('siTrade', tiLabel); document.getElementById('siTrade').style.color=tiColor;
+  setFill('giTrade', tradeIntensity, tiColor);
+  setEl('siTradeSub', `거래량 ${volRatio>=0?'+':''}${volRatio}% (최근 3개월)`);
+  setEl('siJeonse', '보통 ⚡'); document.getElementById('siJeonse').style.color='#f59e0b';
+  setFill('giJeonse', jeonseIntensity, '#f59e0b');
+  setEl('siJeonseSub', '전세가율 데이터 조회 중');
+  setEl('siRatio', '—');
+  setEl('siRatioSub', '전세 데이터 준비 중');
+  setEl('siPeak', `${peakDiff>=0?'+':''}${peakDiff}%`);
+  document.getElementById('siPeak').style.color = parseFloat(peakDiff)>=0?'var(--up)':'var(--muted)';
+  setEl('siPeakSub', `전고점 ${fmt(peak)}`);
+}
+
+function buildChartFromCache() {
+  if (!tradeCache.allTrades) return;
+  const canvas = document.getElementById('priceChart');
+  if (!canvas) return;
+  const months = prevMonths(curPeriod);
+  const byMonth = {};
+  tradeCache.allTrades.forEach(t => {
+    const key = `${t.dealYear}${String(t.dealMonth).padStart(2,'0')}`;
+    if (!byMonth[key]) byMonth[key] = [];
+    byMonth[key].push(parseInt((t.dealAmount||'0').replace(/,/g,''),10));
+  });
+  const labels = months.map(m=>`${m.slice(2,4)}.${m.slice(4)}`);
+  const avgPrices = months.map(m=>{ const p=byMonth[m]; return p?.length ? Math.round(p.reduce((a,b)=>a+b,0)/p.length/10000*10)/10 : null; });
+  const allPrices = avgPrices.filter(Boolean);
+  const peak = allPrices.length ? Math.max(...allPrices) : null;
+  const myP = home?.acqPrice ? Math.round(parseInt(home.acqPrice,10)/10000*10)/10 : null;
+
+  if (chartInst) chartInst.destroy();
+  chartInst = new Chart(canvas.getContext('2d'), {
+    data:{ datasets:[
+      { type:'line', data:avgPrices.map((y,x)=>y!=null?{x,y}:null).filter(Boolean), borderColor:'#f97316', backgroundColor:ctx=>{ const {ctx:c,chartArea}=ctx.chart; if(!chartArea)return'transparent'; const g=c.createLinearGradient(0,chartArea.top,0,chartArea.bottom); g.addColorStop(0,'rgba(249,115,22,0.12)'); g.addColorStop(1,'rgba(249,115,22,0)'); return g; }, fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointBackgroundColor:'#f97316', pointBorderColor:'#fff', pointBorderWidth:2, spanGaps:true },
+      ...(peak?[{ type:'line', data:labels.map((_,x)=>({x,y:peak})), borderColor:'rgba(251,191,36,0.55)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false }]:[]),
+      ...(myP?[{ type:'line', data:labels.map((_,x)=>({x,y:myP})), borderColor:'rgba(59,130,246,0.55)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false }]:[]),
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ filter:i=>i.datasetIndex===0, callbacks:{ title:ctx=>labels[Math.round(ctx[0]?.parsed?.x??0)], label:ctx=>` ${ctx.parsed.y}억` }, backgroundColor:'#1a1a1a', titleColor:'#aaa', bodyColor:'#fff', padding:10, cornerRadius:8 } },
+      scales:{ x:{type:'linear',min:-0.5,max:labels.length-0.5,grid:{display:false},ticks:{stepSize:1,font:{family:'Pretendard',size:10},color:'#bbb',callback:v=>labels[v]||''}}, y:{grid:{color:'#f5f5f7'},ticks:{font:{family:'Pretendard',size:10},color:'#bbb',callback:v=>`${v}억`}} },
+      interaction:{intersect:false,mode:'x'} }
+  });
+}
+
+// ── 관심단지 ──────────────────────────────────────────
+function renderWatchlist() {
+  const el = document.getElementById('watchGrid');
+  const cnt = document.getElementById('watchCount');
+  cnt.textContent = watchlist.length ? `${watchlist.length}개` : '';
+  if (!watchlist.length) { el.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--muted);font-size:.85rem">관심단지가 없어요 — 지도에서 추가해보세요</div>'; return; }
+  el.innerHTML = watchlist.map((w,i) => {
+    const latestPrice = w.latestPrice ? fmt(w.latestPrice) : '—';
+    const diff = w.latestPrice && w.prevPrice ? w.latestPrice - w.prevPrice : 0;
+    const pct = w.prevPrice&&diff ? ((diff/w.prevPrice)*100).toFixed(1) : 0;
+    const chgColor = diff>0?'var(--down)':diff<0?'var(--up)':'var(--muted)';
+    const chgText = diff===0?'변동없음':diff>0?`▲ ${fmt(Math.abs(diff))} (+${pct}%)`:`▼ ${fmt(Math.abs(diff))} (${pct}%)`;
+    const barColor = diff>0?'linear-gradient(90deg,#10b981,#34d399)':diff<0?'linear-gradient(90deg,#ef4444,#f87171)':'linear-gradient(90deg,#ccc,#ddd)';
+    return `<div class="watch-card" onclick="location.href='trade.html?lawdCd=${w.lawdCd}&name=${encodeURIComponent(w.name)}'">
+      <div class="watch-bar" style="background:${barColor}"></div>
+      <div class="watch-name">${esc(w.name)}</div>
+      <div class="watch-loc">${esc(w.loc||'')}</div>
+      <div class="watch-pyeong">${w.pyeongLabel||w.pyeong+'평'}</div>
+      <div class="sparkline-wrap"><svg class="sparkline" viewBox="0 0 100 38" preserveAspectRatio="none">${w.sparkline||'<line x1="0" y1="19" x2="100" y2="19" stroke="#e8e8ec" stroke-width="1.5"/>'}</svg></div>
+      <div class="watch-price">${latestPrice}</div>
+      <div class="watch-chg" style="color:${chgColor}">${chgText}</div>
+      <div class="watch-date">${w.latestDate||''}</div>
+      <button class="watch-del" onclick="event.stopPropagation();removeWatch(${i})">✕</button>
+    </div>`;
+  }).join('');
+  loadWatchPrices();
+}
+
+async function loadWatchPrices() {
+  await Promise.all(watchlist.map(async (w,i) => {
+    if (!w.lawdCd) return;
+    const trades = await fetchTrades(w.lawdCd, curYm());
+    const filtered = trades.filter(t=>matchArea(parseFloat(t.excluUseAr||0),w.areaNum||84.9));
+    if (!filtered.length) return;
+    filtered.sort((a,b)=>{ const da=`${a.dealYear}${String(a.dealMonth).padStart(2,'0')}${String(a.dealDay).padStart(2,'0')}`; const db=`${b.dealYear}${String(b.dealMonth).padStart(2,'0')}${String(b.dealDay).padStart(2,'0')}`; return db>da?1:-1; });
+    const latest=filtered[0], prev=filtered[1];
+    watchlist[i].latestPrice = parseInt((latest.dealAmount||'0').replace(/,/g,''),10);
+    watchlist[i].prevPrice = prev ? parseInt((prev.dealAmount||'0').replace(/,/g,''),10) : null;
+    watchlist[i].latestDate = `${latest.dealYear}.${String(latest.dealMonth).padStart(2,'0')}.${String(latest.dealDay).padStart(2,'0')}`;
+    LS.set('re_watchlist', watchlist);
+  }));
+  renderWatchlist();
+}
+
+function removeWatch(i) { if(!confirm('관심단지에서 삭제할까요?'))return; watchlist.splice(i,1); LS.set('re_watchlist',watchlist); renderWatchlist(); }
+
+// ── API ────────────────────────────────────────────────
+async function fetchTrades(lawdCd, ym) {
+  const key = `${lawdCd}_${ym}`;
+  if (tradeCache[key]) return tradeCache[key];
+  try {
+    const res = await fetch(`${API}/realestate/trade?lawd_cd=${lawdCd}&deal_ymd=${ym}`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    tradeCache[key] = data.items||[];
+    return tradeCache[key];
+  } catch { return []; }
+}
+
+async function searchApts(q) {
+  try {
+    const res = await fetch(`${API}/realestate/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) return [];
+    return (await res.json()).results || [];
+  } catch { return []; }
+}
+
+function prevMonths(n) { const r=[],d=new Date(); for(let i=n-1;i>=0;i--){ const t=new Date(d.getFullYear(),d.getMonth()-i,1); r.push(`${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}`); } return r; }
+function curYm() { const d=new Date(); return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`; }
+function setEl(id,val) { const el=document.getElementById(id); if(el)el.textContent=val; }
+function setFill(id,pct,color) { const el=document.getElementById(id); if(el){el.style.width=pct+'%';el.style.background=color;} }
+
+// ── 설정 모달 ──────────────────────────────────────────
+let modalApt = null, modalPy = 25;
+let searchTimer;
+
+function openSetup() {
+  modalApt = home ? {name:home.name,lawdCd:home.lawdCd,loc:home.loc} : null;
+  modalPy = home?.pyeongs?.[0]?.area || 84.9;
+  document.getElementById('aptSearch').value = home?.name||'';
+  document.getElementById('srSelected').textContent = home?.name ? `✓ ${home.name} (${home.loc||''})` : '';
+  document.getElementById('srSelected').style.display = home ? 'block' : 'none';
+  document.getElementById('acqPrice').value = home?.acqPrice||'';
+  document.getElementById('srModal').style.display = 'none';
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeSetup() { document.getElementById('modalBg').classList.remove('open'); }
+
+function onAptInput() {
+  clearTimeout(searchTimer);
+  const q = document.getElementById('aptSearch').value.trim();
+  if (q.length < 2) { document.getElementById('srModal').style.display='none'; return; }
+  searchTimer = setTimeout(async ()=>{
+    const results = await searchApts(q);
+    const el = document.getElementById('srModal');
+    if (!results.length) { el.style.display='none'; return; }
+    el.style.display='block';
+    el.innerHTML = results.slice(0,6).map(r=>`
+      <div class="sr-item" onclick="selectApt('${esc(r.aptNm)}','${r.lawdCd}','${esc(r.sggNm+' '+r.umdNm)}')">
+        <div class="sr-name">${esc(r.aptNm)}</div>
+        <div class="sr-addr">${esc(r.sggNm)} ${esc(r.umdNm)}</div>
+      </div>`).join('');
+  }, 300);
+}
+
+function searchApt() { onAptInput(); }
+
+function selectApt(name, lawdCd, loc) {
+  modalApt = {name,lawdCd,loc};
+  document.getElementById('aptSearch').value = name;
+  document.getElementById('srModal').style.display='none';
+  const sel = document.getElementById('srSelected');
+  sel.textContent = `✓ ${name} (${loc})`; sel.style.display='block';
+}
+
+function setPy(p, btn) { modalPy=p; document.querySelectorAll('.py-chip').forEach(b=>b.classList.toggle('active',b===btn)); }
+
+function saveSetup() {
+  if (!modalApt) { alert('아파트를 검색해서 선택해 주세요'); return; }
+  const areaMap = {25:84.9, 34:112.3, 40:134.9, 45:148.2};
+  home = { name:modalApt.name, lawdCd:modalApt.lawdCd, loc:modalApt.loc, pyeongs:[{label:`${modalPy}평`,area:areaMap[modalPy]||84.9}], acqPrice:document.getElementById('acqPrice').value||'' };
+  LS.set('re_home', home);
+  tradeCache = {}; curPyeong = 0;
+  closeSetup();
+  renderHome();
+}
+
+// ── 초기화 ─────────────────────────────────────────────
+renderHome();
+renderWatchlist();
+</script>
+</body>
+</html>

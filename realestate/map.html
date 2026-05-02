@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KooVIS · 지도</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd6c9cbf55b7520e804aa68f1804a0a8&libraries=services"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --accent:#f97316; --text:#1a1a1a; --muted:#999; --border:#e8e8ec; --bg:#f4f4f5; --white:#fff; --up:#10b981; --down:#ef4444; }
+    body { font-family:'Pretendard',system-ui,sans-serif; height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
+
+    .nav { background:var(--white); border-bottom:1px solid var(--border); height:56px; display:flex; align-items:center; padding:0 24px; gap:16px; flex-shrink:0; z-index:1000; }
+    .nav-back { text-decoration:none; color:var(--muted); font-size:0.85rem; transition:color 0.15s; }
+    .nav-back:hover { color:var(--text); }
+    .nav-title { font-size:1rem; font-weight:700; flex:1; }
+
+    .search-bar { display:flex; gap:8px; padding:10px 24px; background:var(--white); border-bottom:1px solid var(--border); flex-shrink:0; position:relative; z-index:999; }
+    .si { flex:1; padding:8px 14px; border:1px solid var(--border); border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none; transition:border-color 0.2s; }
+    .si:focus { border-color:var(--accent); }
+    .sb { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:0 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .dd { position:absolute; top:100%; left:24px; right:24px; background:var(--white); border:1px solid var(--border); border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.1); z-index:100; overflow:hidden; display:none; max-height:200px; overflow-y:auto; }
+    .dd-item { padding:10px 16px; cursor:pointer; border-bottom:1px solid #f4f4f5; font-size:0.85rem; }
+    .dd-item:last-child { border-bottom:none; }
+    .dd-item:hover { background:#fff7ed; }
+    .dd-name { font-weight:700; }
+    .dd-addr { font-size:0.72rem; color:var(--muted); margin-top:1px; }
+
+    #map { flex:1; }
+
+    .bubble { font-family:'Pretendard',system-ui,sans-serif; font-size:0.76rem; font-weight:800; background:var(--white); border-radius:16px; padding:5px 11px; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.12); border:1.5px solid var(--border); cursor:pointer; position:relative; display:inline-block; transition:transform 0.15s,box-shadow 0.15s; }
+    .bubble::after { content:''; position:absolute; bottom:-6px; left:50%; transform:translateX(-50%); border:4px solid transparent; }
+    .bubble.home { color:var(--accent); border-color:var(--accent); background:#fff7ed; }
+    .bubble.home::after { border-top-color:var(--accent); }
+    .bubble.watch { color:var(--text); border-color:#c0c0cc; }
+    .bubble.watch::after { border-top-color:#c0c0cc; }
+    .bubble.up { color:var(--down); border-color:var(--down); }
+    .bubble.up::after { border-top-color:var(--down); }
+    .bubble.dn { color:var(--up); border-color:var(--up); }
+    .bubble.dn::after { border-top-color:var(--up); }
+    .bubble:hover { transform:translateY(-2px) scale(1.06); box-shadow:0 4px 14px rgba(0,0,0,0.16); }
+    .bubble.active { transform:translateY(-2px) scale(1.1); }
+
+    .region-btn { position:absolute; top:14px; left:50%; transform:translateX(-50%); z-index:400; background:var(--white); border:1px solid var(--border); border-radius:20px; padding:7px 18px; font-size:0.8rem; font-weight:700; font-family:inherit; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08); white-space:nowrap; transition:all 0.2s; }
+    .region-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .region-btn:disabled { color:var(--muted); cursor:default; }
+
+    .legend { position:absolute; bottom:14px; left:14px; z-index:400; background:rgba(255,255,255,0.96); border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:0.7rem; box-shadow:0 2px 8px rgba(0,0,0,0.07); }
+    .leg-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+    .leg-row:last-child { margin-bottom:0; }
+    .ldot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+    .panel { position:absolute; bottom:0; left:0; right:0; background:var(--white); border-radius:20px 20px 0 0; padding:14px 20px 32px; box-shadow:0 -4px 20px rgba(0,0,0,0.08); transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.34,1.2,0.64,1); z-index:500; border-top:1px solid var(--border); }
+    .panel.open { transform:translateY(0); }
+    .p-handle { width:36px; height:4px; background:#e0e0e0; border-radius:2px; margin:0 auto 14px; }
+    .p-badge { font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:6px; margin-bottom:7px; display:inline-block; }
+    .b-home { background:#fff7ed; color:var(--accent); }
+    .b-watch { background:var(--bg); color:var(--muted); }
+    .p-name { font-size:1.05rem; font-weight:900; margin-bottom:2px; }
+    .p-loc { font-size:0.72rem; color:var(--muted); margin-bottom:14px; }
+    .p-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+    .ps { background:var(--bg); border-radius:10px; padding:10px; text-align:center; }
+    .ps-l { font-size:0.62rem; color:var(--muted); font-weight:600; margin-bottom:3px; }
+    .ps-v { font-size:0.88rem; font-weight:900; }
+    .p-btns { display:flex; gap:8px; }
+    .btn-p { flex:1; background:var(--text); color:#fff; border:none; border-radius:10px; padding:11px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .btn-w { background:#f0fdf9; border:1px solid var(--up); color:var(--up); border-radius:10px; padding:11px 14px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+    .btn-w.added { background:var(--bg); border-color:var(--border); color:var(--muted); }
+    .btn-c { background:none; border:1px solid var(--border); color:var(--muted); border-radius:10px; padding:11px 14px; font-size:0.85rem; cursor:pointer; font-family:inherit; }
+
+    /* 평형 선택 */
+    .py-sel { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+    .py-chip { padding:4px 12px; border-radius:7px; border:1px solid var(--border); background:none; font-size:0.78rem; font-weight:600; color:var(--muted); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .py-chip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  </style>
+</head>
+<body>
+<script>if(!sessionStorage.getItem('_re_tok'))location.replace('index.html');</script>
+
+<nav class="nav">
+  <a href="dashboard.html" class="nav-back">← 대시보드</a>
+  <span class="nav-title">🗺 지도</span>
+</nav>
+<div class="search-bar">
+  <input class="si" id="si" placeholder="단지명 또는 지역 검색" oninput="onInput()" onkeydown="if(event.key==='Enter')doSearch()">
+  <button class="sb" onclick="doSearch()">검색</button>
+  <div class="dd" id="dd"></div>
+</div>
+
+<div style="position:relative;flex:1;display:flex;flex-direction:column">
+  <div id="map" style="flex:1"></div>
+  <button class="region-btn" id="rBtn" onclick="searchRegion()">🔍 이 지역 검색</button>
+  <div class="legend">
+    <div class="leg-row"><div class="ldot" style="background:var(--accent)"></div>우리집</div>
+    <div class="leg-row"><div class="ldot" style="background:var(--down)"></div>상승</div>
+    <div class="leg-row"><div class="ldot" style="background:var(--up)"></div>하락</div>
+    <div class="leg-row"><div class="ldot" style="background:#bbb"></div>관심단지</div>
+  </div>
+  <div class="panel" id="panel">
+    <div class="p-handle"></div>
+    <div id="panelContent"></div>
+  </div>
+</div>
+
+<script>
+const API = location.hostname==='localhost'?'http://localhost:8001':'https://api.koo-vis.com';
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+let watchlist = LS.get('re_watchlist',[]);
+let home = LS.get('re_home',null);
+let overlays={}, currentPanel=null, regionDebounce;
+
+function fmt(m){const n=parseInt(String(m).replace(/,/g,''),10);const e=Math.floor(n/10000),r=n%10000;return e===0?`${r.toLocaleString()}만`:(r===0?`${e}억`:`${e}억 ${r.toLocaleString()}만`);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function ym(offset=0){const d=new Date(new Date().getFullYear(),new Date().getMonth()-offset,1);return`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`;}
+function isWatch(name){return watchlist.some(w=>w.name===name);}
+
+kakao.maps.load(()=>{
+  const map=new kakao.maps.Map(document.getElementById('map'),{center:new kakao.maps.LatLng(37.2735,127.1155),level:5});
+  const ps=new kakao.maps.services.Places();
+
+  // 우리집 마커
+  if(home){
+    addMarker(map,{name:home.name,loc:home.loc,lawdCd:home.lawdCd,lat:null,lng:null,isHome:true,pyeong:home.pyeongs?.[0]?.area||84.9}, ps);
+  }
+  // 관심단지 마커
+  watchlist.forEach(w=>{ if(w.lat&&w.lng) addMarker(map,{...w,isHome:false},ps); });
+
+  kakao.maps.event.addListener(map,'click',closePanel);
+  kakao.maps.event.addListener(map,'dragend',()=>{ document.getElementById('rBtn').style.opacity='1'; });
+
+  // 검색
+  window.onInput=function(){
+    const q=document.getElementById('si').value.trim();
+    if(q.length<2){document.getElementById('dd').style.display='none';return;}
+    ps.keywordSearch(q+' 아파트',(result,status)=>{
+      const el=document.getElementById('dd');
+      if(status===kakao.maps.services.Status.OK&&result.length){
+        el.style.display='block';
+        el.innerHTML=result.slice(0,5).map(r=>`<div class="dd-item" onclick="moveTo(${r.y},${r.x},'${r.place_name.replace(/'/g,"\\'")}','${r.address_name.replace(/'/g,"\\'")}')"><div class="dd-name">${r.place_name}</div><div class="dd-addr">${r.address_name}</div></div>`).join('');
+      }else el.style.display='none';
+    });
+  };
+  window.doSearch=function(){const q=document.getElementById('si').value.trim();if(q)ps.keywordSearch(q,(r,s)=>{if(s===kakao.maps.services.Status.OK)moveTo(r[0].y,r[0].x,r[0].place_name,r[0].address_name);});};
+  window.moveTo=function(lat,lng,name,addr){
+    document.getElementById('si').value=name;
+    document.getElementById('dd').style.display='none';
+    const pos=new kakao.maps.LatLng(lat,lng);
+    map.panTo(pos);map.setLevel(4);
+    // 해당 위치 단지 패널 열기 시도
+    const key=Object.keys(overlays).find(k=>overlays[k].name===name);
+    if(key)showPanel(overlays[key],map);
+    else {
+      // 새 위치 검색 패널
+      showNewAptPanel({name,loc:addr,lat:parseFloat(lat),lng:parseFloat(lng),lawdCd:null},map);
+    }
+  };
+
+  // 이 지역 검색
+  window.searchRegion=async function(){
+    const btn=document.getElementById('rBtn');
+    btn.textContent='⏳ 검색 중…';btn.disabled=true;
+    try {
+      const bounds=map.getBounds(),sw=bounds.getSouthWest(),ne=bounds.getNorthEast();
+      const center=map.getCenter();
+      // geocoder로 중심 lawdCd 추출 후 API 조회
+      const geocoder=new kakao.maps.services.Geocoder();
+      geocoder.coord2RegionCode(center.getLng(),center.getLat(),async(result,status)=>{
+        if(status===kakao.maps.services.Status.OK){
+          const region=result.find(r=>r.region_type==='B')||result[0];
+          const code=region?.code?.slice(0,5)||'41465';
+          const trades=await fetchTrades(code,ym(0));
+          // 중복 없이 단지별 최신가 추출
+          const apts={};
+          trades.forEach(t=>{
+            if(!apts[t.aptNm])apts[t.aptNm]={name:t.aptNm,price:parseInt((t.dealAmount||'0').replace(/,/g,''),10),lawdCd:code};
+          });
+          // 카카오 검색으로 좌표 보강
+          const aptList=Object.values(apts).slice(0,12);
+          await Promise.all(aptList.map(a=>new Promise(resolve=>{
+            ps.keywordSearch(a.name+' 아파트',(r,s)=>{
+              if(s===kakao.maps.services.Status.OK&&r[0]){a.lat=parseFloat(r[0].y);a.lng=parseFloat(r[0].x);}
+              resolve();
+            });
+          })));
+          // 기존 region 마커 제거 후 추가
+          Object.entries(overlays).forEach(([k,v])=>{ if(v.isRegion){v.overlay.setMap(null);delete overlays[k];} });
+          aptList.filter(a=>a.lat&&a.lng).forEach(a=>addMarker(map,{...a,isHome:false,isRegion:true,pyeong:84.9},ps));
+        }
+        btn.textContent='🔍 이 지역 검색';btn.disabled=false;
+      });
+    }catch{btn.textContent='🔍 이 지역 검색';btn.disabled=false;}
+  };
+
+  async function fetchTrades(lawdCd,m){
+    try{const r=await fetch(`${API}/realestate/trade?lawd_cd=${lawdCd}&deal_ymd=${m}`);if(!r.ok)return[];return(await r.json()).items||[];}catch{return[];}
+  }
+
+  function addMarker(map,apt,ps){
+    if(!apt.lat||!apt.lng){
+      if(apt.name){
+        ps.keywordSearch(apt.name+' 아파트',(r,s)=>{
+          if(s===kakao.maps.services.Status.OK&&r[0]){
+            apt.lat=parseFloat(r[0].y);apt.lng=parseFloat(r[0].x);
+            addMarker(map,apt,ps);
+          }
+        });
+      }
+      return;
+    }
+    const div=makeBubble(apt);
+    const overlay=new kakao.maps.CustomOverlay({position:new kakao.maps.LatLng(apt.lat,apt.lng),content:div,yAnchor:1.4});
+    overlay.setMap(map);
+    const key=apt.name+'_'+(apt.isHome?'home':'watch');
+    overlays[key]={overlay,div,apt,name:apt.name,isRegion:apt.isRegion};
+    div.addEventListener('click',e=>{e.stopPropagation();showPanel({overlay,div,apt,name:apt.name},map);});
+  }
+
+  function makeBubble(apt){
+    const diff=(apt.latestPrice&&apt.prevPrice)?apt.latestPrice-apt.prevPrice:0;
+    const cls=apt.isHome?'home':diff>0?'up':diff<0?'dn':isWatch(apt.name)?'watch':'';
+    const arrow=diff>0?'▲':diff<0?'▼':'';
+    const price=apt.latestPrice||apt.price;
+    const label=apt.isHome?`🏠 ${price?fmt(price):'—'}`:`${arrow} ${price?fmt(price):'검색중'}`;
+    const div=document.createElement('div');
+    div.className=`bubble ${cls}`;div.innerHTML=label;
+    return div;
+  }
+
+  function showPanel(item,map){
+    const apt=item.apt;
+    Object.values(overlays).forEach(v=>v.div.classList.remove('active'));
+    item.div.classList.add('active');
+    currentPanel=item;
+    const watched=isWatch(apt.name);
+    const price=apt.latestPrice||apt.price;
+    const diff=(apt.latestPrice&&apt.prevPrice)?apt.latestPrice-apt.prevPrice:0;
+    const pct=apt.prevPrice&&diff?((diff/apt.prevPrice)*100).toFixed(1):0;
+    const diffStr=diff===0?'—':diff>0?`▲ ${fmt(Math.abs(diff))} (+${pct}%)`:`▼ ${fmt(Math.abs(diff))} (${pct}%)`;
+    const diffColor=diff>0?'var(--down)':diff<0?'var(--up)':'#aaa';
+    document.getElementById('panelContent').innerHTML=`
+      <div class="p-badge ${apt.isHome?'b-home':'b-watch'}">${apt.isHome?'🏠 우리집':watched?'★ 관심단지':'일반'}</div>
+      <div class="p-name">${esc(apt.name)}</div>
+      <div class="p-loc">${esc(apt.loc||'')}</div>
+      <div class="p-stats">
+        <div class="ps"><div class="ps-l">최근 거래가</div><div class="ps-v" style="color:var(--accent)">${price?fmt(price):'—'}</div></div>
+        <div class="ps"><div class="ps-l">전월 대비</div><div class="ps-v" style="color:${diffColor};font-size:.76rem">${diffStr}</div></div>
+        <div class="ps"><div class="ps-l">평형</div><div class="ps-v">${apt.pyeong?`${Math.round(apt.pyeong/3.305785)}평`:'—'}</div></div>
+      </div>
+      <div class="p-btns">
+        <button class="btn-p" onclick="goTrade('${apt.name.replace(/'/g,"\\'")}','${apt.lawdCd||''}')">실거래 보기 →</button>
+        ${!apt.isHome?`<button class="btn-w${watched?' added':''}" id="wBtn" onclick="toggleWatch('${apt.name.replace(/'/g,"\\'")}',${apt.lat},${apt.lng},'${(apt.loc||'').replace(/'/g,"\\'")}',${apt.pyeong||84.9},'${apt.lawdCd||''}')">${watched?'✓ 관심':'+ 관심'}</button>`:''}
+        <button class="btn-c" onclick="closePanel()">✕</button>
+      </div>`;
+    document.getElementById('panel').classList.add('open');
+    if(apt.lat) map.panTo(new kakao.maps.LatLng(apt.lat-0.003,apt.lng));
+  }
+
+  function showNewAptPanel(apt,map){
+    document.getElementById('panelContent').innerHTML=`
+      <div class="p-badge b-watch">검색 결과</div>
+      <div class="p-name">${esc(apt.name)}</div>
+      <div class="p-loc">${esc(apt.loc||'')}</div>
+      <div class="p-btns">
+        <button class="btn-w" onclick="addNewWatch('${apt.name.replace(/'/g,"\\'")}',${apt.lat},${apt.lng},'${(apt.loc||'').replace(/'/g,"\\'")}',84.9,'')">+ 관심단지 추가</button>
+        <button class="btn-c" onclick="closePanel()">✕</button>
+      </div>`;
+    document.getElementById('panel').classList.add('open');
+  }
+
+  window.goTrade=function(name,lc){location.href=`trade.html?lawdCd=${lc}&name=${encodeURIComponent(name)}`;};
+
+  window.toggleWatch=function(name,lat,lng,loc,area,lc){
+    const idx=watchlist.findIndex(w=>w.name===name);
+    if(idx>=0){watchlist.splice(idx,1);}
+    else{watchlist.push({name,lat,lng,loc,areaNum:area,pyeong:Math.round(area/3.305785),pyeongLabel:`${Math.round(area/3.305785)}평`,lawdCd:lc});}
+    LS.set('re_watchlist',watchlist);
+    const btn=document.getElementById('wBtn');
+    if(btn){const w=isWatch(name);btn.textContent=w?'✓ 관심':'+ 관심';btn.classList.toggle('added',w);}
+    // 마커 업데이트
+    const key=name+'_watch';
+    if(overlays[key])overlays[key].div.className=`bubble ${isWatch(name)?'watch':''}`;
+  };
+
+  window.addNewWatch=function(name,lat,lng,loc,area,lc){
+    if(!watchlist.find(w=>w.name===name)){
+      watchlist.push({name,lat,lng,loc,areaNum:area,pyeong:Math.round(area/3.305785),pyeongLabel:`${Math.round(area/3.305785)}평`,lawdCd:lc});
+      LS.set('re_watchlist',watchlist);
+    }
+    closePanel();
+  };
+
+  window.closePanel=function(){
+    document.getElementById('panel').classList.remove('open');
+    Object.values(overlays).forEach(v=>v.div.classList.remove('active'));
+    currentPanel=null;
+  };
+
+  document.addEventListener('click',e=>{
+    const dd=document.getElementById('dd');
+    if(!dd.contains(e.target)&&!e.target.closest('.search-bar'))dd.style.display='none';
+  });
+});
+</script>
+</body>
+</html>

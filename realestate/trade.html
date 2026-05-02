@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KooVIS · 실거래가</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --accent:#f97316; --text:#1a1a1a; --muted:#999; --border:#e8e8ec; --bg:#f4f4f5; --white:#fff; --radius:12px; --up:#10b981; --down:#ef4444; }
+    body { background:var(--bg); font-family:'Pretendard',system-ui,sans-serif; color:var(--text); min-height:100vh; padding-bottom:40px; }
+
+    .nav { background:var(--white); border-bottom:1px solid var(--border); height:56px; display:flex; align-items:center; padding:0 24px; gap:16px; position:sticky; top:0; z-index:20; }
+    .nav-back { text-decoration:none; color:var(--muted); font-size:0.85rem; transition:color 0.15s; }
+    .nav-back:hover { color:var(--text); }
+    .nav-info { flex:1; }
+    .nav-apt { font-size:0.95rem; font-weight:800; }
+    .nav-loc { font-size:0.7rem; color:var(--muted); }
+    .nav-btn { font-size:0.82rem; color:var(--muted); background:none; border:1px solid var(--border); border-radius:8px; padding:5px 12px; cursor:pointer; font-family:inherit; transition:all 0.15s; text-decoration:none; display:inline-flex; align-items:center; gap:4px; }
+    .nav-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    .search-bar { display:flex; gap:8px; padding:10px 24px; background:var(--white); border-bottom:1px solid var(--border); position:relative; z-index:10; }
+    .search-input { flex:1; padding:8px 14px; border:1px solid var(--border); border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none; transition:border-color 0.2s; }
+    .search-input:focus { border-color:var(--accent); }
+    .search-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:0 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .search-btn:disabled { background:#bbb; cursor:not-allowed; }
+    .search-dropdown { position:absolute; top:100%; left:24px; right:24px; background:var(--white); border:1px solid var(--border); border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.1); z-index:100; overflow:hidden; display:none; max-height:200px; overflow-y:auto; }
+    .sd-item { padding:10px 16px; cursor:pointer; border-bottom:1px solid #f4f4f5; font-size:0.85rem; }
+    .sd-item:last-child { border-bottom:none; }
+    .sd-item:hover { background:#fff7ed; }
+    .sd-name { font-weight:700; }
+    .sd-addr { font-size:0.72rem; color:var(--muted); margin-top:1px; }
+
+    .main { max-width:840px; margin:0 auto; padding:24px; }
+    .ptabs { display:flex; gap:4px; margin-bottom:16px; }
+    .ptab { padding:6px 16px; border-radius:8px; border:1px solid var(--border); background:var(--white); font-size:0.82rem; font-weight:600; color:var(--muted); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .ptab.active { background:var(--text); border-color:var(--text); color:#fff; }
+
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px; }
+    .stat-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:14px; }
+    .stat-lbl { font-size:0.63rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+    .stat-val { font-size:0.92rem; font-weight:900; }
+    .stat-sub { font-size:0.66rem; color:#bbb; margin-top:3px; }
+    .mini-g { height:3px; background:#ebebef; border-radius:2px; margin-top:6px; overflow:hidden; }
+    .mini-f { height:100%; border-radius:2px; }
+
+    .list-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    .list-hd { display:grid; grid-template-columns:1.4fr 0.8fr 0.6fr 1.2fr 1fr; gap:6px; padding:10px 18px; background:#f8f8fa; border-bottom:1px solid var(--border); font-size:0.68rem; font-weight:700; color:var(--muted); }
+    .tr-row { display:grid; grid-template-columns:1.4fr 0.8fr 0.6fr 1.2fr 1fr; gap:6px; padding:13px 18px; border-bottom:1px solid #f4f4f5; align-items:center; transition:background 0.12s; }
+    .tr-row:last-child { border-bottom:none; }
+    .tr-row:hover { background:#fafafa; }
+    .tr-date { font-size:0.78rem; color:var(--muted); }
+    .tr-date strong { display:block; font-size:0.84rem; font-weight:800; color:var(--text); }
+    .tr-area { font-size:0.82rem; font-weight:600; }
+    .tr-area small { display:block; font-size:0.66rem; color:#bbb; }
+    .tr-floor { font-size:0.82rem; color:var(--muted); }
+    .tr-price { font-size:0.9rem; font-weight:900; color:var(--accent); }
+    .tr-chg { font-size:0.72rem; font-weight:700; }
+    .ch-up { color:var(--down); } .ch-dn { color:var(--up); } .ch-flat { color:#bbb; }
+    .status-msg { text-align:center; padding:40px 20px; color:var(--muted); font-size:0.85rem; }
+    .spin { display:inline-block; width:16px; height:16px; border:2px solid #e8e8ec; border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    @media(max-width:600px) {
+      .stats-row { grid-template-columns:1fr 1fr; }
+      .list-hd { grid-template-columns:1.4fr 1.2fr 1fr; }
+      .list-hd .ha, .list-hd .hf { display:none; }
+      .tr-row { grid-template-columns:1.4fr 1.2fr 1fr; }
+      .tr-row .tr-area, .tr-row .tr-floor { display:none; }
+    }
+  </style>
+</head>
+<body>
+<script>if(!sessionStorage.getItem('_re_tok'))location.replace('index.html');</script>
+
+<nav class="nav">
+  <a href="dashboard.html" class="nav-back">← 대시보드</a>
+  <div class="nav-info">
+    <div class="nav-apt" id="navApt">아파트를 검색하세요</div>
+    <div class="nav-loc" id="navLoc"></div>
+  </div>
+  <a href="map.html" class="nav-btn">🗺 지도</a>
+</nav>
+<div class="search-bar">
+  <input class="search-input" id="si" placeholder="아파트 이름 검색 (예: 힐스테이트 기흥)" oninput="onInput()" onkeydown="if(event.key==='Enter')doSearch()">
+  <button class="search-btn" id="sb" onclick="doSearch()">검색</button>
+  <div class="search-dropdown" id="dd"></div>
+</div>
+
+<main class="main">
+  <div class="ptabs" id="ptabs" style="display:none"></div>
+  <div class="stats-row" id="statsRow" style="display:none"></div>
+  <div class="list-card">
+    <div class="list-hd" id="listHd" style="display:none">
+      <span>거래일</span><span class="ha">면적</span><span class="hf">층</span><span>거래금액</span><span>전건 대비</span>
+    </div>
+    <div id="tradeList"><div class="status-msg">아파트를 검색해서 실거래가를 확인하세요</div></div>
+  </div>
+</main>
+
+<script>
+const API = location.hostname==='localhost'?'http://localhost:8001':'https://api.koo-vis.com';
+let allTrades=[], activePy=null, lawdCd=null;
+let debounce;
+
+function fmt(m){const n=parseInt(String(m).replace(/,/g,''),10);const e=Math.floor(n/10000),r=n%10000;return e===0?`${r.toLocaleString()}만`:(r===0?`${e}억`:`${e}억 ${r.toLocaleString()}만`);}
+function fd(d){return d.replace(/(\d{4})-(\d{2})-(\d{2})/,(_,y,m,d)=>`${y.slice(2)}.${m}.${d}`);}
+function ym(offset=0){const d=new Date(new Date().getFullYear(),new Date().getMonth()-offset,1);return`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`;}
+
+function onInput(){
+  clearTimeout(debounce);
+  const q=document.getElementById('si').value.trim();
+  if(q.length<2){document.getElementById('dd').style.display='none';return;}
+  debounce=setTimeout(()=>suggest(q),300);
+}
+async function suggest(q){
+  try{
+    const res=await fetch(`${API}/realestate/search?q=${encodeURIComponent(q)}`);
+    if(!res.ok)return;
+    const {results=[]}=await res.json();
+    const el=document.getElementById('dd');
+    if(!results.length){el.style.display='none';return;}
+    el.style.display='block';
+    el.innerHTML=results.slice(0,6).map(r=>`<div class="sd-item" onclick="selectApt('${r.aptNm.replace(/'/g,"\\'")}','${r.lawdCd}','${(r.sggNm+' '+r.umdNm).replace(/'/g,"\\'")}')"><div class="sd-name">${r.aptNm}</div><div class="sd-addr">${r.sggNm} ${r.umdNm}</div></div>`).join('');
+  }catch{}
+}
+function doSearch(){const q=document.getElementById('si').value.trim();if(q.length>=2)suggest(q);}
+function selectApt(name,lc,loc){
+  document.getElementById('si').value=name;
+  document.getElementById('dd').style.display='none';
+  document.getElementById('navApt').textContent=name;
+  document.getElementById('navLoc').textContent=loc;
+  lawdCd=lc; allTrades=[];
+  loadTrades(name);
+}
+
+async function loadTrades(aptName){
+  document.getElementById('tradeList').innerHTML='<div class="status-msg"><span class="spin"></span><br>조회중…</div>';
+  ['ptabs','statsRow','listHd'].forEach(id=>document.getElementById(id).style.display='none');
+  const months=[ym(0),ym(1),ym(2),ym(3),ym(4),ym(5)];
+  const nameKey=(aptName||'').replace(/\s/g,'').slice(0,4);
+  const results=await Promise.all(months.map(async m=>{
+    try{const r=await fetch(`${API}/realestate/trade?lawd_cd=${lawdCd}&deal_ymd=${m}`);if(!r.ok)return[];const d=await r.json();return(d.items||[]).filter(t=>(t.aptNm||'').replace(/\s/g,'').includes(nameKey));}catch{return[];}
+  }));
+  allTrades=results.flat().map(t=>({area:parseFloat(t.excluUseAr||0),floor:parseInt(t.floor||0),price:parseInt((t.dealAmount||'0').replace(/,/g,''),10),date:`${t.dealYear}-${String(t.dealMonth).padStart(2,'0')}-${String(t.dealDay).padStart(2,'0')}`})).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(!allTrades.length){document.getElementById('tradeList').innerHTML='<div class="status-msg">최근 6개월 거래 내역이 없어요</div>';return;}
+  const pyeongs=[...new Set(allTrades.map(t=>Math.round(t.area/3.305785)))].sort((a,b)=>a-b);
+  activePy=pyeongs[0];
+  renderPtabs(pyeongs);
+  renderStats();renderList();
+  document.getElementById('listHd').style.display='grid';
+}
+
+function renderPtabs(pys){
+  const el=document.getElementById('ptabs');el.style.display='flex';
+  el.innerHTML=pys.map(p=>`<button class="ptab ${p===activePy?'active':''}" onclick="switchPy(${p},this)">${p}평</button>`).join('');
+}
+function switchPy(p,btn){activePy=p;document.querySelectorAll('.ptab').forEach(b=>b.classList.toggle('active',b===btn));renderStats();renderList();}
+function filtered(){return allTrades.filter(t=>Math.round(t.area/3.305785)===activePy);}
+
+function renderStats(){
+  const list=filtered();if(!list.length){document.getElementById('statsRow').style.display='none';return;}
+  document.getElementById('statsRow').style.display='grid';
+  const prices=list.map(t=>t.price),latest=list[0].price,prev=list[1]?.price;
+  const diff=prev?latest-prev:0,pct=prev?((diff/prev)*100).toFixed(1):0;
+  const vol=list.length,intensity=Math.min(100,Math.max(15,50+(pct>0?20:pct<0?-20:0)+(vol>5?15:vol<2?-15:0)));
+  const ic=intensity>=60?'#10b981':intensity>=35?'#f59e0b':'#bbb';
+  const il=intensity>=60?'강함 🔥':intensity>=35?'보통 ⚡':'약함';
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat-card"><div class="stat-lbl">최근 거래가</div><div class="stat-val" style="color:var(--accent)">${fmt(latest)}</div><div class="stat-sub">${fd(list[0].date)}</div></div>
+    <div class="stat-card"><div class="stat-lbl">전건 대비</div><div class="stat-val ${diff>=0?'ch-up':'ch-dn'}">${diff===0?'—':diff>0?`▲ ${fmt(Math.abs(diff))}`:`▼ ${fmt(Math.abs(diff))}`}</div><div class="stat-sub">${diff>=0?'+':''}${pct}%</div></div>
+    <div class="stat-card"><div class="stat-lbl">🏔 전고점</div><div class="stat-val" style="color:#bbb">${fmt(Math.max(...prices))}</div><div class="stat-sub">조회 기간 내</div></div>
+    <div class="stat-card"><div class="stat-lbl">매매 강도</div><div class="stat-val" style="font-size:.82rem;color:${ic}">${il}</div><div class="mini-g"><div class="mini-f" style="width:${intensity}%;background:${ic}"></div></div></div>`;
+}
+
+function renderList(){
+  const list=filtered();
+  if(!list.length){document.getElementById('tradeList').innerHTML='<div class="status-msg">이 평형 거래 내역이 없어요</div>';return;}
+  document.getElementById('tradeList').innerHTML=list.map((t,i)=>{
+    const prev=list[i+1],diff=prev?t.price-prev.price:0;
+    const ch=!prev?'<span class="ch-flat">—</span>':diff>0?`<span class="ch-up">▲ ${fmt(diff)}</span>`:diff<0?`<span class="ch-dn">▼ ${fmt(Math.abs(diff))}</span>`:'<span class="ch-flat">—</span>';
+    return `<div class="tr-row"><div class="tr-date"><strong>${fd(t.date)}</strong></div><div class="tr-area">${t.area.toFixed(1)}㎡<small>${Math.round(t.area/3.305785)}평</small></div><div class="tr-floor">${t.floor}층</div><div class="tr-price">${fmt(t.price)}</div><div class="tr-chg">${ch}</div></div>`;
+  }).join('');
+}
+
+// URL 파라미터로 자동 로드
+const params=new URLSearchParams(location.search);
+const initLawdCd=params.get('lawdCd'),initName=decodeURIComponent(params.get('name')||'');
+if(initLawdCd&&initName){lawdCd=initLawdCd;document.getElementById('si').value=initName;document.getElementById('navApt').textContent=initName;loadTrades(initName);}
+
+document.addEventListener('click',e=>{const dd=document.getElementById('dd');if(!dd.contains(e.target)&&!e.target.closest('.search-bar'))dd.style.display='none';});
+</script>
+</body>
+</html>
