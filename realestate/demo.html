@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>부동산 대시보드 — 데모</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --accent:#f97316; --accent2:#fb923c;
+      --text:#1a1a1a; --muted:#888; --border:#e8e8ec;
+      --bg:#f4f4f5; --white:#fff; --radius:16px;
+      --up:#10b981; --down:#ef4444;
+    }
+    body { background:var(--bg); font-family:'Pretendard',system-ui,sans-serif; color:var(--text); min-height:100vh; padding-bottom:40px; }
+
+    /* ── Header ── */
+    .header {
+      background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);
+      padding:16px 20px 0;
+      position:sticky; top:0; z-index:10;
+    }
+    .header-top { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .back-btn { font-size:0.78rem; color:#aaa; text-decoration:none; padding:5px 12px; border:1px solid #444; border-radius:20px; }
+    .header-title { font-size:0.95rem; font-weight:800; color:#fff; flex:1; }
+    .demo-badge { font-size:0.68rem; font-weight:700; background:#f97316; color:#fff; padding:3px 8px; border-radius:8px; }
+    .nav { display:flex; gap:0; overflow-x:auto; scrollbar-width:none; }
+    .nav::-webkit-scrollbar { display:none; }
+    .nav-btn { padding:10px 18px; font-size:0.82rem; font-weight:600; color:#666; border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:inherit; transition:color 0.2s; }
+    .nav-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+    .main { max-width:680px; margin:0 auto; padding:20px 16px; }
+
+    /* ── 우리집 섹션 ── */
+    .home-section {
+      background:var(--white);
+      border-radius:20px;
+      overflow:hidden;
+      margin-bottom:20px;
+      box-shadow:0 2px 16px rgba(0,0,0,0.07);
+    }
+    .home-header {
+      background:linear-gradient(135deg,#1a1a1a,#333);
+      padding:20px;
+      color:#fff;
+    }
+    .home-label { font-size:0.72rem; font-weight:700; color:var(--accent); background:rgba(249,115,22,0.15); padding:3px 10px; border-radius:8px; display:inline-block; margin-bottom:10px; }
+    .home-name { font-size:1.3rem; font-weight:900; margin-bottom:2px; }
+    .home-location { font-size:0.78rem; color:#aaa; margin-bottom:16px; }
+    .home-latest { display:flex; align-items:baseline; gap:8px; }
+    .home-price { font-size:2rem; font-weight:900; color:#fff; letter-spacing:-0.03em; }
+    .home-price-sub { font-size:0.8rem; color:#aaa; }
+    .home-stats { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    .home-stat { background:rgba(255,255,255,0.08); border-radius:10px; padding:8px 12px; flex:1; min-width:100px; }
+    .home-stat-label { font-size:0.65rem; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
+    .home-stat-val { font-size:0.9rem; font-weight:800; color:#fff; }
+    .home-stat-sub { font-size:0.65rem; color:#666; margin-top:1px; }
+    .home-stat.peak .home-stat-val { color:#fbbf24; }
+    .chart-tab-btn { font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:8px; border:1px solid #ddd; background:none; color:#aaa; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .chart-tab-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+    .pyeong-tabs { display:flex; gap:6px; margin-top:14px; }
+    .pyeong-btn { font-size:0.78rem; font-weight:700; padding:5px 14px; border-radius:10px; border:1px solid #444; background:none; color:#aaa; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .pyeong-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+    .home-chart-wrap { padding:20px 20px 16px; }
+    .home-chart-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .home-chart-title { font-size:0.82rem; font-weight:700; color:var(--muted); }
+    .home-chart-period { font-size:0.75rem; color:#bbb; }
+    .chart-container { position:relative; height:180px; }
+
+    /* ── 관심단지 ── */
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .section-title { font-size:0.9rem; font-weight:800; }
+    .section-count { font-size:0.78rem; color:var(--muted); }
+
+    .watch-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+    .watch-card {
+      background:var(--white);
+      border-radius:var(--radius);
+      padding:16px;
+      cursor:pointer;
+      transition:transform 0.2s, box-shadow 0.2s;
+      box-shadow:0 1px 4px rgba(0,0,0,0.05);
+      position:relative;
+      overflow:hidden;
+    }
+    .watch-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.1); }
+    .watch-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .watch-card.up::before { background:linear-gradient(90deg,var(--up),#34d399); }
+    .watch-card.down::before { background:linear-gradient(90deg,var(--down),#f87171); }
+    .watch-card.flat::before { background:linear-gradient(90deg,#888,#aaa); }
+
+    .watch-card-name { font-size:0.88rem; font-weight:900; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .watch-card-loc { font-size:0.7rem; color:var(--muted); margin-bottom:10px; }
+    .watch-card-pyeong { display:inline-block; font-size:0.7rem; font-weight:700; background:var(--bg); padding:2px 8px; border-radius:6px; color:var(--muted); margin-bottom:10px; }
+
+    .sparkline-wrap { height:44px; margin-bottom:10px; }
+    svg.sparkline { width:100%; height:100%; }
+
+    .watch-price { font-size:1.1rem; font-weight:900; margin-bottom:3px; }
+    .watch-change { display:flex; align-items:center; gap:4px; font-size:0.75rem; font-weight:700; }
+    .watch-change.up { color:var(--up); }
+    .watch-change.down { color:var(--down); }
+    .watch-change.flat { color:var(--muted); }
+    .watch-date { font-size:0.68rem; color:#ccc; margin-top:3px; }
+
+    .arrow-icon { font-size:0.72rem; position:absolute; bottom:12px; right:14px; color:#ddd; }
+
+    /* ── 수익률 카드 ── */
+    .profit-card {
+      background:var(--white); border-radius:20px; padding:20px;
+      margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,0.06);
+    }
+    .profit-title { font-size:0.82rem; font-weight:800; margin-bottom:14px; display:flex; align-items:center; gap:6px; }
+    .profit-inputs { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:14px; }
+    .profit-input-wrap { display:flex; flex-direction:column; gap:4px; }
+    .profit-label { font-size:0.68rem; font-weight:600; color:var(--muted); }
+    .profit-input { padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:0.82rem; font-family:inherit; outline:none; width:100%; }
+    .profit-input:focus { border-color:var(--accent); }
+    .profit-result { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; padding-top:14px; border-top:1px solid #f0f0f4; }
+    .profit-result-item { text-align:center; }
+    .profit-result-label { font-size:0.65rem; color:var(--muted); font-weight:600; margin-bottom:3px; }
+    .profit-result-val { font-size:0.9rem; font-weight:900; }
+
+    @media(max-width:480px) {
+      .profit-inputs { grid-template-columns:1fr 1fr; }
+      .profit-result { grid-template-columns:1fr 1fr 1fr; }
+    }
+      .watch-grid { grid-template-columns:1fr 1fr; gap:8px; }
+      .watch-card { padding:12px; }
+      .watch-card-name { font-size:0.82rem; }
+      .home-price { font-size:1.6rem; }
+    }
+  </style>
+</head>
+<script>if (!sessionStorage.getItem('_re_tok')) location.replace('index.html');</script>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <a href="../index.html" onclick="event.preventDefault();location.href='../index.html?_='+Date.now()" class="back-btn">← 홈</a>
+    <span class="header-title">🏠 부동산</span>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="">대시보드</button>
+    <button class="nav-btn" onclick="location.href='trade-demo.html'">실거래가</button>
+    <a href="map.html" class="nav-btn" style="text-decoration:none">🗺 지도</a>
+  </nav>
+</header>
+
+<main class="main">
+
+  <!-- 우리집 -->
+  <div class="home-section">
+    <div class="home-header">
+      <div class="home-label">🏠 우리집</div>
+      <div class="home-name">힐스테이트 기흥</div>
+      <div class="home-location">경기도 용인시 기흥구 · 언남동</div>
+      <div class="home-latest">
+        <span class="home-price" id="homePrice">16억 5,000만</span>
+        <span class="home-price-sub">2025.04 최근 거래</span>
+      </div>
+      <div class="pyeong-tabs">
+        <button class="pyeong-btn active" onclick="switchPyeong(25,this)">25평</button>
+        <button class="pyeong-btn" onclick="switchPyeong(34,this)">34평</button>
+        <button class="pyeong-btn" onclick="switchPyeong(45,this)">45평</button>
+      </div>
+      <div class="home-stats">
+        <div class="home-stat">
+          <div class="home-stat-label">최근 거래</div>
+          <div class="home-stat-val" id="statLatest">16억 5,000만</div>
+          <div class="home-stat-sub" id="statLatestDate">2025.04</div>
+        </div>
+        <div class="home-stat peak">
+          <div class="home-stat-label">🏔 전고점</div>
+          <div class="home-stat-val" id="statPeak">16억 5,000만</div>
+          <div class="home-stat-sub" id="statPeakDate">2025.04</div>
+        </div>
+        <div class="home-stat">
+          <div class="home-stat-label">전고점 대비</div>
+          <div class="home-stat-val" id="statVsPeak" style="color:#10b981">전고점</div>
+          <div class="home-stat-sub" id="statVsPeakPct"></div>
+        </div>
+      </div>
+    </div>
+    <div class="home-chart-wrap">
+      <div class="home-chart-meta">
+        <div style="display:flex;gap:6px">
+          <button class="chart-tab-btn active" id="btnTrend" onclick="switchChartTab('trend')">추이</button>
+          <button class="chart-tab-btn" id="btnDist" onclick="switchChartTab('dist')">가격 분포</button>
+          <button class="chart-tab-btn" id="btnJeonse" onclick="switchChartTab('jeonse')">전세가율</button>
+        </div>
+        <span class="home-chart-period" id="chartPeriodLabel">최근 12개월</span>
+      </div>
+      <div class="chart-container" id="trendWrap">
+        <canvas id="homeChart"></canvas>
+      </div>
+      <div style="display:flex;gap:14px;margin-top:10px;font-size:0.72rem;color:#aaa">
+        <span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:20px;height:2px;background:#f97316;border-radius:2px"></span>실거래가</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:20px;height:2px;background:rgba(251,191,36,0.7);border-radius:2px;border-bottom:2px dashed rgba(251,191,36,0.7)"></span>전고점</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:20px;height:0;border-bottom:2px dashed rgba(59,130,246,0.7)"></span>내 매수가</span>
+      </div>
+      <div class="chart-container" id="distWrap" style="display:none">
+        <canvas id="distChart"></canvas>
+      </div>
+      <div class="chart-container" id="jeonseWrap" style="display:none">
+        <canvas id="jeonseChart"></canvas>
+      </div>
+      <div id="distLegend" style="display:none;gap:14px;margin-top:10px;font-size:0.72rem;color:#aaa">
+        <span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:12px;height:12px;background:#f97316;border-radius:3px"></span>최근 거래</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:12px;height:12px;background:#3b82f6;border-radius:3px"></span>내 매수가</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:12px;height:12px;background:#e8e8ec;border-radius:3px"></span>기타</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 수익률 계산 -->
+  <div class="profit-card">
+    <div class="profit-title">💰 수익률 계산</div>
+    <div class="profit-inputs">
+      <div class="profit-input-wrap">
+        <span class="profit-label">취득가 (만원)</span>
+        <input class="profit-input" id="pBuy" value="153000" oninput="calcProfit()">
+      </div>
+      <div class="profit-input-wrap">
+        <span class="profit-label">취득세 (%)</span>
+        <input class="profit-input" id="pAcqTax" value="1.1" oninput="calcProfit()">
+      </div>
+      <div class="profit-input-wrap">
+        <span class="profit-label">중개수수료 (%)</span>
+        <input class="profit-input" id="pAgentFee" value="0.4" oninput="calcProfit()">
+      </div>
+    </div>
+    <div class="profit-result">
+      <div class="profit-result-item">
+        <div class="profit-result-label">매수원가</div>
+        <div class="profit-result-val" id="prCost" style="color:var(--text)">—</div>
+      </div>
+      <div class="profit-result-item">
+        <div class="profit-result-label">예상 수익</div>
+        <div class="profit-result-val" id="prGain">—</div>
+      </div>
+      <div class="profit-result-item">
+        <div class="profit-result-label">수익률</div>
+        <div class="profit-result-val" id="prPct">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관심단지 -->
+  <div class="section-header">
+    <span class="section-title">관심단지</span>
+    <span class="section-count">4개 단지</span>
+  </div>
+
+  <div class="watch-grid">
+
+    <div class="watch-card up" onclick="goTrade('래미안 서초 에스티지')">
+      <div class="watch-card-name">래미안 서초 에스티지</div>
+      <div class="watch-card-loc">서울 서초구 반포동</div>
+      <div class="watch-card-pyeong">25평 (84㎡)</div>
+      <div class="sparkline-wrap">
+        <svg class="sparkline" viewBox="0 0 100 44" preserveAspectRatio="none">
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+          </linearGradient></defs>
+          <polygon points="0,32 14,28 28,30 42,24 57,20 71,16 85,12 100,8 100,44 0,44" fill="url(#g1)"/>
+          <polyline points="0,32 14,28 28,30 42,24 57,20 71,16 85,12 100,8" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="8" r="3" fill="#10b981"/>
+        </svg>
+      </div>
+      <div class="watch-price">22억</div>
+      <div class="watch-change up">▲ +5,000만 <span style="font-weight:400">(+2.3%)</span></div>
+      <div class="watch-date">2025.04.18</div>
+      <span class="arrow-icon">→</span>
+    </div>
+
+    <div class="watch-card down" onclick="goTrade('반포 자이')">
+      <div class="watch-card-name">반포 자이</div>
+      <div class="watch-card-loc">서울 서초구 반포동</div>
+      <div class="watch-card-pyeong">34평 (112㎡)</div>
+      <div class="sparkline-wrap">
+        <svg class="sparkline" viewBox="0 0 100 44" preserveAspectRatio="none">
+          <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ef4444" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+          </linearGradient></defs>
+          <polygon points="0,8 14,10 28,12 42,14 57,16 71,20 85,24 100,28 100,44 0,44" fill="url(#g2)"/>
+          <polyline points="0,8 14,10 28,12 42,14 57,16 71,20 85,24 100,28" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="28" r="3" fill="#ef4444"/>
+        </svg>
+      </div>
+      <div class="watch-price">35억</div>
+      <div class="watch-change down">▼ -2,000만 <span style="font-weight:400">(-0.6%)</span></div>
+      <div class="watch-date">2025.04.08</div>
+      <span class="arrow-icon">→</span>
+    </div>
+
+    <div class="watch-card up" onclick="goTrade('잠실 엘스')">
+      <div class="watch-card-name">잠실 엘스</div>
+      <div class="watch-card-loc">서울 송파구 잠실동</div>
+      <div class="watch-card-pyeong">25평 (84㎡)</div>
+      <div class="sparkline-wrap">
+        <svg class="sparkline" viewBox="0 0 100 44" preserveAspectRatio="none">
+          <defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f97316" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
+          </linearGradient></defs>
+          <polygon points="0,28 14,24 28,26 42,22 57,24 71,18 85,14 100,10 100,44 0,44" fill="url(#g3)"/>
+          <polyline points="0,28 14,24 28,26 42,22 57,24 71,18 85,14 100,10" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="10" r="3" fill="#f97316"/>
+        </svg>
+      </div>
+      <div class="watch-price">21억 5,000만</div>
+      <div class="watch-change up">▲ +3,000만 <span style="font-weight:400">(+1.4%)</span></div>
+      <div class="watch-date">2025.04.22</div>
+      <span class="arrow-icon">→</span>
+    </div>
+
+    <div class="watch-card flat" onclick="goTrade('판교 더샵 퍼스트파크')">
+      <div class="watch-card-name">판교 더샵 퍼스트파크</div>
+      <div class="watch-card-loc">경기 성남 분당구</div>
+      <div class="watch-card-pyeong">34평 (112㎡)</div>
+      <div class="sparkline-wrap">
+        <svg class="sparkline" viewBox="0 0 100 44" preserveAspectRatio="none">
+          <defs><linearGradient id="g4" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#888" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#888" stop-opacity="0"/>
+          </linearGradient></defs>
+          <polygon points="0,22 14,24 28,20 42,22 57,20 71,22 85,20 100,22 100,44 0,44" fill="url(#g4)"/>
+          <polyline points="0,22 14,24 28,20 42,22 57,20 71,22 85,20 100,22" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="22" r="3" fill="#aaa"/>
+        </svg>
+      </div>
+      <div class="watch-price">19억</div>
+      <div class="watch-change flat">— 변동없음</div>
+      <div class="watch-date">2025.04.05</div>
+      <span class="arrow-icon">→</span>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+// 샘플 데이터
+const DATA = {
+  25: {
+    prices:  [14.5,15.0,14.8,15.3,15.5,15.8,16.0,16.2,15.9,16.3,16.5,16.5],
+    volumes: [4,6,3,8,11,9,14,10,7,12,18,15],
+    jeonse:  [68,67,69,66,65,64,63,62,63,61,60,59],
+    latest: '16억 5,000만', myPrice: 15.3,
+    dist: { labels:['13억대','14억대','15억대','16억대','17억대','18억 이상'], counts:[2,8,19,24,11,4], current:3, myBand:2 }
+  },
+  34: {
+    prices:  [19.0,19.5,20.0,20.2,19.8,20.5,21.0,21.5,21.0,21.8,22.0,22.3],
+    volumes: [2,3,5,7,4,8,10,7,5,9,12,9],
+    jeonse:  [55,54,56,53,52,51,50,51,49,48,47,46],
+    latest: '22억 3,000만', myPrice: 20.2,
+    dist: { labels:['18억대','19억대','20억대','21억대','22억대','23억 이상'], counts:[3,11,22,18,14,6], current:4, myBand:2 }
+  },
+  45: {
+    prices:  [25.0,25.5,26.0,26.5,26.0,27.0,27.5,28.0,27.5,28.2,28.5,29.0],
+    volumes: [1,2,2,3,2,4,5,4,3,5,6,4],
+    jeonse:  [50,49,50,48,47,46,45,46,44,43,42,41],
+    latest: '29억', myPrice: 26.5,
+    dist: { labels:['24억대','25억대','26억대','27억대','28억대','29억 이상'], counts:[1,5,13,16,12,7], current:5, myBand:2 }
+  }
+};
+
+const months = ['24.05','24.06','24.07','24.08','24.09','24.10','24.11','24.12','25.01','25.02','25.03','25.04'];
+let homeChartInst = null;
+
+// 월별 거래 건건이 산점도 데이터 생성 (jitter + spread)
+const JITTER = [0.05,-0.08,0.15,-0.15,0.08,-0.05,0.2,-0.2,0.12,-0.12,0.25,-0.25,0.3,-0.3,0.18,-0.18];
+const SPREAD = [0,-0.05,0.1,-0.1,0.15,-0.15,0.05,-0.05,0.12,-0.08,0.07,-0.07,0.03,0.18,-0.03,-0.12];
+function genDots(prices, volumes) {
+  const dots = [];
+  prices.forEach((avg, mi) => {
+    for (let j = 0; j < volumes[mi]; j++) {
+      dots.push({ x: mi + JITTER[j % JITTER.length], y: +(avg + SPREAD[j % SPREAD.length]).toFixed(2) });
+    }
+  });
+  return dots;
+}
+
+function fmtBillion(v) {
+  const e = Math.floor(v), r = Math.round((v - e) * 10000);
+  return r === 0 ? `${e}억` : `${e}억 ${r.toLocaleString()}만`;
+}
+
+function updateStats(pyeong) {
+  const d = DATA[pyeong];
+  const prices = d.prices;
+  const maxVal = Math.max(...prices);
+  const maxIdx = prices.indexOf(maxVal);
+  const latest = prices[prices.length - 1];
+  const diff = latest - maxVal;
+  const pct = ((diff / maxVal) * 100).toFixed(1);
+
+  document.getElementById('statLatest').textContent = fmtBillion(latest);
+  document.getElementById('statLatestDate').textContent = months[prices.length - 1];
+  document.getElementById('statPeak').textContent = fmtBillion(maxVal);
+  document.getElementById('statPeakDate').textContent = months[maxIdx];
+  document.getElementById('statLatest').textContent = d.latest;
+
+  if (Math.abs(diff) < 0.001) {
+    document.getElementById('statVsPeak').textContent = '현재 전고점';
+    document.getElementById('statVsPeak').style.color = '#fbbf24';
+    document.getElementById('statVsPeakPct').textContent = '';
+  } else {
+    const sign = diff >= 0 ? '+' : '';
+    document.getElementById('statVsPeak').textContent = `${sign}${fmtBillion(Math.abs(diff))}`;
+    document.getElementById('statVsPeak').style.color = diff >= 0 ? '#10b981' : '#f87171';
+    document.getElementById('statVsPeakPct').textContent = `${sign}${pct}%`;
+  }
+}
+
+function buildChart(pyeong) {
+  const d = DATA[pyeong];
+  const peakVal = Math.max(...d.prices);
+  const ctx = document.getElementById('homeChart').getContext('2d');
+  if (homeChartInst) homeChartInst.destroy();
+  homeChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      datasets: [
+        // ① 산점도 — 거래 건건이
+        {
+          type: 'scatter', label: '거래',
+          data: genDots(d.prices, d.volumes),
+          backgroundColor: 'rgba(249,115,22,0.35)',
+          pointRadius: 5, pointHoverRadius: 7,
+          order: 1,
+        },
+        // ② 평균 추이선
+        {
+          type: 'line',
+          data: d.prices.map((y, x) => ({x, y})),
+          borderColor: '#f97316',
+          backgroundColor: (ctx) => {
+            const {ctx:c, chartArea} = ctx.chart;
+            if (!chartArea) return 'transparent';
+            const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+            g.addColorStop(0,'rgba(249,115,22,0.18)'); g.addColorStop(1,'rgba(249,115,22,0)');
+            return g;
+          },
+          fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0, order: 2,
+        },
+        // ③ 전고점 점선
+        {
+          type: 'line',
+          data: months.map((_,x) => ({x, y: peakVal})),
+          borderColor: 'rgba(251,191,36,0.65)', borderWidth: 1.5, borderDash: [5,4],
+          pointRadius: 0, fill: false, order: 3,
+        },
+        // ④ 내 매수가 점선
+        {
+          type: 'line',
+          data: months.map((_,x) => ({x, y: d.myPrice})),
+          borderColor: 'rgba(59,130,246,0.7)', borderWidth: 1.5, borderDash: [5,4],
+          pointRadius: 0, fill: false, order: 4,
+        },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          filter: item => item.datasetIndex <= 1,
+          callbacks: {
+            title: ctx => months[Math.round(ctx[0]?.parsed?.x ?? 0)],
+            label: ctx => ctx.datasetIndex === 0
+              ? ` ${fmtBillion(ctx.parsed.y)}`
+              : ` 월평균 ${fmtBillion(ctx.parsed.y)}`,
+          },
+          backgroundColor: '#1a1a1a', titleColor: '#aaa', bodyColor: '#fff',
+          padding: 10, cornerRadius: 8,
+        }
+      },
+      scales: {
+        x: {
+          type: 'linear', min: -0.5, max: months.length - 0.5,
+          grid: { display: false },
+          ticks: {
+            stepSize: 1, font: { family: 'Pretendard', size: 10 }, color: '#bbb',
+            callback: v => months[v] || '',
+          }
+        },
+        y: {
+          grid: { color: '#f0f0f4' },
+          ticks: { font: { family: 'Pretendard', size: 10 }, color: '#bbb', callback: v => `${v}억` }
+        }
+      },
+      interaction: { intersect: false, mode: 'x' }
+    }
+  });
+}
+
+let distChartInst = null;
+let activePyeong = 25;
+
+function buildDistChart(pyeong) {
+  const d = DATA[pyeong].dist;
+  const colors = d.labels.map((_, i) =>
+    i === d.current ? '#f97316' : i === d.myBand ? '#3b82f6' : '#e8e8ec'
+  );
+  const ctx = document.getElementById('distChart').getContext('2d');
+  if (distChartInst) distChartInst.destroy();
+  distChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [{
+        data: d.counts,
+        backgroundColor: colors,
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.parsed.y}건`,
+            title: ctx => ctx[0].label + (ctx[0].dataIndex === d.current ? ' ← 최근 거래' : ''),
+          },
+          backgroundColor: '#1a1a1a', titleColor: '#f97316', bodyColor: '#fff',
+          padding: 10, cornerRadius: 8,
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'Pretendard', size: 10 }, color: '#aaa' } },
+        y: {
+          grid: { color: '#f0f0f4' },
+          ticks: { font: { family: 'Pretendard', size: 10 }, color: '#bbb', callback: v => `${v}건` },
+          beginAtZero: true,
+        }
+      }
+    }
+  });
+}
+
+let jeonseChartInst = null;
+
+function buildJeonseChart(pyeong) {
+  const d = DATA[pyeong];
+  const ctx = document.getElementById('jeonseChart').getContext('2d');
+  if (jeonseChartInst) jeonseChartInst.destroy();
+  jeonseChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [{
+        data: d.jeonse,
+        borderColor: '#8b5cf6',
+        backgroundColor: (c) => {
+          const chart = c.chart; const {ctx:cx, chartArea} = chart;
+          if (!chartArea) return 'transparent';
+          const g = cx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          g.addColorStop(0, 'rgba(139,92,246,0.2)'); g.addColorStop(1, 'rgba(139,92,246,0)');
+          return g;
+        },
+        fill: true, tension: 0.4, borderWidth: 2.5,
+        pointRadius: 3, pointBackgroundColor: '#8b5cf6', pointBorderColor: '#fff', pointBorderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: ctx => ` 전세가율 ${ctx.parsed.y}%` },
+          backgroundColor: '#1a1a1a', titleColor: '#aaa', bodyColor: '#fff', padding: 10, cornerRadius: 8,
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'Pretendard', size: 10 }, color: '#bbb' } },
+        y: {
+          grid: { color: '#f0f0f4' },
+          min: 30, max: 80,
+          ticks: { font: { family: 'Pretendard', size: 10 }, color: '#bbb', callback: v => `${v}%` }
+        }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
+}
+
+function calcProfit() {
+  const buy = parseFloat(document.getElementById('pBuy').value) || 0;
+  const acq = parseFloat(document.getElementById('pAcqTax').value) || 0;
+  const fee = parseFloat(document.getElementById('pAgentFee').value) || 0;
+  const d = DATA[activePyeong];
+  const currentManwon = Math.round(d.myPrice * 10000); // 현재 시세 (샘플: 최근거래가 기준)
+  const latestManwon = Math.round(parseFloat(d.prices[d.prices.length-1]) * 10000);
+
+  const cost = Math.round(buy * (1 + acq/100 + fee/100));
+  const gain = latestManwon - cost;
+  const pct = cost > 0 ? ((gain / cost) * 100).toFixed(1) : 0;
+
+  function fmt(v) {
+    const sign = v >= 0 ? '+' : '-'; const abs = Math.abs(v);
+    const e = Math.floor(abs/10000), r = abs%10000;
+    const s = e === 0 ? `${r.toLocaleString()}만` : (r === 0 ? `${e}억` : `${e}억 ${r.toLocaleString()}만`);
+    return v === 0 ? s : sign + s;
+  }
+
+  document.getElementById('prCost').textContent = fmt(cost).replace('+','').replace('-','');
+  document.getElementById('prGain').textContent = fmt(gain);
+  document.getElementById('prGain').style.color = gain >= 0 ? '#10b981' : '#ef4444';
+  document.getElementById('prPct').textContent = `${gain >= 0 ? '+' : ''}${pct}%`;
+  document.getElementById('prPct').style.color = gain >= 0 ? '#10b981' : '#ef4444';
+}
+
+function switchChartTab(tab) {
+  ['trend','dist','jeonse'].forEach(t => {
+    const wrap = document.getElementById(t === 'trend' ? 'trendWrap' : t === 'dist' ? 'distWrap' : 'jeonseWrap');
+    const btn = document.getElementById('btn' + t.charAt(0).toUpperCase() + t.slice(1));
+    wrap.style.display = t === tab ? '' : 'none';
+    btn.classList.toggle('active', t === tab);
+  });
+  const labels = { trend: '최근 12개월', dist: '최근 6개월 거래 분포', jeonse: '최근 12개월 전세가율' };
+  document.getElementById('chartPeriodLabel').textContent = labels[tab];
+  document.getElementById('distLegend').style.display = tab === 'dist' ? 'flex' : 'none';
+  if (tab === 'dist') buildDistChart(activePyeong);
+  if (tab === 'jeonse') buildJeonseChart(activePyeong);
+}
+
+function switchPyeong(p, btn) {
+  activePyeong = p;
+  document.querySelectorAll('.pyeong-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('homePrice').textContent = DATA[p].latest;
+  buildChart(p);
+  updateStats(p);
+  calcProfit();
+  if (!document.getElementById('trendWrap').style.display || document.getElementById('trendWrap').style.display === '') {
+    // trend is visible, dist will rebuild on next tab switch
+  } else {
+    buildDistChart(p);
+  }
+}
+
+function goTrade(name) {
+  location.href = 'trade-demo.html';
+}
+
+buildChart(25);
+updateStats(25);
+calcProfit();
+</script>
+</body>
+</html>
