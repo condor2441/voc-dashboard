@@ -118,7 +118,7 @@
     if (hash === PW_HASH) {
       saveAttemptState({});
       sessionStorage.setItem('_re_tok', crypto.randomUUID());
-      window.location.href = 'demo.html';
+      window.location.href = 'dashboard.html';
     } else {
       const state = getAttemptState();
       const attempts = (state.attempts || 0) + 1;
