@@ -14,30 +14,34 @@
     }
     body { background:var(--bg); font-family:'Pretendard',system-ui,sans-serif; color:var(--text); min-height:100vh; padding-bottom:40px; }
 
-    /* ── Header ── */
     .header { background:linear-gradient(135deg,#1a1a1a,#2d2d2d); padding:16px 20px; position:sticky; top:0; z-index:10; }
     .header-top { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
-    .back-btn { font-size:0.78rem; color:#aaa; text-decoration:none; padding:5px 12px; border:1px solid #444; border-radius:20px; transition:color 0.2s,border-color 0.2s; }
+    .back-btn { font-size:0.78rem; color:#aaa; text-decoration:none; padding:5px 12px; border:1px solid #444; border-radius:20px; }
     .back-btn:hover { color:#fff; border-color:#888; }
     .header-apt { font-size:1rem; font-weight:900; color:#fff; flex:1; }
     .header-loc { font-size:0.72rem; color:#777; }
-    .search-bar { display:flex; gap:8px; }
-    .search-input { flex:1; background:rgba(255,255,255,0.08); border:1px solid #444; border-radius:10px; padding:10px 14px; font-size:0.85rem; font-family:inherit; color:#fff; outline:none; transition:border-color 0.2s; }
+    .search-bar { display:flex; gap:8px; position:relative; }
+    .search-input { flex:1; background:rgba(255,255,255,0.08); border:1px solid #444; border-radius:10px; padding:10px 14px; font-size:0.85rem; font-family:inherit; color:#fff; outline:none; }
     .search-input::placeholder { color:#666; }
     .search-input:focus { border-color:#f97316; }
     .search-btn { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:0 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; }
-    .map-btn { background:rgba(255,255,255,0.08); color:#aaa; border:1px solid #444; border-radius:10px; padding:0 12px; font-size:0.8rem; cursor:pointer; font-family:inherit; white-space:nowrap; text-decoration:none; display:flex; align-items:center; transition:color 0.2s,border-color 0.2s; }
+    .search-btn:disabled { background:#666; cursor:not-allowed; }
+    .map-btn { background:rgba(255,255,255,0.08); color:#aaa; border:1px solid #444; border-radius:10px; padding:0 12px; font-size:0.8rem; cursor:pointer; font-family:inherit; white-space:nowrap; text-decoration:none; display:flex; align-items:center; }
     .map-btn:hover { color:#fff; border-color:#888; }
 
-    .main { max-width:680px; margin:0 auto; padding:16px; }
+    .search-results { position:absolute; top:100%; left:0; right:60px; background:#fff; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.15); z-index:100; overflow:hidden; display:none; max-height:200px; overflow-y:auto; margin-top:4px; }
+    .search-result-item { padding:10px 14px; font-size:0.85rem; cursor:pointer; border-bottom:1px solid #f4f4f5; }
+    .search-result-item:last-child { border-bottom:none; }
+    .search-result-item:hover { background:#fff7ed; }
+    .search-result-name { font-weight:700; color:#1a1a1a; }
+    .search-result-addr { font-size:0.72rem; color:#888; margin-top:2px; }
 
-    /* ── 평형 탭 ── */
+    .main { max-width:680px; margin:0 auto; padding:16px; }
     .pyeong-tabs { display:flex; gap:6px; margin-bottom:14px; overflow-x:auto; scrollbar-width:none; }
     .pyeong-tabs::-webkit-scrollbar { display:none; }
     .ptab { padding:6px 16px; border-radius:20px; border:1px solid var(--border); background:var(--white); font-size:0.8rem; font-weight:700; color:var(--muted); cursor:pointer; font-family:inherit; white-space:nowrap; transition:all 0.15s; }
     .ptab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
 
-    /* ── 통계 카드 ── */
     .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
     .stat-card { background:var(--white); border-radius:var(--radius); padding:12px 10px; text-align:center; border:1px solid var(--border); }
     .stat-label { font-size:0.65rem; font-weight:600; color:var(--muted); margin-bottom:4px; }
@@ -46,12 +50,10 @@
     .stat-val.down { color:var(--down); }
     .stat-sub { font-size:0.62rem; color:#ccc; margin-top:2px; }
 
-    /* ── 거래 리스트 ── */
     .list-header { display:grid; grid-template-columns:2fr 1fr 1fr 1.2fr 0.8fr; gap:8px; padding:8px 14px; background:#f8f8fa; border-radius:10px 10px 0 0; border:1px solid var(--border); border-bottom:none; font-size:0.7rem; font-weight:700; color:var(--muted); }
-    .trade-list { background:var(--white); border:1px solid var(--border); border-radius:0 0 var(--radius) var(--radius); overflow:hidden; }
-    .trade-item { display:grid; grid-template-columns:2fr 1fr 1fr 1.2fr 0.8fr; gap:8px; padding:12px 14px; border-bottom:1px solid #f4f4f5; align-items:center; cursor:pointer; transition:background 0.12s; }
+    .trade-list { background:var(--white); border:1px solid var(--border); border-radius:0 0 var(--radius) var(--radius); overflow:hidden; min-height:80px; }
+    .trade-item { display:grid; grid-template-columns:2fr 1fr 1fr 1.2fr 0.8fr; gap:8px; padding:12px 14px; border-bottom:1px solid #f4f4f5; align-items:center; }
     .trade-item:last-child { border-bottom:none; }
-    .trade-item:hover { background:#fafafa; }
     .trade-item.highlight { background:#fff7ed; }
     .trade-date { font-size:0.78rem; color:var(--muted); }
     .trade-date strong { display:block; font-size:0.85rem; font-weight:800; color:var(--text); }
@@ -63,6 +65,9 @@
     .trade-change.up { color:var(--up); }
     .trade-change.down { color:var(--down); }
     .trade-change.flat { color:#bbb; }
+    .status-msg { text-align:center; padding:32px 20px; color:var(--muted); font-size:0.85rem; }
+    .loading-spinner { display:inline-block; width:16px; height:16px; border:2px solid #e8e8ec; border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
     @media(max-width:480px) {
       .stats-row { grid-template-columns:repeat(2,1fr); }
@@ -80,13 +85,15 @@
   <div class="header-top">
     <a href="dashboard.html" class="back-btn">← 대시보드</a>
     <div style="flex:1">
-      <div class="header-apt" id="aptTitle">힐스테이트 기흥</div>
-      <div class="header-loc">경기도 용인시 기흥구 · 언남동</div>
+      <div class="header-apt" id="aptTitle">아파트를 검색하세요</div>
+      <div class="header-loc" id="aptLoc">—</div>
     </div>
   </div>
   <div class="search-bar">
-    <input class="search-input" id="searchInput" placeholder="다른 단지명 검색…" value="힐스테이트 기흥">
-    <button class="search-btn">검색</button>
+    <input class="search-input" id="searchInput" placeholder="아파트 이름 검색 (예: 힐스테이트 기흥)"
+      oninput="onInput()" onkeydown="if(event.key==='Enter')doSearch()">
+    <div class="search-results" id="searchResults"></div>
+    <button class="search-btn" id="searchBtn" onclick="doSearch()">검색</button>
     <a href="map.html" class="map-btn">🗺 지도</a>
   </div>
 </header>
@@ -94,86 +101,167 @@
 <main class="main">
   <div class="pyeong-tabs" id="pyeongTabs"></div>
   <div class="stats-row" id="statsRow"></div>
-  <div class="list-header">
+  <div class="list-header" id="listHeader" style="display:none">
     <span>날짜</span>
     <span class="col-area">면적</span>
     <span class="col-floor">층</span>
     <span>거래금액</span>
     <span>전월대비</span>
   </div>
-  <div class="trade-list" id="tradeList"></div>
+  <div class="trade-list" id="tradeList">
+    <div class="status-msg">아파트를 검색해서 실거래가를 확인하세요</div>
+  </div>
 </main>
 
 <script>
-const TRADES = [
-  {pyeong:25, area:84.9, floor:8,  price:165000, date:'2025-04-25'},
-  {pyeong:25, area:84.9, floor:15, price:168000, date:'2025-04-18'},
-  {pyeong:25, area:84.9, floor:3,  price:162000, date:'2025-04-10'},
-  {pyeong:25, area:84.9, floor:11, price:166000, date:'2025-04-02'},
-  {pyeong:25, area:84.9, floor:7,  price:161000, date:'2025-03-28'},
-  {pyeong:25, area:84.9, floor:19, price:170000, date:'2025-03-15'},
-  {pyeong:25, area:84.9, floor:5,  price:159000, date:'2025-03-08'},
-  {pyeong:25, area:84.9, floor:12, price:163000, date:'2025-03-01'},
-  {pyeong:25, area:84.9, floor:9,  price:158000, date:'2025-02-22'},
-  {pyeong:25, area:84.9, floor:4,  price:156000, date:'2025-02-11'},
-  {pyeong:25, area:84.9, floor:14, price:160000, date:'2025-02-05'},
-  {pyeong:25, area:84.9, floor:17, price:164000, date:'2025-01-24'},
-  {pyeong:34, area:112.3, floor:10, price:215000, date:'2025-04-22'},
-  {pyeong:34, area:112.3, floor:6,  price:210000, date:'2025-04-14'},
-  {pyeong:34, area:112.3, floor:20, price:223000, date:'2025-04-05'},
-  {pyeong:34, area:112.3, floor:8,  price:208000, date:'2025-03-20'},
-  {pyeong:34, area:112.3, floor:3,  price:205000, date:'2025-03-10'},
-  {pyeong:34, area:112.3, floor:15, price:218000, date:'2025-02-28'},
-  {pyeong:34, area:112.3, floor:11, price:212000, date:'2025-02-15'},
-  {pyeong:34, area:112.3, floor:7,  price:200000, date:'2025-01-30'},
-  {pyeong:45, area:148.2, floor:12, price:285000, date:'2025-04-20'},
-  {pyeong:45, area:148.2, floor:5,  price:278000, date:'2025-03-25'},
-  {pyeong:45, area:148.2, floor:18, price:292000, date:'2025-03-12'},
-  {pyeong:45, area:148.2, floor:9,  price:282000, date:'2025-02-20'},
-  {pyeong:45, area:148.2, floor:14, price:275000, date:'2025-01-15'},
-];
-const MY_PRICE = {25: 153000, 34: null, 45: null};
-let activePyeong = 25;
+const API = location.hostname === 'localhost' ? 'http://localhost:8001' : 'https://api.koo-vis.com';
+let allTrades = [];
+let activePyeong = null;
+let selectedLawdCd = null;
 
-function pyeongs() { return [...new Set(TRADES.map(t=>t.pyeong))].sort((a,b)=>a-b); }
-function filtered() { return TRADES.filter(t=>t.pyeong===activePyeong).sort((a,b)=>new Date(b.date)-new Date(a.date)); }
-function fmt(manwon) { const e=Math.floor(manwon/10000),r=manwon%10000; return e===0?`${r.toLocaleString()}만`:(r===0?`${e}억`:`${e}억 ${r.toLocaleString()}만`); }
-function fmtDate(d) { const dt=new Date(d); return `${dt.getFullYear()-2000}년 ${dt.getMonth()+1}월 ${dt.getDate()}일`; }
-
-function renderTabs() {
-  document.getElementById('pyeongTabs').innerHTML = pyeongs().map(p=>`
-    <button class="ptab ${p===activePyeong?'active':''}" onclick="selectPyeong(${p})">
-      ${p}평 <span style="font-weight:400;font-size:.7rem">(${TRADES.find(t=>t.pyeong===p)?.area}㎡)</span>
-    </button>`).join('');
+function fmt(manwon) {
+  const v = parseInt(String(manwon).replace(/,/g,''), 10);
+  const e = Math.floor(v/10000), r = v%10000;
+  return e===0 ? `${r.toLocaleString()}만` : (r===0 ? `${e}억` : `${e}억 ${r.toLocaleString()}만`);
 }
+function fmtDate(y,m,d) { return `${String(y).slice(2)}년 ${m}월 ${d}일`; }
+function pyeong(sqm) { return `${(parseFloat(sqm)/3.305785).toFixed(0)}평`; }
+
+// ── 검색 자동완성 ──────────────────────────────────────
+let debounceTimer;
+function onInput() {
+  clearTimeout(debounceTimer);
+  const q = document.getElementById('searchInput').value.trim();
+  if (q.length < 2) { document.getElementById('searchResults').style.display='none'; return; }
+  debounceTimer = setTimeout(() => fetchSuggestions(q), 300);
+}
+
+async function fetchSuggestions(q) {
+  try {
+    const res = await fetch(`${API}/realestate/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const el = document.getElementById('searchResults');
+    if (!data.results?.length) { el.style.display='none'; return; }
+    el.style.display = 'block';
+    el.innerHTML = data.results.slice(0,6).map(r => `
+      <div class="search-result-item" onclick="selectApt('${r.aptNm.replace(/'/g,"\\'")}','${r.lawdCd}','${(r.sggNm+' '+r.umdNm).replace(/'/g,"\\'")}')">
+        <div class="search-result-name">${r.aptNm}</div>
+        <div class="search-result-addr">${r.sggNm} ${r.umdNm}</div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (q.length < 2) return;
+  fetchSuggestions(q);
+}
+
+function selectApt(name, lawdCd, loc) {
+  document.getElementById('searchInput').value = name;
+  document.getElementById('searchResults').style.display = 'none';
+  document.getElementById('aptTitle').textContent = name;
+  document.getElementById('aptLoc').textContent = loc;
+  selectedLawdCd = lawdCd;
+  loadTrades(lawdCd, name);
+}
+
+// ── 실거래가 조회 ──────────────────────────────────────
+async function loadTrades(lawdCd, aptName) {
+  document.getElementById('tradeList').innerHTML = '<div class="status-msg"><span class="loading-spinner"></span><br>조회중…</div>';
+  document.getElementById('listHeader').style.display = 'none';
+  document.getElementById('pyeongTabs').innerHTML = '';
+  document.getElementById('statsRow').innerHTML = '';
+
+  const months = [];
+  const now = new Date();
+  for (let i=0; i<6; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    months.push(`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`);
+  }
+
+  try {
+    const results = await Promise.all(months.map(async ym => {
+      const res = await fetch(`${API}/realestate/trade?lawd_cd=${lawdCd}&deal_ymd=${ym}`);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return (data.items||[]).filter(i => (i.aptNm||'').replace(/\s/g,'').includes(aptName.replace(/\s/g,'').slice(0,4)));
+    }));
+    allTrades = results.flat().map(i => ({
+      area: parseFloat(i.excluUseAr||0),
+      floor: parseInt(i.floor||0),
+      price: parseInt((i.dealAmount||'0').replace(/,/g,''),10),
+      date: `${i.dealYear}-${String(i.dealMonth).padStart(2,'0')}-${String(i.dealDay).padStart(2,'0')}`,
+      year: i.dealYear, month: i.dealMonth, day: i.dealDay,
+    })).sort((a,b) => new Date(b.date)-new Date(a.date));
+
+    if (!allTrades.length) {
+      document.getElementById('tradeList').innerHTML = '<div class="status-msg">최근 6개월 거래 내역이 없어요</div>';
+      return;
+    }
+    const pyeongs = [...new Set(allTrades.map(t=>Math.round(t.area/3.305785)))].sort((a,b)=>a-b);
+    activePyeong = pyeongs[0];
+    renderTabs(pyeongs);
+    renderStats();
+    renderList();
+    document.getElementById('listHeader').style.display = 'grid';
+  } catch(e) {
+    document.getElementById('tradeList').innerHTML = `<div class="status-msg" style="color:#ef4444">조회 실패: ${e.message}</div>`;
+  }
+}
+
+function filtered() {
+  return allTrades.filter(t => Math.round(t.area/3.305785)===activePyeong);
+}
+
+function renderTabs(pyeongs) {
+  document.getElementById('pyeongTabs').innerHTML = pyeongs.map(p=>`
+    <button class="ptab ${p===activePyeong?'active':''}" onclick="switchPyeong(${p})">${p}평</button>`).join('');
+}
+
+function switchPyeong(p) {
+  activePyeong = p;
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.toggle('active',parseInt(b.textContent)===p));
+  renderStats(); renderList();
+}
+
 function renderStats() {
-  const list = filtered(); if (!list.length) return;
-  const prices = list.map(t=>t.price); const latest=list[0].price; const prev=list[1]?.price;
-  const diff=prev?latest-prev:0; const pct=prev?((diff/prev)*100).toFixed(1):0;
-  const max=Math.max(...prices); const min=Math.min(...prices);
+  const list = filtered();
+  if (!list.length) { document.getElementById('statsRow').innerHTML=''; return; }
+  const prices = list.map(t=>t.price);
+  const latest = list[0].price, prev = list[1]?.price;
+  const diff = prev ? latest-prev : 0, pct = prev ? ((diff/prev)*100).toFixed(1) : 0;
   document.getElementById('statsRow').innerHTML = `
-    <div class="stat-card"><div class="stat-label">최근 거래가</div><div class="stat-val">${fmt(latest)}</div><div class="stat-sub">${fmtDate(list[0].date)}</div></div>
+    <div class="stat-card"><div class="stat-label">최근 거래가</div><div class="stat-val">${fmt(latest)}</div><div class="stat-sub">${list[0].date.replace(/-/g,'.')}</div></div>
     <div class="stat-card"><div class="stat-label">전월 대비</div><div class="stat-val ${diff>=0?'up':'down'}">${diff>=0?'▲':'▼'} ${fmt(Math.abs(diff))}</div><div class="stat-sub">${diff>=0?'+':''}${pct}%</div></div>
-    <div class="stat-card"><div class="stat-label">🏔 전고점</div><div class="stat-val" style="color:#f97316">${fmt(max)}</div><div class="stat-sub">조회기간 내</div></div>
+    <div class="stat-card"><div class="stat-label">🏔 전고점</div><div class="stat-val" style="color:#f97316">${fmt(Math.max(...prices))}</div><div class="stat-sub">최근 6개월</div></div>
     <div class="stat-card"><div class="stat-label">거래량</div><div class="stat-val">${list.length}건</div><div class="stat-sub">최근 6개월</div></div>`;
 }
+
 function renderList() {
-  const list = filtered(); if (!list.length) { document.getElementById('tradeList').innerHTML='<div style="text-align:center;padding:48px 20px;color:#aaa;font-size:.85rem">거래 내역이 없어요</div>'; return; }
-  const myP = MY_PRICE[activePyeong];
+  const list = filtered();
+  if (!list.length) { document.getElementById('tradeList').innerHTML='<div class="status-msg">이 평형 거래 내역이 없어요</div>'; return; }
   document.getElementById('tradeList').innerHTML = list.map((t,i)=>{
-    const prev=list[i+1]; const diff=prev?t.price-prev.price:0;
-    const changeHtml = diff===0||!prev?'<span class="trade-change flat">—</span>':diff>0?`<span class="trade-change up">▲ ${fmt(diff)}</span>`:`<span class="trade-change down">▼ ${fmt(Math.abs(diff))}</span>`;
-    const isMyPrice = myP && Math.abs(t.price-myP)<2000;
-    return `<div class="trade-item ${isMyPrice?'highlight':''}">
-      <div class="trade-date"><strong>${fmtDate(t.date)}</strong>${isMyPrice?'<span style="font-size:.65rem;color:#f97316;font-weight:700">내 매수가 근처</span>':''}</div>
-      <div class="trade-area">${t.area}㎡<small>${t.pyeong}평</small></div>
+    const prev = list[i+1];
+    const diff = prev ? t.price-prev.price : 0;
+    const changeHtml = !prev ? '<span class="trade-change flat">—</span>'
+      : diff>0 ? `<span class="trade-change up">▲ ${fmt(diff)}</span>`
+      : diff<0 ? `<span class="trade-change down">▼ ${fmt(Math.abs(diff))}</span>`
+      : '<span class="trade-change flat">—</span>';
+    return `<div class="trade-item">
+      <div class="trade-date"><strong>${t.date.replace(/-/g,'.')}</strong></div>
+      <div class="trade-area">${t.area.toFixed(1)}㎡<small>${Math.round(t.area/3.305785)}평</small></div>
       <div class="trade-floor">${t.floor}층</div>
       <div class="trade-price">${fmt(t.price)}</div>
       ${changeHtml}</div>`;
   }).join('');
 }
-function selectPyeong(p) { activePyeong=p; renderTabs(); renderStats(); renderList(); }
-renderTabs(); renderStats(); renderList();
+
+document.addEventListener('click', e => {
+  const results = document.getElementById('searchResults');
+  if (!results.contains(e.target) && !e.target.closest('.search-bar')) results.style.display='none';
+});
 </script>
 </body>
 </html>
