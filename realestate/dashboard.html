@@ -373,15 +373,36 @@ function buildChartFromCache() {
   const peak = allPrices.length ? Math.max(...allPrices) : null;
   const myP = home?.acqPrice ? Math.round(parseInt(home.acqPrice,10)/10000*10)/10 : null;
 
+  // 개별 거래 산점도 데이터
+  const JITTER = [0,-0.12,0.12,-0.22,0.22,-0.08,0.08,-0.18,0.18,-0.05,0.05,-0.28,0.28];
+  let jitterIdx = 0;
+  const scatterData = tradeCache.allTrades.map(t => {
+    const key = `${t.dealYear}${String(t.dealMonth).padStart(2,'0')}`;
+    const xi = months.indexOf(key);
+    if (xi < 0) return null;
+    const y = Math.round(parseInt((t.dealAmount||'0').replace(/,/g,''),10)/10000*10)/10;
+    const jitter = JITTER[jitterIdx++ % JITTER.length];
+    return { x: xi + jitter, y, label: labels[xi] };
+  }).filter(Boolean);
+
   if (chartInst) chartInst.destroy();
   chartInst = new Chart(canvas.getContext('2d'), {
     data:{ datasets:[
-      { type:'line', data:avgPrices.map((y,x)=>y!=null?{x,y}:null).filter(Boolean), borderColor:'#f97316', backgroundColor:ctx=>{ const {ctx:c,chartArea}=ctx.chart; if(!chartArea)return'transparent'; const g=c.createLinearGradient(0,chartArea.top,0,chartArea.bottom); g.addColorStop(0,'rgba(249,115,22,0.12)'); g.addColorStop(1,'rgba(249,115,22,0)'); return g; }, fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointBackgroundColor:'#f97316', pointBorderColor:'#fff', pointBorderWidth:2, spanGaps:true },
-      ...(peak?[{ type:'line', data:labels.map((_,x)=>({x,y:peak})), borderColor:'rgba(251,191,36,0.55)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false }]:[]),
-      ...(myP?[{ type:'line', data:labels.map((_,x)=>({x,y:myP})), borderColor:'rgba(59,130,246,0.55)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false }]:[]),
+      { type:'scatter', data:scatterData, backgroundColor:'rgba(249,115,22,0.28)', pointRadius:4, pointHoverRadius:6, order:1,
+        tooltip:{ callbacks:{ title:ctx=>ctx[0]?.raw?.label||'', label:ctx=>` ${ctx.parsed.y}억` } } },
+      { type:'line', data:avgPrices.map((y,x)=>y!=null?{x,y}:null).filter(Boolean), borderColor:'#f97316',
+        backgroundColor:ctx=>{ const {ctx:c,chartArea}=ctx.chart; if(!chartArea)return'transparent'; const g=c.createLinearGradient(0,chartArea.top,0,chartArea.bottom); g.addColorStop(0,'rgba(249,115,22,0.12)'); g.addColorStop(1,'rgba(249,115,22,0)'); return g; },
+        fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointBackgroundColor:'#f97316', pointBorderColor:'#fff', pointBorderWidth:2, spanGaps:true, order:2 },
+      ...(peak?[{ type:'line', data:labels.map((_,x)=>({x,y:peak})), borderColor:'rgba(251,191,36,0.55)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false, order:3 }]:[]),
+      ...(myP?[{ type:'line', data:labels.map((_,x)=>({x,y:myP})), borderColor:'rgba(59,130,246,0.55)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false, order:4 }]:[]),
     ]},
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ filter:i=>i.datasetIndex===0, callbacks:{ title:ctx=>labels[Math.round(ctx[0]?.parsed?.x??0)], label:ctx=>` ${ctx.parsed.y}억` }, backgroundColor:'#1a1a1a', titleColor:'#aaa', bodyColor:'#fff', padding:10, cornerRadius:8 } },
-      scales:{ x:{type:'linear',min:-0.5,max:labels.length-0.5,grid:{display:false},ticks:{stepSize:1,font:{family:'Pretendard',size:10},color:'#bbb',callback:v=>labels[v]||''}}, y:{grid:{color:'#f5f5f7'},ticks:{font:{family:'Pretendard',size:10},color:'#bbb',callback:v=>`${v}억`}} },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{
+        callbacks:{
+          title:ctx=>{ const d=ctx[0]?.raw; return d?.label || labels[Math.round(ctx[0]?.parsed?.x??0)] || ''; },
+          label:ctx=>` ${ctx.parsed.y}억`
+        }, backgroundColor:'#1a1a1a', titleColor:'#aaa', bodyColor:'#fff', padding:10, cornerRadius:8 } },
+      scales:{ x:{type:'linear',min:-0.5,max:labels.length-0.5,grid:{display:false},ticks:{stepSize:1,font:{family:'Pretendard',size:10},color:'#bbb',callback:v=>labels[Math.round(v)]||''}}, y:{grid:{color:'#f5f5f7'},ticks:{font:{family:'Pretendard',size:10},color:'#bbb',callback:v=>`${v}억`}} },
       interaction:{intersect:false,mode:'x'} }
   });
 }
