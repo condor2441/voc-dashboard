@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KooVIS · 지도</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd6c9cbf55b7520e804aa68f1804a0a8&libraries=services"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --accent:#f97316; --text:#1a1a1a; --muted:#888;
+      --border:#e8e8ec; --bg:#f4f4f5; --white:#fff;
+      --up:#10b981; --down:#ef4444;
+    }
+    body { font-family:'Pretendard',system-ui,sans-serif; height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
+
+    /* ── Header ── */
+    .header { background:var(--white); border-bottom:1px solid var(--border); flex-shrink:0; z-index:1000; position:relative; }
+    .header-inner { display:flex; align-items:center; gap:10px; padding:12px 16px 10px; }
+    .back-btn { font-size:0.78rem; color:var(--muted); text-decoration:none; padding:5px 12px; border:1px solid var(--border); border-radius:20px; flex-shrink:0; transition:all 0.2s; }
+    .back-btn:hover { color:var(--accent); border-color:var(--accent); }
+    .header-title { font-size:0.9rem; font-weight:800; flex:1; }
+    .search-row { display:flex; gap:8px; padding:0 16px 12px; position:relative; }
+    .search-input { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 14px; font-size:0.85rem; font-family:inherit; outline:none; transition:border-color 0.2s; }
+    .search-input:focus { border-color:var(--accent); }
+    .search-btn { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:0 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; }
+
+    .search-dropdown { position:absolute; top:100%; left:16px; right:16px; background:var(--white); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.1); z-index:100; overflow:hidden; display:none; max-height:200px; overflow-y:auto; }
+    .sd-item { padding:11px 16px; font-size:0.85rem; cursor:pointer; border-bottom:1px solid #f4f4f5; }
+    .sd-item:last-child { border-bottom:none; }
+    .sd-item:hover { background:#fff7ed; }
+    .sd-name { font-weight:700; }
+    .sd-addr { font-size:0.72rem; color:var(--muted); margin-top:1px; }
+
+    #map { flex:1; }
+
+    /* ── 가격 버블 ── */
+    .bubble {
+      font-family:'Pretendard',system-ui,sans-serif;
+      font-size:0.78rem; font-weight:800;
+      background:var(--white); border-radius:18px;
+      padding:5px 11px; white-space:nowrap;
+      box-shadow:0 2px 10px rgba(0,0,0,0.15);
+      border:2px solid var(--border);
+      cursor:pointer; position:relative; display:inline-block;
+      transition:transform 0.15s,box-shadow 0.15s;
+    }
+    .bubble::after { content:''; position:absolute; bottom:-7px; left:50%; transform:translateX(-50%); border:4px solid transparent; }
+    .bubble.home { color:var(--accent); border-color:var(--accent); background:#fff7ed; }
+    .bubble.home::after { border-top-color:var(--accent); }
+    .bubble.watch { color:var(--text); border-color:#d0d0d8; }
+    .bubble.watch::after { border-top-color:#d0d0d8; }
+    .bubble.up { color:var(--down); border-color:var(--down); }
+    .bubble.up::after { border-top-color:var(--down); }
+    .bubble.down { color:var(--up); border-color:var(--up); }
+    .bubble.down::after { border-top-color:var(--up); }
+    .bubble:hover { transform:translateY(-2px) scale(1.06); box-shadow:0 5px 16px rgba(0,0,0,0.18); }
+    .bubble.active { transform:translateY(-2px) scale(1.1); z-index:10; }
+
+    /* ── 이 지역 검색 버튼 ── */
+    .region-search-btn {
+      position:absolute; top:12px; left:50%; transform:translateX(-50%);
+      z-index:400; background:var(--white); border:1px solid var(--border);
+      border-radius:20px; padding:8px 18px; font-size:0.8rem; font-weight:700;
+      font-family:inherit; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.1);
+      display:flex; align-items:center; gap:6px; transition:all 0.2s;
+      white-space:nowrap;
+    }
+    .region-search-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .region-search-btn.loading { color:var(--muted); }
+
+    /* ── 범례 ── */
+    .legend { position:absolute; bottom:12px; left:12px; z-index:400; background:rgba(255,255,255,0.95); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:0.7rem; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+    .legend-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+    .legend-row:last-child { margin-bottom:0; }
+    .ldot { width:9px; height:9px; border-radius:50%; }
+
+    /* ── 하단 패널 ── */
+    .panel {
+      position:absolute; bottom:0; left:0; right:0;
+      background:var(--white); border-radius:20px 20px 0 0;
+      padding:14px 18px 32px;
+      box-shadow:0 -4px 24px rgba(0,0,0,0.1);
+      transform:translateY(100%);
+      transition:transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+      z-index:500;
+    }
+    .panel.open { transform:translateY(0); }
+    .panel-handle { width:36px; height:4px; background:#e0e0e0; border-radius:2px; margin:0 auto 14px; }
+    .panel-badge { font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:7px; margin-bottom:6px; display:inline-block; }
+    .badge-home { background:#fff7ed; color:var(--accent); }
+    .badge-watch { background:var(--bg); color:var(--muted); }
+    .panel-name { font-size:1.05rem; font-weight:900; margin-bottom:2px; }
+    .panel-loc { font-size:0.72rem; color:var(--muted); margin-bottom:14px; }
+    .panel-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+    .ps { background:var(--bg); border-radius:10px; padding:10px; text-align:center; }
+    .ps-label { font-size:0.62rem; color:var(--muted); font-weight:600; margin-bottom:3px; }
+    .ps-val { font-size:0.88rem; font-weight:900; }
+    .panel-btns { display:flex; gap:8px; }
+    .btn-primary { flex:1; background:var(--accent); color:#fff; border:none; border-radius:12px; padding:12px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .btn-secondary { background:none; border:1px solid var(--border); color:var(--muted); border-radius:12px; padding:12px 16px; font-size:0.85rem; cursor:pointer; font-family:inherit; }
+    .btn-add { background:#f0fdf9; border:1px solid var(--up); color:var(--up); border-radius:12px; padding:12px 14px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .btn-add.added { background:var(--bg); border-color:var(--border); color:var(--muted); }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="dashboard-demo.html" class="back-btn">← 대시보드</a>
+    <span class="header-title">🗺 지도</span>
+  </div>
+  <div class="search-row">
+    <input class="search-input" id="searchInput" placeholder="단지명 또는 지역 검색" oninput="onInput()" onkeydown="if(event.key==='Enter')doSearch()">
+    <button class="search-btn" onclick="doSearch()">검색</button>
+    <div class="search-dropdown" id="searchDropdown"></div>
+  </div>
+</header>
+
+<div style="position:relative;flex:1;display:flex;flex-direction:column">
+  <div id="map" style="flex:1"></div>
+
+  <button class="region-search-btn" id="regionBtn" onclick="searchRegion()">
+    <span>🔍</span> 이 지역 검색
+  </button>
+
+  <div class="legend">
+    <div class="legend-row"><div class="ldot" style="background:var(--accent)"></div> 우리집</div>
+    <div class="legend-row"><div class="ldot" style="background:var(--down)"></div> 상승</div>
+    <div class="legend-row"><div class="ldot" style="background:var(--up)"></div> 하락</div>
+    <div class="legend-row"><div class="ldot" style="background:#bbb"></div> 관심단지</div>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="panel-handle"></div>
+    <div id="panelContent"></div>
+  </div>
+</div>
+
+<script>
+const APTS = [
+  { id:1, name:'힐스테이트 기흥', loc:'경기 용인시 기흥구 언남동', lat:37.2748, lng:127.1155, isHome:true, pyeong:25, price:165000, prev:162000, peak:170000, isWatch:true },
+  { id:2, name:'기흥역 롯데캐슬 스카이엘', loc:'경기 용인시 기흥구 마북동', lat:37.2695, lng:127.1148, pyeong:25, price:143000, prev:147000, peak:152000, isWatch:true },
+  { id:3, name:'기흥 KCC스위첸', loc:'경기 용인시 기흥구 구갈동', lat:37.2812, lng:127.1098, pyeong:34, price:186000, prev:183000, peak:190000, isWatch:true },
+  { id:4, name:'동백 센트레빌', loc:'경기 용인시 기흥구 중동', lat:37.2630, lng:127.1210, pyeong:25, price:128000, prev:128000, peak:135000, isWatch:false },
+  { id:5, name:'기흥 자이', loc:'경기 용인시 기흥구 신갈동', lat:37.2780, lng:127.1230, pyeong:34, price:195000, prev:188000, peak:202000, isWatch:true },
+  { id:6, name:'보정동 아이파크', loc:'경기 용인시 기흥구 보정동', lat:37.2560, lng:127.1088, pyeong:25, price:115000, prev:118000, peak:122000, isWatch:false },
+  { id:7, name:'기흥역 반도유보라', loc:'경기 용인시 기흥구 마북동', lat:37.2710, lng:127.1180, pyeong:25, price:138000, prev:135000, peak:145000, isWatch:true },
+];
+
+function fmt(m) { const e=Math.floor(m/10000),r=m%10000; return e===0?`${r.toLocaleString()}만`:(r===0?`${e}억`:`${e}억 ${r.toLocaleString()}만`); }
+
+kakao.maps.load(() => {
+  const mapEl = document.getElementById('map');
+  const map = new kakao.maps.Map(mapEl, { center: new kakao.maps.LatLng(37.2735, 127.1155), level:5 });
+  const overlays = {};
+
+  function makeBubble(apt) {
+    const diff = apt.price - apt.prev;
+    let cls = apt.isHome ? 'home' : diff > 0 ? 'up' : diff < 0 ? 'down' : 'watch';
+    const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '';
+    const label = apt.isHome ? `🏠 ${fmt(apt.price)}` : `${arrow} ${fmt(apt.price)}`;
+    const div = document.createElement('div');
+    div.className = `bubble ${cls}`;
+    div.innerHTML = label;
+    div.addEventListener('click', (e) => { e.stopPropagation(); showPanel(apt.id); });
+    return div;
+  }
+
+  APTS.forEach(apt => {
+    const div = makeBubble(apt);
+    const overlay = new kakao.maps.CustomOverlay({ position: new kakao.maps.LatLng(apt.lat, apt.lng), content: div, yAnchor:1.35 });
+    overlay.setMap(map);
+    overlays[apt.id] = { overlay, div, apt };
+  });
+
+  kakao.maps.event.addListener(map, 'click', closePanel);
+
+  // ── 카카오 Places 검색 ──
+  const ps = new kakao.maps.services.Places();
+
+  window.onInput = function() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (q.length < 2) { document.getElementById('searchDropdown').style.display='none'; return; }
+    ps.keywordSearch(q + ' 아파트', (result, status) => {
+      const el = document.getElementById('searchDropdown');
+      if (status === kakao.maps.services.Status.OK && result.length) {
+        el.style.display = 'block';
+        el.innerHTML = result.slice(0,5).map(r => `
+          <div class="sd-item" onclick="moveTo(${r.y},${r.x},'${r.place_name.replace(/'/g,"\\'")}')">
+            <div class="sd-name">${r.place_name}</div>
+            <div class="sd-addr">${r.address_name}</div>
+          </div>`).join('');
+      } else { el.style.display='none'; }
+    });
+  };
+
+  window.doSearch = function() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) return;
+    ps.keywordSearch(q, (result, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        moveTo(result[0].y, result[0].x, result[0].place_name);
+      }
+    });
+  };
+
+  window.moveTo = function(lat, lng, name) {
+    document.getElementById('searchInput').value = name;
+    document.getElementById('searchDropdown').style.display = 'none';
+    map.panTo(new kakao.maps.LatLng(lat, lng));
+    map.setLevel(4);
+    const match = APTS.find(a => a.name.includes(name.split(' ')[0]));
+    if (match) showPanel(match.id);
+  };
+
+  // ── 이 지역 검색 ──
+  window.searchRegion = function() {
+    const btn = document.getElementById('regionBtn');
+    btn.classList.add('loading');
+    btn.innerHTML = '<span>⏳</span> 검색 중…';
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      btn.innerHTML = '<span>🔍</span> 이 지역 검색';
+      // 실제: 현재 bounds에서 lawdCd 계산 후 API 호출
+      // 데모: 기존 마커 깜빡임 효과
+      Object.values(overlays).forEach(({div}) => {
+        div.style.opacity = '0.3';
+        setTimeout(() => { div.style.opacity = '1'; }, 300);
+      });
+    }, 1200);
+  };
+
+  // ── 패널 ──
+  window.showPanel = function(id) {
+    const apt = APTS.find(a=>a.id===id);
+    if (!apt) return;
+    Object.values(overlays).forEach(({div}) => div.classList.remove('active'));
+    overlays[id]?.div.classList.add('active');
+    const diff = apt.price - apt.prev;
+    const pct = ((diff/apt.prev)*100).toFixed(1);
+    const diffStr = diff===0?'변동없음':diff>0?`▲ ${fmt(diff)} (+${pct}%)`:`▼ ${fmt(Math.abs(diff))} (${pct}%)`;
+    const diffColor = diff>0?'var(--down)':diff<0?'var(--up)':'#aaa';
+    const isWatch = apt.isWatch;
+    document.getElementById('panelContent').innerHTML = `
+      <div class="panel-badge ${apt.isHome?'badge-home':'badge-watch'}">${apt.isHome?'🏠 우리집':isWatch?'★ 관심단지':'일반'}</div>
+      <div class="panel-name">${apt.name}</div>
+      <div class="panel-loc">${apt.loc} · ${apt.pyeong}평 기준</div>
+      <div class="panel-stats">
+        <div class="ps"><div class="ps-label">최근 거래가</div><div class="ps-val" style="color:var(--accent)">${fmt(apt.price)}</div></div>
+        <div class="ps"><div class="ps-label">전월 대비</div><div class="ps-val" style="color:${diffColor};font-size:.78rem">${diffStr}</div></div>
+        <div class="ps"><div class="ps-label">🏔 전고점</div><div class="ps-val">${fmt(apt.peak)}</div></div>
+      </div>
+      <div class="panel-btns">
+        <button class="btn-primary" onclick="location.href='trade-demo.html'">실거래 보기 →</button>
+        ${!apt.isHome ? `<button class="btn-add ${isWatch?'added':''}" id="watchBtn" onclick="toggleWatch(${apt.id})">${isWatch?'✓ 관심':'+ 관심'}</button>` : ''}
+        <button class="btn-secondary" onclick="closePanel()">✕</button>
+      </div>`;
+    document.getElementById('panel').classList.add('open');
+    map.panTo(new kakao.maps.LatLng(apt.lat - 0.003, apt.lng));
+  };
+
+  window.toggleWatch = function(id) {
+    const apt = APTS.find(a=>a.id===id);
+    if (!apt) return;
+    apt.isWatch = !apt.isWatch;
+    const btn = document.getElementById('watchBtn');
+    btn.textContent = apt.isWatch ? '✓ 관심' : '+ 관심';
+    btn.classList.toggle('added', apt.isWatch);
+    // 버블 스타일 업데이트
+    const {div} = overlays[id];
+    const newDiv = makeBubble(apt);
+    newDiv.addEventListener('click', e => { e.stopPropagation(); showPanel(id); });
+    overlays[id].div = newDiv;
+    overlays[id].overlay.setContent(newDiv);
+  };
+
+  window.closePanel = function() {
+    document.getElementById('panel').classList.remove('open');
+    Object.values(overlays).forEach(({div}) => div.classList.remove('active'));
+  };
+
+  document.addEventListener('click', e => {
+    const dd = document.getElementById('searchDropdown');
+    if (!dd.contains(e.target) && !e.target.closest('.search-row')) dd.style.display='none';
+  });
+
+  setTimeout(() => showPanel(1), 600);
+});
+</script>
+</body>
+</html>

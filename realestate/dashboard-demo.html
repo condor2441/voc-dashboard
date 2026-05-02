@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KooVIS · 부동산</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --accent:#f97316; --text:#1a1a1a; --muted:#888;
+      --border:#e8e8ec; --bg:#f4f4f5; --white:#fff; --radius:16px;
+      --up:#10b981; --down:#ef4444;
+    }
+    body { background:var(--bg); font-family:'Pretendard',system-ui,sans-serif; color:var(--text); min-height:100vh; padding-bottom:60px; }
+
+    /* ── Header ── */
+    .header { background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:20; }
+    .header-inner { display:flex; align-items:center; gap:12px; padding:14px 20px; max-width:720px; margin:0 auto; }
+    .back-btn { font-size:0.78rem; color:var(--muted); text-decoration:none; padding:5px 12px; border:1px solid var(--border); border-radius:20px; transition:all 0.2s; flex-shrink:0; }
+    .back-btn:hover { color:var(--accent); border-color:var(--accent); }
+    .header-title { font-size:0.95rem; font-weight:800; flex:1; }
+    .header-actions { display:flex; gap:8px; }
+    .icon-btn { background:none; border:1px solid var(--border); border-radius:10px; padding:7px 12px; font-size:0.8rem; color:var(--muted); cursor:pointer; font-family:inherit; transition:all 0.2s; text-decoration:none; display:flex; align-items:center; gap:4px; }
+    .icon-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    .main { max-width:720px; margin:0 auto; padding:20px 16px; }
+
+    /* ── 우리집 카드 ── */
+    .home-card { background:var(--white); border-radius:20px; overflow:hidden; margin-bottom:20px; box-shadow:0 2px 20px rgba(0,0,0,0.06); }
+    .home-hero { background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%); padding:22px 22px 20px; color:#fff; }
+    .home-label { display:inline-flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:700; color:var(--accent); background:rgba(249,115,22,0.18); padding:3px 10px; border-radius:8px; margin-bottom:12px; }
+    .home-name { font-size:1.25rem; font-weight:900; margin-bottom:2px; letter-spacing:-0.02em; }
+    .home-meta { font-size:0.75rem; color:#999; margin-bottom:18px; }
+    .home-price-row { display:flex; align-items:baseline; gap:10px; margin-bottom:6px; }
+    .home-price { font-size:2.2rem; font-weight:900; letter-spacing:-0.04em; }
+    .home-price-date { font-size:0.75rem; color:#888; }
+    .home-change { font-size:0.82rem; font-weight:700; color:var(--down); }
+
+    /* ── 평형/기간 탭 ── */
+    .tab-row { display:flex; gap:6px; margin-top:14px; flex-wrap:wrap; }
+    .tab-chip { font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:8px; border:1px solid #444; background:none; color:#aaa; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .tab-chip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+    /* ── 통계 그리드 ── */
+    .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:18px 22px; border-bottom:1px solid #f0f0f4; }
+    .stat-item { background:var(--bg); border-radius:12px; padding:12px 14px; }
+    .stat-label { font-size:0.65rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+    .stat-val { font-size:1rem; font-weight:900; }
+    .stat-sub { font-size:0.68rem; color:#bbb; margin-top:3px; }
+
+    /* ── 강도 게이지 ── */
+    .gauge-wrap { display:flex; align-items:center; gap:8px; margin-top:4px; }
+    .gauge-bar { flex:1; height:6px; background:#e8e8ec; border-radius:3px; overflow:hidden; }
+    .gauge-fill { height:100%; border-radius:3px; transition:width 0.6s; }
+    .gauge-label { font-size:0.68rem; font-weight:700; white-space:nowrap; }
+    .strong { color:var(--up); } .mid { color:#f59e0b; } .weak { color:#bbb; }
+
+    /* ── 차트 영역 ── */
+    .chart-wrap { padding:18px 22px 20px; }
+    .chart-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .chart-title { font-size:0.82rem; font-weight:700; color:var(--muted); }
+    .period-tabs { display:flex; gap:4px; }
+    .period-chip { font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:7px; border:1px solid var(--border); background:none; color:var(--muted); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+    .period-chip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .chart-box { height:180px; position:relative; }
+    .chart-legend { display:flex; gap:14px; margin-top:10px; font-size:0.7rem; color:#aaa; }
+    .legend-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:4px; }
+
+    /* ── 수익률 카드 ── */
+    .profit-card { background:var(--white); border-radius:var(--radius); padding:18px 22px; margin-bottom:20px; box-shadow:0 2px 12px rgba(0,0,0,0.05); border-left:3px solid var(--accent); }
+    .profit-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .profit-title { font-size:0.85rem; font-weight:800; }
+    .profit-edit { font-size:0.72rem; color:var(--muted); background:none; border:1px solid var(--border); border-radius:8px; padding:3px 10px; cursor:pointer; font-family:inherit; }
+    .profit-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .profit-item { text-align:center; background:var(--bg); border-radius:10px; padding:10px; }
+    .profit-item-label { font-size:0.62rem; color:var(--muted); font-weight:600; margin-bottom:4px; }
+    .profit-item-val { font-size:0.9rem; font-weight:900; }
+
+    /* ── 관심단지 ── */
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .section-title { font-size:0.88rem; font-weight:800; }
+    .add-btn { font-size:0.78rem; font-weight:700; background:var(--accent); color:#fff; border:none; border-radius:20px; padding:6px 14px; cursor:pointer; font-family:inherit; }
+    .watch-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .watch-card { background:var(--white); border-radius:var(--radius); padding:16px; cursor:pointer; box-shadow:0 1px 6px rgba(0,0,0,0.05); transition:transform 0.2s,box-shadow 0.2s; position:relative; overflow:hidden; border:1px solid var(--border); }
+    .watch-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.1); }
+    .watch-card-top-bar { position:absolute; top:0; left:0; right:0; height:3px; }
+    .up-bar { background:linear-gradient(90deg,var(--up),#34d399); }
+    .down-bar { background:linear-gradient(90deg,var(--down),#f87171); }
+    .flat-bar { background:linear-gradient(90deg,#bbb,#ddd); }
+    .watch-name { font-size:0.85rem; font-weight:900; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .watch-loc { font-size:0.68rem; color:var(--muted); margin-bottom:8px; }
+    .watch-pyeong { font-size:0.68rem; font-weight:700; background:var(--bg); padding:2px 7px; border-radius:6px; color:var(--muted); display:inline-block; margin-bottom:8px; }
+    .sparkline-wrap { height:40px; margin-bottom:8px; }
+    svg.sparkline { width:100%; height:100%; }
+    .watch-price { font-size:1.05rem; font-weight:900; margin-bottom:2px; }
+    .watch-change { font-size:0.72rem; font-weight:700; }
+    .watch-date { font-size:0.65rem; color:#ccc; margin-top:2px; }
+    .watch-del { position:absolute; top:10px; right:10px; background:none; border:none; color:#ddd; font-size:0.8rem; cursor:pointer; }
+    .watch-del:hover { color:#ef4444; }
+
+    @media(max-width:480px) {
+      .stats-grid { grid-template-columns:1fr 1fr; }
+      .profit-row { grid-template-columns:1fr 1fr 1fr; }
+      .watch-grid { grid-template-columns:1fr 1fr; gap:8px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="../index.html" class="back-btn">← 홈</a>
+    <span class="header-title">🏠 부동산</span>
+    <div class="header-actions">
+      <a href="map-demo.html" class="icon-btn">🗺 지도</a>
+      <button class="icon-btn" onclick="alert('우리집 설정')">⚙</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- 우리집 -->
+  <div class="home-card">
+    <div class="home-hero">
+      <div class="home-label">🏠 우리집</div>
+      <div class="home-name">힐스테이트 기흥</div>
+      <div class="home-meta">경기도 용인시 기흥구 언남동 · 25평 (84.9㎡)</div>
+      <div class="home-price-row">
+        <span class="home-price" id="homePrice">16억 5,000만</span>
+        <span class="home-price-date">2025.04 거래</span>
+      </div>
+      <div class="home-change">▲ 3,000만 (+1.9%) 전월 대비</div>
+      <div class="tab-row">
+        <button class="tab-chip active" onclick="switchPyeong(25,this)">25평</button>
+        <button class="tab-chip" onclick="switchPyeong(34,this)">34평</button>
+        <button class="tab-chip" onclick="switchPyeong(45,this)">45평</button>
+      </div>
+    </div>
+
+    <!-- 통계 -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-label">매매 강도</div>
+        <div class="gauge-wrap">
+          <div class="gauge-bar"><div class="gauge-fill" style="width:72%;background:var(--up)"></div></div>
+          <span class="gauge-label strong">강함 🔥</span>
+        </div>
+        <div class="stat-sub">거래량 ▲38% · 가격 ▲1.9%</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">전세 강도</div>
+        <div class="gauge-wrap">
+          <div class="gauge-bar"><div class="gauge-fill" style="width:48%;background:#f59e0b"></div></div>
+          <span class="gauge-label mid">보통 ⚡</span>
+        </div>
+        <div class="stat-sub">전세가율 58% · 거래 유지</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">전세가율</div>
+        <div class="stat-val" id="jeonseRatio" style="color:#f97316">58%</div>
+        <div class="stat-sub">전세 9억 6,000만 기준</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">🏔 전고점 대비</div>
+        <div class="stat-val" style="color:#bbb">-3.0%</div>
+        <div class="stat-sub">전고점 17억 (2023.10)</div>
+      </div>
+    </div>
+
+    <!-- 차트 -->
+    <div class="chart-wrap">
+      <div class="chart-meta">
+        <span class="chart-title">실거래가 추이</span>
+        <div class="period-tabs">
+          <button class="period-chip active" onclick="switchPeriod(12,this)">1년</button>
+          <button class="period-chip" onclick="switchPeriod(36,this)">3년</button>
+        </div>
+      </div>
+      <div class="chart-box"><canvas id="priceChart"></canvas></div>
+      <div class="chart-legend">
+        <span><span class="legend-dot" style="background:#f97316"></span>실거래가</span>
+        <span><span class="legend-dot" style="background:rgba(251,191,36,0.8)"></span>전고점</span>
+        <span><span style="display:inline-block;width:8px;height:0;border-bottom:2px dashed #3b82f6;margin-right:4px;vertical-align:middle"></span>내 매수가</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 수익률 카드 -->
+  <div class="profit-card">
+    <div class="profit-header">
+      <span class="profit-title">💰 수익률</span>
+      <button class="profit-edit">취득가 수정</button>
+    </div>
+    <div class="profit-row">
+      <div class="profit-item">
+        <div class="profit-item-label">취득원가</div>
+        <div class="profit-item-val" style="color:var(--text)">15억 5,000만</div>
+      </div>
+      <div class="profit-item">
+        <div class="profit-item-label">평가 수익</div>
+        <div class="profit-item-val" style="color:var(--up)">+1억</div>
+      </div>
+      <div class="profit-item">
+        <div class="profit-item-label">수익률</div>
+        <div class="profit-item-val" style="color:var(--up)">+6.5%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관심단지 -->
+  <div class="section-header">
+    <span class="section-title">관심단지 <span style="color:#ccc;font-weight:400;font-size:.8rem">5개</span></span>
+    <button class="add-btn" onclick="location.href='map-demo.html'">+ 지도에서 추가</button>
+  </div>
+
+  <div class="watch-grid">
+
+    <div class="watch-card" onclick="location.href='trade-demo.html'">
+      <div class="watch-card-top-bar up-bar"></div>
+      <div class="watch-name">기흥역 롯데캐슬</div>
+      <div class="watch-loc">용인 기흥구 마북동</div>
+      <div class="watch-pyeong">25평</div>
+      <div class="sparkline-wrap">
+        <svg class="sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+          <defs><linearGradient id="sg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981" stop-opacity=".25"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs>
+          <polygon points="0,30 17,26 33,28 50,22 67,18 83,14 100,8 100,40 0,40" fill="url(#sg1)"/>
+          <polyline points="0,30 17,26 33,28 50,22 67,18 83,14 100,8" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="8" r="3" fill="#10b981"/>
+        </svg>
+      </div>
+      <div class="watch-price">14억 3,000만</div>
+      <div class="watch-change" style="color:var(--down)">▲ +2,000만 (+1.4%)</div>
+      <div class="watch-date">2025.04.12</div>
+      <button class="watch-del" onclick="event.stopPropagation()">✕</button>
+    </div>
+
+    <div class="watch-card" onclick="location.href='trade-demo.html'">
+      <div class="watch-card-top-bar down-bar"></div>
+      <div class="watch-name">기흥 KCC스위첸</div>
+      <div class="watch-loc">용인 기흥구 구갈동</div>
+      <div class="watch-pyeong">34평</div>
+      <div class="sparkline-wrap">
+        <svg class="sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+          <defs><linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ef4444" stop-opacity=".25"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></linearGradient></defs>
+          <polygon points="0,8 17,10 33,12 50,16 67,20 83,24 100,28 100,40 0,40" fill="url(#sg2)"/>
+          <polyline points="0,8 17,10 33,12 50,16 67,20 83,24 100,28" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="28" r="3" fill="#ef4444"/>
+        </svg>
+      </div>
+      <div class="watch-price">18억 6,000만</div>
+      <div class="watch-change" style="color:var(--up)">▼ -1,500만 (-0.8%)</div>
+      <div class="watch-date">2025.04.05</div>
+      <button class="watch-del" onclick="event.stopPropagation()">✕</button>
+    </div>
+
+    <div class="watch-card" onclick="location.href='trade-demo.html'">
+      <div class="watch-card-top-bar up-bar"></div>
+      <div class="watch-name">기흥 자이</div>
+      <div class="watch-loc">용인 기흥구 신갈동</div>
+      <div class="watch-pyeong">34평</div>
+      <div class="sparkline-wrap">
+        <svg class="sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+          <defs><linearGradient id="sg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f97316" stop-opacity=".25"/><stop offset="100%" stop-color="#f97316" stop-opacity="0"/></linearGradient></defs>
+          <polygon points="0,28 17,24 33,26 50,20 67,22 83,16 100,10 100,40 0,40" fill="url(#sg3)"/>
+          <polyline points="0,28 17,24 33,26 50,20 67,22 83,16 100,10" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="10" r="3" fill="#f97316"/>
+        </svg>
+      </div>
+      <div class="watch-price">19억 5,000만</div>
+      <div class="watch-change" style="color:var(--down)">▲ +3,500만 (+1.8%)</div>
+      <div class="watch-date">2025.04.20</div>
+      <button class="watch-del" onclick="event.stopPropagation()">✕</button>
+    </div>
+
+    <div class="watch-card" onclick="location.href='trade-demo.html'">
+      <div class="watch-card-top-bar flat-bar"></div>
+      <div class="watch-name">동백 센트레빌</div>
+      <div class="watch-loc">용인 기흥구 중동</div>
+      <div class="watch-pyeong">25평</div>
+      <div class="sparkline-wrap">
+        <svg class="sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+          <defs><linearGradient id="sg4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#888" stop-opacity=".15"/><stop offset="100%" stop-color="#888" stop-opacity="0"/></linearGradient></defs>
+          <polygon points="0,20 17,22 33,18 50,21 67,19 83,22 100,20 100,40 0,40" fill="url(#sg4)"/>
+          <polyline points="0,20 17,22 33,18 50,21 67,19 83,22 100,20" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="20" r="3" fill="#aaa"/>
+        </svg>
+      </div>
+      <div class="watch-price">12억 8,000만</div>
+      <div class="watch-change" style="color:var(--muted)">— 변동없음</div>
+      <div class="watch-date">2025.04.01</div>
+      <button class="watch-del" onclick="event.stopPropagation()">✕</button>
+    </div>
+
+    <div class="watch-card" onclick="location.href='trade-demo.html'">
+      <div class="watch-card-top-bar up-bar"></div>
+      <div class="watch-name">인덕원 센트럴 자이</div>
+      <div class="watch-loc">경기 의왕시 내손동</div>
+      <div class="watch-pyeong">34평</div>
+      <div class="sparkline-wrap">
+        <svg class="sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+          <defs><linearGradient id="sg5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981" stop-opacity=".25"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs>
+          <polygon points="0,32 17,28 33,24 50,20 67,16 83,12 100,8 100,40 0,40" fill="url(#sg5)"/>
+          <polyline points="0,32 17,28 33,24 50,20 67,16 83,12 100,8" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="8" r="3" fill="#10b981"/>
+        </svg>
+      </div>
+      <div class="watch-price">11억 2,000만</div>
+      <div class="watch-change" style="color:var(--down)">▲ +5,000만 (+4.7%)</div>
+      <div class="watch-date">2025.04.18</div>
+      <button class="watch-del" onclick="event.stopPropagation()">✕</button>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const DATA = {
+  12: {
+    labels: ['24.05','24.06','24.07','24.08','24.09','24.10','24.11','24.12','25.01','25.02','25.03','25.04'],
+    prices: [14.8,15.0,14.9,15.2,15.4,15.6,15.8,16.0,15.8,16.1,16.2,16.5],
+    peak: 17.0, myPrice: 15.3,
+    dots: [[14.7,14.9],[15.0,15.1],[14.8,15.0],[15.1,15.3],[15.3,15.5],[15.5,15.7],[15.7,15.9],[15.9,16.1],[15.7,15.9],[16.0,16.2],[16.1,16.3],[16.4,16.6]]
+  },
+  36: {
+    labels: ['22.05','22.08','22.11','23.02','23.05','23.08','23.11','24.02','24.05','24.08','24.11','25.02'],
+    prices: [16.5,17.0,16.8,16.2,15.5,15.0,14.8,15.0,15.2,15.8,16.2,16.5],
+    peak: 17.0, myPrice: 15.3,
+    dots: [[16.3,16.7],[16.8,17.2],[16.5,17.1],[15.9,16.5],[15.2,15.8],[14.7,15.3],[14.5,15.1],[14.8,15.2],[15.0,15.4],[15.5,16.1],[16.0,16.4],[16.3,16.7]]
+  }
+};
+let chartInst = null;
+let currentPeriod = 12;
+
+function buildChart(period) {
+  const d = DATA[period];
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  if (chartInst) chartInst.destroy();
+  const scatterData = d.labels.flatMap((_, i) => d.dots[i].map(y => ({x: i, y})));
+  chartInst = new Chart(ctx, {
+    data: { datasets: [
+      { type:'scatter', data: scatterData, backgroundColor:'rgba(249,115,22,0.3)', pointRadius:4, pointHoverRadius:6, order:1 },
+      { type:'line', data: d.prices.map((y,x)=>({x,y})), borderColor:'#f97316',
+        backgroundColor: ctx => { const {ctx:c,chartArea} = ctx.chart; if(!chartArea)return'transparent'; const g=c.createLinearGradient(0,chartArea.top,0,chartArea.bottom); g.addColorStop(0,'rgba(249,115,22,0.15)'); g.addColorStop(1,'rgba(249,115,22,0)'); return g; },
+        fill:true, tension:0.4, borderWidth:2.5, pointRadius:0, order:2 },
+      { type:'line', data: d.labels.map((_,x)=>({x,y:d.peak})), borderColor:'rgba(251,191,36,0.6)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false, order:3 },
+      { type:'line', data: d.labels.map((_,x)=>({x,y:d.myPrice})), borderColor:'rgba(59,130,246,0.65)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false, order:4 },
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ filter:i=>i.datasetIndex<=1, callbacks:{ title:ctx=>d.labels[Math.round(ctx[0]?.parsed?.x??0)], label:ctx=>` ${ctx.parsed.y}억` }, backgroundColor:'#1a1a1a', titleColor:'#aaa', bodyColor:'#fff', padding:10, cornerRadius:8 } },
+      scales:{
+        x:{ type:'linear', min:-0.5, max:d.labels.length-0.5, grid:{display:false}, ticks:{stepSize:1,font:{family:'Pretendard',size:10},color:'#bbb',callback:v=>d.labels[v]||''} },
+        y:{ grid:{color:'#f0f0f4'}, ticks:{font:{family:'Pretendard',size:10},color:'#bbb',callback:v=>`${v}억`} }
+      },
+      interaction:{intersect:false,mode:'x'}
+    }
+  });
+}
+
+function switchPeriod(p, btn) {
+  currentPeriod = p;
+  document.querySelectorAll('.period-chip').forEach(b=>b.classList.toggle('active',+b.textContent.replace('년','')*12===p||b===btn));
+  buildChart(p);
+}
+
+function switchPyeong(p, btn) {
+  document.querySelectorAll('.tab-chip').forEach(b=>b.classList.toggle('active',b===btn));
+  const prices = {25:'16억 5,000만', 34:'22억 3,000만', 45:'29억'};
+  const jeonse = {25:'58%', 34:'52%', 45:'46%'};
+  document.getElementById('homePrice').textContent = prices[p];
+  document.getElementById('jeonseRatio').textContent = jeonse[p];
+}
+
+buildChart(12);
+</script>
+</body>
+</html>

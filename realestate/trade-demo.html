@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KooVIS · 실거래가</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --accent:#f97316; --text:#1a1a1a; --muted:#888;
+      --border:#e8e8ec; --bg:#f4f4f5; --white:#fff; --radius:14px;
+      --up:#10b981; --down:#ef4444;
+    }
+    body { background:var(--bg); font-family:'Pretendard',system-ui,sans-serif; color:var(--text); min-height:100vh; padding-bottom:40px; }
+
+    /* ── Header ── */
+    .header { background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; }
+    .header-inner { max-width:720px; margin:0 auto; padding:12px 16px; }
+    .header-top { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .back-btn { font-size:0.78rem; color:var(--muted); text-decoration:none; padding:5px 12px; border:1px solid var(--border); border-radius:20px; flex-shrink:0; transition:all 0.2s; }
+    .back-btn:hover { color:var(--accent); border-color:var(--accent); }
+    .header-apt { font-size:0.95rem; font-weight:900; flex:1; }
+    .header-loc { font-size:0.7rem; color:var(--muted); }
+    .search-bar { display:flex; gap:8px; position:relative; }
+    .search-input { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 14px; font-size:0.85rem; font-family:inherit; outline:none; transition:border-color 0.2s; }
+    .search-input:focus { border-color:var(--accent); }
+    .search-btn { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:0 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .map-link { display:flex; align-items:center; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:0 12px; font-size:0.8rem; color:var(--muted); text-decoration:none; white-space:nowrap; transition:all 0.2s; }
+    .map-link:hover { border-color:var(--accent); color:var(--accent); }
+
+    .main { max-width:720px; margin:0 auto; padding:16px; }
+
+    /* ── 평형 탭 ── */
+    .pyeong-tabs { display:flex; gap:6px; margin-bottom:14px; overflow-x:auto; scrollbar-width:none; }
+    .pyeong-tabs::-webkit-scrollbar { display:none; }
+    .ptab { padding:6px 16px; border-radius:20px; border:1px solid var(--border); background:var(--white); font-size:0.8rem; font-weight:700; color:var(--muted); cursor:pointer; font-family:inherit; white-space:nowrap; transition:all 0.15s; }
+    .ptab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+    /* ── 통계 ── */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
+    .stat-card { background:var(--white); border-radius:var(--radius); padding:12px 10px; text-align:center; border:1px solid var(--border); }
+    .stat-label { font-size:0.62rem; font-weight:700; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:.03em; }
+    .stat-val { font-size:0.9rem; font-weight:900; }
+    .stat-sub { font-size:0.62rem; color:#ccc; margin-top:3px; }
+
+    /* ── 강도 바 (통계 안) ── */
+    .mini-gauge { height:4px; background:#e8e8ec; border-radius:2px; margin-top:6px; overflow:hidden; }
+    .mini-gauge-fill { height:100%; border-radius:2px; }
+
+    /* ── 거래 리스트 ── */
+    .list-wrap { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    .list-head { display:grid; grid-template-columns:1.4fr 0.8fr 0.6fr 1.2fr 0.9fr; gap:6px; padding:9px 16px; background:#f8f8fa; border-bottom:1px solid var(--border); font-size:0.68rem; font-weight:700; color:var(--muted); }
+    .trade-row { display:grid; grid-template-columns:1.4fr 0.8fr 0.6fr 1.2fr 0.9fr; gap:6px; padding:13px 16px; border-bottom:1px solid #f4f4f5; align-items:center; cursor:pointer; transition:background 0.12s; }
+    .trade-row:last-child { border-bottom:none; }
+    .trade-row:hover { background:#fafafa; }
+    .trade-row.my-price { background:#fff7ed; }
+    .t-date { font-size:0.78rem; color:var(--muted); }
+    .t-date strong { display:block; font-size:0.84rem; font-weight:800; color:var(--text); }
+    .t-area { font-size:0.82rem; font-weight:600; }
+    .t-area small { display:block; font-size:0.66rem; color:#bbb; }
+    .t-floor { font-size:0.82rem; color:var(--muted); }
+    .t-price { font-size:0.9rem; font-weight:900; color:var(--accent); }
+    .t-change { font-size:0.72rem; font-weight:700; }
+    .up { color:var(--down); } .dn { color:var(--up); } .flat { color:#bbb; }
+
+    /* ── 내 가격 배지 ── */
+    .my-badge { font-size:0.6rem; font-weight:700; background:var(--accent); color:#fff; padding:1px 6px; border-radius:4px; margin-top:2px; display:inline-block; }
+
+    @media(max-width:480px) {
+      .stats-row { grid-template-columns:repeat(2,1fr); }
+      .list-head { grid-template-columns:1.4fr 1.2fr 0.9fr; }
+      .list-head .ha, .list-head .hf { display:none; }
+      .trade-row { grid-template-columns:1.4fr 1.2fr 0.9fr; }
+      .trade-row .t-area, .trade-row .t-floor { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <a href="dashboard-demo.html" class="back-btn">← 대시보드</a>
+      <div style="flex:1">
+        <div class="header-apt" id="aptTitle">힐스테이트 기흥</div>
+        <div class="header-loc">경기도 용인시 기흥구 언남동</div>
+      </div>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" id="searchInput" placeholder="다른 단지 검색…" value="힐스테이트 기흥">
+      <button class="search-btn">검색</button>
+      <a href="map-demo.html" class="map-link">🗺 지도</a>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="pyeong-tabs">
+    <button class="ptab active" onclick="selectPyeong(25,this)">25평 (84.9㎡)</button>
+    <button class="ptab" onclick="selectPyeong(34,this)">34평 (112.3㎡)</button>
+    <button class="ptab" onclick="selectPyeong(45,this)">45평 (148.2㎡)</button>
+  </div>
+
+  <div class="stats-row" id="statsRow"></div>
+
+  <div class="list-wrap">
+    <div class="list-head">
+      <span>거래일</span>
+      <span class="ha">면적</span>
+      <span class="hf">층</span>
+      <span>거래금액</span>
+      <span>전건 대비</span>
+    </div>
+    <div id="tradeList"></div>
+  </div>
+
+</main>
+
+<script>
+const TRADES = {
+  25: [
+    {date:'2025-04-25',area:84.9,floor:8, price:165000},
+    {date:'2025-04-18',area:84.9,floor:15,price:168000},
+    {date:'2025-04-10',area:84.9,floor:3, price:162000},
+    {date:'2025-04-02',area:84.9,floor:11,price:166000},
+    {date:'2025-03-28',area:84.9,floor:7, price:161000},
+    {date:'2025-03-15',area:84.9,floor:19,price:170000},
+    {date:'2025-03-08',area:84.9,floor:5, price:159000},
+    {date:'2025-03-01',area:84.9,floor:12,price:163000},
+    {date:'2025-02-22',area:84.9,floor:9, price:158000},
+    {date:'2025-02-11',area:84.9,floor:4, price:156000},
+    {date:'2025-02-05',area:84.9,floor:14,price:160000},
+    {date:'2025-01-24',area:84.9,floor:17,price:164000},
+  ],
+  34: [
+    {date:'2025-04-22',area:112.3,floor:10,price:215000},
+    {date:'2025-04-14',area:112.3,floor:6, price:210000},
+    {date:'2025-04-05',area:112.3,floor:20,price:223000},
+    {date:'2025-03-20',area:112.3,floor:8, price:208000},
+    {date:'2025-03-10',area:112.3,floor:3, price:205000},
+    {date:'2025-02-28',area:112.3,floor:15,price:218000},
+    {date:'2025-02-15',area:112.3,floor:11,price:212000},
+    {date:'2025-01-30',area:112.3,floor:7, price:200000},
+  ],
+  45: [
+    {date:'2025-04-20',area:148.2,floor:12,price:285000},
+    {date:'2025-03-25',area:148.2,floor:5, price:278000},
+    {date:'2025-03-12',area:148.2,floor:18,price:292000},
+    {date:'2025-02-20',area:148.2,floor:9, price:282000},
+    {date:'2025-01-15',area:148.2,floor:14,price:275000},
+  ]
+};
+const MY_PRICE = {25:153000, 34:null, 45:null};
+
+function fmt(m) { const e=Math.floor(m/10000),r=m%10000; return e===0?`${r.toLocaleString()}만`:(r===0?`${e}억`:`${e}억 ${r.toLocaleString()}만`); }
+function fmtDate(d) { return d.replace(/(\d{4})-(\d{2})-(\d{2})/,(_,y,m,d)=>`${y.slice(2)}.${m}.${d}`); }
+
+function renderStats(pyeong) {
+  const list = TRADES[pyeong];
+  const prices = list.map(t=>t.price);
+  const latest = list[0].price, prev = list[1]?.price;
+  const diff = prev ? latest-prev : 0;
+  const pct = prev ? ((diff/prev)*100).toFixed(1) : 0;
+  const max = Math.max(...prices);
+  const recentVol = list.filter(t=>t.date>='2025-02-01').length;
+  const prevVol = list.filter(t=>t.date<'2025-02-01').length;
+  const volChange = prevVol > 0 ? ((recentVol-prevVol)/prevVol*100).toFixed(0) : 0;
+  const intensity = Math.min(100, Math.max(0, 50 + parseFloat(pct)*10 + (volChange>0?20:volChange<0?-20:0)));
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">최근 거래가</div>
+      <div class="stat-val" style="color:var(--accent)">${fmt(latest)}</div>
+      <div class="stat-sub">${fmtDate(list[0].date)}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">전건 대비</div>
+      <div class="stat-val ${diff>=0?'up':'dn'}">${diff===0?'—':diff>0?`▲ ${fmt(diff)}`:`▼ ${fmt(Math.abs(diff))}`}</div>
+      <div class="stat-sub">${diff>=0?'+':''}${pct}%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🏔 전고점</div>
+      <div class="stat-val" style="color:#bbb">${fmt(max)}</div>
+      <div class="stat-sub">조회 기간 내</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">매매 강도</div>
+      <div class="stat-val ${intensity>=60?'up':intensity>=35?'':'flat'}" style="font-size:0.82rem">${intensity>=60?'강함 🔥':intensity>=35?'보통 ⚡':'약함'}</div>
+      <div class="mini-gauge"><div class="mini-gauge-fill" style="width:${intensity}%;background:${intensity>=60?'#10b981':intensity>=35?'#f59e0b':'#bbb'}"></div></div>
+    </div>`;
+}
+
+function renderList(pyeong) {
+  const list = TRADES[pyeong];
+  const myP = MY_PRICE[pyeong];
+  document.getElementById('tradeList').innerHTML = list.map((t,i)=>{
+    const prev = list[i+1];
+    const diff = prev ? t.price-prev.price : 0;
+    const changeHtml = !prev ? '<span class="flat">—</span>'
+      : diff>0 ? `<span class="up">▲ ${fmt(diff)}</span>`
+      : diff<0 ? `<span class="dn">▼ ${fmt(Math.abs(diff))}</span>`
+      : '<span class="flat">—</span>';
+    const isMyPrice = myP && Math.abs(t.price-myP)<2000;
+    return `<div class="trade-row ${isMyPrice?'my-price':''}">
+      <div class="t-date"><strong>${fmtDate(t.date)}</strong>${isMyPrice?'<span class="my-badge">내 매수가 근처</span>':''}</div>
+      <div class="t-area t-area">${t.area}㎡<small>${Math.round(t.area/3.305785)}평</small></div>
+      <div class="t-floor">${t.floor}층</div>
+      <div class="t-price">${fmt(t.price)}</div>
+      <div class="t-change">${changeHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectPyeong(p, btn) {
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.toggle('active',b===btn));
+  renderStats(p); renderList(p);
+}
+
+renderStats(25); renderList(25);
+</script>
+</body>
+</html>
