@@ -328,13 +328,21 @@ async function loadHomeData() {
   const months = prevMonths(Math.max(curPeriod, 6));
   const results = await Promise.all(months.map(ym => fetchTrades(home.lawdCd, ym)));
 
-  const nameKey = home.name.replace(/\s/g,'').slice(0,4);
-  const allTrades = results.flatMap((items, mi) =>
+  const nameKey = home.name.replace(/\s/g,'').slice(0, 3);
+  let allTrades = results.flatMap((items, mi) =>
     items.filter(t =>
       (t.aptNm||'').replace(/\s/g,'').includes(nameKey) &&
       matchArea(parseFloat(t.excluUseAr||0), pyeong.area)
     ).map(t => ({...t, ym: months[mi]}))
-  ).sort((a,b)=>{
+  );
+  // 이름 매칭 실패 시 면적만으로 재시도
+  if (!allTrades.length) {
+    allTrades = results.flatMap((items, mi) =>
+      items.filter(t => matchArea(parseFloat(t.excluUseAr||0), pyeong.area))
+           .map(t => ({...t, ym: months[mi]}))
+    );
+  }
+  allTrades.sort((a,b)=>{
     const da=`${a.dealYear}${String(a.dealMonth).padStart(2,'0')}${String(a.dealDay).padStart(2,'0')}`;
     const db=`${b.dealYear}${String(b.dealMonth).padStart(2,'0')}${String(b.dealDay).padStart(2,'0')}`;
     return db>da?1:-1;
