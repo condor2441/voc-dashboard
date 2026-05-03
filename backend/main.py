@@ -812,13 +812,24 @@ def realestate_rent(lawd_cd: str, deal_ymd: str, api_key: str = ""):
 
 @app.get("/rss")
 def rss_proxy(url: str):
-    """RSS 피드 서버사이드 프록시 (CORS 우회)"""
+    """RSS 피드 서버사이드 프록시 (CORS 우회 + 인코딩 정규화)"""
     import requests as req_lib
+    import re
     from fastapi.responses import Response
     try:
         headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36"}
         r = req_lib.get(url, headers=headers, timeout=8)
-        return Response(content=r.content, media_type="application/xml")
+        # XML 선언에서 인코딩 추출 후 UTF-8로 변환
+        raw = r.content
+        enc_match = re.search(rb'encoding=["\']([^"\']+)["\']', raw[:200])
+        src_enc = enc_match.group(1).decode('ascii') if enc_match else (r.encoding or 'utf-8')
+        try:
+            text = raw.decode(src_enc)
+        except (UnicodeDecodeError, LookupError):
+            text = raw.decode('utf-8', errors='replace')
+        # XML 선언의 encoding 속성을 utf-8로 교체
+        text = re.sub(r'encoding=["\'][^"\']+["\']', 'encoding="utf-8"', text, count=1)
+        return Response(content=text.encode('utf-8'), media_type='application/xml; charset=utf-8')
     except Exception as e:
         raise HTTPException(500, f"RSS 가져오기 실패: {str(e)}")
 
