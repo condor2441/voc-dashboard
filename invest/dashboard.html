@@ -590,7 +590,7 @@
       const dailyAmt = d.daily_profit !== undefined ? d.daily_profit : Math.round(d.total_cur * d.daily_pct / 100);
 
       el.innerHTML = `
-        <div class="overview-stats fade-in" style="grid-template-columns:repeat(3,1fr)">
+        <div class="overview-stats fade-in">
           <div class="overview-stat">
             <div class="overview-stat-label">총 투자금</div>
             <div class="overview-stat-value" id="stat-buy">₩0</div>
@@ -598,6 +598,10 @@
           <div class="overview-stat">
             <div class="overview-stat-label">총 평가금</div>
             <div class="overview-stat-value" id="stat-cur">₩0</div>
+          </div>
+          <div class="overview-stat">
+            <div class="overview-stat-label">예수금</div>
+            <div class="overview-stat-value" id="stat-cash">₩${Number(d.total_cash || 0).toLocaleString()}</div>
           </div>
           <div class="overview-stat">
             <div class="overview-stat-label">주가 손익</div>
@@ -608,8 +612,9 @@
             <div class="overview-stat-value profit-pos" id="stat-div">+0</div>
           </div>
           <div class="overview-stat">
-            <div class="overview-stat-label">총 수익률</div>
+            <div class="overview-stat-label">총 수익</div>
             <div class="overview-stat-value ${cls(totalReturn)}" id="stat-total">0</div>
+            <div style="font-size:0.72rem;margin-top:5px;color:${totalReturn >= 0 ? '#ef4444' : '#3b82f6'}">${totalReturn >= 0 ? '+' : ''}${totalReturnPct}%</div>
           </div>
           <div class="overview-stat">
             <div class="overview-stat-label">오늘 수익률</div>
