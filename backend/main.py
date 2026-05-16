@@ -992,3 +992,83 @@ async def nbc_scrape_detail(nbc_id: int):
     conn.close()
 
     return {"cached": False, "data": data}
+
+
+# ── Display Feedback ──────────────────────────────────────────────────────────
+
+@app.get("/display/stats")
+def display_stats(brand: str = None, days: int = 90):
+    """브랜드/모델별 감성 통계"""
+    conn = get_conn()
+    params = [days]
+    brand_filter = "AND r.brand = ?" if brand else ""
+    if brand:
+        params.append(brand)
+    rows = conn.execute(f"""
+        SELECT r.brand, r.model, a.feature, a.sentiment, COUNT(*) as cnt
+        FROM display_reviews r
+        JOIN display_analysis a ON r.id = a.review_id
+        WHERE r.date >= date('now', '-' || ? || ' days')
+        {brand_filter}
+        GROUP BY r.brand, r.model, a.feature, a.sentiment
+    """, params).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+@app.get("/display/trends")
+def display_trends(feature: str = "brightness", brand: str = None, days: int = 90):
+    """특정 디스플레이 항목의 날짜별 감성 추이"""
+    conn = get_conn()
+    params = [days, feature]
+    brand_filter = "AND r.brand = ?" if brand else ""
+    if brand:
+        params.append(brand)
+    rows = conn.execute(f"""
+        SELECT r.date, a.sentiment, COUNT(*) as cnt
+        FROM display_reviews r
+        JOIN display_analysis a ON r.id = a.review_id
+        WHERE r.date >= date('now', '-' || ? || ' days')
+          AND a.feature = ?
+        {brand_filter}
+        GROUP BY r.date, a.sentiment
+        ORDER BY r.date
+    """, params).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+@app.get("/display/panels")
+def display_panels(days: int = 90):
+    """패널 메이커별 언급 수"""
+    conn = get_conn()
+    rows = conn.execute("""
+        SELECT panel_maker, COUNT(*) as cnt
+        FROM display_reviews
+        WHERE date >= date('now', '-' || ? || ' days')
+          AND panel_maker IS NOT NULL
+        GROUP BY panel_maker
+        ORDER BY cnt DESC
+    """, [days]).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+@app.get("/display/models")
+def display_models(days: int = 90):
+    """모델별 부정률 비교"""
+    conn = get_conn()
+    rows = conn.execute("""
+        SELECT r.brand, r.model,
+               SUM(CASE WHEN a.sentiment='negative' THEN 1 ELSE 0 END) as neg,
+               SUM(CASE WHEN a.sentiment='positive' THEN 1 ELSE 0 END) as pos,
+               SUM(CASE WHEN a.sentiment='neutral'  THEN 1 ELSE 0 END) as neu,
+               COUNT(*) as total
+        FROM display_reviews r
+        JOIN display_analysis a ON r.id = a.review_id
+        WHERE r.date >= date('now', '-' || ? || ' days')
+        GROUP BY r.brand, r.model
+        ORDER BY neg * 1.0 / total DESC
+    """, [days]).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]

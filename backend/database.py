@@ -142,6 +142,34 @@ def init_db():
 
     try:
         conn.execute("""
+            CREATE TABLE IF NOT EXISTS display_reviews (
+                id          TEXT PRIMARY KEY,
+                brand       TEXT,
+                model       TEXT,
+                source      TEXT,
+                review_text TEXT,
+                date        TEXT,
+                panel_maker TEXT,
+                raw_rating  INTEGER,
+                collected_at TEXT
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS display_analysis (
+                review_id       TEXT REFERENCES display_reviews(id),
+                feature         TEXT,
+                sentiment       TEXT,
+                confidence      REAL,
+                summary_snippet TEXT,
+                PRIMARY KEY (review_id, feature)
+            )
+        """)
+        conn.commit()
+    except Exception:
+        pass
+
+    try:
+        conn.execute("""
             CREATE TABLE IF NOT EXISTS nbc_reviews (
                 id           INTEGER PRIMARY KEY AUTOINCREMENT,
                 title        TEXT NOT NULL,

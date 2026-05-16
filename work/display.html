@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KooVIS · Display Feedback</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#f4f4f5;
+  color:#1a1a1a;
+  font-family:'Pretendard', system-ui, sans-serif;
+  min-height:100vh;
+}
+
+/* Nav */
+.nav {
+  background:#fff;
+  border-bottom:1px solid #e8e8ec;
+  padding:0 32px;
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.nav-left { display:flex; align-items:center; gap:12px; }
+.nav-brand { font-size:15px; font-weight:700; color:#1a1a1a; text-decoration:none; }
+.nav-divider { color:#d1d1d6; }
+.nav-title { font-size:14px; color:#6b6b6b; }
+.nav-tag {
+  background:#1a1a1a; color:#fff;
+  font-size:10px; font-weight:600;
+  padding:2px 8px; border-radius:20px;
+  letter-spacing:.04em;
+}
+.nav-back { font-size:13px; color:#6b6b6b; text-decoration:none; }
+.nav-back:hover { color:#1a1a1a; }
+
+/* Layout */
+.page { max-width:1200px; margin:0 auto; padding:28px 24px 60px; }
+
+/* Controls */
+.controls {
+  display:flex; gap:10px; align-items:center;
+  margin-bottom:24px; flex-wrap:wrap;
+}
+.ctrl-label { font-size:13px; color:#6b6b6b; margin-right:4px; }
+select, .btn-group button {
+  height:36px;
+  border:1px solid #e0e0e6;
+  background:#fff;
+  border-radius:8px;
+  padding:0 14px;
+  font-size:13px;
+  font-family:inherit;
+  cursor:pointer;
+  color:#1a1a1a;
+}
+.btn-group { display:flex; gap:0; }
+.btn-group button { border-radius:0; border-right:none; }
+.btn-group button:first-child { border-radius:8px 0 0 8px; }
+.btn-group button:last-child  { border-radius:0 8px 8px 0; border-right:1px solid #e0e0e6; }
+.btn-group button.active { background:#1a1a1a; color:#fff; border-color:#1a1a1a; }
+
+/* KPI row */
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+.kpi {
+  background:#fff;
+  border:1px solid #e8e8ec;
+  border-radius:14px;
+  padding:20px 22px;
+}
+.kpi-val { font-size:28px; font-weight:700; line-height:1; letter-spacing:-.02em; }
+.kpi-lbl { font-size:12px; color:#8e8e93; margin-top:8px; font-weight:500; }
+.kpi-sub { font-size:11px; color:#c0c0c8; margin-top:4px; }
+
+/* Grid */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.grid-3 { display:grid; grid-template-columns:2fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+
+/* Card */
+.card {
+  background:#fff;
+  border:1px solid #e8e8ec;
+  border-radius:14px;
+  padding:22px;
+}
+.card-title {
+  font-size:12px; font-weight:600; color:#8e8e93;
+  text-transform:uppercase; letter-spacing:.08em;
+  margin-bottom:18px;
+  padding-bottom:14px;
+  border-bottom:1px solid #f0f0f4;
+}
+
+/* Model table */
+.model-table { width:100%; border-collapse:collapse; }
+.model-table th {
+  text-align:left; font-size:11px; font-weight:600;
+  color:#8e8e93; padding:0 0 10px; border-bottom:1px solid #f0f0f4;
+}
+.model-table td { padding:10px 0; border-bottom:1px solid #f8f8fa; font-size:13px; }
+.model-table tr:last-child td { border-bottom:none; }
+.neg-bar-wrap { display:flex; align-items:center; gap:8px; }
+.neg-bar-bg { flex:1; height:6px; background:#f0f0f4; border-radius:3px; }
+.neg-bar { height:6px; border-radius:3px; background:#ff3b30; }
+.neg-pct { font-size:12px; font-weight:600; min-width:34px; }
+
+/* Feature rank */
+.feat-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.feat-name { font-size:13px; min-width:72px; }
+.feat-bar-bg { flex:1; height:6px; background:#f0f0f4; border-radius:3px; }
+.feat-bar { height:6px; border-radius:3px; }
+.feat-cnt { font-size:12px; color:#8e8e93; min-width:28px; text-align:right; }
+
+/* Panel */
+.panel-row { margin-bottom:14px; }
+.panel-header { display:flex; justify-content:space-between; margin-bottom:6px; }
+.panel-name { font-size:13px; font-weight:600; }
+.panel-cnt { font-size:12px; color:#8e8e93; }
+.panel-bar-bg { height:6px; background:#f0f0f4; border-radius:3px; }
+.panel-bar { height:6px; border-radius:3px; }
+
+.empty { color:#c0c0c8; font-size:13px; text-align:center; padding:24px 0; }
+.loading { color:#c0c0c8; font-size:13px; }
+
+/* Responsive */
+@media (max-width:768px) {
+  .kpi-row { grid-template-columns:repeat(2,1fr); }
+  .grid-2, .grid-3 { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a href="/" class="nav-brand">KooVIS</a>
+    <span class="nav-divider">/</span>
+    <span class="nav-title">Display Feedback</span>
+    <span class="nav-tag">SDC China</span>
+  </div>
+  <a href="/work/" class="nav-back">← 업무</a>
+</nav>
+
+<div class="page">
+
+  <!-- Controls -->
+  <div class="controls">
+    <span class="ctrl-label">브랜드</span>
+    <select id="brandSel" onchange="load()">
+      <option value="">전체</option>
+      <option value="vivo">vivo</option>
+      <option value="OPPO">OPPO</option>
+      <option value="Xiaomi">Xiaomi</option>
+    </select>
+
+    <span class="ctrl-label" style="margin-left:8px">기간</span>
+    <div class="btn-group" id="daysBtns">
+      <button onclick="setDays(30,this)">30일</button>
+      <button onclick="setDays(90,this)" class="active">90일</button>
+      <button onclick="setDays(180,this)">180일</button>
+      <button onclick="setDays(365,this)">1년</button>
+    </div>
+
+    <span class="ctrl-label" style="margin-left:8px">트렌드 항목</span>
+    <select id="featSel" onchange="loadTrend()">
+      <option value="brightness">밝기</option>
+      <option value="color">색재현</option>
+      <option value="refresh">주사율</option>
+      <option value="outdoor">실외가시성</option>
+      <option value="eye_strain">눈피로</option>
+      <option value="burn_in">번인</option>
+      <option value="response">응답속도</option>
+    </select>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-val" id="kpiTotal">—</div>
+      <div class="kpi-lbl">총 분석 리뷰</div>
+      <div class="kpi-sub" id="kpiSub">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#ff3b30" id="kpiNeg">—</div>
+      <div class="kpi-lbl">부정 비율</div>
+      <div class="kpi-sub" id="kpiNegSub">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#34c759" id="kpiPos">—</div>
+      <div class="kpi-lbl">긍정 비율</div>
+      <div class="kpi-sub" id="kpiPosSub">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#ff9500; font-size:18px; padding-top:4px" id="kpiTopFeat">—</div>
+      <div class="kpi-lbl">최다 불만 항목</div>
+      <div class="kpi-sub" id="kpiTopModel">—</div>
+    </div>
+  </div>
+
+  <!-- Row 1: trend + sentiment donut -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" id="trendTitle">언급 추이</div>
+      <canvas id="trendChart" height="160"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">감성 분포</div>
+      <canvas id="donutChart" height="160"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 2: model table + feature rank + panel -->
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">모델별 부정률</div>
+      <table class="model-table">
+        <thead>
+          <tr>
+            <th>모델</th>
+            <th style="width:120px">부정률</th>
+            <th style="width:40px; text-align:right">건수</th>
+          </tr>
+        </thead>
+        <tbody id="modelTbody"><tr><td colspan="3" class="empty loading">로딩 중…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">항목별 부정 순위</div>
+      <div id="featRank"><p class="empty loading">로딩 중…</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">패널 메이커 언급</div>
+      <div id="panelBars"><p class="empty loading">로딩 중…</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = 'https://koovis-backend.fly.dev';
+const FEATURE_KO = {
+  brightness:'밝기', color:'색재현', refresh:'주사율',
+  outdoor:'실외가시성', eye_strain:'눈피로', burn_in:'번인', response:'응답속도'
+};
+const PANEL_COLOR = { SDC:'#007aff', BOE:'#ff3b30', CSOT:'#ffcc00' };
+const SENT_COLOR  = { negative:'#ff3b30', positive:'#34c759', neutral:'#c7c7cc' };
+
+let days = 90;
+let trendChart = null, donutChart = null;
+
+function brand() { return document.getElementById('brandSel').value; }
+function feat()  { return document.getElementById('featSel').value; }
+
+function setDays(d, btn) {
+  days = d;
+  document.querySelectorAll('#daysBtns button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  load();
+}
+
+async function load() {
+  const b = brand();
+  const qs = `?days=${days}${b ? '&brand='+b : ''}`;
+
+  const [stats, models, panels] = await Promise.all([
+    fetch(`${API}/display/stats${qs}`).then(r=>r.json()),
+    fetch(`${API}/display/models${qs}`).then(r=>r.json()),
+    fetch(`${API}/display/panels?days=${days}`).then(r=>r.json()),
+  ]);
+
+  renderKpi(stats);
+  renderDonut(stats);
+  renderModels(models);
+  renderFeatureRank(stats);
+  renderPanels(panels);
+  loadTrend();
+}
+
+function renderKpi(stats) {
+  const totals = { negative:0, positive:0, neutral:0 };
+  const featNeg = {};
+  const modelNeg = {};
+
+  stats.forEach(r => {
+    totals[r.sentiment] = (totals[r.sentiment]||0) + r.cnt;
+    if (r.sentiment === 'negative') {
+      featNeg[r.feature]   = (featNeg[r.feature]||0) + r.cnt;
+      modelNeg[r.model]    = (modelNeg[r.model]||0) + r.cnt;
+    }
+  });
+
+  const total = totals.negative + totals.positive + totals.neutral;
+  const negPct = total ? Math.round(totals.negative/total*100) : 0;
+  const posPct = total ? Math.round(totals.positive/total*100) : 0;
+
+  const topFeat  = Object.entries(featNeg).sort((a,b)=>b[1]-a[1])[0];
+  const topModel = Object.entries(modelNeg).sort((a,b)=>b[1]-a[1])[0];
+
+  document.getElementById('kpiTotal').textContent   = total.toLocaleString();
+  document.getElementById('kpiSub').textContent     = `${brand()||'전체'} · 최근 ${days}일`;
+  document.getElementById('kpiNeg').textContent     = negPct + '%';
+  document.getElementById('kpiNegSub').textContent  = totals.negative.toLocaleString() + '건';
+  document.getElementById('kpiPos').textContent     = posPct + '%';
+  document.getElementById('kpiPosSub').textContent  = totals.positive.toLocaleString() + '건';
+  document.getElementById('kpiTopFeat').textContent = topFeat  ? FEATURE_KO[topFeat[0]]||topFeat[0]  : '—';
+  document.getElementById('kpiTopModel').textContent= topModel ? topModel[0] : '—';
+}
+
+function renderDonut(stats) {
+  const totals = { negative:0, positive:0, neutral:0 };
+  stats.forEach(r => totals[r.sentiment] = (totals[r.sentiment]||0) + r.cnt);
+
+  const data = {
+    labels: ['부정','긍정','중립'],
+    datasets:[{ data:[totals.negative,totals.positive,totals.neutral],
+      backgroundColor:['#ff3b30','#34c759','#e5e5ea'],
+      borderWidth:2, borderColor:'#fff' }]
+  };
+
+  if (donutChart) { donutChart.data = data; donutChart.update(); return; }
+  donutChart = new Chart(document.getElementById('donutChart'), {
+    type:'doughnut', data,
+    options:{ cutout:'65%', plugins:{ legend:{ position:'bottom',
+      labels:{ font:{size:12,family:'Pretendard'}, padding:16 } } } }
+  });
+}
+
+async function loadTrend() {
+  const f = feat();
+  const b = brand();
+  const qs = `?feature=${f}&days=${days}${b?'&brand='+b:''}`;
+  const rows = await fetch(`${API}/display/trends${qs}`).then(r=>r.json());
+
+  document.getElementById('trendTitle').textContent =
+    (FEATURE_KO[f]||f) + ' 언급 추이 · 최근 ' + days + '일';
+
+  // aggregate by date
+  const dates = [...new Set(rows.map(r=>r.date))].sort();
+  const byDate = {};
+  rows.forEach(r => {
+    if (!byDate[r.date]) byDate[r.date] = {};
+    byDate[r.date][r.sentiment] = r.cnt;
+  });
+
+  const datasets = ['negative','positive','neutral'].map(s => ({
+    label: s==='negative'?'부정':s==='positive'?'긍정':'중립',
+    data: dates.map(d => byDate[d]?.[s]||0),
+    borderColor: SENT_COLOR[s],
+    backgroundColor: SENT_COLOR[s] + (s==='negative'?'22':'11'),
+    fill: s==='negative',
+    tension:.35, pointRadius:3,
+  }));
+
+  const chartData = { labels:dates, datasets };
+
+  if (trendChart) { trendChart.data = chartData; trendChart.update(); return; }
+  trendChart = new Chart(document.getElementById('trendChart'), {
+    type:'line', data:chartData,
+    options:{
+      responsive:true,
+      plugins:{ legend:{ position:'top', labels:{ font:{size:11,family:'Pretendard'} } } },
+      scales:{
+        x:{ grid:{display:false}, ticks:{ font:{size:10}, maxRotation:0, maxTicksLimit:8 } },
+        y:{ grid:{color:'#f0f0f4'}, ticks:{ font:{size:10} }, beginAtZero:true }
+      }
+    }
+  });
+}
+
+function renderModels(models) {
+  if (!models.length) {
+    document.getElementById('modelTbody').innerHTML = '<tr><td colspan="3" class="empty">데이터 없음</td></tr>';
+    return;
+  }
+  document.getElementById('modelTbody').innerHTML = models.map(m => {
+    const pct = m.total ? Math.round(m.neg/m.total*100) : 0;
+    const color = pct >= 30 ? '#ff3b30' : pct >= 20 ? '#ff9500' : '#34c759';
+    return `<tr>
+      <td style="font-size:12px;color:#6b6b6b">${m.brand}<br>
+        <span style="font-size:13px;color:#1a1a1a;font-weight:500">${m.model}</span></td>
+      <td>
+        <div class="neg-bar-wrap">
+          <div class="neg-bar-bg"><div class="neg-bar" style="width:${pct}%;background:${color}"></div></div>
+          <span class="neg-pct" style="color:${color}">${pct}%</span>
+        </div>
+      </td>
+      <td style="text-align:right;font-size:12px;color:#8e8e93">${m.total}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderFeatureRank(stats) {
+  const featNeg = {};
+  stats.forEach(r => {
+    if (r.sentiment === 'negative')
+      featNeg[r.feature] = (featNeg[r.feature]||0) + r.cnt;
+  });
+
+  const sorted = Object.entries(featNeg).sort((a,b)=>b[1]-a[1]);
+  if (!sorted.length) { document.getElementById('featRank').innerHTML = '<p class="empty">데이터 없음</p>'; return; }
+
+  const max = sorted[0][1];
+  const colors = ['#ff3b30','#ff6b5b','#ff9580','#ffb8a8','#ffd0c8','#ffe8e5','#fff4f3'];
+
+  document.getElementById('featRank').innerHTML = sorted.map(([f,n],i) => `
+    <div class="feat-row">
+      <span class="feat-name" style="font-weight:${i===0?600:400}">${FEATURE_KO[f]||f}</span>
+      <div class="feat-bar-bg">
+        <div class="feat-bar" style="width:${Math.round(n/max*100)}%;background:${colors[i]||'#eee'}"></div>
+      </div>
+      <span class="feat-cnt">${n}</span>
+    </div>`).join('');
+}
+
+function renderPanels(panels) {
+  if (!panels.length) { document.getElementById('panelBars').innerHTML = '<p class="empty">데이터 없음</p>'; return; }
+  const total = panels.reduce((s,p)=>s+p.cnt, 0);
+  document.getElementById('panelBars').innerHTML = panels.map(p => {
+    const pct = Math.round(p.cnt/total*100);
+    const color = PANEL_COLOR[p.panel_maker] || '#8e8e93';
+    return `<div class="panel-row">
+      <div class="panel-header">
+        <span class="panel-name" style="color:${color}">${p.panel_maker}</span>
+        <span class="panel-cnt">${p.cnt}건 · ${pct}%</span>
+      </div>
+      <div class="panel-bar-bg">
+        <div class="panel-bar" style="width:${pct}%;background:${color}"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+load();
+</script>
+</body>
+</html>

@@ -56,6 +56,7 @@ BRANDS = {
     "iqoo":    "vivo-phones-98.php",
     "realme":  "realme-phones-118.php",
     "honor":   "honor-phones-121.php",
+    "huawei":  "huawei-phones-58.php",
 }
 
 # 별칭 → 실제 브랜드 키 매핑
@@ -69,6 +70,7 @@ BRAND_DISPLAY = {
     "xiaomi": "Xiaomi", "redmi": "Xiaomi", "poco": "Xiaomi",
     "oneplus": "OnePlus", "oppo": "OPPO", "vivo": "Vivo",
     "iqoo": "iQOO", "realme": "Realme", "honor": "Honor",
+    "huawei": "Huawei",
 }
 
 def _normalize(text: str) -> str:

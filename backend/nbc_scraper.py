@@ -15,7 +15,7 @@ async def collect_review_list(pages: int = 2) -> list[dict]:
     """Smartphone + Tests 필터 적용 후 리뷰 목록 수집"""
     results = []
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
+        browser = await p.chromium.launch(headless=True)
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 800},
@@ -96,6 +96,7 @@ async def collect_review_list(pages: int = 2) -> list[dict]:
                 'power bank', 'dock ', 'stream deck', 'elgato',
                 'gamer ', 'gaming laptop', 'slim ', 'aura edition',
                 'g11 ', 'g9 ', 'g10 ', '14 g', '15 g', '16 g',
+                'dashcam', 'dash cam', 'dash-cam', 'projector', 'hands-on',
             ]
             for item in items:
                 title_l = item['title'].lower()
@@ -150,7 +151,7 @@ async def _apply_filters(page):
 async def scrape_review_detail(url: str) -> dict:
     """개별 리뷰 페이지에서 평점·pros/cons·항목별 평점·발열 등 추출"""
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
+        browser = await p.chromium.launch(headless=True)
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 900},
@@ -165,9 +166,10 @@ async def scrape_review_detail(url: str) -> dict:
         data = await page.evaluate("""() => {
             const clean = s => s.replace(' - Notebookcheck Review','').replace(' - NotebookCheck.net','').trim();
 
-            // 종합 평점
-            const scoreEl = document.querySelector('.rating');
-            const score = scoreEl ? parseInt(scoreEl.innerText) : null;
+            // 종합 평점 — 제목 앞 "86% ..." 패턴에서 추출 (DOM 선택자는 비신뢰)
+            const titleRaw = document.title;
+            const scoreMatch = titleRaw.match(/^(\d{2,3})%\s/);
+            const score = scoreMatch ? parseInt(scoreMatch[1]) : null;
 
             // pros / cons
             const pros = Array.from(document.querySelectorAll('.pro_eintrag')).map(e => e.innerText.trim()).filter(Boolean);

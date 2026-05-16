@@ -145,6 +145,7 @@ def get_overview(accounts: list[dict], all_holdings: list[dict]) -> dict:
     return {
         "total_buy":    round(total_buy, 2),
         "total_cur":    round(total_cur, 2),
+        "total_cash":   round(total_cash, 2),
         "total_profit": total_profit,
         "total_pct":    total_pct,
         "daily_chg":    round(total_daily, 2),
